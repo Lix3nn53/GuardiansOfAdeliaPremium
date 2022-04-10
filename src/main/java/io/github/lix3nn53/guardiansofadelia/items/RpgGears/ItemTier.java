@@ -2,6 +2,7 @@ package io.github.lix3nn53.guardiansofadelia.items.RpgGears;
 
 import io.github.lix3nn53.guardiansofadelia.text.ChatPalette;
 import io.github.lix3nn53.guardiansofadelia.utilities.PersistentDataContainerUtil;
+import org.bukkit.ChatColor;
 import org.bukkit.inventory.ItemStack;
 
 public enum ItemTier {
@@ -30,6 +31,18 @@ public enum ItemTier {
             color = ChatPalette.PURPLE;
         } else if (this == ItemTier.LEGENDARY) {
             color = ChatPalette.GOLD;
+        }
+        return color;
+    }
+
+    public ChatColor getTierColorOld() {
+        ChatColor color = ChatColor.DARK_GREEN;
+        if (this == ItemTier.RARE) {
+            color = ChatColor.BLUE;
+        } else if (this == ItemTier.MYSTIC) {
+            color = ChatColor.DARK_PURPLE;
+        } else if (this == ItemTier.LEGENDARY) {
+            color = ChatColor.GOLD;
         }
         return color;
     }

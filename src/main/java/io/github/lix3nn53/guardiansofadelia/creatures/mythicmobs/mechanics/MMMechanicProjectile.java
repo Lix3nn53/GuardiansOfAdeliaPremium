@@ -9,11 +9,11 @@ import io.lumine.mythic.api.adapters.AbstractEntity;
 import io.lumine.mythic.api.adapters.AbstractLocation;
 import io.lumine.mythic.api.config.MythicLineConfig;
 import io.lumine.mythic.api.skills.ITargetedEntitySkill;
+import io.lumine.mythic.api.skills.Skill;
 import io.lumine.mythic.api.skills.SkillMetadata;
 import io.lumine.mythic.api.skills.SkillResult;
 import io.lumine.mythic.bukkit.BukkitAdapter;
-import io.lumine.mythic.core.skills.Skill;
-import io.lumine.mythic.core.skills.SkillManager;
+import io.lumine.mythic.core.skills.SkillExecutor;
 import io.lumine.mythic.core.skills.SkillMechanic;
 import org.bukkit.Color;
 import org.bukkit.Location;
@@ -33,7 +33,7 @@ public class MMMechanicProjectile extends SkillMechanic implements ITargetedEnti
     private final ProjectileMechanicBase base;
     private SkillMetadata data;
 
-    public MMMechanicProjectile(SkillManager skillManager, MythicLineConfig config) {
+    public MMMechanicProjectile(SkillExecutor skillManager, MythicLineConfig config) {
         super(skillManager, config.getLine(), config);
         this.setAsyncSafe(false);
         this.setTargetsCreativePlayers(false);

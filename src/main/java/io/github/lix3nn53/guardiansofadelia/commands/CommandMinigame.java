@@ -20,7 +20,10 @@ public class CommandMinigame implements CommandExecutor {
                 player.sendMessage(ChatPalette.YELLOW + "/minigame leave");
             } else if (args.length == 1) {
                 if (args[0].equals("leave")) {
-                    MiniGameManager.onQuit(player);
+                    boolean didQuit = MiniGameManager.onQuit(player);
+                    if (!didQuit) {
+                        player.sendMessage(ChatPalette.RED + "You are not in a minigame");
+                    }
                 }
             }
             // If the player (or console) uses our command correct, we can return true

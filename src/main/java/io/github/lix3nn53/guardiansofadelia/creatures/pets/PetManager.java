@@ -34,6 +34,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 
 public class PetManager {
 
@@ -560,10 +561,15 @@ public class PetManager {
     }
 
     public static int getDamage(String key, int petLevel) {
-        MythicMob mythicMob = MythicBukkit.inst().getMobManager().getMythicMob(key);
+        Optional<MythicMob> mythicMob = MythicBukkit.inst().getMobManager().getMythicMob(key);
 
-        float base = (float) mythicMob.getDamage().get();
-        float perLevel = (float) mythicMob.getPerLevelDamage();
+        if (!mythicMob.isPresent()) {
+            throw new IllegalArgumentException("PetManager: MythicMob not found: " + key);
+        }
+
+        MythicMob mythicMobGet = mythicMob.get();
+        float base = (float) mythicMobGet.getDamage().get();
+        float perLevel = (float) mythicMobGet.getPerLevelDamage();
 
         //GuardiansOfAdelia.getInstance().getLogger().info("base damage: " + base);
         //GuardiansOfAdelia.getInstance().getLogger().info("perLevel damage: " + perLevel);
@@ -572,10 +578,16 @@ public class PetManager {
     }
 
     public static int getHealth(String key, int petLevel) {
-        MythicMob mythicMob = MythicBukkit.inst().getMobManager().getMythicMob(key);
+        Optional<MythicMob> mythicMob = MythicBukkit.inst().getMobManager().getMythicMob(key);
 
-        float base = (float) mythicMob.getHealth().get();
-        float perLevel = (float) mythicMob.getPerLevelHealth();
+        if (!mythicMob.isPresent()) {
+            throw new IllegalArgumentException("PetManager: MythicMob not found: " + key);
+        }
+
+        MythicMob mythicMobGet = mythicMob.get();
+
+        float base = (float) mythicMobGet.getHealth().get();
+        float perLevel = (float) mythicMobGet.getPerLevelHealth();
 
         //GuardiansOfAdelia.getInstance().getLogger().info("base health: " + base);
         //GuardiansOfAdelia.getInstance().getLogger().info("perLevel health: " + perLevel);
@@ -584,9 +596,15 @@ public class PetManager {
     }
 
     public static float getMovementSpeed(String key, int petLevel) {
-        MythicMob mythicMob = MythicBukkit.inst().getMobManager().getMythicMob(key);
+        Optional<MythicMob> mythicMob = MythicBukkit.inst().getMobManager().getMythicMob(key);
 
-        MythicConfig config = mythicMob.getConfig();
+        if (!mythicMob.isPresent()) {
+            throw new IllegalArgumentException("PetManager: MythicMob not found: " + key);
+        }
+
+        MythicMob mythicMobGet = mythicMob.get();
+
+        MythicConfig config = mythicMobGet.getConfig();
 
         float base = (float) config.getPlaceholderDouble("Options.MovementSpeed", "0").get();
         float perLevel = (float) config.getDouble("LevelModifiers.MovementSpeed", -1.0D);
@@ -598,8 +616,12 @@ public class PetManager {
     }
 
     public static String getName(String key) {
-        MythicMob mythicMob = MythicBukkit.inst().getMobManager().getMythicMob(key);
+        Optional<MythicMob> mythicMob = MythicBukkit.inst().getMobManager().getMythicMob(key);
 
-        return mythicMob.getDisplayName().get();
+        if (!mythicMob.isPresent()) {
+            throw new IllegalArgumentException("PetManager: MythicMob not found: " + key);
+        }
+
+        return mythicMob.get().getDisplayName().get();
     }
 }

@@ -17,9 +17,9 @@ import io.github.lix3nn53.guardiansofadelia.text.ChatPalette;
 import io.github.lix3nn53.guardiansofadelia.transportation.portals.PortalColor;
 import io.github.lix3nn53.guardiansofadelia.utilities.ItemPoolGenerator;
 import io.github.lix3nn53.guardiansofadelia.utilities.gui.GuiGeneric;
+import io.lumine.mythic.api.mobs.MobManager;
 import io.lumine.mythic.api.mobs.MythicMob;
 import io.lumine.mythic.bukkit.MythicBukkit;
-import io.lumine.mythic.core.mobs.MobManager;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -114,9 +114,13 @@ public class DungeonTheme {
 
     public String getBossName() {
         MobManager mobManager = MythicBukkit.inst().getMobManager();
-        MythicMob mythicMob = mobManager.getMythicMob(bossInternalName);
+        Optional<MythicMob> mythicMob = mobManager.getMythicMob(bossInternalName);
 
-        return mythicMob.getDisplayName().get();
+        if (mythicMob.isPresent()) {
+            return mythicMob.get().getDisplayName().get();
+        }
+
+        throw new IllegalArgumentException("DungeonTheme Boss: MythicMob not found: " + bossInternalName);
     }
 
     public PrizeChest getPrizeChest() {
@@ -303,8 +307,8 @@ public class DungeonTheme {
     public int getMonsterLevel(int darkness) {
         if (darkness < 0) {
             darkness = 1;
-        } else if (darkness > 100) {
-            darkness = 99;
+        } else if (darkness > 99) {
+            darkness = 99; // not 100 because of the rounding
         }
 
         int maxLevel = 10;

@@ -9,7 +9,7 @@ import io.lumine.mythic.api.skills.ITargetedEntitySkill;
 import io.lumine.mythic.api.skills.SkillMetadata;
 import io.lumine.mythic.api.skills.SkillResult;
 import io.lumine.mythic.bukkit.BukkitAdapter;
-import io.lumine.mythic.core.skills.SkillManager;
+import io.lumine.mythic.core.skills.SkillExecutor;
 import io.lumine.mythic.core.skills.SkillMechanic;
 import org.bukkit.entity.LivingEntity;
 
@@ -19,7 +19,7 @@ public class MMMechanicElementResistance extends SkillMechanic implements ITarge
     protected final ElementType elementType;
     protected final float resistance;
 
-    public MMMechanicElementResistance(SkillManager skillManager, MythicLineConfig config) {
+    public MMMechanicElementResistance(SkillExecutor skillManager, MythicLineConfig config) {
         super(skillManager, config.getLine(), config);
 
         internalName = config.getKey();

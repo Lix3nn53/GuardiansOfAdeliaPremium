@@ -373,9 +373,10 @@ public class DungeonInstance extends Minigame {
             public void run() {
                 if (darkness < 100) {
                     darkness++;
-                    updateDarknessOnBoards();
-                    applyDarknessEffects(periodInTicks);
                 }
+
+                updateDarknessOnBoards();
+                applyDarknessEffects(periodInTicks);
             }
         }.runTaskTimer(GuardiansOfAdelia.getInstance(), 20, periodInTicks);
     }

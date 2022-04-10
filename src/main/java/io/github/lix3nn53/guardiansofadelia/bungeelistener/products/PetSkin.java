@@ -11,6 +11,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public enum PetSkin {
     ICE_CREAM,
@@ -22,9 +23,13 @@ public enum PetSkin {
 
     public ItemStack getItemStack() {
         String skinName = name();
-        MythicMob mythicMob = MythicBukkit.inst().getMobManager().getMythicMob(skinName);
+        Optional<MythicMob> mythicMob = MythicBukkit.inst().getMobManager().getMythicMob(skinName);
 
-        String displayName = mythicMob.getDisplayName().get();
+        if (!mythicMob.isPresent()) {
+            throw new IllegalStateException("PetSkin: MythicMob not found for " + skinName);
+        }
+
+        String displayName = mythicMob.get().getDisplayName().get();
         String itemName = displayName + ChatPalette.PURPLE_LIGHT + " Pet Skin";
 
         List<String> lore = new ArrayList<>();

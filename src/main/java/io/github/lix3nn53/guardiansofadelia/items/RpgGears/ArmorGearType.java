@@ -101,7 +101,7 @@ public enum ArmorGearType {
             case LIGHT_ARMOR:
                 return GearSetEffect.CRITICAL_CHANCE;
             case FEATHER_ARMOR:
-                return GearSetEffect.MOVEMENT_SPEED;
+                return GearSetEffect.MOVEMENT_SPEED_2;
         }
 
         return null;

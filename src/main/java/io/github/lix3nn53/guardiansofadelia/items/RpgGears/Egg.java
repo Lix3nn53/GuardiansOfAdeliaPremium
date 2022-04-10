@@ -17,15 +17,20 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 
 public class Egg implements RPGGear {
 
     private final ItemStack itemStack;
 
     public Egg(String petKey, ItemTier tier, Material material, int customModelData, int reqLevel, int petLevel, String gearSetStr) {
-        MythicMob mythicMob = MythicBukkit.inst().getMobManager().getMythicMob(petKey);
+        Optional<MythicMob> mythicMob = MythicBukkit.inst().getMobManager().getMythicMob(petKey);
 
-        String name = mythicMob.getDisplayName().get();
+        if (!mythicMob.isPresent()) {
+            throw new IllegalArgumentException("Egg: MythicMob not found: " + petKey);
+        }
+
+        String name = mythicMob.get().getDisplayName().get();
         if (gearSetStr != null && !gearSetStr.equals("")) {
             name = tier.getTierColor() + gearSetStr + " " + name;
         }

@@ -24,11 +24,20 @@ public enum GearSetEffect {
     // MANA_REGEN,
     SLOW_FALLING,
     SWIMMING_SPEED,
-    ATTACK_SPEED_INCREASE,
+    ATTACK_SPEED_INCREASE_1,
+    ATTACK_SPEED_INCREASE_2,
+    ATTACK_SPEED_INCREASE_3,
+    ATTACK_SPEED_INCREASE_4,
     ATTACK_SPEED_DECREASE,
     ABILITY_HASTE,
-    JUMP_BOOST,
-    MOVEMENT_SPEED,
+    JUMP_BOOST_1,
+    JUMP_BOOST_2,
+    JUMP_BOOST_3,
+    JUMP_BOOST_4,
+    MOVEMENT_SPEED_1,
+    MOVEMENT_SPEED_2,
+    MOVEMENT_SPEED_3,
+    MOVEMENT_SPEED_4,
     LIFE_STEAL,
     ELEMENT_FIRE,
     ELEMENT_WATER,
@@ -74,8 +83,20 @@ public enum GearSetEffect {
                 potionEffect = new PotionEffect(PotionEffectType.DOLPHINS_GRACE, Integer.MAX_VALUE, 1);
                 player.addPotionEffect(potionEffect);
                 break;
-            case ATTACK_SPEED_INCREASE:
+            case ATTACK_SPEED_INCREASE_1:
+                potionEffect = new PotionEffect(PotionEffectType.FAST_DIGGING, Integer.MAX_VALUE, 1);
+                player.addPotionEffect(potionEffect);
+                break;
+            case ATTACK_SPEED_INCREASE_2:
                 potionEffect = new PotionEffect(PotionEffectType.FAST_DIGGING, Integer.MAX_VALUE, 2);
+                player.addPotionEffect(potionEffect);
+                break;
+            case ATTACK_SPEED_INCREASE_3:
+                potionEffect = new PotionEffect(PotionEffectType.FAST_DIGGING, Integer.MAX_VALUE, 3);
+                player.addPotionEffect(potionEffect);
+                break;
+            case ATTACK_SPEED_INCREASE_4:
+                potionEffect = new PotionEffect(PotionEffectType.FAST_DIGGING, Integer.MAX_VALUE, 4);
                 player.addPotionEffect(potionEffect);
                 break;
             case ATTACK_SPEED_DECREASE:
@@ -85,12 +106,36 @@ public enum GearSetEffect {
             case ABILITY_HASTE:
                 rpgCharacterStats.addToBuffMultiplier(BuffType.ABILITY_HASTE, 20, null);
                 break;
-            case JUMP_BOOST:
+            case JUMP_BOOST_1:
+                potionEffect = new PotionEffect(PotionEffectType.JUMP, Integer.MAX_VALUE, 1);
+                player.addPotionEffect(potionEffect);
+                break;
+            case JUMP_BOOST_2:
                 potionEffect = new PotionEffect(PotionEffectType.JUMP, Integer.MAX_VALUE, 2);
                 player.addPotionEffect(potionEffect);
                 break;
-            case MOVEMENT_SPEED:
+            case JUMP_BOOST_3:
+                potionEffect = new PotionEffect(PotionEffectType.JUMP, Integer.MAX_VALUE, 3);
+                player.addPotionEffect(potionEffect);
+                break;
+            case JUMP_BOOST_4:
+                potionEffect = new PotionEffect(PotionEffectType.JUMP, Integer.MAX_VALUE, 4);
+                player.addPotionEffect(potionEffect);
+                break;
+            case MOVEMENT_SPEED_1:
                 potionEffect = new PotionEffect(PotionEffectType.SPEED, Integer.MAX_VALUE, 0, false, false);
+                player.addPotionEffect(potionEffect);
+                break;
+            case MOVEMENT_SPEED_2:
+                potionEffect = new PotionEffect(PotionEffectType.SPEED, Integer.MAX_VALUE, 1, false, false);
+                player.addPotionEffect(potionEffect);
+                break;
+            case MOVEMENT_SPEED_3:
+                potionEffect = new PotionEffect(PotionEffectType.SPEED, Integer.MAX_VALUE, 2, false, false);
+                player.addPotionEffect(potionEffect);
+                break;
+            case MOVEMENT_SPEED_4:
+                potionEffect = new PotionEffect(PotionEffectType.SPEED, Integer.MAX_VALUE, 3, false, false);
                 player.addPotionEffect(potionEffect);
                 break;
             case LIFE_STEAL:
@@ -133,7 +178,10 @@ public enum GearSetEffect {
             case SWIMMING_SPEED:
                 player.removePotionEffect(PotionEffectType.DOLPHINS_GRACE);
                 break;
-            case ATTACK_SPEED_INCREASE:
+            case ATTACK_SPEED_INCREASE_1:
+            case ATTACK_SPEED_INCREASE_2:
+            case ATTACK_SPEED_INCREASE_3:
+            case ATTACK_SPEED_INCREASE_4:
                 player.removePotionEffect(PotionEffectType.FAST_DIGGING);
                 break;
             case ATTACK_SPEED_DECREASE:
@@ -142,10 +190,16 @@ public enum GearSetEffect {
             case ABILITY_HASTE:
                 rpgCharacterStats.addToBuffMultiplier(BuffType.ABILITY_HASTE, -20, null);
                 break;
-            case JUMP_BOOST:
+            case JUMP_BOOST_1:
+            case JUMP_BOOST_2:
+            case JUMP_BOOST_3:
+            case JUMP_BOOST_4:
                 player.removePotionEffect(PotionEffectType.JUMP);
                 break;
-            case MOVEMENT_SPEED:
+            case MOVEMENT_SPEED_1:
+            case MOVEMENT_SPEED_2:
+            case MOVEMENT_SPEED_3:
+            case MOVEMENT_SPEED_4:
                 player.removePotionEffect(PotionEffectType.SPEED);
                 break;
             case LIFE_STEAL:
@@ -186,16 +240,34 @@ public enum GearSetEffect {
                 return ChatPalette.GRAY + "Slow Fallling";
             case SWIMMING_SPEED:
                 return ChatPalette.GRAY + "Swimming Speed 2x";
-            case ATTACK_SPEED_INCREASE:
-                return ChatPalette.GRAY + "Attack Speed +20%";
+            case ATTACK_SPEED_INCREASE_1:
+                return ChatPalette.GRAY + "Attack Speed = +20%";
+            case ATTACK_SPEED_INCREASE_2:
+                return ChatPalette.GRAY + "Attack Speed = +40%";
+            case ATTACK_SPEED_INCREASE_3:
+                return ChatPalette.GRAY + "Attack Speed = +60%";
+            case ATTACK_SPEED_INCREASE_4:
+                return ChatPalette.GRAY + "Attack Speed = +80%";
             case ATTACK_SPEED_DECREASE:
                 return ChatPalette.GRAY + "Attack Speed -20%";
             case ABILITY_HASTE:
                 return ChatPalette.GRAY + "Ability Haste +20";
-            case JUMP_BOOST:
-                return ChatPalette.GRAY + "Jump +1";
-            case MOVEMENT_SPEED:
-                return ChatPalette.GRAY + "Movement Speed +20%";
+            case JUMP_BOOST_1:
+                return ChatPalette.GRAY + "Jump = +1";
+            case JUMP_BOOST_2:
+                return ChatPalette.GRAY + "Jump = +2";
+            case JUMP_BOOST_3:
+                return ChatPalette.GRAY + "Jump = +3";
+            case JUMP_BOOST_4:
+                return ChatPalette.GRAY + "Jump = +4";
+            case MOVEMENT_SPEED_1:
+                return ChatPalette.GRAY + "Movement Speed = +20%";
+            case MOVEMENT_SPEED_2:
+                return ChatPalette.GRAY + "Movement Speed = +40%";
+            case MOVEMENT_SPEED_3:
+                return ChatPalette.GRAY + "Movement Speed = +60%";
+            case MOVEMENT_SPEED_4:
+                return ChatPalette.GRAY + "Movement Speed = +80%";
             case LIFE_STEAL:
                 return ChatPalette.GRAY + "Lifesteal +10%";
             case ELEMENT_FIRE:

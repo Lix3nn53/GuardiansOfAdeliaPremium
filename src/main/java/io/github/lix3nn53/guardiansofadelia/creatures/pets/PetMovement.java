@@ -44,6 +44,7 @@ public class PetMovement {
                 Location target = player.getLocation(); // Target location to follow
                 Location start = pet.getLocation(); // Current location
 
+                // Skill section
                 if (!PetManager.petSkillOnCooldown.contains(player)) {
                     List<Entity> nearbyEntities = pet.getNearbyEntities(range, range, range);
                     LivingEntity targetEnemy = determineTarget(player, nearbyEntities);

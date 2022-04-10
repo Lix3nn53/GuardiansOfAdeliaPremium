@@ -9,7 +9,7 @@ import io.lumine.mythic.api.skills.ITargetedEntitySkill;
 import io.lumine.mythic.api.skills.SkillMetadata;
 import io.lumine.mythic.api.skills.SkillResult;
 import io.lumine.mythic.bukkit.BukkitAdapter;
-import io.lumine.mythic.core.skills.SkillManager;
+import io.lumine.mythic.core.skills.SkillExecutor;
 import io.lumine.mythic.core.skills.SkillMechanic;
 import org.bukkit.entity.LivingEntity;
 
@@ -18,7 +18,7 @@ public class MMMechanicElementType extends SkillMechanic implements ITargetedEnt
     protected final String internalName;
     protected final ElementType elementType;
 
-    public MMMechanicElementType(SkillManager skillManager, MythicLineConfig config) {
+    public MMMechanicElementType(SkillExecutor skillManager, MythicLineConfig config) {
         super(skillManager, config.getLine(), config);
 
         internalName = config.getKey();

@@ -20,17 +20,16 @@ import org.bukkit.event.player.PlayerQuitEvent;
 
 public class MyPlayerQuitEvent implements Listener {
 
-    public static void onPlayerQuit(Player player) {
+    private static void onPlayerQuit(Player player) {
         onPlayerBackToCharacterSelection(player);
 
         GuildManager.onPlayerQuit(player);
-        MiniGameManager.onQuit(player);
     }
 
-    public static void onPlayerBackToCharacterSelection(Player player) {
+    public static boolean onPlayerBackToCharacterSelection(Player player) {
         if (MiniGameManager.isInMinigame(player)) {
             player.sendMessage(ChatPalette.RED + "You are in a minigame, you can't go back to character selection.");
-            return;
+            return false;
         }
 
         GuardianData guardianData = GuardianDataManager.onPlayerQuit(player);
@@ -48,6 +47,9 @@ public class MyPlayerQuitEvent implements Listener {
         SkillDataManager.onPlayerQuit(player);
         TriggerListener.onPlayerQuit(player);
         DoNotGetAwayManager.onQuit(player);
+        MiniGameManager.onQuit(player);
+
+        return true;
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)

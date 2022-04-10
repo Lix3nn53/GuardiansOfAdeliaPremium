@@ -20,6 +20,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class TaskLoader {
 
@@ -37,13 +38,13 @@ public class TaskLoader {
 
             List<String> nameOfMobsItemDropsFrom = new ArrayList<>();
             for (String internalName : keyOfMobsItemDropsFrom) {
-                MythicMob mythicMob = MythicBukkit.inst().getMobManager().getMythicMob(internalName);
-                if (mythicMob == null) {
+                Optional<MythicMob> mythicMob = MythicBukkit.inst().getMobManager().getMythicMob(internalName);
+                if (!mythicMob.isPresent()) {
                     GuardiansOfAdelia.getInstance().getLogger().info(ChatPalette.RED + "TaskCollect mythicMob null: " + internalName);
 
                     return null;
                 }
-                String displayName = mythicMob.getDisplayName().get();
+                String displayName = mythicMob.get().getDisplayName().get();
                 GuardiansOfAdelia.getInstance().getLogger().info(ChatPalette.GREEN_DARK + "TaskCollect MM: " + internalName + "-" + displayName);
 
                 nameOfMobsItemDropsFrom.add(internalName);
@@ -69,13 +70,13 @@ public class TaskLoader {
         } else if (componentType.equals(TaskDealDamage.class.getSimpleName())) {
             String internalName = configurationSection.getString("mobKey");
 
-            MythicMob mythicMob = MythicBukkit.inst().getMobManager().getMythicMob(internalName);
-            if (mythicMob == null) {
+            Optional<MythicMob> mythicMob = MythicBukkit.inst().getMobManager().getMythicMob(internalName);
+            if (!mythicMob.isPresent()) {
                 GuardiansOfAdelia.getInstance().getLogger().info(ChatPalette.RED + "TaskDealDamage mythicMob null: " + internalName);
 
                 return null;
             }
-            String displayName = mythicMob.getDisplayName().get();
+            String displayName = mythicMob.get().getDisplayName().get();
             GuardiansOfAdelia.getInstance().getLogger().info(ChatPalette.GREEN_DARK + "TaskDealDamage MM: " + internalName + "-" + displayName);
 
             int damageNeeded = configurationSection.getInt("damageNeeded");
@@ -91,13 +92,13 @@ public class TaskLoader {
         } else if (componentType.equals(TaskGift.class.getSimpleName())) {
             String internalName = configurationSection.getString("mobKey");
 
-            MythicMob mythicMob = MythicBukkit.inst().getMobManager().getMythicMob(internalName);
-            if (mythicMob == null) {
+            Optional<MythicMob> mythicMob = MythicBukkit.inst().getMobManager().getMythicMob(internalName);
+            if (!mythicMob.isPresent()) {
                 GuardiansOfAdelia.getInstance().getLogger().info(ChatPalette.RED + "TaskGift mythicMob null: " + internalName);
 
                 return null;
             }
-            String displayName = mythicMob.getDisplayName().get();
+            String displayName = mythicMob.get().getDisplayName().get();
             GuardiansOfAdelia.getInstance().getLogger().info(ChatPalette.GREEN_DARK + "TaskGift MM: " + internalName + "-" + displayName);
 
             ItemStack itemStack = ItemReferenceLoader.loadItemReference(configurationSection.getConfigurationSection("item"));
@@ -112,13 +113,13 @@ public class TaskLoader {
         } else if (componentType.equals(TaskKill.class.getSimpleName())) {
             String internalName = configurationSection.getString("mobKey");
 
-            MythicMob mythicMob = MythicBukkit.inst().getMobManager().getMythicMob(internalName);
-            if (mythicMob == null) {
+            Optional<MythicMob> mythicMob = MythicBukkit.inst().getMobManager().getMythicMob(internalName);
+            if (!mythicMob.isPresent()) {
                 GuardiansOfAdelia.getInstance().getLogger().info(ChatPalette.RED + "TaskKill mythicMob null: " + internalName);
 
                 return null;
             }
-            String displayName = mythicMob.getDisplayName().get();
+            String displayName = mythicMob.get().getDisplayName().get();
             GuardiansOfAdelia.getInstance().getLogger().info(ChatPalette.GREEN_DARK + "TaskKill MM: " + internalName + "-" + displayName);
 
             int amountNeeded = configurationSection.getInt("amountNeeded");

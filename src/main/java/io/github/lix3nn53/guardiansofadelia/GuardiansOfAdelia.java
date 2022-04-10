@@ -302,5 +302,10 @@ public class GuardiansOfAdelia extends JavaPlugin {
         // gets a Message from Bungee
 
         signMenuFactory = new SignMenuFactory(this);
+
+        // Disable bukkit saving
+        for (World world : Bukkit.getWorlds()) {
+            world.setAutoSave(false);
+        }
     }
 }

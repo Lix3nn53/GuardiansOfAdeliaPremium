@@ -8,7 +8,7 @@ import io.lumine.mythic.api.skills.ITargetedEntitySkill;
 import io.lumine.mythic.api.skills.SkillMetadata;
 import io.lumine.mythic.api.skills.SkillResult;
 import io.lumine.mythic.bukkit.BukkitAdapter;
-import io.lumine.mythic.core.skills.SkillManager;
+import io.lumine.mythic.core.skills.SkillExecutor;
 import io.lumine.mythic.core.skills.SkillMechanic;
 import org.bukkit.entity.LivingEntity;
 
@@ -16,7 +16,7 @@ public class MMMechanicStun extends SkillMechanic implements ITargetedEntitySkil
 
     protected final int duration;
 
-    public MMMechanicStun(SkillManager skillManager, MythicLineConfig config) {
+    public MMMechanicStun(SkillExecutor skillManager, MythicLineConfig config) {
         super(skillManager, config.getLine(), config);
         this.setAsyncSafe(false);
         this.setTargetsCreativePlayers(false);

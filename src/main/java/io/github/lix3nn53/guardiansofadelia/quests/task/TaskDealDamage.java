@@ -4,14 +4,15 @@ import io.github.lix3nn53.guardiansofadelia.guardian.GuardianData;
 import io.github.lix3nn53.guardiansofadelia.quests.actions.Action;
 import io.github.lix3nn53.guardiansofadelia.text.ChatPalette;
 import io.github.lix3nn53.guardiansofadelia.text.locale.Translation;
+import io.lumine.mythic.api.mobs.MobManager;
 import io.lumine.mythic.api.mobs.MythicMob;
 import io.lumine.mythic.bukkit.MythicBukkit;
-import io.lumine.mythic.core.mobs.MobManager;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public final class TaskDealDamage implements Task {
 
@@ -24,11 +25,15 @@ public final class TaskDealDamage implements Task {
 
     public TaskDealDamage(final String internalName, final int damageNeeded) {
         MobManager mobManager = MythicBukkit.inst().getMobManager();
-        MythicMob mythicMob = mobManager.getMythicMob(internalName);
+        Optional<MythicMob> mythicMob = mobManager.getMythicMob(internalName);
 
-        this.mobName = mythicMob.getDisplayName().get();
-        this.internalName = internalName;
-        this.damageNeeded = damageNeeded;
+        if (mythicMob.isPresent()) {
+            this.mobName = mythicMob.get().getDisplayName().get();
+            this.internalName = internalName;
+            this.damageNeeded = damageNeeded;
+        } else {
+            throw new IllegalArgumentException("TaskDealDamage: MythicMob not found: " + internalName);
+        }
     }
 
     public TaskDealDamage freshCopy() {

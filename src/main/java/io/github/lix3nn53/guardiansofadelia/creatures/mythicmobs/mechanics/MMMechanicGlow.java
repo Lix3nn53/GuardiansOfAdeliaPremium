@@ -7,7 +7,7 @@ import io.lumine.mythic.api.skills.ITargetedEntitySkill;
 import io.lumine.mythic.api.skills.SkillMetadata;
 import io.lumine.mythic.api.skills.SkillResult;
 import io.lumine.mythic.bukkit.BukkitAdapter;
-import io.lumine.mythic.core.skills.SkillManager;
+import io.lumine.mythic.core.skills.SkillExecutor;
 import io.lumine.mythic.core.skills.SkillMechanic;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -22,7 +22,7 @@ public class MMMechanicGlow extends SkillMechanic implements ITargetedEntitySkil
     protected final int duration;
     private final ChatColor color;
 
-    public MMMechanicGlow(SkillManager skillManager, MythicLineConfig config) {
+    public MMMechanicGlow(SkillExecutor skillManager, MythicLineConfig config) {
         super(skillManager, config.getLine(), config);
         this.setAsyncSafe(false);
         this.setTargetsCreativePlayers(false);

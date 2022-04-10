@@ -280,7 +280,7 @@ public class GatheringManager {
                                 gatheringModelState.resetName(gatheringModelData);
                                 gatheringModelState.setBeingGathered(false);
                             } else {
-                                armorStand.setCustomName(ChatPalette.GOLD + "||||||||||||||||");
+                                armorStand.setCustomName(ChatPalette.GOLD + "|||||||||||||||");
                                 CustomSound customSound = new CustomSound(Sound.BLOCK_STONE_HIT, 0.5f, 1f);
                                 customSound.play(player.getLocation());
                             }
@@ -292,7 +292,7 @@ public class GatheringManager {
                                 gatheringModelState.resetName(gatheringModelData);
                                 gatheringModelState.setBeingGathered(false);
                             } else {
-                                armorStand.setCustomName(ChatPalette.GREEN_DARK + "||||" + ChatPalette.GOLD + "||||||||||||");
+                                armorStand.setCustomName(ChatPalette.GREEN_DARK + "|||" + ChatPalette.GOLD + "||||||||||||");
                                 CustomSound customSound = new CustomSound(Sound.BLOCK_STONE_HIT, 0.5f, 1f);
                                 customSound.play(player.getLocation());
 
@@ -307,7 +307,7 @@ public class GatheringManager {
                                 gatheringModelState.resetName(gatheringModelData);
                                 gatheringModelState.setBeingGathered(false);
                             } else {
-                                armorStand.setCustomName(ChatPalette.GREEN_DARK + "||||||||" + ChatPalette.GOLD + "||||||||");
+                                armorStand.setCustomName(ChatPalette.GREEN_DARK + "||||||" + ChatPalette.GOLD + "|||||||||");
                                 CustomSound customSound = new CustomSound(Sound.BLOCK_STONE_HIT, 0.5f, 1f);
                                 customSound.play(player.getLocation());
 
@@ -322,7 +322,7 @@ public class GatheringManager {
                                 gatheringModelState.resetName(gatheringModelData);
                                 gatheringModelState.setBeingGathered(false);
                             } else {
-                                armorStand.setCustomName(ChatPalette.GREEN_DARK + "||||||||||||" + ChatPalette.GOLD + "||||");
+                                armorStand.setCustomName(ChatPalette.GREEN_DARK + "|||||||||" + ChatPalette.GOLD + "||||||");
                                 CustomSound customSound = new CustomSound(Sound.BLOCK_STONE_HIT, 0.5f, 1f);
                                 customSound.play(player.getLocation());
 
@@ -337,7 +337,7 @@ public class GatheringManager {
                                 gatheringModelState.resetName(gatheringModelData);
                                 gatheringModelState.setBeingGathered(false);
                             } else {
-                                armorStand.setCustomName(ChatPalette.GREEN_DARK + "||||||||||||||||");
+                                armorStand.setCustomName(ChatPalette.GREEN_DARK + "||||||||||||" + ChatPalette.GOLD + "|||");
                                 CustomSound customSound = new CustomSound(Sound.BLOCK_STONE_HIT, 0.5f, 1f);
                                 customSound.play(player.getLocation());
 

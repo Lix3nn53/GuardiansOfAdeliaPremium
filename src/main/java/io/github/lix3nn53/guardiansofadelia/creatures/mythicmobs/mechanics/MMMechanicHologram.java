@@ -8,10 +8,10 @@ import io.lumine.mythic.api.config.MythicLineConfig;
 import io.lumine.mythic.api.skills.ITargetedEntitySkill;
 import io.lumine.mythic.api.skills.SkillMetadata;
 import io.lumine.mythic.api.skills.SkillResult;
+import io.lumine.mythic.api.skills.placeholders.PlaceholderString;
 import io.lumine.mythic.bukkit.BukkitAdapter;
-import io.lumine.mythic.core.skills.SkillManager;
+import io.lumine.mythic.core.skills.SkillExecutor;
 import io.lumine.mythic.core.skills.SkillMechanic;
-import io.lumine.mythic.core.skills.placeholders.parsers.PlaceholderString;
 import org.bukkit.Location;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.LivingEntity;
@@ -21,7 +21,7 @@ public class MMMechanicHologram extends SkillMechanic implements ITargetedEntity
 
     protected final PlaceholderString message;
 
-    public MMMechanicHologram(SkillManager skillManager, MythicLineConfig config) {
+    public MMMechanicHologram(SkillExecutor skillManager, MythicLineConfig config) {
         super(skillManager, config.getLine(), config);
         this.setAsyncSafe(false);
         this.setTargetsCreativePlayers(false);

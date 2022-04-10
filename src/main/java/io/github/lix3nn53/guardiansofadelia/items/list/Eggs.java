@@ -11,6 +11,7 @@ import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.HashMap;
+import java.util.Optional;
 import java.util.Set;
 
 public class Eggs {
@@ -33,13 +34,13 @@ public class Eggs {
     }
 
     public static boolean isMythicMob(String key) {
-        MythicMob mythicMob = MythicBukkit.inst().getMobManager().getMythicMob(key);
-        if (mythicMob == null) {
+        Optional<MythicMob> mythicMob = MythicBukkit.inst().getMobManager().getMythicMob(key);
+        if (!mythicMob.isPresent()) {
             GuardiansOfAdelia.getInstance().getLogger().info(ChatPalette.RED + "Eggs mythicMob null: " + key);
 
             return false;
         }
-        String displayName = mythicMob.getDisplayName().get();
+        String displayName = mythicMob.get().getDisplayName().get();
         GuardiansOfAdelia.getInstance().getLogger().info(ChatPalette.GREEN_DARK + "Eggs MM: " + key + "-" + displayName);
 
         return true;

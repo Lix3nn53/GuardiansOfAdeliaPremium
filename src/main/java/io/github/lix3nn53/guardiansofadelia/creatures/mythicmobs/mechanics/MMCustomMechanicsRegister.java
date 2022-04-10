@@ -1,8 +1,7 @@
 package io.github.lix3nn53.guardiansofadelia.creatures.mythicmobs.mechanics;
 
-import io.lumine.mythic.bukkit.MythicBukkit;
 import io.lumine.mythic.bukkit.events.MythicMechanicLoadEvent;
-import io.lumine.mythic.core.skills.SkillManager;
+import io.lumine.mythic.core.skills.SkillExecutor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -11,7 +10,8 @@ public class MMCustomMechanicsRegister implements Listener {
 
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onEvent(MythicMechanicLoadEvent event) {
-        SkillManager skillManager = MythicBukkit.inst().getSkillManager();
+        // SkillManager skillManager = MythicBukkit.inst().getSkillManager(); // old api
+        SkillExecutor skillManager = event.getContainer().getManager();
 
         if (event.getMechanicName().equalsIgnoreCase("GoaElementType")) {
             event.register(new MMMechanicElementType(skillManager, event.getConfig()));

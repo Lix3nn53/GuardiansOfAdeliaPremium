@@ -7,7 +7,7 @@ import io.lumine.mythic.api.skills.ITargetedEntitySkill;
 import io.lumine.mythic.api.skills.SkillMetadata;
 import io.lumine.mythic.api.skills.SkillResult;
 import io.lumine.mythic.bukkit.BukkitAdapter;
-import io.lumine.mythic.core.skills.SkillManager;
+import io.lumine.mythic.core.skills.SkillExecutor;
 import io.lumine.mythic.core.skills.SkillMechanic;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
@@ -21,7 +21,7 @@ public class MMMechanicTargetPlayer extends SkillMechanic implements ITargetedEn
 
     protected final float range;
 
-    public MMMechanicTargetPlayer(SkillManager skillManager, MythicLineConfig config) {
+    public MMMechanicTargetPlayer(SkillExecutor skillManager, MythicLineConfig config) {
         super(skillManager, config.getLine(), config);
         this.setAsyncSafe(false);
         this.setTargetsCreativePlayers(false);

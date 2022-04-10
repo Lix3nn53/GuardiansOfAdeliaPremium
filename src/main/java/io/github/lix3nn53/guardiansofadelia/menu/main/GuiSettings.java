@@ -123,11 +123,18 @@ public class GuiSettings extends GuiGeneric {
                                 if (TeleportationUtils.isTeleportCanceled(differenceX, differenceY, differenceZ)) {
                                     TeleportationUtils.cancelTeleportation(this, guardianData, hologramTop, hologramBottom, player);
                                 } else {
-                                    TeleportationUtils.finishTeleportation(this, guardianData, hologramTop, hologramBottom,
-                                            player, CharacterSelectionScreenManager.characterSelectionCenter, destination, null, 0);
+                                    boolean didGoToCharSelect = MyPlayerQuitEvent.onPlayerBackToCharacterSelection(player);
+                                    if (didGoToCharSelect) {
+                                        MyPlayerJoinEvent.onPlayerBackToCharacterSelection(player, false);
 
-                                    MyPlayerQuitEvent.onPlayerBackToCharacterSelection(player);
-                                    MyPlayerJoinEvent.onPlayerBackToCharacterSelection(player, false);
+                                        TeleportationUtils.finishTeleportation(this, guardianData, hologramTop, hologramBottom,
+                                                player, CharacterSelectionScreenManager.characterSelectionCenter, destination, null, 0);
+                                    } else {
+                                        this.cancel();
+                                        guardianData.setTeleporting(false);
+                                        hologramTop.remove();
+                                        hologramBottom.remove();
+                                    }
                                 }
                             }
                         }

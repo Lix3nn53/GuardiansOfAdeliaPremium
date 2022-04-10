@@ -6,7 +6,6 @@ import io.github.lix3nn53.guardiansofadelia.minigames.checkpoint.Checkpoint;
 import io.github.lix3nn53.guardiansofadelia.minigames.dungeon.DungeonInstance;
 import io.github.lix3nn53.guardiansofadelia.minigames.dungeon.DungeonTheme;
 import io.github.lix3nn53.guardiansofadelia.minigames.guildwar.GuildWar;
-import io.github.lix3nn53.guardiansofadelia.text.ChatPalette;
 import io.github.lix3nn53.guardiansofadelia.towns.TownManager;
 import io.github.lix3nn53.guardiansofadelia.transportation.portals.Portal;
 import io.github.lix3nn53.guardiansofadelia.transportation.portals.PortalManager;
@@ -189,15 +188,14 @@ public class MiniGameManager {
         return true;
     }
 
-    public static void onQuit(Player player) {
+    public static boolean onQuit(Player player) {
         if (playerToMinigame.containsKey(player)) {
             Minigame minigame = playerToMinigame.get(player);
             minigame.leave(player);
-        } else {
-            if (player.isOnline()) {
-                player.sendMessage(ChatPalette.RED + "You are not in a minigame");
-            }
+            return true;
         }
+
+        return false;
     }
 
     public static boolean onCheckpointSet(Player player, Checkpoint checkpoint) {
