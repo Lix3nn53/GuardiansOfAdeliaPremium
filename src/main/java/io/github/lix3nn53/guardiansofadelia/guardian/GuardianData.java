@@ -13,6 +13,7 @@ import io.github.lix3nn53.guardiansofadelia.text.ChatPalette;
 import io.github.lix3nn53.guardiansofadelia.text.locale.Translation;
 import io.github.lix3nn53.guardiansofadelia.utilities.TablistUtils;
 import io.github.lix3nn53.guardiansofadelia.utilities.invite.Invite;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -36,7 +37,7 @@ public class GuardianData {
     private StaffRank staffRank = StaffRank.NONE;
     private PremiumRank premiumRank = PremiumRank.NONE;
 
-    private List<Player> friends = new ArrayList<>();
+    private List<OfflinePlayer> friends = new ArrayList<>();
 
     private boolean isTeleporting;
     private boolean isGathering;
@@ -183,11 +184,11 @@ public class GuardianData {
         return this.bazaar != null;
     }
 
-    public List<Player> getFriends() {
+    public List<OfflinePlayer> getFriends() {
         return friends;
     }
 
-    public void setFriends(List<Player> friends) {
+    public void setFriends(List<OfflinePlayer> friends) {
         this.friends = friends;
     }
 

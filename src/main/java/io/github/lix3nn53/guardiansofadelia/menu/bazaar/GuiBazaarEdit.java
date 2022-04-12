@@ -5,6 +5,7 @@ import io.github.lix3nn53.guardiansofadelia.economy.EconomyUtils;
 import io.github.lix3nn53.guardiansofadelia.economy.bazaar.Bazaar;
 import io.github.lix3nn53.guardiansofadelia.guardian.GuardianData;
 import io.github.lix3nn53.guardiansofadelia.guardian.GuardianDataManager;
+import io.github.lix3nn53.guardiansofadelia.menu.ActiveGuiManager;
 import io.github.lix3nn53.guardiansofadelia.text.ChatPalette;
 import io.github.lix3nn53.guardiansofadelia.utilities.InventoryUtils;
 import io.github.lix3nn53.guardiansofadelia.utilities.gui.GuiGeneric;
@@ -114,7 +115,7 @@ public class GuiBazaarEdit extends GuiGeneric {
             String currentName = itemMeta.getDisplayName();
 
             SignMenuFactory.Menu menu = signMenuFactory.newMenu(Arrays.asList("", "▲ Enter above ▲", "Set price of:", currentName))
-                    .reopenIfFail(true)
+                    .reopenIfFail(false)
                     .response((signPlayer, strings) -> {
                         if (GuardianDataManager.hasGuardianData(player)) {
                             GuardianData guardianDataBazaar = GuardianDataManager.getGuardianData(player);
@@ -144,6 +145,12 @@ public class GuiBazaarEdit extends GuiGeneric {
                     });
 
             menu.open(player);
+            if (ActiveGuiManager.hasActiveGui(player)) {
+                // Gui gui = ActiveGuiManager.getActiveGui(player);
+                // gui.onClose();
+
+                ActiveGuiManager.clearActiveGui(player);
+            }
         }
     }
 

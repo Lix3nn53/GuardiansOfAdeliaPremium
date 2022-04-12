@@ -18,11 +18,22 @@ public class GuiHelper {
     private static final List<Integer> Big54Button5 = Arrays.asList(47, 48, 38, 39);
     private static final List<Integer> Big54Button6 = Arrays.asList(50, 51, 41, 42);
     private static final List<Integer> Big54Button7 = Arrays.asList(52, 53, 43, 44);
-    private static final int Small27Button0 = 9;
-    private static final int Small27Button1 = 11;
-    private static final int Small27Button2 = 13;
-    private static final int Small27Button3 = 15;
-    private static final int Small27Button4 = 17;
+    private static final int SmallButton0 = 9;
+    private static final int SmallButton1 = 11;
+    private static final int SmallButton2 = 13;
+    private static final int SmallButton3 = 15;
+    private static final int SmallButton4 = 17;
+    // 27 ends here
+    private static final int SmallButton5 = 27;
+    private static final int SmallButton6 = 29;
+    private static final int SmallButton7 = 31;
+    private static final int SmallButton8 = 33;
+    private static final int SmallButton9 = 35;
+    private static final int SmallButton10 = 45;
+    private static final int SmallButton11 = 47;
+    private static final int SmallButton12 = 49;
+    private static final int SmallButton13 = 51;
+    private static final int SmallButton14 = 53;
 
     public static void form54Big(GuiGeneric guiGeneric, ItemStack[] buttons, String backTo) {
         if (backTo != null) {
@@ -86,7 +97,7 @@ public class GuiHelper {
 
         int i = 0;
         for (ItemStack button : buttons) {
-            if (i > 7) break;
+            if (i > 4) break;
             if (button != null) {
                 add27SmallButton(guiGeneric, button, get27SmallButtonIndex(i));
                 i++;
@@ -100,15 +111,71 @@ public class GuiHelper {
 
     public static int get27SmallButtonIndex(int itemIndex) {
         if (itemIndex == 0) {
-            return Small27Button0;
+            return SmallButton0;
         } else if (itemIndex == 1) {
-            return Small27Button1;
+            return SmallButton1;
         } else if (itemIndex == 2) {
-            return Small27Button2;
+            return SmallButton2;
         } else if (itemIndex == 3) {
-            return Small27Button3;
+            return SmallButton3;
         } else if (itemIndex == 4) {
-            return Small27Button4;
+            return SmallButton4;
+        }
+
+        return 0;
+    }
+
+    public static void form54Small(GuiGeneric guiGeneric, ItemStack[] buttons, String backTo) {
+        if (backTo != null) {
+            ItemStack backButton = OtherItems.getBackButton(backTo);
+            guiGeneric.setItem(0, backButton);
+        }
+
+        int i = 0;
+        for (ItemStack button : buttons) {
+            if (i > 14) break;
+            if (button != null) {
+                add54SmallButton(guiGeneric, button, get54SmallButtonIndex(i));
+                i++;
+            }
+        }
+    }
+
+    private static void add54SmallButton(GuiGeneric guiGeneric, ItemStack button, int index) {
+        guiGeneric.setItem(index, button);
+    }
+
+    public static int get54SmallButtonIndex(int itemIndex) {
+        if (itemIndex == 0) {
+            return SmallButton0;
+        } else if (itemIndex == 1) {
+            return SmallButton1;
+        } else if (itemIndex == 2) {
+            return SmallButton2;
+        } else if (itemIndex == 3) {
+            return SmallButton3;
+        } else if (itemIndex == 4) {
+            return SmallButton4;
+        } else if (itemIndex == 5) {
+            return SmallButton5;
+        } else if (itemIndex == 6) {
+            return SmallButton6;
+        } else if (itemIndex == 7) {
+            return SmallButton7;
+        } else if (itemIndex == 8) {
+            return SmallButton8;
+        } else if (itemIndex == 9) {
+            return SmallButton9;
+        } else if (itemIndex == 10) {
+            return SmallButton10;
+        } else if (itemIndex == 11) {
+            return SmallButton11;
+        } else if (itemIndex == 12) {
+            return SmallButton12;
+        } else if (itemIndex == 13) {
+            return SmallButton13;
+        } else if (itemIndex == 14) {
+            return SmallButton14;
         }
 
         return 0;

@@ -6,7 +6,6 @@ import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGCharacter;
 import io.github.lix3nn53.guardiansofadelia.guild.GuildManager;
 import io.github.lix3nn53.guardiansofadelia.menu.GuiHelper;
 import io.github.lix3nn53.guardiansofadelia.menu.bazaar.GuiBazaar;
-import io.github.lix3nn53.guardiansofadelia.menu.guild.GuiGuild;
 import io.github.lix3nn53.guardiansofadelia.text.ChatPalette;
 import io.github.lix3nn53.guardiansofadelia.text.font.CustomCharacterGui;
 import io.github.lix3nn53.guardiansofadelia.text.locale.Translation;
@@ -172,10 +171,13 @@ public class GuiMain extends GuiGeneric {
             GuiCompass gui = new GuiCompass(guardianData);
             gui.openInventory(player);
         } else if (GuiHelper.get54BigButtonIndexes(2).contains(slot)) {
+            GuiGeneric gui;
             if (GuildManager.inGuild(player)) {
-                GuiGuild gui = new GuiGuild();
-                gui.openInventory(player);
+                gui = new GuiGuild(player, guardianData);
+            } else {
+                gui = new GuiGuildEmpty(player, guardianData);
             }
+            gui.openInventory(player);
         } else if (GuiHelper.get54BigButtonIndexes(3).contains(slot)) {
             GuiMinigames gui = new GuiMinigames(guardianData);
             gui.openInventory(player);

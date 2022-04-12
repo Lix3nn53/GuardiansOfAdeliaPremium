@@ -26,6 +26,7 @@ import me.libraryaddict.disguise.disguisetypes.watchers.LivingWatcher;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
@@ -94,7 +95,7 @@ public class DatabaseManager {
                     player.sendMessage(ChatPalette.GREEN_DARK + Translation.t(guardianData, "general.language.saved") + ": " + guardianData.getLanguage());
                 }
 
-                List<Player> friendsOfPlayer = DatabaseQueries.getFriendsOfPlayer(uuid);
+                List<OfflinePlayer> friendsOfPlayer = DatabaseQueries.getFriendsOfPlayer(uuid);
                 guardianData.setFriends(friendsOfPlayer);
 
                 GuardianDataManager.addGuardianData(player, guardianData);
@@ -107,7 +108,7 @@ public class DatabaseManager {
                         GuildManager.addPlayerGuild(player, guild);
                         GuildManager.sendJoinMessageToMembers(player);
                     } else {
-                        Guild guild = DatabaseQueries.getGuild(player, guildNameOfPlayer);
+                        Guild guild = DatabaseQueries.getGuild(guildNameOfPlayer);
                         if (guild != null) {
                             HashMap<UUID, PlayerRankInGuild> guildMembers = DatabaseQueries.getGuildMembers(guildNameOfPlayer);
                             guild.setMembers(guildMembers);
@@ -226,7 +227,7 @@ public class DatabaseManager {
             e.printStackTrace();
         }
 
-        List<Player> friends = guardianData.getFriends();
+        List<OfflinePlayer> friends = guardianData.getFriends();
         DatabaseQueries.setFriendsOfPlayer(uuid, friends);
 
         //character

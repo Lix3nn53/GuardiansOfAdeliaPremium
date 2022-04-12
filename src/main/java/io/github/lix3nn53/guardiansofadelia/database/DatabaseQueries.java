@@ -22,6 +22,7 @@ import io.github.lix3nn53.guardiansofadelia.rpginventory.RPGInventory;
 import io.github.lix3nn53.guardiansofadelia.utilities.TablistUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -97,13 +98,10 @@ public class DatabaseQueries {
                     ");");
             statement.addBatch("CREATE TABLE IF NOT EXISTS `goa_player_friend` (\n" +
                     "     `uuid`        varchar(40) NOT NULL ,\n" +
-                    "     `friend_uuid` varchar(40) NOT NULL ,\n" +
+                    "     `friend_uuids` text NULL ,\n" +
                     "\n" +
-                    "     UNIQUE KEY `Ind_89` (`friend_uuid`, `uuid`),\n" +
                     "     KEY `fkIdx_22` (`uuid`),\n" +
-                    "     CONSTRAINT `FK_22` FOREIGN KEY `fkIdx_22` (`uuid`) REFERENCES `goa_player` (`uuid`),\n" +
-                    "     KEY `fkIdx_25` (`friend_uuid`),\n" +
-                    "     CONSTRAINT `FK_25` FOREIGN KEY `fkIdx_25` (`friend_uuid`) REFERENCES `goa_player` (`uuid`)\n" +
+                    "     CONSTRAINT `FK_22` FOREIGN KEY `fkIdx_22` (`uuid`) REFERENCES `goa_player` (`uuid`)\n" +
                     ");");
             statement.addBatch("CREATE TABLE IF NOT EXISTS `goa_player_web` (\n" +
                     "     `uuid`        varchar(40) NULL ,\n" +
@@ -150,9 +148,9 @@ public class DatabaseQueries {
     //GETTERS
 
     /* updates tabList of online friends */
-    public static List<Player> getFriendsOfPlayer(UUID uuid) throws SQLException {
+    public static List<OfflinePlayer> getFriendsOfPlayer(UUID uuid) throws SQLException {
         String SQL_QUERY = "SELECT * FROM goa_player_friend WHERE uuid = ?";
-        List<Player> friendList = new ArrayList<>();
+        List<OfflinePlayer> friendList = new ArrayList<>();
         try (Connection con = ConnectionPool.getConnection()) {
             PreparedStatement pst = con.prepareStatement(SQL_QUERY);
 
@@ -160,13 +158,16 @@ public class DatabaseQueries {
 
             ResultSet resultSet = pst.executeQuery();
 
-            while (resultSet.next()) {
-                String friendUuidString = resultSet.getString("friend_uuid");
-                Player friend = Bukkit.getPlayer(UUID.fromString(friendUuidString));
-                if (friend != null) {
-                    friendList.add(friend);
-                    if (friend.isOnline()) {
-                        TablistUtils.updateTablist(friend);
+            if (resultSet.next()) {
+                String friendUuids = resultSet.getString("friend_uuids");
+
+                String[] split = friendUuids.split(",");
+
+                for (String uuidString : split) {
+                    OfflinePlayer player = Bukkit.getOfflinePlayer(UUID.fromString(uuidString));
+                    friendList.add(player);
+                    if (player.isOnline()) {
+                        TablistUtils.updateTablist(player.getPlayer());
                     }
                 }
             }
@@ -572,64 +573,24 @@ public class DatabaseQueries {
         return rpgCharacter;
     }
 
-    public static Guild getGuild(Player player, String name) throws SQLException {
+    public static Guild getGuild(String name) throws SQLException {
         String SQL_QUERY = "SELECT * FROM goa_guild WHERE name = ?";
         Guild guild = null;
+
         try (Connection con = ConnectionPool.getConnection()) {
             PreparedStatement pst = con.prepareStatement(SQL_QUERY);
-
             pst.setString(1, name);
-
             ResultSet resultSet = pst.executeQuery();
 
             if (resultSet.next()) {
-                String tag = resultSet.getString("tag");
-                if (!resultSet.wasNull()) {
-                    guild = new Guild(name, tag);
-
-                    String announcement = resultSet.getString("announcement");
-                    if (!resultSet.wasNull()) {
-                        //if NOT NULL
-                        guild.setAnnouncement(announcement);
-                    }
-
-                    int currentValue = resultSet.getInt("war_point");
-                    if (!resultSet.wasNull()) {
-                        //if NOT NULL
-                        guild.setWarPoints(currentValue);
-                    }
-
-                    currentValue = resultSet.getInt("hall_level");
-                    if (!resultSet.wasNull()) {
-                        //if NOT NULL
-                        guild.setHallLevel(currentValue);
-                    }
-
-                    currentValue = resultSet.getInt("bank_level");
-                    if (!resultSet.wasNull()) {
-                        //if NOT NULL
-                        guild.setBankLevel(currentValue);
-                    }
-
-                    currentValue = resultSet.getInt("lab_level");
-                    if (!resultSet.wasNull()) {
-                        //if NOT NULL
-                        guild.setLabLevel(currentValue);
-                    }
-
-                    String storageString = resultSet.getString("storage");
-                    if (!resultSet.wasNull()) {
-                        //if NOT NULL
-                        ItemStack[] itemStacks = ItemSerializer.itemStackArrayFromBase64(storageString);
-                        guild.setGuildStorage(itemStacks);
-                    }
-                }
+                guild = guildFromResultSet(resultSet);
             }
             resultSet.close();
             pst.close();
-        } catch (IOException e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
+
         return guild;
     }
 
@@ -852,9 +813,42 @@ public class DatabaseQueries {
         }
     }
 
-    public static boolean setFriendsOfPlayer(UUID uuid, List<Player> friendList) {
+    /**
+     * @param uuid
+     * @param friendList
+     * @return 2 = replaced, 1 = new row added, -1 failed
+     */
+    public static int setFriendsOfPlayer(UUID uuid, List<OfflinePlayer> friendList) {
+        String SQL_QUERY = "INSERT INTO goa_player_friend \n" +
+                "\t(uuid, friend_uuids) \n" +
+                "VALUES \n" +
+                "\t(?, ?)\n" +
+                "ON DUPLICATE KEY UPDATE\n" +
+                "\tuuid = VALUES(uuid),\n" +
+                "\tfriend_uuids = VALUES(friend_uuids);";
 
-        return false;
+        StringBuilder friendUUIDs = new StringBuilder();
+        for (OfflinePlayer friend : friendList) {
+            friendUUIDs.append(friend.getUniqueId()).append(",");
+        }
+
+        try (Connection con = ConnectionPool.getConnection()) {
+            PreparedStatement pst = con.prepareStatement(SQL_QUERY);
+
+            pst.setString(1, uuid.toString());
+            pst.setString(2, friendUUIDs.toString());
+
+            //2 = replaced, 1 = new row added
+            int returnValue = pst.executeUpdate();
+
+            pst.close();
+
+            return returnValue;
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+
+        return -1;
     }
 
     public static boolean setMembersOfGuild(String guild, HashMap<UUID, PlayerRankInGuild> playerPlayerRankInGuildHashMap) {
@@ -1271,5 +1265,88 @@ public class DatabaseQueries {
             e.printStackTrace();
         }
         return exists;
+    }
+
+    private static Guild guildFromResultSet(ResultSet resultSet) throws SQLException {
+        String name = resultSet.getString("name");
+        if (resultSet.wasNull()) {
+            //if NOT NULL
+            return null;
+        }
+
+        String tag = resultSet.getString("tag");
+        if (resultSet.wasNull()) {
+            //if NOT NULL
+            return null;
+        }
+
+        Guild guild = new Guild(name, tag);
+
+        String announcement = resultSet.getString("announcement");
+        if (!resultSet.wasNull()) {
+            //if NOT NULL
+            guild.setAnnouncement(announcement);
+        }
+
+        int currentValue = resultSet.getInt("war_point");
+        if (!resultSet.wasNull()) {
+            //if NOT NULL
+            guild.setWarPoints(currentValue);
+        }
+
+        currentValue = resultSet.getInt("hall_level");
+        if (!resultSet.wasNull()) {
+            //if NOT NULL
+            guild.setHallLevel(currentValue);
+        }
+
+        currentValue = resultSet.getInt("bank_level");
+        if (!resultSet.wasNull()) {
+            //if NOT NULL
+            guild.setBankLevel(currentValue);
+        }
+
+        currentValue = resultSet.getInt("lab_level");
+        if (!resultSet.wasNull()) {
+            //if NOT NULL
+            guild.setLabLevel(currentValue);
+        }
+
+        String storageString = resultSet.getString("storage");
+        if (!resultSet.wasNull()) {
+            //if NOT NULL
+            ItemStack[] itemStacks = new ItemStack[0];
+            try {
+                itemStacks = ItemSerializer.itemStackArrayFromBase64(storageString);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            guild.setGuildStorage(itemStacks);
+        }
+
+        return guild;
+    }
+
+    public static List<Guild> getTop10Guilds() {
+        String SQL_QUERY = "SELECT * FROM goa_guild ORDER BY war_point LIMIT 10";
+        List<Guild> guilds = new ArrayList<>();
+
+        try (Connection con = ConnectionPool.getConnection()) {
+            PreparedStatement pst = con.prepareStatement(SQL_QUERY);
+            ResultSet resultSet = pst.executeQuery();
+
+            while (resultSet.next()) {
+                Guild guild = guildFromResultSet(resultSet);
+                if (guild != null) {
+                    guilds.add(guild);
+                }
+            }
+            resultSet.close();
+            pst.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return guilds;
     }
 }

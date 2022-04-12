@@ -2,9 +2,10 @@ package io.github.lix3nn53.guardiansofadelia.menu.main.guild;
 
 import io.github.lix3nn53.guardiansofadelia.guardian.GuardianData;
 import io.github.lix3nn53.guardiansofadelia.guardian.GuardianDataManager;
-import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGCharacter;
+import io.github.lix3nn53.guardiansofadelia.guild.Guild;
+import io.github.lix3nn53.guardiansofadelia.guild.GuildManager;
 import io.github.lix3nn53.guardiansofadelia.menu.GuiHelper;
-import io.github.lix3nn53.guardiansofadelia.menu.main.GuiSettings;
+import io.github.lix3nn53.guardiansofadelia.menu.main.GuiGuild;
 import io.github.lix3nn53.guardiansofadelia.text.ChatPalette;
 import io.github.lix3nn53.guardiansofadelia.text.font.CustomCharacterGui;
 import io.github.lix3nn53.guardiansofadelia.text.locale.Translation;
@@ -19,55 +20,65 @@ import java.util.ArrayList;
 
 public class GuiGuildUpgrades extends GuiGeneric {
 
-    public GuiGuildUpgrades(GuardianData guardianData) {
+    public GuiGuildUpgrades(Player player, GuardianData guardianData) {
         super(27, CustomCharacterGui.MENU_27_FLAT.toString() + ChatPalette.BLACK + Translation.t(guardianData, "menu.language.name"), 0);
 
-        ItemStack english = new ItemStack(Material.LIGHT_BLUE_WOOL);
-        ItemMeta itemMeta = english.getItemMeta();
-        itemMeta.setDisplayName(ChatPalette.BLUE_LIGHT + "English");
+        Guild guild = GuildManager.getGuild(player);
+
+        ItemStack info = new ItemStack(Material.LIGHT_BLUE_WOOL);
+        ItemMeta itemMeta = info.getItemMeta();
+        itemMeta.setDisplayName(ChatPalette.BLUE_LIGHT + "Info");
         ArrayList<String> lore = new ArrayList<>();
         lore.add("");
-        lore.add("Click to change to en_us language.");
+        lore.add(ChatPalette.GRAY + "Hall: " + ChatPalette.GREEN + "lv " + guild.getHallLevel());
+        lore.add(ChatPalette.GRAY + "Bank: " + ChatPalette.GREEN + "lv " + guild.getBankLevel());
+        lore.add(ChatPalette.GRAY + "Laboratory: " + ChatPalette.GREEN + "lv " + guild.getLabLevel());
         itemMeta.setLore(lore);
-        english.setItemMeta(itemMeta);
+        info.setItemMeta(itemMeta);
 
-        ItemStack turkish = new ItemStack(Material.LIGHT_BLUE_WOOL);
-        itemMeta = turkish.getItemMeta();
-        itemMeta.setDisplayName(ChatPalette.BLUE_LIGHT + "Turkish");
+        ItemStack hall = new ItemStack(Material.LIGHT_BLUE_WOOL);
+        itemMeta = hall.getItemMeta();
+        itemMeta.setDisplayName(ChatPalette.BLUE_LIGHT + "Hall");
         lore = new ArrayList<>();
         lore.add("");
-        lore.add("Click to change to tr_tr language.");
+        lore.add("Increases guild member capacity");
         itemMeta.setLore(lore);
-        turkish.setItemMeta(itemMeta);
+        hall.setItemMeta(itemMeta);
 
-        GuiHelper.form27Small(this, new ItemStack[]{english, turkish}, "Settings");
+        ItemStack bank = new ItemStack(Material.LIGHT_BLUE_WOOL);
+        itemMeta = bank.getItemMeta();
+        itemMeta.setDisplayName(ChatPalette.BLUE_LIGHT + "Bank");
+        lore = new ArrayList<>();
+        lore.add("");
+        lore.add("Increases guild bank item capacity");
+        itemMeta.setLore(lore);
+        bank.setItemMeta(itemMeta);
+
+        ItemStack lab = new ItemStack(Material.LIGHT_BLUE_WOOL);
+        itemMeta = lab.getItemMeta();
+        itemMeta.setDisplayName(ChatPalette.BLUE_LIGHT + "Laboratory");
+        lore = new ArrayList<>();
+        lore.add("");
+        lore.add("Increases guild buff");
+        itemMeta.setLore(lore);
+        lab.setItemMeta(itemMeta);
+
+        GuiHelper.form27Small(this, new ItemStack[]{info, hall, bank, lab}, "Guild");
     }
 
     @Override
     public void onClick(InventoryClickEvent event) {
         Player player = (Player) event.getWhoClicked();
         GuardianData guardianData;
-        RPGCharacter rpgCharacter;
         if (GuardianDataManager.hasGuardianData(player)) {
             guardianData = GuardianDataManager.getGuardianData(player);
-
-            if (guardianData.hasActiveCharacter()) {
-                rpgCharacter = guardianData.getActiveCharacter();
-            } else {
-                return;
-            }
         } else {
             return;
         }
 
         int slot = event.getSlot();
         if (slot == 0) {
-            GuiSettings gui = new GuiSettings(guardianData);
-            gui.openInventory(player);
-        } else if (GuiHelper.get27SmallButtonIndex(0) == slot) {
-            guardianData.setLanguage(player, "en_us");
-        } else if (GuiHelper.get27SmallButtonIndex(1) == slot) {
-            guardianData.setLanguage(player, "tr_tr");
+            new GuiGuild(player, guardianData).openInventory(player);
         }
     }
 }

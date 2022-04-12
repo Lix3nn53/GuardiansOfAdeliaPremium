@@ -4,8 +4,11 @@ import io.github.lix3nn53.guardiansofadelia.GuardiansOfAdelia;
 import io.github.lix3nn53.guardiansofadelia.guardian.GuardianData;
 import io.github.lix3nn53.guardiansofadelia.guardian.GuardianDataManager;
 import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGCharacter;
+import io.github.lix3nn53.guardiansofadelia.guild.Guild;
+import io.github.lix3nn53.guardiansofadelia.guild.GuildManager;
 import io.github.lix3nn53.guardiansofadelia.text.ChatPalette;
 import io.github.lix3nn53.guardiansofadelia.text.font.CustomCharacter;
+import io.github.lix3nn53.guardiansofadelia.text.font.CustomCharacterGuild;
 import io.github.lix3nn53.guardiansofadelia.text.font.NegativeSpace;
 import io.github.lix3nn53.guardiansofadelia.utilities.hologram.Hologram;
 import org.bukkit.Location;
@@ -145,6 +148,23 @@ public class ChatManager {
             if (!premiumRank.equals(PremiumRank.NONE)) {
                 CustomCharacter customCharacter = premiumRank.getCustomCharacter();
                 prefix += customCharacter;
+            }
+            if (GuildManager.inGuild(player)) {
+                Guild guild = GuildManager.getGuild(player);
+                String tag = guild.getTag();
+                int length = tag.length();
+                CustomCharacter customCharacter;
+                if (length == 2) {
+                    customCharacter = CustomCharacterGuild.GUILD_2;
+                } else if (length == 3) {
+                    customCharacter = CustomCharacterGuild.GUILD_3;
+                } else if (length == 4) {
+                    customCharacter = CustomCharacterGuild.GUILD_4;
+                } else { // if (length == 5) {
+                    customCharacter = CustomCharacterGuild.GUILD_5;
+                }
+
+                prefix += customCharacter + tag + NegativeSpace.POSITIVE_2;
             }
             if (guardianData.hasActiveCharacter()) {
                 RPGCharacter activeCharacter = guardianData.getActiveCharacter();

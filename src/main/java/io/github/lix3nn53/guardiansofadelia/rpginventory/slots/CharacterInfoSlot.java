@@ -14,6 +14,7 @@ import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
+import org.bukkit.profile.PlayerProfile;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -37,6 +38,8 @@ public class CharacterInfoSlot {
 
                 ItemStack itemStack = new ItemStack(Material.PLAYER_HEAD);
                 SkullMeta skullMeta = (SkullMeta) itemStack.getItemMeta();
+                PlayerProfile playerProfile = player.getPlayerProfile();
+                skullMeta.setOwnerProfile(playerProfile);
                 skullMeta.setDisplayName(ChatPalette.YELLOW + Translation.t(viewerData, "character.info"));
 
                 String rpgClassStr = activeCharacter.getRpgClassStr();

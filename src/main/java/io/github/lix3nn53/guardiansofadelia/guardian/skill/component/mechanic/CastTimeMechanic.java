@@ -60,8 +60,8 @@ public class CastTimeMechanic extends MechanicComponent {
                 StatusEffectManager.addStatus(target, StatusEffectType.DISARM, DELAY - 2);
             }
 
-            float height = (float) target.getHeight();
-            Location location = target.getLocation().add(new Vector(0, height + 0.2, 0));
+            // float height = (float) target.getHeight();
+            Location location = target.getLocation().add(new Vector(0, 0.2, 0));
 
             DamageIndicator.showPlayerNearby(TEXT, location, holoTime, 40);
             /*List<Entity> nearbyEntities = target.getNearbyEntities(24, 24, 24);

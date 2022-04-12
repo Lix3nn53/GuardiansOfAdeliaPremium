@@ -41,7 +41,7 @@ public class GuildInvite extends Invite {
         if (GuildManager.inGuild(getSender())) {
             Guild guild = GuildManager.getGuild(getSender());
             if (guild.isEmpty()) {
-                boolean isReceiverJoined = guild.addMember(getReceiver().getUniqueId());
+                boolean isReceiverJoined = guild.newMemberJoin(getReceiver().getUniqueId());
                 if (isReceiverJoined) {
                     for (UUID uuid : guild.getMembers()) {
                         Player member = Bukkit.getPlayer(uuid);

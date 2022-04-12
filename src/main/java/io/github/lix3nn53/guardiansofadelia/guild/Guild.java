@@ -5,6 +5,7 @@ import io.github.lix3nn53.guardiansofadelia.menu.merchant.storage.GuiGuildStorag
 import io.github.lix3nn53.guardiansofadelia.text.ChatPalette;
 import io.github.lix3nn53.guardiansofadelia.utilities.TablistUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -15,7 +16,7 @@ import java.util.UUID;
 public class Guild {
 
     private final GuiGuildStorage guildStorage = new GuiGuildStorage();
-    private HashMap<UUID, PlayerRankInGuild> members = new HashMap<UUID, PlayerRankInGuild>();
+    private HashMap<UUID, PlayerRankInGuild> members = new HashMap<>();
     private String name;
     private String tag;
     private int warPoints = 0;
@@ -23,6 +24,13 @@ public class Guild {
     private int bankLevel = 0;
     private int labLevel = 0;
     private String announcement = "";
+
+    public Guild(String name, String tag, Player player) {
+        this.tag = tag;
+        this.name = name;
+        members.put(player.getUniqueId(), PlayerRankInGuild.LEADER);
+        GuildManager.addPlayerGuild(player, this);
+    }
 
     public Guild(String name, String tag) {
         this.tag = tag;
@@ -68,7 +76,7 @@ public class Guild {
         }
     }
 
-    public boolean addMember(UUID uuid) {
+    public boolean newMemberJoin(UUID uuid) {
         if (members.size() < 20) {
             members.put(uuid, PlayerRankInGuild.SOLDIER);
             Player player = Bukkit.getPlayer(uuid);
@@ -84,19 +92,25 @@ public class Guild {
         if (members.containsKey(uuid)) {
             if (!members.get(uuid).equals(PlayerRankInGuild.LEADER)) {
                 members.remove(uuid);
-                Player player = Bukkit.getPlayer(uuid);
-                if (player != null) {
-                    GuildManager.removePlayer(player);
-                }
-                DatabaseManager.removeGuildOfPlayer(player.getUniqueId());
-                TablistUtils.updateTablist(player);
+                OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(uuid);
+
                 for (UUID memberUUID : members.keySet()) {
                     Player member = Bukkit.getPlayer(memberUUID);
                     if (member != null) {
                         if (member.isOnline()) {
-                            member.sendMessage(ChatPalette.RED + player.getName() + " left your guild.");
+                            member.sendMessage(ChatPalette.RED + offlinePlayer.getName() + " left your guild.");
                             TablistUtils.updateTablist(member);
                         }
+                    }
+                }
+
+                if (offlinePlayer.isOnline()) {
+                    Player player = offlinePlayer.getPlayer();
+                    if (player != null) {
+                        GuildManager.removePlayer(player);
+
+                        DatabaseManager.removeGuildOfPlayer(player.getUniqueId());
+                        TablistUtils.updateTablist(player);
                     }
                 }
             }

@@ -8,6 +8,7 @@ import io.github.lix3nn53.guardiansofadelia.guild.GuildManager;
 import io.github.lix3nn53.guardiansofadelia.quests.Quest;
 import io.github.lix3nn53.guardiansofadelia.text.ChatPalette;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 import java.util.List;
@@ -43,14 +44,14 @@ public class TablistUtils {
             }
 
             //Add friends
-            List<Player> friends = guardianData.getFriends();
+            List<OfflinePlayer> friends = guardianData.getFriends();
             if (!friends.isEmpty()) {
                 footer.append("\n");
                 footer.append("\n" + ChatPalette.GREEN + "FRIENDS");
                 footer.append("\n");
 
                 int i = 0;
-                for (Player friend : friends) {
+                for (OfflinePlayer friend : friends) {
                     if (friend.isOnline()) {
                         if (i > 10) {
                             footer.append("\n");

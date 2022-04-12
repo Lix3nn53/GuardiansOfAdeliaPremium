@@ -1,7 +1,9 @@
 package io.github.lix3nn53.guardiansofadelia.guild;
 
 import io.github.lix3nn53.guardiansofadelia.GuardiansOfAdelia;
+import io.github.lix3nn53.guardiansofadelia.chat.ChatManager;
 import io.github.lix3nn53.guardiansofadelia.database.DatabaseManager;
+import io.github.lix3nn53.guardiansofadelia.database.DatabaseQueries;
 import io.github.lix3nn53.guardiansofadelia.text.ChatPalette;
 import io.github.lix3nn53.guardiansofadelia.utilities.TablistUtils;
 import io.github.lix3nn53.guardiansofadelia.utilities.centermessage.MessageUtils;
@@ -18,6 +20,7 @@ public class GuildManager {
 
     public static void addPlayerGuild(Player player, Guild guild) {
         playerToGuild.put(player, guild);
+        ChatManager.updatePlayerName(player);
         GuildManager.updateTablistOfMembers(player);
     }
 
@@ -63,18 +66,6 @@ public class GuildManager {
         playerToGuild.values().removeAll(Collections.singleton(guild));
     }
 
-    public static List<Guild> getGuildsSortedByWarPoints() {
-        Collection<Guild> guilds = playerToGuild.values();
-
-        List<Guild> guildList = new ArrayList<>(guilds);
-
-        List<Guild> guildListNoDuplicate = guildList.stream().distinct().collect(Collectors.toList());
-
-        guildListNoDuplicate.sort(Comparator.comparingInt(Guild::getWarPoints));
-
-        return guildListNoDuplicate;
-    }
-
     public static void onPlayerQuit(Player player) {
         if (inGuild(player)) {
             Guild guild = getGuild(player);
@@ -117,5 +108,18 @@ public class GuildManager {
                 .findAny();
     }
 
+    public static void printTop10(Player player) {
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                List<Guild> top10Guilds = DatabaseQueries.getTop10Guilds();
 
+                int bound = Math.min(10, top10Guilds.size());
+                for (int i = 0; i < bound; i++) {
+                    Guild guild = top10Guilds.get(i);
+                    player.sendMessage(ChatPalette.PURPLE + guild.getName() + " - " + guild.getWarPoints());
+                }
+            }
+        }.runTaskAsynchronously(GuardiansOfAdelia.getInstance());
+    }
 }

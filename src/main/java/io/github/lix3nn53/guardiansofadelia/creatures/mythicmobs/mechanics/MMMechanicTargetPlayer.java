@@ -9,7 +9,6 @@ import io.lumine.mythic.api.skills.SkillResult;
 import io.lumine.mythic.bukkit.BukkitAdapter;
 import io.lumine.mythic.core.skills.SkillExecutor;
 import io.lumine.mythic.core.skills.SkillMechanic;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Mob;
@@ -33,8 +32,6 @@ public class MMMechanicTargetPlayer extends SkillMechanic implements ITargetedEn
     public SkillResult castAtEntity(SkillMetadata data, AbstractEntity abstractEntity) {
         LivingEntity target = (LivingEntity) BukkitAdapter.adapt(abstractEntity);
 
-        Bukkit.getPlayer("Lix3nn").sendMessage("Mob: " + target.getCustomName());
-
         if (!(target instanceof Mob)) return SkillResult.CONDITION_FAILED;
 
         Mob mob = (Mob) target;
@@ -49,7 +46,6 @@ public class MMMechanicTargetPlayer extends SkillMechanic implements ITargetedEn
                 if (GuardianDataManager.hasGuardianData(player)) {
                     mob.setTarget(player);
 
-                    Bukkit.getPlayer("Lix3nn").sendMessage("Player: " + player.getName());
                     return SkillResult.SUCCESS;
                 }
             }
