@@ -1,6 +1,5 @@
 package io.github.lix3nn53.guardiansofadelia.items.RpgGears;
 
-import io.github.lix3nn53.guardiansofadelia.GuardiansOfAdelia;
 import io.github.lix3nn53.guardiansofadelia.guardian.attribute.AttributeType;
 import io.github.lix3nn53.guardiansofadelia.guardian.element.ElementType;
 import io.github.lix3nn53.guardiansofadelia.items.RpgGears.gearset.GearSetManager;
@@ -30,7 +29,6 @@ public class GearPassive implements RPGGear {
 
         String gearSetStr = null;
         if (withGearSet) {
-            GuardiansOfAdelia.getInstance().getLogger().info("GearSetManager.getRandom from PASSIVE");
             gearSetStr = GearSetManager.getRandom(tier);
         }
         if (gearSetStr != null) {

@@ -84,11 +84,6 @@ public class SkillOnGround {
 
                 boolean cast = skill.cast(armorStand, skillLevel, targets, castCounter, 999);
                 castCounter++;
-
-                for (LivingEntity target : targets) {
-                    if (target.getCustomName() != null)
-                        GuardiansOfAdelia.getInstance().getLogger().info("custom name: " + target.getCustomName());
-                }
             }
         }.runTaskTimer(GuardiansOfAdelia.getInstance(), delay, period);
 

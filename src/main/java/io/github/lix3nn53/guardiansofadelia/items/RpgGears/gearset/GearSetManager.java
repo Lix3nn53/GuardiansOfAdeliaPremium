@@ -111,12 +111,6 @@ public class GearSetManager {
             }
         }
 
-        GuardiansOfAdelia.getInstance().getLogger().info("GearSet Pool for tier: " + itemTier);
-        for (Map.Entry<GearSet, List<GearSetEffect>> a : gearSetMap.entrySet()) {
-            GearSet key = a.getKey();
-            GuardiansOfAdelia.getInstance().getLogger().info(key.getName());
-        }
-
         if (gearSetMap.isEmpty()) return null;
 
         float chanceToGetSet = 0.4f;
@@ -146,7 +140,6 @@ public class GearSetManager {
 
         ItemTier itemTierOfItemStack = ItemTier.getItemTierOfItemStack(itemStack);
 
-        GuardiansOfAdelia.getInstance().getLogger().info("GearSetManager.getRandom from ADD NEW");
         String gearSetStr = getRandom(itemTierOfItemStack);
 
         if (gearSetStr == null) {

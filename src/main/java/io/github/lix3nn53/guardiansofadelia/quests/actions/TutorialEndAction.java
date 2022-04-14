@@ -1,6 +1,7 @@
 package io.github.lix3nn53.guardiansofadelia.quests.actions;
 
 import io.github.lix3nn53.guardiansofadelia.GuardiansOfAdelia;
+import io.github.lix3nn53.guardiansofadelia.chat.ChatTag;
 import io.github.lix3nn53.guardiansofadelia.database.DatabaseManager;
 import io.github.lix3nn53.guardiansofadelia.guardian.GuardianData;
 import io.github.lix3nn53.guardiansofadelia.guardian.GuardianDataManager;
@@ -43,6 +44,7 @@ public class TutorialEndAction implements Action {
                 activeCharacter.clearRPGClassStats();
 
                 activeCharacter.changeClass(player, RPGClassManager.getStartingClass(), guardianData.getLanguage());
+                activeCharacter.setChatTag(player, ChatTag.NOVICE);
 
                 new BukkitRunnable() {
                     @Override
@@ -60,7 +62,7 @@ public class TutorialEndAction implements Action {
                     public void run() {
                         DatabaseManager.writeGuardianDataWithCurrentCharacter(player, guardianData);
                     }
-                }.runTaskLaterAsynchronously(GuardiansOfAdelia.getInstance(), 20L);
+                }.runTaskLaterAsynchronously(GuardiansOfAdelia.getInstance(), 40L);
             }
         }
     }

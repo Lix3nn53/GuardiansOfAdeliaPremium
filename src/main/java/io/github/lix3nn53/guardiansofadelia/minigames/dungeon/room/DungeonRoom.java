@@ -40,7 +40,7 @@ public class DungeonRoom {
         }
     }
 
-    public void onRoomStart(DungeonRoomState state, int roomNo, HashMap<Integer, List<DungeonRoomSpawnerState>> wavesToSpawnerStates,
+    public void onRoomStart(DungeonRoomState roomState, int roomNo, HashMap<Integer, List<DungeonRoomSpawnerState>> wavesToSpawnerStates,
                             Location dungeonStart, DungeonTheme theme, int darkness) {
         for (DungeonRoomDoor door : doors) {
             door.close(dungeonStart);
@@ -62,12 +62,18 @@ public class DungeonRoom {
 
             int mobLevel = theme.getMonsterLevel(darkness);
 
-            spawner.firstSpawn(mobCode, mobLevel, dungeonStart, roomNo, spawnerIndex, spawnerState);
+            List<Entity> entities = spawner.firstSpawn(mobCode, mobLevel, dungeonStart, roomNo, spawnerIndex, spawnerState);
+            if (spawner.isBoss()) {
+                if (!entities.isEmpty()) {
+                    Entity boss = entities.get(0);
+                    roomState.getDungeonInstance().startKeepBossSafeRunnable(boss, boss.getLocation());
+                }
+            }
         }
 
         for (RandomSkillOnGroundWithOffset skillOnGround : skillsOnGround) {
             ArmorStand activate = skillOnGround.activate(dungeonStart, 40L);
-            state.addSkillsOnGroundArmorStand(activate);
+            roomState.addSkillsOnGroundArmorStand(activate);
         }
     }
 
@@ -129,7 +135,13 @@ public class DungeonRoom {
                             }
                             int mobLevel = theme.getMonsterLevel(darkness);
 
-                            spawner.firstSpawn(mobCode, mobLevel, dungeonStart, roomNo, spawnerIndex, spawnerState);
+                            List<Entity> entities = spawner.firstSpawn(mobCode, mobLevel, dungeonStart, roomNo, spawnerIndex, spawnerState);
+                            if (spawner.isBoss()) {
+                                if (!entities.isEmpty()) {
+                                    Entity boss = entities.get(0);
+                                    roomState.getDungeonInstance().startKeepBossSafeRunnable(boss, boss.getLocation());
+                                }
+                            }
                         }
                     }
                 }.runTaskLater(GuardiansOfAdelia.getInstance(), 20 * 4L);

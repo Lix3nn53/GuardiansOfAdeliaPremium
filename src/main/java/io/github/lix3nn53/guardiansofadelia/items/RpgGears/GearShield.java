@@ -1,6 +1,5 @@
 package io.github.lix3nn53.guardiansofadelia.items.RpgGears;
 
-import io.github.lix3nn53.guardiansofadelia.GuardiansOfAdelia;
 import io.github.lix3nn53.guardiansofadelia.guardian.element.ElementType;
 import io.github.lix3nn53.guardiansofadelia.items.RpgGears.gearset.GearSet;
 import io.github.lix3nn53.guardiansofadelia.items.RpgGears.gearset.GearSetEffect;
@@ -29,7 +28,6 @@ public class GearShield implements RPGGear {
 
         String gearSetStr = null;
         if (withGearSet) {
-            GuardiansOfAdelia.getInstance().getLogger().info("GearSetManager.getRandom from SHIELD");
             gearSetStr = GearSetManager.getRandom(tier);
         }
         if (gearSetStr != null) {

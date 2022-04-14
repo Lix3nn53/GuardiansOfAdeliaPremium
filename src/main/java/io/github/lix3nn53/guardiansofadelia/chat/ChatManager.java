@@ -17,39 +17,45 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
 
 public class ChatManager {
 
-    private static final List<Player> chatCooldown = new ArrayList<>();
+    private static final HashMap<Player, ArmorStand> chatHolograms = new HashMap<>();
 
     public static void chatHologram(Player player, String message) {
         float height = (float) player.getHeight();
         Location location = player.getLocation().clone().add(0, height + 0.4, 0);
 
+        if (chatHolograms.containsKey(player)) {
+            chatHolograms.get(player).remove();
+        }
+
+        final int period = 2;
+        final int ticksLimit = 100;
+
+        final ArmorStand armorStand = new Hologram(location, ChatPalette.YELLOW + "< " + ChatPalette.GRAY + message + ChatPalette.YELLOW + " >").getArmorStand();
+        chatHolograms.put(player, armorStand);
+
         new BukkitRunnable() {
 
-            ArmorStand armorStand;
             int ticksPass = 0;
-            final int ticksLimit = 30;
 
             @Override
             public void run() {
-                if (ticksPass == ticksLimit) {
+                if (armorStand.isDead()) {
                     cancel();
-                    chatCooldown.remove(player);
+                } else if (ticksPass == ticksLimit) {
+                    cancel();
                     armorStand.remove();
+                    chatHolograms.remove(player);
                 } else {
-                    if (ticksPass == 0) {
-                        armorStand = new Hologram(location, ChatPalette.YELLOW + "< " + ChatPalette.GRAY + message + ChatPalette.YELLOW + " >").getArmorStand();
-                    }
                     Location location = player.getLocation().clone().add(0, height + 0.4, 0);
                     armorStand.teleport(location);
-                    ticksPass++;
+                    ticksPass += period;
                 }
             }
-        }.runTaskTimer(GuardiansOfAdelia.getInstance(), 0L, 2L);
+        }.runTaskTimer(GuardiansOfAdelia.getInstance(), 0L, period);
     }
 
     public static void chatHologramEntity(Entity entity, String message, int durationTicks, float offsetY) {
@@ -114,11 +120,6 @@ public class ChatManager {
      * @return allow message to normal chat
      */
     public static boolean onChat(Player player, String message) {
-        if (chatCooldown.contains(player)) {
-            player.sendMessage(ChatPalette.RED + "You can send a message per 3 seconds");
-            return false;
-        }
-        chatCooldown.add(player);
         chatHologram(player, message);
 
         //send message to normal chat

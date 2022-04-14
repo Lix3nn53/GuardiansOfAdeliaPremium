@@ -316,11 +316,14 @@ public class DungeonTheme {
         return (int) ((darkness / 100d) * maxLevel) + 1;
     }
 
+    public boolean isPlayerInBossRoom(Location dungeonStart, Player player) {
+        return isLocationInBossRoom(dungeonStart, player.getLocation());
+    }
 
-    public boolean canAttackBoss(Location dungeonStart, Player player) {
+    public boolean isLocationInBossRoom(Location dungeonStart, Location location) {
         BoundingBox shift = this.bossRoomBox.clone().shift(dungeonStart);
 
-        Vector vector = player.getLocation().toVector();
+        Vector vector = location.toVector();
         return shift.contains(vector);
     }
 

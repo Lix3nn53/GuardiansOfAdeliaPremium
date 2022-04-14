@@ -48,6 +48,7 @@ public class DungeonInstance extends Minigame {
     private final List<Integer> activeRooms = new ArrayList<>();
     private int darkness = 0;
     private BukkitTask darknessRunnable;
+    private BukkitTask keepBossSafeRunnable;
     private final HashMap<Player, Integer> playerToLootedChestCount = new HashMap<>();
     private int unlockedChests;
     private final List<ArmorStand> skillsOnGroundArmorStands = new ArrayList<>();
@@ -196,6 +197,7 @@ public class DungeonInstance extends Minigame {
         }
 
         endDarknessRunnable();
+        endKeepBossSafeRunnable();
 
         // Clear global skillsOnGround
         for (ArmorStand armorStand : skillsOnGroundArmorStands) {
@@ -516,7 +518,7 @@ public class DungeonInstance extends Minigame {
         Set<Integer> dungeonRoomKeys = theme.getDungeonRoomKeys();
 
         for (int roomKey : dungeonRoomKeys) {
-            roomNoToRoomState.put(roomKey, new DungeonRoomState());
+            roomNoToRoomState.put(roomKey, new DungeonRoomState(this));
 
             DungeonRoom dungeonRoom = theme.getDungeonRoom(roomKey);
             HashMap<Integer, List<DungeonRoomSpawner>> waveToSpawners = dungeonRoom.getWaveToSpawners();
@@ -558,10 +560,38 @@ public class DungeonInstance extends Minigame {
             String internalName = mythicMobInstance.getType().getInternalName();
 
             if (internalName.equals(this.theme.getBossInternalName())) { // BOSS
-                return this.theme.canAttackBoss(this.getStartLocation(1), attacker);
+                return this.theme.isPlayerInBossRoom(this.getStartLocation(1), attacker);
             }
         }
 
         return true;
+    }
+
+    public void startKeepBossSafeRunnable(Entity boss, Location bossSpawnLoc) {
+        if (this.keepBossSafeRunnable != null) {
+            this.keepBossSafeRunnable.cancel();
+        }
+
+        Location startLocation = this.getStartLocation(1);
+
+        this.keepBossSafeRunnable = new BukkitRunnable() {
+            @Override
+            public void run() {
+                if (boss.isDead()) {
+                    cancel();
+                    return;
+                }
+
+                boolean locationInBossRoom = theme.isLocationInBossRoom(startLocation, boss.getLocation());
+
+                if (locationInBossRoom) {
+                    boss.teleport(bossSpawnLoc);
+                }
+            }
+        }.runTaskTimer(GuardiansOfAdelia.getInstance(), 20, 80);
+    }
+
+    private void endKeepBossSafeRunnable() {
+        this.keepBossSafeRunnable.cancel();
     }
 }
