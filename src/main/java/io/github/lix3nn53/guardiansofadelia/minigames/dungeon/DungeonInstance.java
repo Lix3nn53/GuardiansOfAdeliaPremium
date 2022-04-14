@@ -592,6 +592,8 @@ public class DungeonInstance extends Minigame {
     }
 
     private void endKeepBossSafeRunnable() {
-        this.keepBossSafeRunnable.cancel();
+        if (this.keepBossSafeRunnable != null) {
+            this.keepBossSafeRunnable.cancel();
+        }
     }
 }

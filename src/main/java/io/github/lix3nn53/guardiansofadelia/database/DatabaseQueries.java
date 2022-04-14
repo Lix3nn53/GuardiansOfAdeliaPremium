@@ -164,10 +164,16 @@ public class DatabaseQueries {
                 String[] split = friendUuids.split(",");
 
                 for (String uuidString : split) {
-                    OfflinePlayer player = Bukkit.getOfflinePlayer(UUID.fromString(uuidString));
-                    friendList.add(player);
-                    if (player.isOnline()) {
-                        TablistUtils.updateTablist(player.getPlayer());
+                    try {
+                        UUID friendUUID = UUID.fromString(uuidString);
+
+                        OfflinePlayer player = Bukkit.getOfflinePlayer(friendUUID);
+                        friendList.add(player);
+                        if (player.isOnline()) {
+                            TablistUtils.updateTablist(player.getPlayer());
+                        }
+                    } catch (IllegalArgumentException e) {
+                        //ignore
                     }
                 }
             }
@@ -816,7 +822,7 @@ public class DatabaseQueries {
     /**
      * @param uuid
      * @param friendList
-     * @return 2 = replaced, 1 = new row added, -1 failed
+     * @return 2 = replaced, 1 = new row added, 0 no change, -1 failed
      */
     public static int setFriendsOfPlayer(UUID uuid, List<OfflinePlayer> friendList) {
         String SQL_QUERY = "INSERT INTO goa_player_friend \n" +
@@ -830,6 +836,10 @@ public class DatabaseQueries {
         StringBuilder friendUUIDs = new StringBuilder();
         for (OfflinePlayer friend : friendList) {
             friendUUIDs.append(friend.getUniqueId()).append(",");
+        }
+
+        if (friendUUIDs.isEmpty()) {
+            return 0;
         }
 
         try (Connection con = ConnectionPool.getConnection()) {
