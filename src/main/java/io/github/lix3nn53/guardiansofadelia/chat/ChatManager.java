@@ -27,29 +27,33 @@ public class ChatManager {
         float height = (float) player.getHeight();
         Location location = player.getLocation().clone().add(0, height + 0.4, 0);
 
-        if (chatHolograms.containsKey(player)) {
-            chatHolograms.get(player).remove();
-        }
-
         final int period = 2;
         final int ticksLimit = 100;
 
-        final ArmorStand armorStand = new Hologram(location, ChatPalette.YELLOW + "< " + ChatPalette.GRAY + message + ChatPalette.YELLOW + " >").getArmorStand();
-        chatHolograms.put(player, armorStand);
-
         new BukkitRunnable() {
 
+            ArmorStand armorStand;
             int ticksPass = 0;
 
             @Override
             public void run() {
-                if (armorStand.isDead()) {
-                    cancel();
-                } else if (ticksPass == ticksLimit) {
+                if (ticksPass == ticksLimit) {
                     cancel();
                     armorStand.remove();
                     chatHolograms.remove(player);
                 } else {
+                    if (ticksPass == 0) {
+                        ArmorStand old = chatHolograms.get(player);
+                        if (old != null) {
+                            old.remove();
+                        }
+                        this.armorStand = new Hologram(location, ChatPalette.YELLOW + "< " + ChatPalette.GRAY + message + ChatPalette.YELLOW + " >").getArmorStand();
+                        chatHolograms.put(player, this.armorStand);
+                    } else if (armorStand.isDead()) {
+                        cancel();
+                        return;
+                    }
+
                     Location location = player.getLocation().clone().add(0, height + 0.4, 0);
                     armorStand.teleport(location);
                     ticksPass += period;
