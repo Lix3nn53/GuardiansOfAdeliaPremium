@@ -66,6 +66,7 @@ public class DungeonRoom {
             if (spawner.isBoss()) {
                 if (!entities.isEmpty()) {
                     Entity boss = entities.get(0);
+                    GuardiansOfAdelia.getInstance().getLogger().info("onRoomStart: boss spawned");
                     roomState.getDungeonInstance().startKeepBossSafeRunnable(boss, boss.getLocation());
                 }
             }
@@ -139,6 +140,7 @@ public class DungeonRoom {
                             if (spawner.isBoss()) {
                                 if (!entities.isEmpty()) {
                                     Entity boss = entities.get(0);
+                                    GuardiansOfAdelia.getInstance().getLogger().info("onMobKill: boss spawned");
                                     roomState.getDungeonInstance().startKeepBossSafeRunnable(boss, boss.getLocation());
                                 }
                             }

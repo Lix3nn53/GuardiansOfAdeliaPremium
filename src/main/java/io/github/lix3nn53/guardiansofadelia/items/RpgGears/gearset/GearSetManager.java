@@ -76,7 +76,30 @@ public class GearSetManager {
     public static List<GearSetEffect> getEffectsWithoutLower(GearSet gearSet) {
         ItemTier itemTier = tierOf(gearSet);
 
-        return tierToGearSets.get(itemTier).get(gearSet);
+        if (itemTier == null) {
+            GuardiansOfAdelia.getInstance().getLogger().info("GearSetManager.getEffectsWithoutLower: itemTier is null");
+            GuardiansOfAdelia.getInstance().getLogger().info("GearSetManager.getEffectsWithoutLower: gearSet: " + gearSet.getName());
+            GuardiansOfAdelia.getInstance().getLogger().info("GearSetManager.getEffectsWithoutLower: pieceCount: " + gearSet.getPieceCount());
+            return new ArrayList<>();
+        }
+
+        HashMap<GearSet, List<GearSetEffect>> map = tierToGearSets.get(itemTier);
+
+        if (map == null) {
+            GuardiansOfAdelia.getInstance().getLogger().info("GearSetManager.getEffectsWithoutLower: map is null");
+            GuardiansOfAdelia.getInstance().getLogger().info("GearSetManager.getEffectsWithoutLower: gearSet: " + gearSet.getName());
+            return new ArrayList<>();
+        }
+
+        List<GearSetEffect> gearSetEffects = map.get(gearSet);
+
+        if (gearSetEffects == null) {
+            GuardiansOfAdelia.getInstance().getLogger().info("getEffectsWithoutLower: gearSetEffects is null");
+            GuardiansOfAdelia.getInstance().getLogger().info("GearSetManager.getEffectsWithoutLower: gearSet: " + gearSet.getName());
+            return new ArrayList<>();
+        }
+
+        return gearSetEffects;
     }
 
     public static void addEffect(ItemTier itemTier, GearSet gearSet, GearSetEffect gearSetEffect) {

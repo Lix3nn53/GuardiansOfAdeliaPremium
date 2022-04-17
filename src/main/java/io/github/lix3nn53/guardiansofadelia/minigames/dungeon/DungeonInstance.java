@@ -568,32 +568,36 @@ public class DungeonInstance extends Minigame {
     }
 
     public void startKeepBossSafeRunnable(Entity boss, Location bossSpawnLoc) {
-        if (this.keepBossSafeRunnable != null) {
-            this.keepBossSafeRunnable.cancel();
-        }
+        GuardiansOfAdelia.getInstance().getLogger().info("Starting keep boss safe runnable");
+        GuardiansOfAdelia.getInstance().getLogger().info("Boss: " + boss.getName());
+        endKeepBossSafeRunnable();
 
         Location startLocation = this.getStartLocation(1);
 
         this.keepBossSafeRunnable = new BukkitRunnable() {
             @Override
             public void run() {
-                if (boss.isDead()) {
+                if (!boss.isValid()) {
                     cancel();
+                    GuardiansOfAdelia.getInstance().getLogger().info("Boss is dead");
                     return;
                 }
 
                 boolean locationInBossRoom = theme.isLocationInBossRoom(startLocation, boss.getLocation());
+                GuardiansOfAdelia.getInstance().getLogger().info("Location in boss room: " + locationInBossRoom);
+                GuardiansOfAdelia.getInstance().getLogger().info("Boss location: " + boss.getLocation());
 
-                if (locationInBossRoom) {
+                if (!locationInBossRoom) {
                     boss.teleport(bossSpawnLoc);
                 }
             }
-        }.runTaskTimer(GuardiansOfAdelia.getInstance(), 20, 80);
+        }.runTaskTimer(GuardiansOfAdelia.getInstance(), 100, 80);
     }
 
     private void endKeepBossSafeRunnable() {
         if (this.keepBossSafeRunnable != null) {
             this.keepBossSafeRunnable.cancel();
+            GuardiansOfAdelia.getInstance().getLogger().info("Ending keep boss safe runnable");
         }
     }
 }

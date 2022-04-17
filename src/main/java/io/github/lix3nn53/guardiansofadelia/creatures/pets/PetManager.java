@@ -115,8 +115,6 @@ public class PetManager {
     private static LivingEntity spawnMythicMobTameable(Player owner, String petCode, int petLevel) {
         Location spawnLoc = LocationUtils.getRandomSafeLocationNearPoint(owner.getLocation(), 4);
 
-        GuardiansOfAdelia.getInstance().getLogger().info("petLevel: " + petLevel);
-
         BukkitAPIHelper apiHelper = MythicBukkit.inst().getAPIHelper();
         Entity entity = null;
         try {
@@ -171,8 +169,6 @@ public class PetManager {
 
     private static LivingEntity spawnMythicMobArmorStand(Player owner, String petCode, int petLevel) {
         Location spawnLoc = LocationUtils.getRandomSafeLocationNearPoint(owner.getLocation(), 4);
-
-        GuardiansOfAdelia.getInstance().getLogger().info("petLevel: " + petLevel);
 
         BukkitAPIHelper apiHelper = MythicBukkit.inst().getAPIHelper();
         Entity entity = null;
@@ -450,7 +446,6 @@ public class PetManager {
                         if (PersistentDataContainerUtil.hasString(egg, "petCode")) {
                             String petCode = PersistentDataContainerUtil.getString(egg, "petCode");
                             int petExp = PersistentDataContainerUtil.getInteger(egg, "petExp");
-                            GuardiansOfAdelia.getInstance().getLogger().info("petExp: " + petExp);
                             int levelFromExp = PetExperienceManager.getLevelFromExp(petExp);
 
                             LivingEntity pet = spawnPet(player, petCode, levelFromExp);

@@ -1,5 +1,6 @@
 package io.github.lix3nn53.guardiansofadelia.items.list.passiveItems;
 
+import io.github.lix3nn53.guardiansofadelia.GuardiansOfAdelia;
 import io.github.lix3nn53.guardiansofadelia.items.GearLevel;
 import io.github.lix3nn53.guardiansofadelia.items.RpgGears.GearPassive;
 import io.github.lix3nn53.guardiansofadelia.items.RpgGears.ItemTier;
@@ -49,7 +50,14 @@ public class PassiveManager {
     }
 
     public static int countAt(GearLevel gearLevel) {
-        return gearLevelToPassives.get(gearLevel).size();
+        List<PassiveSet> passiveSets = gearLevelToPassives.get(gearLevel);
+
+        if (passiveSets == null) {
+            GuardiansOfAdelia.getInstance().getLogger().info("PassiveSet not found for gear level " + gearLevel);
+            return 0;
+        }
+
+        return passiveSets.size();
     }
 
     public static void add(PassiveSet passiveSet) {

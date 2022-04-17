@@ -101,7 +101,7 @@ public class GuardiansOfAdelia extends JavaPlugin {
                     }
                 }
             }
-        }.runTaskTimerAsynchronously(GuardiansOfAdelia.getInstance(), 100L, 20 * 5L);
+        }.runTaskTimerAsynchronously(GuardiansOfAdelia.getInstance(), 100L, 20 * 10L);
     }
 
     public void onPluginMessageReceived(String channel, Player player, byte[] message) {
