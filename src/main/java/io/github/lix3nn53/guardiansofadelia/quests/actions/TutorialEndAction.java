@@ -5,9 +5,9 @@ import io.github.lix3nn53.guardiansofadelia.chat.ChatTag;
 import io.github.lix3nn53.guardiansofadelia.database.DatabaseManager;
 import io.github.lix3nn53.guardiansofadelia.guardian.GuardianData;
 import io.github.lix3nn53.guardiansofadelia.guardian.GuardianDataManager;
-import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGCharacter;
-import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGCharacterStats;
-import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGClassManager;
+import io.github.lix3nn53.guardiansofadelia.guardian.character.*;
+import io.github.lix3nn53.guardiansofadelia.guardian.skill.SkillBar;
+import io.github.lix3nn53.guardiansofadelia.guardian.skill.SkillTree;
 import io.github.lix3nn53.guardiansofadelia.npc.QuestNPCManager;
 import io.github.lix3nn53.guardiansofadelia.rpginventory.RPGInventory;
 import org.bukkit.entity.Player;
@@ -40,7 +40,12 @@ public class TutorialEndAction implements Action {
                 rpgCharacterStats.setCurrentHealth(rpgCharacterStats.getTotalMaxHealth());
                 rpgCharacterStats.setCurrentMana(rpgCharacterStats.getTotalMaxMana());
 
-                activeCharacter.getSkillBar().resetSkillPoints(guardianData.getLanguage());
+                final String rpgClassStr = activeCharacter.getRpgClassStr();
+                RPGClassStats rpgClassStats = activeCharacter.getRPGClassStats(rpgClassStr);
+                RPGClass rpgClass = RPGClassManager.getClass(rpgClassStr);
+                SkillTree skillTree = rpgClass.getSkillTree();
+                SkillBar skillBar = activeCharacter.getSkillBar();
+                rpgClassStats.getSkillRPGClassData().resetSkillPoints(player, skillTree, skillBar, guardianData.getLanguage());
                 activeCharacter.clearRPGClassStats();
 
                 activeCharacter.changeClass(player, RPGClassManager.getStartingClass(), guardianData.getLanguage());
@@ -52,7 +57,7 @@ public class TutorialEndAction implements Action {
                         player.removePotionEffect(PotionEffectType.WITHER);
                         player.addPotionEffect(new PotionEffect(PotionEffectType.ABSORPTION, 200, 4));
                         QuestNPCManager.setAllNpcHologramForPlayer(player);
-                        activeCharacter.getRpgCharacterStats().recalculateEquipment(activeCharacter.getRpgClassStr());
+                        activeCharacter.getRpgCharacterStats().recalculateEquipment(rpgClassStr);
                         activeCharacter.getRpgCharacterStats().recalculateRPGInventory(rpgInventory);
                     }
                 }.runTaskLater(GuardiansOfAdelia.getInstance(), 5L);

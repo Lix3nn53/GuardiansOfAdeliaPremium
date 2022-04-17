@@ -17,15 +17,9 @@ import java.util.List;
 public class RPGClassManager {
 
     private static final HashMap<String, RPGClass> rpgClassMap = new HashMap<>();
-
-    private static final HashMap<Integer, Integer> classTierToRequiredLevel = new HashMap<>();
-    public static int HIGHEST_CLASS_TIER = 1;
     private static String startingClass;
 
     public static void addClass(String className, RPGClass rpgClass) {
-        int tier = rpgClass.getTier();
-        if (tier > HIGHEST_CLASS_TIER) HIGHEST_CLASS_TIER = tier;
-
         rpgClassMap.put(className.toUpperCase(), rpgClass);
     }
 
@@ -37,36 +31,8 @@ public class RPGClassManager {
         return rpgClassMap.get(className.toUpperCase());
     }
 
-    public static List<RPGClass> getClassesAtTier(int tier) {
-        List<RPGClass> classes = new ArrayList<>();
-
-        for (String classStr : rpgClassMap.keySet()) {
-            RPGClass rpgClass = rpgClassMap.get(classStr);
-
-            int tierOfCurrent = rpgClass.getTier();
-
-            if (tierOfCurrent == tier) {
-                classes.add(rpgClass);
-            }
-        }
-
-        return classes;
-    }
-
     public static void clearClasses() {
         rpgClassMap.clear();
-    }
-
-    public static int getRequiredLevelForClassTier(int classTier) {
-        if (classTierToRequiredLevel.containsKey(classTier)) {
-            return classTierToRequiredLevel.get(classTier);
-        }
-
-        return 9999;
-    }
-
-    public static void setRequiredLevelForClassTier(int classTier, int level) {
-        classTierToRequiredLevel.put(classTier, level);
     }
 
     public static String getStartingClass() {
@@ -92,8 +58,6 @@ public class RPGClassManager {
         HashMap<AttributeType, Integer> attributeTiers = rpgClass.getAttributeTiers();
 
         List<String> lore = new ArrayList<>(description);
-        int classTier = rpgClass.getTier();
-        lore.add(ChatPalette.RED + "Tier: " + ChatPalette.GRAY + classTier);
         lore.add("");
 
         lore.add(ChatPalette.GREEN_DARK + "Attributes");
@@ -123,28 +87,20 @@ public class RPGClassManager {
         lore.add("");
 
         String valueStr = rpgClass.getClassStringNoColor();
-
-        if (classTier <= highestUnlockedClassTier) {
-            String rpgClassStr = rpgCharacter.getRpgClassStr();
-            if (valueStr.equalsIgnoreCase(rpgClassStr)) {
-                lore.add(ChatPalette.PURPLE_LIGHT + "This is your current class");
-            } else {
-                lore.add(ChatPalette.GREEN_DARK + "Click to change to this class!");
-            }
-
-            RPGClassStats rpgClassStats = rpgCharacter.getRPGClassStats(valueStr);
-            int totalExperience = rpgClassStats.getTotalExperience();
-            int level = RPGClassExperienceManager.getLevel(totalExperience);
-            lore.add(ChatPalette.GOLD + "Class Level: " + ChatPalette.WHITE + level);
-            int exp = RPGClassExperienceManager.getCurrentExperience(totalExperience, level);
-            int expReq = RPGClassExperienceManager.getRequiredExperience(level);
-            lore.add(ChatPalette.YELLOW + "Class Experience: " + ChatPalette.GRAY + exp + "/" + expReq);
+        String rpgClassStr = rpgCharacter.getRpgClassStr();
+        if (valueStr.equalsIgnoreCase(rpgClassStr)) {
+            lore.add(ChatPalette.PURPLE_LIGHT + "This is your current class");
         } else {
-            lore.add(ChatPalette.RED + "You haven't unlocked classes at this tier yet.");
-            lore.add(ChatPalette.RED + "");
-            int reqLevel = RPGClassManager.getRequiredLevelForClassTier(classTier);
-            lore.add(ChatPalette.RED + "Required level: " + ChatPalette.GRAY + reqLevel);
+            lore.add(ChatPalette.GREEN_DARK + "Click to change to this class!");
         }
+
+        RPGClassStats rpgClassStats = rpgCharacter.getRPGClassStats(valueStr);
+        int totalExperience = rpgClassStats.getTotalExperience();
+        int level = RPGClassExperienceManager.getLevel(totalExperience);
+        lore.add(ChatPalette.GOLD + "Class Level: " + ChatPalette.WHITE + level);
+        int exp = RPGClassExperienceManager.getCurrentExperience(totalExperience, level);
+        int expReq = RPGClassExperienceManager.getRequiredExperience(level);
+        lore.add(ChatPalette.YELLOW + "Class Experience: " + ChatPalette.GRAY + exp + "/" + expReq);
 
         itemMeta.setLore(lore);
         itemStack.setItemMeta(itemMeta);

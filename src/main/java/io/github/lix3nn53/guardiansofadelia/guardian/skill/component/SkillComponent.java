@@ -16,7 +16,7 @@ public abstract class SkillComponent {
         this.addLore = addLore;
     }
 
-    public abstract boolean execute(LivingEntity caster, int skillLevel, List<LivingEntity> targets, int castCounter, int skillIndex);
+    public abstract boolean execute(LivingEntity caster, int skillLevel, List<LivingEntity> targets, int castCounter, int skillId);
 
     /**
      * Use this in #execute method of SkillComponents
@@ -24,15 +24,15 @@ public abstract class SkillComponent {
      * @param caster
      * @param skillLevel
      * @param targets
-     * @param skillIndex
+     * @param skillId
      * @return
      */
-    protected boolean executeChildren(LivingEntity caster, int skillLevel, List<LivingEntity> targets, int castCounter, int skillIndex) {
+    protected boolean executeChildren(LivingEntity caster, int skillLevel, List<LivingEntity> targets, int castCounter, int skillId) {
         if (targets.isEmpty()) return false;
 
         boolean worked = false;
         for (SkillComponent child : children) {
-            boolean passed = child.execute(caster, skillLevel, targets, castCounter, skillIndex);
+            boolean passed = child.execute(caster, skillLevel, targets, castCounter, skillId);
             worked = passed || worked;
         }
         return worked;

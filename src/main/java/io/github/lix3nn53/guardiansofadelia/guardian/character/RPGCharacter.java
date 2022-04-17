@@ -2,10 +2,10 @@ package io.github.lix3nn53.guardiansofadelia.guardian.character;
 
 import io.github.lix3nn53.guardiansofadelia.chat.ChatManager;
 import io.github.lix3nn53.guardiansofadelia.chat.ChatTag;
-import io.github.lix3nn53.guardiansofadelia.guardian.GuardianData;
-import io.github.lix3nn53.guardiansofadelia.guardian.GuardianDataManager;
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.SkillBar;
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.SkillDataManager;
+import io.github.lix3nn53.guardiansofadelia.guardian.skill.SkillTree;
+import io.github.lix3nn53.guardiansofadelia.guardian.skill.player.SkillRPGClassData;
 import io.github.lix3nn53.guardiansofadelia.jobs.RPGCharacterCraftingStats;
 import io.github.lix3nn53.guardiansofadelia.quests.Quest;
 import io.github.lix3nn53.guardiansofadelia.rpginventory.RPGInventory;
@@ -34,15 +34,17 @@ public final class RPGCharacter {
 
     private ChatTag chatTag = ChatTag.NOVICE;
 
-    public RPGCharacter(String rpgClassStr, Player player, int one, int two, int three, int passive, int ultimate,
-                        HashMap<String, RPGClassStats> classToClassStats) {
+    public RPGCharacter(String rpgClassStr, Player player, HashMap<String, RPGClassStats> classToClassStats) {
         this.rpgInventory = new RPGInventory(player);
         rpgCharacterStats = new RPGCharacterStats(player, rpgClassStr);
         this.rpgClassStr = rpgClassStr.toUpperCase();
-        RPGClass rpgClass = RPGClassManager.getClass(rpgClassStr);
-        this.skillBar = new SkillBar(player, one, two, three, passive, ultimate, rpgClass.getSkillSet(), false);
-
         this.classToClassStats = classToClassStats;
+
+        RPGClassStats rpgClassStats = this.classToClassStats.get(this.rpgClassStr);
+        SkillRPGClassData skillRPGClassData = rpgClassStats.getSkillRPGClassData();
+        RPGClass rpgClass = RPGClassManager.getClass(rpgClassStr);
+        this.skillBar = new SkillBar(player, rpgClass.getSkillTree(), skillRPGClassData, false);
+
     }
 
     public RPGCharacter(String rpgClassStr, Player player) {
@@ -50,11 +52,12 @@ public final class RPGCharacter {
         rpgCharacterStats = new RPGCharacterStats(player, rpgClassStr);
         this.rpgClassStr = rpgClassStr.toUpperCase();
         RPGClass rpgClass = RPGClassManager.getClass(rpgClassStr);
-        this.skillBar = new SkillBar(player, 0, 0, 0, 0, 0, rpgClass.getSkillSet(), false);
 
         this.classToClassStats = new HashMap<>();
-        RPGClassStats rpgClassStats = new RPGClassStats(0, 0, 0, 0, 0, 0);
+        RPGClassStats rpgClassStats = new RPGClassStats();
         this.classToClassStats.put(rpgClassStr, rpgClassStats);
+        SkillRPGClassData skillRPGClassData = rpgClassStats.getSkillRPGClassData();
+        this.skillBar = new SkillBar(player, rpgClass.getSkillTree(), skillRPGClassData, false);
     }
 
     public String getRpgClassStr() {
@@ -69,6 +72,15 @@ public final class RPGCharacter {
         return classToClassStats.get(this.rpgClassStr.toUpperCase());
     }
 
+    public RPGClassStats getRPGClassStats() {
+        String rpgClassStr = getRpgClassStr();
+        if (classToClassStats.containsKey(rpgClassStr)) {
+            return classToClassStats.get(rpgClassStr);
+        }
+
+        return new RPGClassStats();
+    }
+
     public RPGClassStats getRPGClassStats(String rpgClassStr) {
         if (classToClassStats.containsKey(rpgClassStr.toUpperCase())) {
             return classToClassStats.get(rpgClassStr.toUpperCase());
@@ -79,25 +91,6 @@ public final class RPGCharacter {
 
     public void clearRPGClassStats() {
         classToClassStats.clear();
-    }
-
-    public int getHighestUnlockedClassTier(Player player) {
-        if (GuardianDataManager.hasGuardianData(player)) {
-            GuardianData guardianData = GuardianDataManager.getGuardianData(player);
-            if (guardianData.hasActiveCharacter()) {
-                int level = player.getLevel();
-
-                for (int classTier = RPGClassManager.HIGHEST_CLASS_TIER; classTier > 0; classTier--) { // count down from the highest class tier
-                    int reqLevel = RPGClassManager.getRequiredLevelForClassTier(classTier);
-
-                    if (level >= reqLevel) {
-                        return classTier;
-                    }
-                }
-            }
-        }
-
-        return 0;
     }
 
     public RPGClassStats addClassStats(String newClassStr) {
@@ -111,13 +104,6 @@ public final class RPGCharacter {
         String s = newClassStr.toUpperCase();
         RPGClass rpgClass = RPGClassManager.getClass(s);
 
-        int tier = rpgClass.getTier();
-
-        if (tier > getHighestUnlockedClassTier(player)) {
-            player.sendMessage(ChatPalette.RED + "You have not unlocked classes at this tier");
-            return false;
-        }
-
         SkillDataManager.onPlayerQuit(player);
 
         RPGClassStats rpgClassStats;
@@ -128,18 +114,17 @@ public final class RPGCharacter {
         }
 
         this.rpgClassStr = s;
-        int one = rpgClassStats.getOne();
-        int two = rpgClassStats.getTwo();
-        int three = rpgClassStats.getThree();
-        int passive = rpgClassStats.getPassive();
-        int ultimate = rpgClassStats.getUltimate();
 
         this.skillBar.onQuit();
-        this.skillBar = new SkillBar(player, one, two, three, passive, ultimate, rpgClass.getSkillSet(), true);
-        skillBar.remakeSkillBar(lang);
 
-        rpgCharacterStats.setRpgClassStr(s);
-        rpgCharacterStats.recalculateEquipment(rpgClassStr);
+        SkillTree skillTree = rpgClass.getSkillTree();
+        SkillRPGClassData skillRPGClassData = rpgClassStats.getSkillRPGClassData();
+
+        this.skillBar = new SkillBar(player, skillTree, skillRPGClassData, true);
+        this.skillBar.remakeSkillBar(skillTree, skillRPGClassData, lang);
+
+        this.rpgCharacterStats.setRpgClassStr(s);
+        this.rpgCharacterStats.recalculateEquipment(rpgClassStr);
         player.sendMessage(ChatPalette.YELLOW + "Changed class to " + rpgClass.getClassString() + ChatPalette.YELLOW + "!");
 
         ActionBarInfo actionBarInfo = rpgClass.getActionBarInfo();

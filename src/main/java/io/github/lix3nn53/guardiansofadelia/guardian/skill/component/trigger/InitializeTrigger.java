@@ -21,8 +21,8 @@ public class InitializeTrigger extends TriggerComponent {
     }
 
     @Override
-    public boolean execute(LivingEntity caster, int skillLevel, List<LivingEntity> targets, int castCounter, int skillIndex) {
-        this.skillIndex = skillIndex;
+    public boolean execute(LivingEntity caster, int skillLevel, List<LivingEntity> targets, int castCounter, int skillId) {
+        this.skillId = skillId;
 
         return false;
     }
@@ -32,10 +32,10 @@ public class InitializeTrigger extends TriggerComponent {
         return getSkillLoreAdditionsOfChildren(lang, additions, skillLevel);
     }
 
-    public void startEffects(Player caster, int skillLevel, List<LivingEntity> targets, int castCounter, int skillIndex) {
-        this.skillIndex = skillIndex;
+    public void startEffects(Player caster, int skillLevel, List<LivingEntity> targets, int castCounter, int skillId) {
+        this.skillId = skillId;
 
-        executeChildren(caster, skillLevel, targets, castCounter, skillIndex);
+        executeChildren(caster, skillLevel, targets, castCounter, skillId);
         lastCastCounter = castCounter;
     }
 

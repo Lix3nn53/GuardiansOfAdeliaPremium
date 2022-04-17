@@ -14,6 +14,7 @@ import java.util.List;
 
 public class Skill {
 
+    private final int id;
     private final String name;
     private final int maxSkillLevel;
     private final Material material;
@@ -26,9 +27,15 @@ public class Skill {
     private final List<Integer> manaCosts;
     private final List<Integer> cooldowns;
 
+    // skill tree
+    private final int parentSkillId;
+
     private final List<SkillComponent> triggers = new ArrayList<>();
 
-    public Skill(String name, int maxSkillLevel, Material material, int customModelData, List<String> description, List<Integer> reqSkillPoints, List<Integer> manaCosts, List<Integer> cooldowns) {
+    public Skill(int id, String name, int maxSkillLevel, Material material, int customModelData,
+                 List<String> description, List<Integer> reqSkillPoints, List<Integer> manaCosts,
+                 List<Integer> cooldowns, int parentSkillId) {
+        this.id = id;
         this.name = name;
         this.maxSkillLevel = maxSkillLevel;
         this.material = material;
@@ -37,6 +44,11 @@ public class Skill {
         this.reqSkillPoints = reqSkillPoints;
         this.manaCosts = manaCosts;
         this.cooldowns = cooldowns;
+        this.parentSkillId = parentSkillId;
+    }
+
+    public int getId() {
+        return id;
     }
 
     public String getName() {
@@ -64,6 +76,10 @@ public class Skill {
     public int getCooldown(int skillLevel) {
         if (skillLevel == 0) return cooldowns.get(0);
         return cooldowns.get(skillLevel - 1);
+    }
+
+    public int getParentSkillId() {
+        return parentSkillId;
     }
 
     public int getCurrentSkillLevel(int pointsInvested) {
@@ -133,10 +149,10 @@ public class Skill {
         return icon;
     }
 
-    public boolean cast(LivingEntity caster, int skillLevel, List<LivingEntity> targets, int castCounter, int skillIndex) {
+    public boolean cast(LivingEntity caster, int skillLevel, List<LivingEntity> targets, int castCounter, int skillId) {
         boolean didCast = false;
         for (SkillComponent trigger : triggers) {
-            didCast = trigger.execute(caster, skillLevel, targets, castCounter, skillIndex) || didCast;
+            didCast = trigger.execute(caster, skillLevel, targets, castCounter, skillId) || didCast;
         }
         return didCast;
     }

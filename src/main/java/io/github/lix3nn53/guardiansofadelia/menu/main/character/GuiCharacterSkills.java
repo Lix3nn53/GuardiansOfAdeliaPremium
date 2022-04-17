@@ -28,7 +28,7 @@ public class GuiCharacterSkills extends GuiGeneric {
         super(27, CustomCharacterGui.MENU_27_FLAT.toString() + ChatPalette.BLACK + Translation.t(guardianData, "skill.name") +
                 " (" + Translation.t(guardianData, "skill.points") + ": " + pointsLeft + ")", 0);
 
-        HashMap<Integer, Skill> skillSet = rpgCharacter.getSkillBar().getSkillSet();
+        HashMap<Integer, Skill> skillSet = rpgCharacter.getSkillBar().getSkillTree();
 
         String language = guardianData.getLanguage();
         if (skillSet.containsKey(0)) {

@@ -1,0 +1,150 @@
+package io.github.lix3nn53.guardiansofadelia.guardian.skill.player;
+
+import io.github.lix3nn53.guardiansofadelia.guardian.GuardianData;
+import io.github.lix3nn53.guardiansofadelia.guardian.GuardianDataManager;
+import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGCharacter;
+import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGClassExperienceManager;
+import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGClassStats;
+import io.github.lix3nn53.guardiansofadelia.guardian.skill.Skill;
+import io.github.lix3nn53.guardiansofadelia.guardian.skill.SkillBar;
+import io.github.lix3nn53.guardiansofadelia.guardian.skill.SkillTree;
+import io.github.lix3nn53.guardiansofadelia.guardian.skill.component.trigger.InitializeTrigger;
+import io.github.lix3nn53.guardiansofadelia.guardian.skill.component.trigger.TriggerListener;
+import org.bukkit.entity.Player;
+
+import java.util.List;
+import java.util.Set;
+
+public class SkillRPGClassData {
+
+    private final SkillTreeData skillTreeData;
+    private final SkillBarData skillBarData;
+
+    public SkillRPGClassData(SkillTreeData skillTreeData, SkillBarData skillBarData) {
+        this.skillTreeData = skillTreeData;
+        this.skillBarData = skillBarData;
+    }
+
+    public SkillRPGClassData() {
+        this.skillTreeData = new SkillTreeData();
+        this.skillBarData = new SkillBarData();
+    }
+
+    public SkillTreeData getSkillTreeData() {
+        return skillTreeData;
+    }
+
+    public SkillBarData getSkillBarData() {
+        return skillBarData;
+    }
+
+    /**
+     * @param skillId global if of skill
+     */
+    public boolean upgradeSkill(Player player, int skillId, SkillTree skillTree, RPGClassStats rpgClassStats, SkillBar skillBar, String lang) {
+        if (!skillTree.containsSkill(skillId)) return false;
+
+        Skill skill = skillTree.getSkill(skillId);
+
+        int invested = skillTreeData.getInvestedSkillPoints(skillId);
+        int currentSkillLevel = skill.getCurrentSkillLevel(invested);
+
+        if (currentSkillLevel >= skill.getMaxSkillLevel()) {
+            return false;
+        }
+
+        int reqSkillPoints = skill.getReqSkillPoints(currentSkillLevel);
+
+        SkillTreeData skillTreeData = this.getSkillTreeData();
+        SkillBarData skillBarData = this.getSkillBarData();
+
+        if (getSkillPointsLeftToSpend(player) >= reqSkillPoints) {
+            List<InitializeTrigger> initializeTriggers = skill.getInitializeTriggers();
+            for (InitializeTrigger initializeTrigger : initializeTriggers) {
+                int castCounter = skillBar.getCastCounter();
+                TriggerListener.onSkillUpgrade(player, initializeTrigger, skillId, currentSkillLevel + 1, castCounter);
+                skillBar.increaseCastCounter();
+            }
+            int newInvested = invested + reqSkillPoints;
+            skillTreeData.setInvestedSkillPoint(skillId, newInvested);
+            int slotIndex = skillBarData.skillToSlot(skillId);
+            skillBar.remakeSkillBarIcon(slotIndex, skillTree, this, lang);
+
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * @param skillId global if of skill
+     */
+    public boolean downgradeSkill(Player player, int skillId, SkillTree skillTree, RPGClassStats rpgClassStats, SkillBar skillBar, String lang) {
+        if (!skillTree.containsSkill(skillId)) return false;
+
+        Skill skill = skillTree.getSkill(skillId);
+
+        int invested = skillTreeData.getInvestedSkillPoints(skillId);
+        int currentSkillLevel = skill.getCurrentSkillLevel(invested);
+
+        if (currentSkillLevel <= 0) return false;
+
+        List<InitializeTrigger> initializeTriggers = skill.getInitializeTriggers();
+        for (InitializeTrigger initializeTrigger : initializeTriggers) {
+            int castCounter = skillBar.getCastCounter();
+            TriggerListener.onSkillDowngrade(player, initializeTrigger, skillId, currentSkillLevel - 1, castCounter);
+            skillBar.increaseCastCounter();
+        }
+
+        int reqSkillPoints = skill.getReqSkillPoints(currentSkillLevel - 1);
+
+        int newInvested = invested - reqSkillPoints;
+        skillTreeData.setInvestedSkillPoint(skillId, newInvested);
+        int slotIndex = skillBarData.skillToSlot(skillId);
+        skillBar.remakeSkillBarIcon(slotIndex, skillTree, this, lang);
+
+        return true;
+    }
+
+    public boolean resetSkillPoints(Player player, SkillTree skillTree, SkillBar skillBar, String lang) {
+        Set<Integer> skillIds = this.skillTreeData.getSkillIds();
+
+        for (int skillId : skillIds) {
+            Skill skill = skillTree.getSkill(skillId);
+
+            List<InitializeTrigger> initializeTriggers = skill.getInitializeTriggers();
+            for (InitializeTrigger initializeTrigger : initializeTriggers) {
+                int castCounter = skillBar.getCastCounter();
+                TriggerListener.onSkillDowngrade(player, initializeTrigger, skillId, 0, castCounter);
+                skillBar.increaseCastCounter();
+            }
+        }
+
+        this.skillTreeData.reset();
+
+        for (int i = 0; i < 4; i++) {
+            skillBar.remakeSkillBarIcon(i, skillTree, this, lang);
+        }
+
+        return true;
+    }
+
+    public int getSkillPointsLeftToSpend(Player player) {
+        int points = 1;
+        if (GuardianDataManager.hasGuardianData(player)) {
+            GuardianData guardianData = GuardianDataManager.getGuardianData(player);
+            if (guardianData.hasActiveCharacter()) {
+                RPGCharacter activeCharacter = guardianData.getActiveCharacter();
+                RPGClassStats currentRPGClassStats = activeCharacter.getCurrentRPGClassStats();
+
+                int totalExperience = currentRPGClassStats.getTotalExperience();
+
+                points = RPGClassExperienceManager.getLevel(totalExperience);
+            }
+        }
+
+        int totalInvestedSkillPoints = skillTreeData.getTotalInvestedSkillPoints();
+
+        return points - totalInvestedSkillPoints;
+    }
+}

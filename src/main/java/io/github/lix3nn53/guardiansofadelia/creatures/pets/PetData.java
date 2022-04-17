@@ -38,8 +38,8 @@ public class PetData {
 
                 List<String> description = skillSection.getStringList("description");
 
-                Skill skill = new Skill("petskill", 1, Material.IRON_HOE, 1, description,
-                        new ArrayList<>(), new ArrayList<>(), cooldowns);
+                Skill skill = new Skill(id, "petskill", 1, Material.IRON_HOE, 1, description,
+                        new ArrayList<>(), new ArrayList<>(), cooldowns, parentSkillId);
 
                 SkillComponent triggerComponent = SkillComponentLoader.loadSection(skillSection.getConfigurationSection("trigger"));
                 skill.addTrigger(triggerComponent);

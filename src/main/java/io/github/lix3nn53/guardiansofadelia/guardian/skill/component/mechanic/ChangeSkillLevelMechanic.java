@@ -3,8 +3,14 @@ package io.github.lix3nn53.guardiansofadelia.guardian.skill.component.mechanic;
 import io.github.lix3nn53.guardiansofadelia.guardian.GuardianData;
 import io.github.lix3nn53.guardiansofadelia.guardian.GuardianDataManager;
 import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGCharacter;
-import io.github.lix3nn53.guardiansofadelia.guardian.skill.SkillBar;
+import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGClass;
+import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGClassManager;
+import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGClassStats;
+import io.github.lix3nn53.guardiansofadelia.guardian.skill.Skill;
+import io.github.lix3nn53.guardiansofadelia.guardian.skill.SkillTree;
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.component.MechanicComponent;
+import io.github.lix3nn53.guardiansofadelia.guardian.skill.player.SkillRPGClassData;
+import io.github.lix3nn53.guardiansofadelia.guardian.skill.player.SkillTreeData;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -13,20 +19,20 @@ import java.util.List;
 
 public class ChangeSkillLevelMechanic extends MechanicComponent {
 
-    private final int index; // index of skill to get skill level of
+    private final int skillId; // index of skill to get skill level of
     private final int value; // value to use if index == - 1
 
     public ChangeSkillLevelMechanic(ConfigurationSection configurationSection) {
         super(!configurationSection.contains("addLore") || configurationSection.getBoolean("addLore"));
 
-        if (!configurationSection.contains("index") && !configurationSection.contains("value")) {
-            configLoadError("index or value");
+        if (!configurationSection.contains("skillId") && !configurationSection.contains("value")) {
+            configLoadError("skillId or value");
         }
 
-        if (configurationSection.contains("index")) {
-            this.index = configurationSection.getInt("index");
+        if (configurationSection.contains("skillId")) {
+            this.skillId = configurationSection.getInt("skillId");
         } else {
-            index = -1;
+            skillId = -1;
         }
 
         if (configurationSection.contains("value")) {
@@ -41,7 +47,7 @@ public class ChangeSkillLevelMechanic extends MechanicComponent {
         if (targets.isEmpty()) return false;
 
         int newSkillLevel = value;
-        if (index > -1) {
+        if (skillId > -1) {
             if (caster instanceof Player) {
                 Player player = (Player) caster;
                 if (GuardianDataManager.hasGuardianData(player)) {
@@ -49,9 +55,17 @@ public class ChangeSkillLevelMechanic extends MechanicComponent {
 
                     if (guardianData.hasActiveCharacter()) {
                         RPGCharacter activeCharacter = guardianData.getActiveCharacter();
-                        SkillBar skillBar = activeCharacter.getSkillBar();
 
-                        newSkillLevel = skillBar.getCurrentSkillLevel(index);
+                        String rpgClassStr = activeCharacter.getRpgClassStr();
+                        RPGClass aClass = RPGClassManager.getClass(rpgClassStr);
+                        SkillTree skillTree = aClass.getSkillTree();
+                        Skill skill = skillTree.getSkill(skillId);
+
+                        RPGClassStats rpgClassStats = activeCharacter.getRPGClassStats();
+                        SkillRPGClassData skillRPGClassData = rpgClassStats.getSkillRPGClassData();
+                        SkillTreeData skillTreeData = skillRPGClassData.getSkillTreeData();
+
+                        newSkillLevel = skillTreeData.getCurrentSkillLevel(skill);
                     }
                 }
             }

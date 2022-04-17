@@ -15,83 +15,96 @@ import java.util.List;
 public class TriggerListener {
     //Every player can have only one trigger of a type
 
-    private static final HashMap<Player, List<TriggerComponent>> playerToTriggerList = new HashMap<>();
+    // Player to skillid to triggerType to trigger
+    private static final HashMap<Player, HashMap<Integer, HashMap<String, TriggerComponent>>> playerToTriggerList = new HashMap<>();
 
     public static void onPlayerQuit(Player player) {
         playerToTriggerList.remove(player);
     }
 
-    public static void add(Player player, TriggerComponent triggerComponent) {
-        List<TriggerComponent> list = new ArrayList<>();
+    public static void add(Player player, TriggerComponent triggerComponent, int skillId) {
+        HashMap<Integer, HashMap<String, TriggerComponent>> map = new HashMap<>();
         if (playerToTriggerList.containsKey(player)) {
-            list = playerToTriggerList.get(player);
+            map = playerToTriggerList.get(player);
         }
-        list.add(triggerComponent);
-        playerToTriggerList.put(player, list);
-        if (CommandAdmin.DEBUG_MODE) player.sendMessage("ADD, new size: " + list.size());
+        HashMap<String, TriggerComponent> triggerComponents = new HashMap<>();
+        if (map.containsKey(skillId)) {
+            triggerComponents = map.get(skillId);
+        }
+        triggerComponents.put(triggerComponent.getClass().getName(), triggerComponent);
+        playerToTriggerList.put(player, map);
+        if (CommandAdmin.DEBUG_MODE) player.sendMessage("ADD, new size: " + map.size());
     }
 
-    public static void remove(Player player, TriggerComponent toRemove) {
+    public static void remove(Player player, int skillId, String triggerType) {
         if (playerToTriggerList.containsKey(player)) {
-            List<TriggerComponent> list = playerToTriggerList.get(player);
+            HashMap<Integer, HashMap<String, TriggerComponent>> map = playerToTriggerList.get(player);
 
-            list.remove(toRemove);
-            if (list.isEmpty()) {
+            HashMap<String, TriggerComponent> triggers = map.get(skillId);
+            triggers.remove(triggerType);
+            if (map.isEmpty()) {
                 playerToTriggerList.remove(player);
             } else {
-                playerToTriggerList.put(player, list);
+                playerToTriggerList.put(player, map);
             }
-            if (CommandAdmin.DEBUG_MODE) player.sendMessage("REMOVE trigger, new size: " + list.size());
+            if (CommandAdmin.DEBUG_MODE) player.sendMessage("REMOVE trigger, new size: " + map.size());
         }
     }
 
     public static void onPlayerLandGround(Player player) {
         if (playerToTriggerList.containsKey(player)) {
-            List<TriggerComponent> list = playerToTriggerList.get(player);
+            HashMap<Integer, HashMap<String, TriggerComponent>> map = playerToTriggerList.get(player);
 
-            List<LandTrigger> toRemove = new ArrayList<>();
+            List<Integer> toRemove = new ArrayList<>();
 
-            for (TriggerComponent triggerComponent : list) {
-                if (!(triggerComponent instanceof LandTrigger)) continue;
-                LandTrigger trigger = (LandTrigger) triggerComponent;
-                trigger.callback(player);
+            for (int skillId : map.keySet()) {
+                HashMap<String, TriggerComponent> triggerComponents = map.get(skillId);
+                for (TriggerComponent triggerComponent : triggerComponents.values()) {
+                    if (!(triggerComponent instanceof LandTrigger)) continue;
+                    LandTrigger trigger = (LandTrigger) triggerComponent;
+                    trigger.callback(player);
 
-                toRemove.add(trigger); // always remove this trigger even if child fails somehow
+                    toRemove.add(skillId); // always remove this trigger even if child fails somehow
+                }
             }
 
-            for (LandTrigger trigger : toRemove) {
-                TriggerListener.remove(player, trigger);
+            for (int skillId : toRemove) {
+                TriggerListener.remove(player, skillId, LandTrigger.class.getName());
             }
         }
     }
 
     public static void onPlayerTookDamage(Player player, LivingEntity attacker) {
         if (playerToTriggerList.containsKey(player)) {
-            List<TriggerComponent> list = playerToTriggerList.get(player);
+            HashMap<Integer, HashMap<String, TriggerComponent>> map = playerToTriggerList.get(player);
 
-            List<TookDamageTrigger> toRemove = new ArrayList<>();
+            HashMap<Integer, TookDamageTrigger> toRemove = new HashMap<>();
 
-            for (TriggerComponent triggerComponent : list) {
-                if (!(triggerComponent instanceof TookDamageTrigger)) continue;
-                TookDamageTrigger trigger = (TookDamageTrigger) triggerComponent;
-                boolean callback = trigger.callback(player, attacker);
+            for (int skillId : map.keySet()) {
+                HashMap<String, TriggerComponent> triggerComponents = map.get(skillId);
+                for (TriggerComponent triggerComponent : triggerComponents.values()) {
+                    if (!(triggerComponent instanceof TookDamageTrigger)) continue;
+                    TookDamageTrigger trigger = (TookDamageTrigger) triggerComponent;
+                    boolean callback = trigger.callback(player, attacker);
 
-                if (callback) {
-                    toRemove.add(trigger);
+                    if (callback) {
+                        toRemove.put(skillId, trigger);
+                    }
                 }
             }
 
-            for (TookDamageTrigger trigger : toRemove) {
+            for (int skillId : toRemove.keySet()) {
+                TookDamageTrigger trigger = toRemove.get(skillId);
                 int skillLevel = trigger.getSkillLevel();
                 List<Integer> cooldowns = trigger.getCooldowns();
 
                 if (!cooldowns.isEmpty()) {
-                    TriggerListener.remove(player, trigger);
+                    TriggerListener.remove(player, skillId, TookDamageTrigger.class.getName());
 
                     new BukkitRunnable() {
                         @Override
                         public void run() {
-                            TriggerListener.add(player, trigger);
+                            TriggerListener.add(player, trigger, skillId);
                         }
                     }.runTaskLaterAsynchronously(GuardiansOfAdelia.getInstance(), cooldowns.get(skillLevel - 1));
                 }
@@ -101,31 +114,35 @@ public class TriggerListener {
 
     public static void onPlayerNormalAttack(Player player, LivingEntity target, boolean isProjectile) {
         if (playerToTriggerList.containsKey(player)) {
-            List<TriggerComponent> list = playerToTriggerList.get(player);
+            HashMap<Integer, HashMap<String, TriggerComponent>> map = playerToTriggerList.get(player);
 
-            List<NormalAttackTrigger> toRemove = new ArrayList<>();
+            HashMap<Integer, NormalAttackTrigger> toRemove = new HashMap<>();
 
-            for (TriggerComponent triggerComponent : list) {
-                if (!(triggerComponent instanceof NormalAttackTrigger)) continue;
-                NormalAttackTrigger trigger = (NormalAttackTrigger) triggerComponent;
-                boolean callback = trigger.callback(player, target, isProjectile);
+            for (int skillId : map.keySet()) {
+                HashMap<String, TriggerComponent> triggerComponents = map.get(skillId);
+                for (TriggerComponent triggerComponent : triggerComponents.values()) {
+                    if (!(triggerComponent instanceof NormalAttackTrigger)) continue;
+                    NormalAttackTrigger trigger = (NormalAttackTrigger) triggerComponent;
+                    boolean callback = trigger.callback(player, target, isProjectile);
 
-                if (callback) {
-                    toRemove.add(trigger);
+                    if (callback) {
+                        toRemove.put(skillId, trigger);
+                    }
                 }
             }
 
-            for (NormalAttackTrigger trigger : toRemove) {
+            for (int skillId : toRemove.keySet()) {
+                NormalAttackTrigger trigger = toRemove.get(skillId);
                 int skillLevel = trigger.getSkillLevel();
                 List<Integer> cooldowns = trigger.getCooldowns();
 
                 if (!cooldowns.isEmpty()) {
-                    TriggerListener.remove(player, trigger);
+                    TriggerListener.remove(player, skillId, NormalAttackTrigger.class.getName());
 
                     new BukkitRunnable() {
                         @Override
                         public void run() {
-                            TriggerListener.add(player, trigger);
+                            TriggerListener.add(player, trigger, skillId);
                         }
                     }.runTaskLaterAsynchronously(GuardiansOfAdelia.getInstance(), cooldowns.get(skillLevel - 1));
                 }
@@ -135,31 +152,35 @@ public class TriggerListener {
 
     public static void onPlayerSkillAttack(Player player, LivingEntity target) {
         if (playerToTriggerList.containsKey(player)) {
-            List<TriggerComponent> list = playerToTriggerList.get(player);
+            HashMap<Integer, HashMap<String, TriggerComponent>> map = playerToTriggerList.get(player);
 
-            List<SkillAttackTrigger> toRemove = new ArrayList<>();
+            HashMap<Integer, SkillAttackTrigger> toRemove = new HashMap<>();
 
-            for (TriggerComponent triggerComponent : list) {
-                if (!(triggerComponent instanceof SkillAttackTrigger)) continue;
-                SkillAttackTrigger trigger = (SkillAttackTrigger) triggerComponent;
-                boolean callback = trigger.callback(player, target);
+            for (int skillId : map.keySet()) {
+                HashMap<String, TriggerComponent> triggerComponents = map.get(skillId);
+                for (TriggerComponent triggerComponent : triggerComponents.values()) {
+                    if (!(triggerComponent instanceof SkillAttackTrigger)) continue;
+                    SkillAttackTrigger trigger = (SkillAttackTrigger) triggerComponent;
+                    boolean callback = trigger.callback(player, target);
 
-                if (callback) {
-                    toRemove.add(trigger);
+                    if (callback) {
+                        toRemove.put(skillId, trigger);
+                    }
                 }
             }
 
-            for (SkillAttackTrigger trigger : toRemove) {
+            for (int skillId : toRemove.keySet()) {
+                SkillAttackTrigger trigger = toRemove.get(skillId);
                 int skillLevel = trigger.getSkillLevel();
                 List<Integer> cooldowns = trigger.getCooldowns();
 
                 if (!cooldowns.isEmpty()) {
-                    TriggerListener.remove(player, trigger);
+                    TriggerListener.remove(player, skillId, SkillAttackTrigger.class.getName());
 
                     new BukkitRunnable() {
                         @Override
                         public void run() {
-                            TriggerListener.add(player, trigger);
+                            TriggerListener.add(player, trigger, skillId);
                         }
                     }.runTaskLaterAsynchronously(GuardiansOfAdelia.getInstance(), cooldowns.get(skillLevel - 1));
                 }
@@ -169,31 +190,35 @@ public class TriggerListener {
 
     public static void onPlayerSkillCast(Player player) {
         if (playerToTriggerList.containsKey(player)) {
-            List<TriggerComponent> list = playerToTriggerList.get(player);
+            HashMap<Integer, HashMap<String, TriggerComponent>> map = playerToTriggerList.get(player);
 
-            List<SkillCastTrigger> toRemove = new ArrayList<>();
+            HashMap<Integer, SkillCastTrigger> toRemove = new HashMap<>();
 
-            for (TriggerComponent triggerComponent : list) {
-                if (!(triggerComponent instanceof SkillCastTrigger)) continue;
-                SkillCastTrigger trigger = (SkillCastTrigger) triggerComponent;
-                boolean callback = trigger.callback(player);
+            for (int skillId : map.keySet()) {
+                HashMap<String, TriggerComponent> triggerComponents = map.get(skillId);
+                for (TriggerComponent triggerComponent : triggerComponents.values()) {
+                    if (!(triggerComponent instanceof SkillCastTrigger)) continue;
+                    SkillCastTrigger trigger = (SkillCastTrigger) triggerComponent;
+                    boolean callback = trigger.callback(player);
 
-                if (callback) {
-                    toRemove.add(trigger);
+                    if (callback) {
+                        toRemove.put(skillId, trigger);
+                    }
                 }
             }
 
-            for (SkillCastTrigger trigger : toRemove) {
+            for (int skillId : toRemove.keySet()) {
+                SkillCastTrigger trigger = toRemove.get(skillId);
                 int skillLevel = trigger.getSkillLevel();
                 List<Integer> cooldowns = trigger.getCooldowns();
 
                 if (!cooldowns.isEmpty()) {
-                    TriggerListener.remove(player, trigger);
+                    TriggerListener.remove(player, skillId, SkillCastTrigger.class.getName());
 
                     new BukkitRunnable() {
                         @Override
                         public void run() {
-                            TriggerListener.add(player, trigger);
+                            TriggerListener.add(player, trigger, skillId);
                         }
                     }.runTaskLaterAsynchronously(GuardiansOfAdelia.getInstance(), cooldowns.get(skillLevel - 1));
                 }
@@ -203,43 +228,49 @@ public class TriggerListener {
 
     public static void onPlayerShootCrossbow(Player player, Arrow arrow) {
         if (playerToTriggerList.containsKey(player)) {
-            List<TriggerComponent> list = playerToTriggerList.get(player);
+            HashMap<Integer, HashMap<String, TriggerComponent>> map = playerToTriggerList.get(player);
 
-            for (TriggerComponent triggerComponent : list) {
-                if (!(triggerComponent instanceof AddPiercingToArrowShootFromCrossbowTrigger)) continue;
-                AddPiercingToArrowShootFromCrossbowTrigger trigger = (AddPiercingToArrowShootFromCrossbowTrigger) triggerComponent;
-                trigger.callback(arrow);
+            for (HashMap<String, TriggerComponent> skillTriggers : map.values()) {
+                for (TriggerComponent triggerComponent : skillTriggers.values()) {
+                    if (!(triggerComponent instanceof AddPiercingToArrowShootFromCrossbowTrigger)) continue;
+                    AddPiercingToArrowShootFromCrossbowTrigger trigger = (AddPiercingToArrowShootFromCrossbowTrigger) triggerComponent;
+                    trigger.callback(arrow);
+                }
             }
         }
     }
 
     public static void onPlayerSavedEntitySpawn(Player player, LivingEntity created) {
         if (playerToTriggerList.containsKey(player)) {
-            List<TriggerComponent> list = playerToTriggerList.get(player);
+            HashMap<Integer, HashMap<String, TriggerComponent>> map = playerToTriggerList.get(player);
 
-            List<SavedEntitySpawnTrigger> toRemove = new ArrayList<>();
+            HashMap<Integer, SavedEntitySpawnTrigger> toRemove = new HashMap<>();
 
-            for (TriggerComponent triggerComponent : list) {
-                if (!(triggerComponent instanceof SavedEntitySpawnTrigger)) continue;
-                SavedEntitySpawnTrigger trigger = (SavedEntitySpawnTrigger) triggerComponent;
-                boolean callback = trigger.callback(player, created);
+            for (int skillId : map.keySet()) {
+                HashMap<String, TriggerComponent> triggerComponents = map.get(skillId);
+                for (TriggerComponent triggerComponent : triggerComponents.values()) {
+                    if (!(triggerComponent instanceof SavedEntitySpawnTrigger)) continue;
+                    SavedEntitySpawnTrigger trigger = (SavedEntitySpawnTrigger) triggerComponent;
+                    boolean callback = trigger.callback(player, created);
 
-                if (callback) {
-                    toRemove.add(trigger);
+                    if (callback) {
+                        toRemove.put(skillId, trigger);
+                    }
                 }
             }
 
-            for (SavedEntitySpawnTrigger trigger : toRemove) {
+            for (int skillId : toRemove.keySet()) {
+                SavedEntitySpawnTrigger trigger = toRemove.get(skillId);
                 int skillLevel = trigger.getSkillLevel();
                 List<Integer> cooldowns = trigger.getCooldowns();
 
                 if (!cooldowns.isEmpty()) {
-                    TriggerListener.remove(player, trigger);
+                    TriggerListener.remove(player, skillId, SavedEntitySpawnTrigger.class.getName());
 
                     new BukkitRunnable() {
                         @Override
                         public void run() {
-                            TriggerListener.add(player, trigger);
+                            TriggerListener.add(player, trigger, skillId);
                         }
                     }.runTaskLaterAsynchronously(GuardiansOfAdelia.getInstance(), cooldowns.get(skillLevel - 1));
                 }
@@ -249,31 +280,35 @@ public class TriggerListener {
 
     public static void onPlayerCompanionSpawn(Player player, LivingEntity spawned) {
         if (playerToTriggerList.containsKey(player)) {
-            List<TriggerComponent> list = playerToTriggerList.get(player);
+            HashMap<Integer, HashMap<String, TriggerComponent>> map = playerToTriggerList.get(player);
 
-            List<CompanionSpawnTrigger> toRemove = new ArrayList<>();
+            HashMap<Integer, CompanionSpawnTrigger> toRemove = new HashMap<>();
 
-            for (TriggerComponent triggerComponent : list) {
-                if (!(triggerComponent instanceof CompanionSpawnTrigger)) continue;
-                CompanionSpawnTrigger trigger = (CompanionSpawnTrigger) triggerComponent;
-                boolean callback = trigger.callback(player, spawned);
+            for (int skillId : map.keySet()) {
+                HashMap<String, TriggerComponent> triggerComponents = map.get(skillId);
+                for (TriggerComponent triggerComponent : triggerComponents.values()) {
+                    if (!(triggerComponent instanceof CompanionSpawnTrigger)) continue;
+                    CompanionSpawnTrigger trigger = (CompanionSpawnTrigger) triggerComponent;
+                    boolean callback = trigger.callback(player, spawned);
 
-                if (callback) {
-                    toRemove.add(trigger);
+                    if (callback) {
+                        toRemove.put(skillId, trigger);
+                    }
                 }
             }
 
-            for (CompanionSpawnTrigger trigger : toRemove) {
+            for (int skillId : toRemove.keySet()) {
+                CompanionSpawnTrigger trigger = toRemove.get(skillId);
                 int skillLevel = trigger.getSkillLevel();
                 List<Integer> cooldowns = trigger.getCooldowns();
 
                 if (!cooldowns.isEmpty()) {
-                    TriggerListener.remove(player, trigger);
+                    TriggerListener.remove(player, skillId, CompanionSpawnTrigger.class.getName());
 
                     new BukkitRunnable() {
                         @Override
                         public void run() {
-                            TriggerListener.add(player, trigger);
+                            TriggerListener.add(player, trigger, skillId);
                         }
                     }.runTaskLaterAsynchronously(GuardiansOfAdelia.getInstance(), cooldowns.get(skillLevel - 1));
                 }
@@ -281,50 +316,43 @@ public class TriggerListener {
         }
     }
 
-    public static void onSkillUpgrade(Player player, InitializeTrigger initializeTrigger, int skillIndex, int nextSkillLevel, int castCounter) {
-        stopInit(player, skillIndex); //stop old init
+    public static void onSkillUpgrade(Player player, InitializeTrigger initializeTrigger, int skillId, int nextSkillLevel, int castCounter) {
+        stopInit(player, skillId); //stop old init
         initializeTrigger.stopPreviousEffects(player);
 
         List<LivingEntity> targets = new ArrayList<>();
         targets.add(player);
 
-        initializeTrigger.startEffects(player, nextSkillLevel, targets, castCounter, skillIndex);
+        initializeTrigger.startEffects(player, nextSkillLevel, targets, castCounter, skillId);
     }
 
-    public static void onSkillDowngrade(Player player, InitializeTrigger initializeTrigger, int skillIndex, int nextSkillLevel, int castCounter) {
-        stopInit(player, skillIndex);
+    public static void onSkillDowngrade(Player player, InitializeTrigger initializeTrigger, int skillId, int nextSkillLevel, int castCounter) {
+        stopInit(player, skillId);
         initializeTrigger.stopPreviousEffects(player);
         if (nextSkillLevel == 0) return;
 
         List<LivingEntity> targets = new ArrayList<>();
         targets.add(player);
 
-        initializeTrigger.startEffects(player, nextSkillLevel, targets, castCounter, skillIndex);
+        initializeTrigger.startEffects(player, nextSkillLevel, targets, castCounter, skillId);
     }
 
-    private static void stopInit(Player player, int skillIndex) {
+    private static void stopInit(Player player, int skillId) {
         if (playerToTriggerList.containsKey(player)) {
-            List<TriggerComponent> list = playerToTriggerList.get(player);
+            HashMap<Integer, HashMap<String, TriggerComponent>> skillToTriggers = playerToTriggerList.get(player);
 
-            List<TriggerComponent> toRemove = new ArrayList<>();
+            HashMap<String, TriggerComponent> removed = skillToTriggers.remove(skillId);
 
-            for (TriggerComponent trigger : list) {
-                int triggerSkillIndex = trigger.getSkillIndex();
+            /*for (TriggerComponent triggerComponent : removed.values()) {
+                // TODO trigger clear?
+                // trigger.stopEffects(player);
+                // SkillDataManager.onPlayerQuit(player); // stop effects
+            }*/
 
-                if (skillIndex != triggerSkillIndex) continue;
-
-                toRemove.add(trigger);
-            }
-
-            // TODO trigger clear?
-            // trigger.stopEffects(player);
-            // SkillDataManager.onPlayerQuit(player); // stop effects
-
-            list.removeAll(toRemove);
-            if (list.isEmpty()) {
+            if (skillToTriggers.isEmpty()) {
                 playerToTriggerList.remove(player);
             } else {
-                playerToTriggerList.put(player, list);
+                playerToTriggerList.put(player, skillToTriggers);
             }
         }
     }

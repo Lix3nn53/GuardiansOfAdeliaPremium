@@ -2,7 +2,7 @@ package io.github.lix3nn53.guardiansofadelia.guardian.character;
 
 import io.github.lix3nn53.guardiansofadelia.guardian.attribute.AttributeType;
 import io.github.lix3nn53.guardiansofadelia.guardian.element.ElementType;
-import io.github.lix3nn53.guardiansofadelia.guardian.skill.Skill;
+import io.github.lix3nn53.guardiansofadelia.guardian.skill.SkillTree;
 import io.github.lix3nn53.guardiansofadelia.items.RpgGears.ArmorGearType;
 import io.github.lix3nn53.guardiansofadelia.items.RpgGears.ShieldGearType;
 import io.github.lix3nn53.guardiansofadelia.items.RpgGears.WeaponGearType;
@@ -15,10 +15,9 @@ public class RPGClass {
     private final ChatPalette color;
     private final ElementType mainElement;
     private final String name;
-    private final int tier;
     private final int customModelData;
     private final HashMap<AttributeType, Integer> attributeTiers;
-    private final HashMap<Integer, Skill> skillSet;
+    private final SkillTree skillTree;
 
     private final ActionBarInfo actionBarInfo;
 
@@ -28,16 +27,15 @@ public class RPGClass {
 
     private final List<String> description;
 
-    public RPGClass(ChatPalette color, ElementType mainElement, String name, int tier, int customModelData, HashMap<AttributeType, Integer> attributeTiers,
-                    HashMap<Integer, Skill> skillSet, ActionBarInfo actionBarInfo, List<ShieldGearType> shieldGearTypes, List<WeaponGearType> weaponGearTypes,
+    public RPGClass(ChatPalette color, ElementType mainElement, String name, int customModelData, HashMap<AttributeType, Integer> attributeTiers,
+                    SkillTree skillTree, ActionBarInfo actionBarInfo, List<ShieldGearType> shieldGearTypes, List<WeaponGearType> weaponGearTypes,
                     List<ArmorGearType> armorGearTypes, List<String> description) {
         this.color = color;
         this.mainElement = mainElement;
         this.name = name.toUpperCase();
-        this.tier = tier;
         this.customModelData = customModelData;
         this.attributeTiers = attributeTiers;
-        this.skillSet = skillSet;
+        this.skillTree = skillTree;
         this.actionBarInfo = actionBarInfo;
         this.shieldGearTypes = shieldGearTypes;
         this.weaponGearTypes = weaponGearTypes;
@@ -57,10 +55,6 @@ public class RPGClass {
         return name;
     }
 
-    public int getTier() {
-        return tier;
-    }
-
     public int getClassIconCustomModelData() {
         return customModelData;
     }
@@ -77,8 +71,8 @@ public class RPGClass {
         return attributeTiers;
     }
 
-    public HashMap<Integer, Skill> getSkillSet() {
-        return skillSet;
+    public SkillTree getSkillTree() {
+        return skillTree;
     }
 
     public ActionBarInfo getActionBarInfo() {

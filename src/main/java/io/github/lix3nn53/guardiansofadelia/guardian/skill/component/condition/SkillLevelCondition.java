@@ -3,8 +3,14 @@ package io.github.lix3nn53.guardiansofadelia.guardian.skill.component.condition;
 import io.github.lix3nn53.guardiansofadelia.guardian.GuardianData;
 import io.github.lix3nn53.guardiansofadelia.guardian.GuardianDataManager;
 import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGCharacter;
-import io.github.lix3nn53.guardiansofadelia.guardian.skill.SkillBar;
+import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGClass;
+import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGClassManager;
+import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGClassStats;
+import io.github.lix3nn53.guardiansofadelia.guardian.skill.Skill;
+import io.github.lix3nn53.guardiansofadelia.guardian.skill.SkillTree;
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.component.ConditionComponent;
+import io.github.lix3nn53.guardiansofadelia.guardian.skill.player.SkillRPGClassData;
+import io.github.lix3nn53.guardiansofadelia.guardian.skill.player.SkillTreeData;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -14,15 +20,15 @@ import java.util.List;
 
 public class SkillLevelCondition extends ConditionComponent {
 
-    private final int skillIndex;
+    private final int skillId;
     private final int minValue;
     private final int maxValue;
 
     public SkillLevelCondition(ConfigurationSection configurationSection) {
         super(!configurationSection.contains("addLore") || configurationSection.getBoolean("addLore"));
 
-        if (!configurationSection.contains("skillIndex")) {
-            configLoadError("skillIndex");
+        if (!configurationSection.contains("skillId")) {
+            configLoadError("skillId");
         }
 
         if (!configurationSection.contains("minValue")) {
@@ -33,7 +39,7 @@ public class SkillLevelCondition extends ConditionComponent {
             configLoadError("maxValue");
         }
 
-        this.skillIndex = configurationSection.getInt("skillIndex");
+        this.skillId = configurationSection.getInt("skillId");
         this.minValue = configurationSection.getInt("minValue");
         this.maxValue = configurationSection.getInt("maxValue");
     }
@@ -53,8 +59,17 @@ public class SkillLevelCondition extends ConditionComponent {
                 if (guardianData.hasActiveCharacter()) {
                     RPGCharacter activeCharacter = guardianData.getActiveCharacter();
 
-                    SkillBar skillBar = activeCharacter.getSkillBar();
-                    int value = skillBar.getCurrentSkillLevel(this.skillIndex);
+                    RPGClassStats rpgClassStats = activeCharacter.getRPGClassStats();
+                    SkillRPGClassData skillRPGClassData = rpgClassStats.getSkillRPGClassData();
+                    SkillTreeData skillTreeData = skillRPGClassData.getSkillTreeData();
+
+                    String rpgClassStr = activeCharacter.getRpgClassStr();
+                    RPGClass aClass = RPGClassManager.getClass(rpgClassStr);
+                    SkillTree skillTree = aClass.getSkillTree();
+
+                    int invested = skillTreeData.getInvestedSkillPoints(skillId);
+                    Skill skill = skillTree.getSkill(skillId);
+                    int value = skill.getCurrentSkillLevel(invested);
 
                     if (value >= minValue && value <= maxValue) {
                         success = executeChildren(caster, skillLevel, Collections.singletonList(target), castCounter, skillIndex) || success;
