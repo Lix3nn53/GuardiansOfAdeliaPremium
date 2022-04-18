@@ -41,7 +41,6 @@ public class ConfigManager {
         townsConfig = ConfigurationUtils.createConfig(DATA_FOLDER + File.separator + "world", "towns.yml");
         hologramsConfig = ConfigurationUtils.createConfig(DATA_FOLDER + File.separator + "world", "holograms.yml");
 
-        ClassConfigurations.createConfigs();
         RewardDailyConfigurations.createConfigs();
         JobGatheringConfigurations.createConfigs();
         TeleportPortalsConfiguration.createConfig();

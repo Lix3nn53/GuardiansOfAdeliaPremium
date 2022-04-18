@@ -13,6 +13,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 public class RPGClassManager {
 
@@ -41,6 +42,10 @@ public class RPGClassManager {
 
     public static void setStartingClass(String startingClass) {
         RPGClassManager.startingClass = startingClass;
+    }
+
+    public static Set<String> getClasses() {
+        return rpgClassMap.keySet();
     }
 
     public static ItemStack getPersonalIcon(RPGClass rpgClass, int highestUnlockedClassTier, RPGCharacter rpgCharacter) {

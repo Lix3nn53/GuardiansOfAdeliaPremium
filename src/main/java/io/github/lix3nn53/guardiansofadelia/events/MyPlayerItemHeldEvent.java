@@ -3,6 +3,11 @@ package io.github.lix3nn53.guardiansofadelia.events;
 import io.github.lix3nn53.guardiansofadelia.guardian.GuardianData;
 import io.github.lix3nn53.guardiansofadelia.guardian.GuardianDataManager;
 import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGCharacter;
+import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGClass;
+import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGClassManager;
+import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGClassStats;
+import io.github.lix3nn53.guardiansofadelia.guardian.skill.SkillTree;
+import io.github.lix3nn53.guardiansofadelia.guardian.skill.player.SkillRPGClassData;
 import io.github.lix3nn53.guardiansofadelia.items.list.OtherItems;
 import io.github.lix3nn53.guardiansofadelia.items.stats.StatUtils;
 import io.github.lix3nn53.guardiansofadelia.utilities.InventoryUtils;
@@ -35,13 +40,18 @@ public class MyPlayerItemHeldEvent implements Listener {
                     return;
                 }
 
+                String rpgClassStr = activeCharacter.getRpgClassStr();
                 if (newSlot >= 0 && newSlot <= 3) { //skill bar
                     if (previousSlot >= 0 && previousSlot <= 3) { //old slot is also skill bar
                         player.getInventory().setHeldItemSlot(4);
                         return;
                     }
 
-                    boolean success = activeCharacter.getSkillBar().castSkill(guardianData, newSlot);
+                    RPGClass rpgClass = RPGClassManager.getClass(rpgClassStr);
+                    SkillTree skillTree = rpgClass.getSkillTree();
+                    RPGClassStats rpgClassStats = activeCharacter.getRPGClassStats();
+                    SkillRPGClassData skillRPGClassData = rpgClassStats.getSkillRPGClassData();
+                    boolean success = activeCharacter.getSkillBar().castSkill(guardianData, newSlot, skillTree, skillRPGClassData);
                     if (!success) {
                         //play sound special to player on cast fail
                         player.playSound(player.getLocation(), Sound.BLOCK_ANVIL_LAND, 0.1f, 0.1f);
@@ -54,7 +64,6 @@ public class MyPlayerItemHeldEvent implements Listener {
                     return;
                 }
 
-                String rpgClassStr = activeCharacter.getRpgClassStr();
 
                 PlayerInventory inventory = player.getInventory();
                 //remove old item stats

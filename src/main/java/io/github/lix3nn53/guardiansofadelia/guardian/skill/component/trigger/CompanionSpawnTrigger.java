@@ -37,10 +37,10 @@ public class CompanionSpawnTrigger extends TriggerComponent {
     }
 
     @Override
-    public boolean execute(LivingEntity caster, int skillLevel, List<LivingEntity> targets, int castCounter, int skillIndex) {
+    public boolean execute(LivingEntity caster, int skillLevel, List<LivingEntity> targets, int castCounter, int skillId) {
         if (targets.isEmpty()) return false;
 
-        this.skillIndex = skillIndex;
+        this.skillId = skillId;
         this.caster = caster;
         this.skillLevel = skillLevel;
         this.castCounter = castCounter;
@@ -49,7 +49,7 @@ public class CompanionSpawnTrigger extends TriggerComponent {
 
         for (LivingEntity target : targets) {
             if (target instanceof Player) {
-                TriggerListener.add((Player) target, companionSpawnTrigger);
+                TriggerListener.add((Player) target, companionSpawnTrigger, skillId);
             }
         }
 
@@ -76,13 +76,13 @@ public class CompanionSpawnTrigger extends TriggerComponent {
                 if (internalName.equals(mobCodeGet)) {
                     List<LivingEntity> targets = new ArrayList<>();
                     targets.add(spawned);
-                    cast = executeChildren(caster, skillLevel, targets, castCounter, skillIndex);
+                    cast = executeChildren(caster, skillLevel, targets, castCounter, skillId);
                 }
             }
         } else { // executeChildren without comparison if mobCode is not present
             List<LivingEntity> targets = new ArrayList<>();
             targets.add(spawned);
-            cast = executeChildren(caster, skillLevel, targets, castCounter, skillIndex);
+            cast = executeChildren(caster, skillLevel, targets, castCounter, skillId);
         }
 
         return cast;

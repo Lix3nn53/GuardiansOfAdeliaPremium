@@ -10,7 +10,6 @@ import io.github.lix3nn53.guardiansofadelia.guardian.attribute.AttributeType;
 import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGCharacter;
 import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGCharacterStats;
 import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGClassStats;
-import io.github.lix3nn53.guardiansofadelia.guardian.skill.SkillBar;
 import io.github.lix3nn53.guardiansofadelia.guild.Guild;
 import io.github.lix3nn53.guardiansofadelia.guild.PlayerRankInGuild;
 import io.github.lix3nn53.guardiansofadelia.jobs.RPGCharacterCraftingStats;
@@ -19,10 +18,8 @@ import io.github.lix3nn53.guardiansofadelia.npc.QuestNPCManager;
 import io.github.lix3nn53.guardiansofadelia.quests.Quest;
 import io.github.lix3nn53.guardiansofadelia.quests.task.Task;
 import io.github.lix3nn53.guardiansofadelia.rpginventory.RPGInventory;
-import io.github.lix3nn53.guardiansofadelia.utilities.TablistUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -45,93 +42,82 @@ public class DatabaseQueries {
         try (Connection connection = ConnectionPool.getConnection();
              Statement statement = connection.createStatement()) {
             statement.addBatch("CREATE TABLE IF NOT EXISTS `goa_player` (\n" +
-                    "     `uuid`              varchar(40) NOT NULL ,\n" +
-                    "     `daily_last_date`   date NULL ,\n" +
-                    "     `staff_rank`        varchar(20) NULL ,\n" +
-                    "     `premium_rank`      varchar(20) NULL ,\n" +
-                    "     `premium_rank_date` date NULL ,\n" +
-                    "     `storage_personal`  mediumtext NULL ,\n" +
-                    "     `storage_bazaar`    mediumtext NULL ,\n" +
-                    "     `storage_premium`   mediumtext NULL ,\n" +
-                    "     `lang`              varchar(20) NULL ,\n" +
-                    "     \n" +
+                    "     `uuid` varchar(40) NOT NULL,\n" +
+                    "     `daily_last_date` date NULL,\n" +
+                    "     `staff_rank` varchar(20) NULL,\n" +
+                    "     `premium_rank` varchar(20) NULL,\n" +
+                    "     `premium_rank_date` date NULL,\n" +
+                    "     `storage_personal` mediumtext NULL,\n" +
+                    "     `storage_bazaar` mediumtext NULL,\n" +
+                    "     `storage_premium` mediumtext NULL,\n" +
+                    "     `lang` varchar(20) NOT NULL,\n" +
+                    "     `friend_uuids` text NOT NULL,\n" +
                     "     PRIMARY KEY (`uuid`)\n" +
                     ");");
             statement.addBatch("CREATE TABLE IF NOT EXISTS `goa_player_character` (\n" +
-                    "     `character_no`         smallint NOT NULL ,\n" +
-                    "     `uuid`                 varchar(40) NOT NULL ,\n" +
-                    "     `off_hand`             text NULL ,\n" +
-                    "     `slot_parrot`          text NULL ,\n" +
-                    "     `slot_necklace`        text NULL ,\n" +
-                    "     `slot_ring`            text NULL ,\n" +
-                    "     `slot_earring`         text NULL ,\n" +
-                    "     `slot_glove`           text NULL ,\n" +
-                    "     `slot_pet`             text NULL ,\n" +
-                    "     `slot_tool_axe`        text NULL ,\n" +
-                    "     `slot_tool_bottle`     text NULL ,\n" +
-                    "     `slot_tool_hoe`        text NULL ,\n" +
-                    "     `slot_tool_pickaxe`    text NULL ,\n" +
-                    "     `chat_tag`             varchar(45) NULL ,\n" +
-                    "     `crafting_experiences` text NOT NULL ,\n" +
-                    "     `inventory`            mediumtext NOT NULL ,\n" +
-                    "     `turnedinquests`       text NULL ,\n" +
-                    "     `activequests`         text NULL ,\n" +
-                    "     `location`             text NOT NULL ,\n" +
-                    "     `armor_content`        text NOT NULL ,\n" +
-                    "     `rpg_class`            varchar(45) NOT NULL ,\n" +
-                    "     `class_skills`         mediumtext NULL ,\n" +
-                    "     `totalexp`             int NOT NULL ,\n" +
-                    "     `attr_one`             smallint NOT NULL ,\n" +
-                    "     `attr_two`             smallint NOT NULL ,\n" +
-                    "     `attr_three`           smallint NOT NULL ,\n" +
-                    "     `attr_four`            smallint NOT NULL ,\n" +
-                    "     `attr_five`            smallint NOT NULL ,\n" +
-                    "     `skill_one`            smallint NOT NULL ,\n" +
-                    "     `skill_two`            smallint NOT NULL ,\n" +
-                    "     `skill_three`          smallint NOT NULL ,\n" +
-                    "     `skill_passive`        smallint NOT NULL ,\n" +
-                    "     `skill_ultimate`       smallint NOT NULL ,\n" +
-                    "\n" +
+                    "     `character_no` smallint NOT NULL,\n" +
+                    "     `uuid` varchar(40) NOT NULL,\n" +
+                    "     `off_hand` text NULL,\n" +
+                    "     `slot_parrot` text NULL,\n" +
+                    "     `slot_necklace` text NULL,\n" +
+                    "     `slot_ring` text NULL,\n" +
+                    "     `slot_earring` text NULL,\n" +
+                    "     `slot_glove` text NULL,\n" +
+                    "     `slot_pet` text NULL,\n" +
+                    "     `chat_tag` varchar(45) NULL,\n" +
+                    "     `crafting_experiences` text NOT NULL,\n" +
+                    "     `inventory` mediumtext NOT NULL,\n" +
+                    "     `turnedinquests` text NULL,\n" +
+                    "     `activequests` text NULL,\n" +
+                    "     `location` text NOT NULL,\n" +
+                    "     `armor_content` text NOT NULL,\n" +
+                    "     `rpg_class` varchar(45) NOT NULL,\n" +
+                    "     `totalexp` int NOT NULL,\n" +
+                    "     `slot_tool_axe` text NOT NULL,\n" +
+                    "     `slot_tool_bottle` text NOT NULL,\n" +
+                    "     `slot_tool_hoe` text NOT NULL,\n" +
+                    "     `slot_tool_pickaxe` text NOT NULL,\n" +
                     "     UNIQUE KEY `Ind_88` (`uuid`, `character_no`),\n" +
                     "     KEY `fkIdx_55` (`uuid`),\n" +
                     "     CONSTRAINT `FK_55` FOREIGN KEY `fkIdx_55` (`uuid`) REFERENCES `goa_player` (`uuid`)\n" +
                     ");");
-            statement.addBatch("CREATE TABLE IF NOT EXISTS `goa_player_friend` (\n" +
-                    "     `uuid`        varchar(40) NOT NULL ,\n" +
-                    "     `friend_uuids` text NULL ,\n" +
-                    "\n" +
-                    "     KEY `fkIdx_22` (`uuid`),\n" +
-                    "     CONSTRAINT `FK_22` FOREIGN KEY `fkIdx_22` (`uuid`) REFERENCES `goa_player` (`uuid`)\n" +
+            statement.addBatch("CREATE TABLE IF NOT EXISTS `goa_player_character_class` (\n" +
+                    "     `class_name` NOT NULL,\n" +
+                    "     `uuid` varchar(40) NOT NULL,\n" +
+                    "     `character_no` smallint NOT NULL,\n" +
+                    "     `skill_points` mediumtext NOT NULL,\n" +
+                    "     `totalexp` int NOT NULL,\n" +
+                    "     `attribute_points` mediumtext NOT NULL,\n" +
+                    "     UNIQUE KEY `Index_228` (`class_name`, `uuid`, `character_no`),\n" +
+                    "     KEY `FK_215` (`uuid`),\n" +
+                    "     CONSTRAINT `FK_213` FOREIGN KEY `FK_215` (`uuid`) REFERENCES `goa_player` (`uuid`)\n" +
                     ");");
             statement.addBatch("CREATE TABLE IF NOT EXISTS `goa_player_web` (\n" +
-                    "     `uuid`        varchar(40) NULL ,\n" +
-                    "     `google_id`      varchar(40) NULL UNIQUE,\n" +
-                    "     `twitch_id`      varchar(40) NULL UNIQUE,\n" +
-                    "     `discord_id`      varchar(40) NULL UNIQUE,\n" +
-                    "     `email`       varchar(45) NULL UNIQUE,\n" +
-                    "     `credits`     smallint DEFAULT 0,\n" +
-                    "     `sessions`    text NULL ,\n" +
-                    "\n" +
+                    "     `uuid` varchar(40) NULL,\n" +
+                    "     `email` varchar(45) NULL,\n" +
+                    "     `credits` smallint NOT NULL,\n" +
+                    "     `sessions` text NULL,\n" +
+                    "     `twitch_id` varchar(40) NOT NULL,\n" +
+                    "     `discord_id` varchar(40) NOT NULL,\n" +
+                    "     `google_id` varchar(40) NOT NULL,\n" +
                     "     KEY `fkIdx_188` (`uuid`),\n" +
                     "     CONSTRAINT `FK_187` FOREIGN KEY `fkIdx_188` (`uuid`) REFERENCES `goa_player` (`uuid`)\n" +
                     ");");
             statement.addBatch("CREATE TABLE IF NOT EXISTS `goa_guild` (\n" +
-                    "     `name`         varchar(20) NOT NULL ,\n" +
-                    "     `tag`          varchar(5) NOT NULL ,\n" +
-                    "     `war_point`    smallint NULL ,\n" +
-                    "     `announcement` tinytext NULL ,\n" +
-                    "     `hall_level`   smallint NOT NULL ,\n" +
-                    "     `bank_level`   smallint NOT NULL ,\n" +
-                    "     `lab_level`    smallint NOT NULL ,\n" +
-                    "     `storage`      mediumtext NULL ,\n" +
-                    "\n" +
+                    "     `name` varchar(20) NOT NULL,\n" +
+                    "     `tag` varchar(5) NOT NULL,\n" +
+                    "     `war_point` smallint NULL,\n" +
+                    "     `announcement` tinytext NULL,\n" +
+                    "     `hall_level` smallint NOT NULL,\n" +
+                    "     `bank_level` smallint NOT NULL,\n" +
+                    "     `lab_level` smallint NOT NULL,\n" +
+                    "     `storage` mediumtext NULL,\n" +
                     "     PRIMARY KEY (`name`)\n" +
                     ");");
             statement.addBatch("CREATE TABLE IF NOT EXISTS `goa_player_guild` (\n" +
-                    "     `uuid` varchar(40) NOT NULL ,\n" +
-                    "     `name` varchar(20) NOT NULL ,\n" +
-                    "     `rank` varchar(20) NOT NULL ,\n" +
-                    "     \n" +
+                    "     `uuid` varchar(40) NOT NULL,\n" +
+                    "     `name` varchar(20) NOT NULL,\n" +
+                    "     `rank` varchar(20) NOT NULL,\n" +
                     "     PRIMARY KEY (`uuid`),\n" +
                     "     KEY `fkIdx_38` (`uuid`),\n" +
                     "     CONSTRAINT `FK_38` FOREIGN KEY `fkIdx_38` (`uuid`) REFERENCES `goa_player` (`uuid`),\n" +
@@ -146,42 +132,6 @@ public class DatabaseQueries {
     }
 
     //GETTERS
-
-    /* updates tabList of online friends */
-    public static List<OfflinePlayer> getFriendsOfPlayer(UUID uuid) throws SQLException {
-        String SQL_QUERY = "SELECT * FROM goa_player_friend WHERE uuid = ?";
-        List<OfflinePlayer> friendList = new ArrayList<>();
-        try (Connection con = ConnectionPool.getConnection()) {
-            PreparedStatement pst = con.prepareStatement(SQL_QUERY);
-
-            pst.setString(1, uuid.toString());
-
-            ResultSet resultSet = pst.executeQuery();
-
-            if (resultSet.next()) {
-                String friendUuids = resultSet.getString("friend_uuids");
-
-                String[] split = friendUuids.split(",");
-
-                for (String uuidString : split) {
-                    try {
-                        UUID friendUUID = UUID.fromString(uuidString);
-
-                        OfflinePlayer player = Bukkit.getOfflinePlayer(friendUUID);
-                        friendList.add(player);
-                        if (player.isOnline()) {
-                            TablistUtils.updateTablist(player.getPlayer());
-                        }
-                    } catch (IllegalArgumentException e) {
-                        //ignore
-                    }
-                }
-            }
-            resultSet.close();
-            pst.close();
-        }
-        return friendList;
-    }
 
     public static HashMap<UUID, PlayerRankInGuild> getGuildMembers(String guild) throws SQLException {
         String SQL_QUERY = "SELECT * FROM goa_player_guild WHERE name = ?";
@@ -694,11 +644,11 @@ public class DatabaseQueries {
 
     public static int setGuardianData(UUID uuid, LocalDate lastPrizeDate, StaffRank staffRank, PremiumRank premiumRank,
                                       ItemStack[] personalStorage, ItemStack[] bazaarStorage,
-                                      ItemStack[] premiumStorage, String language) throws SQLException {
+                                      ItemStack[] premiumStorage, String language, String friendUUIDS) throws SQLException {
         String SQL_QUERY = "INSERT INTO goa_player \n" +
-                "\t(uuid, daily_last_date, staff_rank, premium_rank, storage_personal, storage_bazaar, storage_premium, lang) \n" +
+                "\t(uuid, daily_last_date, staff_rank, premium_rank, storage_personal, storage_bazaar, storage_premium, lang, friend_uuids) \n" +
                 "VALUES \n" +
-                "\t(?, ?, ?, ?, ?, ?, ?, ?)\n" +
+                "\t(?, ?, ?, ?, ?, ?, ?, ?, ?)\n" +
                 "ON DUPLICATE KEY UPDATE\n" +
                 "\tuuid = VALUES(uuid),\n" +
                 "\tdaily_last_date = VALUES(daily_last_date),\n" +
@@ -722,6 +672,7 @@ public class DatabaseQueries {
             String premiumStorageString = ItemSerializer.itemStackArrayToBase64(premiumStorage);
             pst.setString(7, premiumStorageString);
             pst.setString(8, language);
+            pst.setString(9, friendUUIDS);
 
             //2 = replaced, 1 = new row added
             int returnValue = pst.executeUpdate();
@@ -819,48 +770,6 @@ public class DatabaseQueries {
         }
     }
 
-    /**
-     * @param uuid
-     * @param friendList
-     * @return 2 = replaced, 1 = new row added, 0 no change, -1 failed
-     */
-    public static int setFriendsOfPlayer(UUID uuid, List<OfflinePlayer> friendList) {
-        String SQL_QUERY = "INSERT INTO goa_player_friend \n" +
-                "\t(uuid, friend_uuids) \n" +
-                "VALUES \n" +
-                "\t(?, ?)\n" +
-                "ON DUPLICATE KEY UPDATE\n" +
-                "\tuuid = VALUES(uuid),\n" +
-                "\tfriend_uuids = VALUES(friend_uuids);";
-
-        StringBuilder friendUUIDs = new StringBuilder();
-        for (OfflinePlayer friend : friendList) {
-            friendUUIDs.append(friend.getUniqueId()).append(",");
-        }
-
-        if (friendUUIDs.isEmpty()) {
-            return 0;
-        }
-
-        try (Connection con = ConnectionPool.getConnection()) {
-            PreparedStatement pst = con.prepareStatement(SQL_QUERY);
-
-            pst.setString(1, uuid.toString());
-            pst.setString(2, friendUUIDs.toString());
-
-            //2 = replaced, 1 = new row added
-            int returnValue = pst.executeUpdate();
-
-            pst.close();
-
-            return returnValue;
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        }
-
-        return -1;
-    }
-
     public static boolean setMembersOfGuild(String guild, HashMap<UUID, PlayerRankInGuild> playerPlayerRankInGuildHashMap) {
         try (Connection connection = ConnectionPool.getConnection();
              Statement statement = connection.createStatement()) {
@@ -920,10 +829,11 @@ public class DatabaseQueries {
         String SQL_QUERY = "INSERT INTO goa_player_character \n" +
                 "\t(uuid, character_no, off_hand, slot_parrot, slot_necklace, slot_ring, slot_earring, slot_glove, " +
                 "slot_pet, chat_tag, crafting_experiences, inventory, activequests, turnedinquests, location, armor_content, " +
-                "rpg_class, class_skills, totalexp, attr_one, attr_two, attr_three, attr_four, attr_five, skill_one, skill_two, skill_three, skill_passive, skill_ultimate, " +
-                "slot_tool_axe, slot_tool_bottle, slot_tool_hoe, slot_tool_pickaxe) \n" +
+                "rpg_class, totalexp, slot_tool_axe, slot_tool_bottle, slot_tool_hoe, slot_tool_pickaxe) \n" +
                 "VALUES \n" +
-                "\t(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)\n" +
+                "\t(?, ?, ?, ?, ?, ?, ?, ?, " +
+                "?, ?, ?, ?, ?, ?, ?, ?, " +
+                "?, ?, ?, ?, ?, ?)\n" +
                 "ON DUPLICATE KEY UPDATE\n" +
                 "\tuuid = VALUES(uuid),\n" +
                 "\tcharacter_no = VALUES(character_no),\n" +
@@ -942,18 +852,7 @@ public class DatabaseQueries {
                 "\tlocation = VALUES(location),\n" +
                 "\tarmor_content = VALUES(armor_content),\n" +
                 "\trpg_class = VALUES(rpg_class),\n" +
-                "\tclass_skills = VALUES(class_skills),\n" +
                 "\ttotalexp = VALUES(totalexp),\n" +
-                "\tattr_one = VALUES(attr_one),\n" +
-                "\tattr_two = VALUES(attr_two),\n" +
-                "\tattr_three = VALUES(attr_three),\n" +
-                "\tattr_four = VALUES(attr_four),\n" +
-                "\tattr_five = VALUES(attr_five),\n" +
-                "\tskill_one = VALUES(skill_one),\n" +
-                "\tskill_two = VALUES(skill_two),\n" +
-                "\tskill_three = VALUES(skill_three),\n" +
-                "\tskill_passive = VALUES(skill_passive),\n" +
-                "\tskill_ultimate = VALUES(skill_ultimate),\n" +
                 "\tslot_tool_axe = VALUES(slot_tool_axe),\n" +
                 "\tslot_tool_bottle = VALUES(slot_tool_bottle),\n" +
                 "\tslot_tool_hoe = VALUES(slot_tool_hoe),\n" +
@@ -1076,87 +975,37 @@ public class DatabaseQueries {
             String rpgClassStr = rpgCharacter.getRpgClassStr();
             pst.setString(17, rpgClassStr);
 
-            HashMap<String, RPGClassStats> unlockedClasses = rpgCharacter.getClassToClassStats();
-            StringBuilder unlockedClassesString = new StringBuilder();
-            int i = 0;
-            for (String unlockedClass : unlockedClasses.keySet()) {
-                if (i > 0) {
-                    unlockedClassesString.append(";");
-                }
-                RPGClassStats rpgClassStats = unlockedClasses.get(unlockedClass);
-
-                unlockedClassesString.append(unlockedClass);
-                unlockedClassesString.append("-");
-                unlockedClassesString.append(rpgClassStats.getOne());
-                unlockedClassesString.append("-");
-                unlockedClassesString.append(rpgClassStats.getTwo());
-                unlockedClassesString.append("-");
-                unlockedClassesString.append(rpgClassStats.getThree());
-                unlockedClassesString.append("-");
-                unlockedClassesString.append(rpgClassStats.getPassive());
-                unlockedClassesString.append("-");
-                unlockedClassesString.append(rpgClassStats.getUltimate());
-                unlockedClassesString.append("-");
-                unlockedClassesString.append(rpgClassStats.getTotalExperience());
-
-                i++;
-            }
-            pst.setString(18, unlockedClassesString.toString());
-
             RPGCharacterStats rpgCharacterStats = rpgCharacter.getRpgCharacterStats();
 
             int totalExp = rpgCharacterStats.getTotalExp();
-            pst.setInt(19, totalExp);
-
-            int strength = rpgCharacterStats.getAttribute(AttributeType.BONUS_ELEMENT_DAMAGE).getInvested();
-            pst.setInt(20, strength);
-            int spirit = rpgCharacterStats.getAttribute(AttributeType.BONUS_ELEMENT_DEFENSE).getInvested();
-            pst.setInt(21, spirit);
-            int endurance = rpgCharacterStats.getAttribute(AttributeType.BONUS_MAX_HEALTH).getInvested();
-            pst.setInt(22, endurance);
-            int intelligence = rpgCharacterStats.getAttribute(AttributeType.BONUS_MAX_MANA).getInvested();
-            pst.setInt(23, intelligence);
-            int dexterity = rpgCharacterStats.getAttribute(AttributeType.BONUS_CRITICAL_CHANCE).getInvested();
-            pst.setInt(24, dexterity);
-
-            SkillBar skillBar = rpgCharacter.getSkillBar();
-            int skill_one = skillBar.getInvestedSkillPoints(0);
-            pst.setInt(25, skill_one);
-            int skill_two = skillBar.getInvestedSkillPoints(1);
-            pst.setInt(26, skill_two);
-            int skill_three = skillBar.getInvestedSkillPoints(2);
-            pst.setInt(27, skill_three);
-            int skill_passive = skillBar.getInvestedSkillPoints(3);
-            pst.setInt(28, skill_passive);
-            int skill_ultimate = skillBar.getInvestedSkillPoints(4);
-            pst.setInt(29, skill_ultimate);
+            pst.setInt(18, totalExp);
 
             if (!rpgCharacter.getRpgInventory().getToolSlot(GatheringToolType.AXE).isEmpty()) {
                 String itemString = ItemSerializer.itemStackToBase64(rpgCharacter.getRpgInventory().getToolSlot(GatheringToolType.AXE).getItemOnSlot());
-                pst.setString(30, itemString);
+                pst.setString(19, itemString);
             } else {
-                pst.setNull(30, Types.BLOB);
+                pst.setNull(19, Types.BLOB);
             }
 
             if (!rpgCharacter.getRpgInventory().getToolSlot(GatheringToolType.BOTTLE).isEmpty()) {
                 String itemString = ItemSerializer.itemStackToBase64(rpgCharacter.getRpgInventory().getToolSlot(GatheringToolType.BOTTLE).getItemOnSlot());
-                pst.setString(31, itemString);
+                pst.setString(20, itemString);
             } else {
-                pst.setNull(31, Types.BLOB);
+                pst.setNull(20, Types.BLOB);
             }
 
             if (!rpgCharacter.getRpgInventory().getToolSlot(GatheringToolType.HOE).isEmpty()) {
                 String itemString = ItemSerializer.itemStackToBase64(rpgCharacter.getRpgInventory().getToolSlot(GatheringToolType.HOE).getItemOnSlot());
-                pst.setString(32, itemString);
+                pst.setString(21, itemString);
             } else {
-                pst.setNull(32, Types.BLOB);
+                pst.setNull(21, Types.BLOB);
             }
 
             if (!rpgCharacter.getRpgInventory().getToolSlot(GatheringToolType.PICKAXE).isEmpty()) {
                 String itemString = ItemSerializer.itemStackToBase64(rpgCharacter.getRpgInventory().getToolSlot(GatheringToolType.PICKAXE).getItemOnSlot());
-                pst.setString(33, itemString);
+                pst.setString(22, itemString);
             } else {
-                pst.setNull(33, Types.BLOB);
+                pst.setNull(22, Types.BLOB);
             }
 
             //2 = replaced, 1 = new row added

@@ -27,10 +27,10 @@ public class SkillCastTrigger extends TriggerComponent {
     }
 
     @Override
-    public boolean execute(LivingEntity caster, int skillLevel, List<LivingEntity> targets, int castCounter, int skillIndex) {
+    public boolean execute(LivingEntity caster, int skillLevel, List<LivingEntity> targets, int castCounter, int skillId) {
         if (targets.isEmpty()) return false;
 
-        this.skillIndex = skillIndex;
+        this.skillId = skillId;
         this.caster = caster;
         this.skillLevel = skillLevel;
         this.castCounter = castCounter;
@@ -39,7 +39,7 @@ public class SkillCastTrigger extends TriggerComponent {
 
         for (LivingEntity target : targets) {
             if (target instanceof Player) {
-                TriggerListener.add((Player) target, skillCastTrigger);
+                TriggerListener.add((Player) target, skillCastTrigger, skillId);
             }
         }
 
@@ -59,7 +59,7 @@ public class SkillCastTrigger extends TriggerComponent {
         targets.add(attacker);
         if (CommandAdmin.DEBUG_MODE) attacker.sendMessage("skillCast callback");
 
-        return executeChildren(caster, skillLevel, targets, castCounter, skillIndex);
+        return executeChildren(caster, skillLevel, targets, castCounter, skillId);
     }
 
     public int getSkillLevel() {

@@ -27,10 +27,10 @@ public class AddPiercingToArrowShootFromCrossbowTrigger extends TriggerComponent
     }
 
     @Override
-    public boolean execute(LivingEntity caster, int skillLevel, List<LivingEntity> targets, int castCounter, int skillIndex) {
+    public boolean execute(LivingEntity caster, int skillLevel, List<LivingEntity> targets, int castCounter, int skillId) {
         if (targets.isEmpty()) return false;
 
-        this.skillIndex = skillIndex;
+        this.skillId = skillId;
         this.caster = caster;
         this.skillLevel = skillLevel;
 
@@ -38,7 +38,7 @@ public class AddPiercingToArrowShootFromCrossbowTrigger extends TriggerComponent
 
         for (LivingEntity target : targets) {
             if (target instanceof Player) {
-                TriggerListener.add((Player) target, crossbowTrigger);
+                TriggerListener.add((Player) target, crossbowTrigger, skillId);
             }
         }
 

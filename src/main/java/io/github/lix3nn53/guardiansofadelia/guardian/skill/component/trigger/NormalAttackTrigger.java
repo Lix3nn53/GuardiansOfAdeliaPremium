@@ -36,10 +36,10 @@ public class NormalAttackTrigger extends TriggerComponent {
     }
 
     @Override
-    public boolean execute(LivingEntity caster, int skillLevel, List<LivingEntity> targets, int castCounter, int skillIndex) {
+    public boolean execute(LivingEntity caster, int skillLevel, List<LivingEntity> targets, int castCounter, int skillId) {
         if (targets.isEmpty()) return false;
 
-        this.skillIndex = skillIndex;
+        this.skillId = skillId;
         this.caster = caster;
         this.skillLevel = skillLevel;
         this.castCounter = castCounter;
@@ -48,7 +48,7 @@ public class NormalAttackTrigger extends TriggerComponent {
 
         for (LivingEntity target : targets) {
             if (target instanceof Player) {
-                TriggerListener.add((Player) target, normalAttackTrigger);
+                TriggerListener.add((Player) target, normalAttackTrigger, skillId);
             }
         }
 
@@ -64,7 +64,7 @@ public class NormalAttackTrigger extends TriggerComponent {
      * The callback when player lands that applies child components
      */
     public boolean callback(Player attacker, LivingEntity target, boolean isProjectile) {
-        if (CommandAdmin.DEBUG_MODE) attacker.sendMessage("NormalAttackTrigger callback, skillIndex: " + skillIndex);
+        if (CommandAdmin.DEBUG_MODE) attacker.sendMessage("NormalAttackTrigger callback, skillIndex: " + skillId);
         if (!(this.melee && this.projectile)) {
             if (this.melee && isProjectile) {
                 return false;
@@ -76,7 +76,7 @@ public class NormalAttackTrigger extends TriggerComponent {
         ArrayList<LivingEntity> targets = new ArrayList<>();
         targets.add(target);
 
-        return executeChildren(caster, skillLevel, targets, castCounter, skillIndex);
+        return executeChildren(caster, skillLevel, targets, castCounter, skillId);
     }
 
     public int getSkillLevel() {

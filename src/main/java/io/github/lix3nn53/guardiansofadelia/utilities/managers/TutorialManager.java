@@ -3,6 +3,8 @@ package io.github.lix3nn53.guardiansofadelia.utilities.managers;
 import io.github.lix3nn53.guardiansofadelia.guardian.GuardianData;
 import io.github.lix3nn53.guardiansofadelia.guardian.GuardianDataManager;
 import io.github.lix3nn53.guardiansofadelia.guardian.character.*;
+import io.github.lix3nn53.guardiansofadelia.guardian.skill.SkillTree;
+import io.github.lix3nn53.guardiansofadelia.guardian.skill.player.SkillRPGClassData;
 import io.github.lix3nn53.guardiansofadelia.items.GearLevel;
 import io.github.lix3nn53.guardiansofadelia.items.RpgGears.ArmorGearType;
 import io.github.lix3nn53.guardiansofadelia.items.RpgGears.ItemTier;
@@ -17,7 +19,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
-import java.util.List;
+import java.util.Set;
 
 
 public class TutorialManager {
@@ -28,7 +30,11 @@ public class TutorialManager {
             String startingClass = RPGClassManager.getStartingClass();
             RPGCharacter rpgCharacter = new RPGCharacter(startingClass, player);
             guardianData.setActiveCharacter(rpgCharacter, charNo);
-            rpgCharacter.getSkillBar().remakeSkillBar(guardianData.getLanguage());
+
+            RPGClass rpgClass = RPGClassManager.getClass(startingClass);
+            SkillTree skillTree = rpgClass.getSkillTree();
+            SkillRPGClassData skillRPGClassData = rpgCharacter.getRPGClassStats().getSkillRPGClassData();
+            rpgCharacter.getSkillBar().remakeSkillBar(skillTree, skillRPGClassData, guardianData.getLanguage());
 
             // Character level
             int totalExpForLevel = RPGCharacterExperienceManager.getTotalRequiredExperience(90);
@@ -36,14 +42,12 @@ public class TutorialManager {
             rpgCharacterStats.setTotalExp(totalExpForLevel);
 
             int totalExpClass = RPGClassExperienceManager.getTotalRequiredExperience(20);
-            for (int i = 1; i <= RPGClassManager.HIGHEST_CLASS_TIER; i++) {
-                List<RPGClass> classesAtTier = RPGClassManager.getClassesAtTier(i);
-
-                for (RPGClass rpgClass : classesAtTier) {
-                    String classStringNoColor = rpgClass.getClassStringNoColor();
-                    RPGClassStats rpgClassStats = rpgCharacter.addClassStats(classStringNoColor);
-                    rpgClassStats.giveExpNoMessage(totalExpClass);
-                }
+            Set<String> classes = RPGClassManager.getClasses();
+            for (String className : classes) {
+                RPGClass rpgClassInner = RPGClassManager.getClass(className);
+                String classStringNoColor = rpgClassInner.getClassStringNoColor();
+                RPGClassStats rpgClassStats = rpgCharacter.addClassStats(classStringNoColor);
+                rpgClassStats.giveExpNoMessage(totalExpClass);
             }
 
             // InventoryUtils.setMenuItemPlayer(player);

@@ -124,6 +124,7 @@ public class ClassConfigurations {
 
     private static Skill loadSkill(ConfigurationSection skillSection, int skillIndex) {
         int id = skillSection.getInt("id");
+        int parentSkillId = skillSection.getInt("parentSkillId");
         String name = skillSection.getString("name");
         List<String> description = skillSection.getStringList("description");
         int customModelData = skillSection.getInt("customModelData");

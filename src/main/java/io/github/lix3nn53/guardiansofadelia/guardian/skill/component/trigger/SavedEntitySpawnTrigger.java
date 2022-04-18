@@ -26,10 +26,10 @@ public class SavedEntitySpawnTrigger extends TriggerComponent {
     }
 
     @Override
-    public boolean execute(LivingEntity caster, int skillLevel, List<LivingEntity> targets, int castCounter, int skillIndex) {
+    public boolean execute(LivingEntity caster, int skillLevel, List<LivingEntity> targets, int castCounter, int skillId) {
         if (targets.isEmpty()) return false;
 
-        this.skillIndex = skillIndex;
+        this.skillId = skillId;
         this.caster = caster;
         this.skillLevel = skillLevel;
         this.castCounter = castCounter;
@@ -38,7 +38,7 @@ public class SavedEntitySpawnTrigger extends TriggerComponent {
 
         for (LivingEntity target : targets) {
             if (target instanceof Player) {
-                TriggerListener.add((Player) target, savedEntitySpawnTrigger);
+                TriggerListener.add((Player) target, savedEntitySpawnTrigger, skillId);
             }
         }
 
@@ -57,7 +57,7 @@ public class SavedEntitySpawnTrigger extends TriggerComponent {
         List<LivingEntity> targets = new ArrayList<>();
         targets.add(created);
 
-        return executeChildren(caster, skillLevel, targets, castCounter, skillIndex);
+        return executeChildren(caster, skillLevel, targets, castCounter, skillId);
     }
 
     public int getSkillLevel() {

@@ -40,8 +40,8 @@ public class SkillOnGroundConfigurations {
             cooldowns.add(0);
             List<String> description = new ArrayList<>();
 
-            Skill skill = new Skill(id, "skillOnGround", 1, Material.IRON_HOE, 1, description,
-                    new ArrayList<>(), new ArrayList<>(), cooldowns, parentSkillId);
+            Skill skill = new Skill(-1, "skillOnGround", 1, Material.IRON_HOE, 1, description,
+                    new ArrayList<>(), new ArrayList<>(), cooldowns, -1);
 
             SkillComponent triggerComponent = SkillComponentLoader.loadSection(configurationSection.getConfigurationSection("trigger"));
             skill.addTrigger(triggerComponent);
