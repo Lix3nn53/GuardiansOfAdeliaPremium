@@ -19,7 +19,11 @@ public class SkillBarData {
         this(-1, -1, -1, -1);
     }
 
-    public int get(int i) {
+    /**
+     * @param i skill slot index
+     * @return skillId assigned to slot
+     */
+    public int getSkillId(int i) {
         return switch (i) {
             case 0 -> one;
             case 1 -> two;

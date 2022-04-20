@@ -10,6 +10,9 @@ import io.github.lix3nn53.guardiansofadelia.guardian.attribute.AttributeType;
 import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGCharacter;
 import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGCharacterStats;
 import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGClassStats;
+import io.github.lix3nn53.guardiansofadelia.guardian.skill.player.SkillBarData;
+import io.github.lix3nn53.guardiansofadelia.guardian.skill.player.SkillRPGClassData;
+import io.github.lix3nn53.guardiansofadelia.guardian.skill.player.SkillTreeData;
 import io.github.lix3nn53.guardiansofadelia.guild.Guild;
 import io.github.lix3nn53.guardiansofadelia.guild.PlayerRankInGuild;
 import io.github.lix3nn53.guardiansofadelia.jobs.RPGCharacterCraftingStats;
@@ -27,10 +30,7 @@ import org.bukkit.inventory.ItemStack;
 import java.io.IOException;
 import java.sql.*;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public class DatabaseQueries {
 
@@ -82,12 +82,13 @@ public class DatabaseQueries {
                     "     CONSTRAINT `FK_55` FOREIGN KEY `fkIdx_55` (`uuid`) REFERENCES `goa_player` (`uuid`)\n" +
                     ");");
             statement.addBatch("CREATE TABLE IF NOT EXISTS `goa_player_character_class` (\n" +
-                    "     `class_name` NOT NULL,\n" +
+                    "     `class_name` varchar(40) NOT NULL,\n" +
                     "     `uuid` varchar(40) NOT NULL,\n" +
                     "     `character_no` smallint NOT NULL,\n" +
                     "     `skill_points` mediumtext NOT NULL,\n" +
                     "     `totalexp` int NOT NULL,\n" +
                     "     `attribute_points` mediumtext NOT NULL,\n" +
+                    "     `skill_bar` mediumtext NOT NULL,\n" +
                     "     UNIQUE KEY `Index_228` (`class_name`, `uuid`, `character_no`),\n" +
                     "     KEY `FK_215` (`uuid`),\n" +
                     "     CONSTRAINT `FK_213` FOREIGN KEY `FK_215` (`uuid`) REFERENCES `goa_player` (`uuid`)\n" +
@@ -270,56 +271,24 @@ public class DatabaseQueries {
         try (Connection con = ConnectionPool.getConnection()) {
             PreparedStatement pst = con.prepareStatement(SQL_QUERY);
 
-            pst.setString(1, player.getUniqueId().toString());
+            UUID uuid = player.getUniqueId();
+            pst.setString(1, uuid.toString());
             pst.setInt(2, characterNo);
 
             ResultSet resultSet = pst.executeQuery();
 
             if (resultSet.next()) {
-                String rpgClassString = resultSet.getString("rpg_class");
+                String rpgClassStr = resultSet.getString("rpg_class").toUpperCase();
 
-                String unlockedClassesString = resultSet.getString("class_skills");
-                String[] classWithDataArray = unlockedClassesString.split(";");
-                HashMap<String, RPGClassStats> unlockedClasses = new HashMap<>();
-                for (String classWithData : classWithDataArray) {
-                    String[] classDataArray = classWithData.split("-");
+                HashMap<String, RPGClassStats> rpgClassStatsMap = getRPGClassStats(uuid, characterNo);
 
-                    String unlockedClassStr = classDataArray[0];
-                    int one = Integer.parseInt(classDataArray[1]);
-                    int two = Integer.parseInt(classDataArray[2]);
-                    int three = Integer.parseInt(classDataArray[3]);
-                    int passive = Integer.parseInt(classDataArray[4]);
-                    int ultimate = Integer.parseInt(classDataArray[5]);
-                    int experience = Integer.parseInt(classDataArray[6]);
-
-                    RPGClassStats rpgClassStats = new RPGClassStats(one, two, three, passive, ultimate, experience);
-                    unlockedClasses.put(unlockedClassStr, rpgClassStats);
-                }
-
-                int skill_one = resultSet.getInt("skill_one");
-                int skill_two = resultSet.getInt("skill_two");
-                int skill_three = resultSet.getInt("skill_three");
-                int skill_passive = resultSet.getInt("skill_passive");
-                int skill_ultimate = resultSet.getInt("skill_ultimate");
-
-                rpgCharacter = new RPGCharacter(rpgClassString, player, skill_one, skill_two, skill_three, skill_passive, skill_ultimate, unlockedClasses);
+                rpgCharacter = new RPGCharacter(rpgClassStr, player, rpgClassStatsMap);
                 RPGInventory rpgInventory = rpgCharacter.getRpgInventory();
 
                 RPGCharacterStats rpgCharacterStats = rpgCharacter.getRpgCharacterStats();
 
                 int totalexp = resultSet.getInt("totalexp");
                 rpgCharacterStats.setTotalExp(totalexp);
-
-                int attr_one = resultSet.getInt("attr_one");
-                rpgCharacterStats.getAttribute(AttributeType.BONUS_ELEMENT_DAMAGE).setInvested(attr_one, rpgCharacterStats, false);
-                int attr_two = resultSet.getInt("attr_two");
-                rpgCharacterStats.getAttribute(AttributeType.BONUS_ELEMENT_DEFENSE).setInvested(attr_two, rpgCharacterStats, false);
-                int attr_three = resultSet.getInt("attr_three");
-                rpgCharacterStats.getAttribute(AttributeType.BONUS_MAX_HEALTH).setInvested(attr_three, rpgCharacterStats, false);
-                int attr_four = resultSet.getInt("attr_four");
-                rpgCharacterStats.getAttribute(AttributeType.BONUS_MAX_MANA).setInvested(attr_four, rpgCharacterStats, false);
-                int attr_five = resultSet.getInt("attr_five");
-                rpgCharacterStats.getAttribute(AttributeType.BONUS_CRITICAL_CHANCE).setInvested(attr_five, rpgCharacterStats, false);
 
                 String offHand = resultSet.getString("off_hand");
                 if (!resultSet.wasNull()) {
@@ -511,14 +480,15 @@ public class DatabaseQueries {
                     player.getInventory().setArmorContents(itemStacks);
                 }
 
-                String rpgClassStr = rpgCharacter.getRpgClassStr();
+                RPGClassStats rpgClassStats = rpgClassStatsMap.get(rpgClassStr);
+                HashMap<AttributeType, Integer> attributeInvested = rpgClassStats.getAttributeInvestedMap();
 
                 // Escape IllegalStateException: Asynchronous effect add!
                 Bukkit.getScheduler().runTask(GuardiansOfAdelia.getInstance(), () -> {
-                    rpgCharacterStats.recalculateEquipment(rpgClassStr);
+                    rpgCharacterStats.recalculateEquipment(rpgClassStr, attributeInvested);
                 });
 
-                rpgCharacterStats.recalculateRPGInventory(rpgCharacter.getRpgInventory());
+                rpgCharacterStats.recalculateRPGInventory(rpgCharacter.getRpgInventory(), attributeInvested);
             }
             resultSet.close();
             pst.close();
@@ -528,6 +498,80 @@ public class DatabaseQueries {
 
         return rpgCharacter;
     }
+
+    public static HashMap<String, RPGClassStats> getRPGClassStats(UUID uuid, int characterNo) {
+        String SQL_QUERY = "SELECT * FROM goa_player_character_class WHERE uuid = ? AND character_no";
+
+        HashMap<String, RPGClassStats> result = new HashMap<>();
+        try (Connection con = ConnectionPool.getConnection()) {
+            PreparedStatement pst = con.prepareStatement(SQL_QUERY);
+
+            pst.setString(1, uuid.toString());
+            pst.setInt(2, characterNo);
+
+            ResultSet resultSet = pst.executeQuery();
+
+            if (resultSet.next()) {
+                String className = resultSet.getString("class_name");
+                String skillPointsTotal = resultSet.getString("skill_points");
+                String totalexpStr = resultSet.getString("totalexp");
+                int totalexp = Integer.parseInt(totalexpStr);
+                String attributePoints = resultSet.getString("attribute_points");
+                String skillBar = resultSet.getString("skill_bar");
+
+                HashMap<Integer, Integer> investedSkillPoints = new HashMap<>();
+                String[] skillPoints = skillPointsTotal.split(";");
+                for (int i = 0; i < skillPoints.length; i++) {
+                    String skillPoint = skillPoints[i];
+                    String[] skillPointSplit = skillPoint.split(",");
+
+                    int skillId = Integer.parseInt(skillPointSplit[0]);
+                    int investedPoints = Integer.parseInt(skillPointSplit[1]);
+
+                    investedSkillPoints.put(skillId, investedPoints);
+                }
+                SkillTreeData skillTreeData = new SkillTreeData(investedSkillPoints);
+
+                HashMap<AttributeType, Integer> investedAttributePoints = new HashMap<>();
+                String[] attrSplit = attributePoints.split(";");
+                for (String attrWithPointStr : attrSplit) {
+                    String[] attrWithPoint = attrWithPointStr.split(",");
+                    AttributeType attributeType = AttributeType.valueOf(attrWithPoint[0]);
+                    int investedPoints = Integer.parseInt(attrWithPoint[1]);
+                    investedAttributePoints.put(attributeType, investedPoints);
+                }
+
+                int barOne = -1;
+                int barTwo = -1;
+                int barThree = -1;
+                int barFour = -1;
+                String[] skillBarSplit = skillBar.split(";");
+                for (int i = 0; i < 4; i++) {
+                    String skillBarString = skillBarSplit[i];
+                    if (i == 0) {
+                        barOne = Integer.parseInt(skillBarString);
+                    } else if (i == 1) {
+                        barTwo = Integer.parseInt(skillBarString);
+                    } else if (i == 2) {
+                        barThree = Integer.parseInt(skillBarString);
+                    } else {
+                        barFour = Integer.parseInt(skillBarString);
+                    }
+                }
+                SkillBarData skillBarData = new SkillBarData(barOne, barTwo, barThree, barFour);
+                SkillRPGClassData skillRPGClassData = new SkillRPGClassData(skillTreeData, skillBarData);
+
+                result.put(className, new RPGClassStats(skillRPGClassData, investedAttributePoints, totalexp));
+            }
+            resultSet.close();
+            pst.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return result;
+    }
+
 
     public static Guild getGuild(String name) throws SQLException {
         String SQL_QUERY = "SELECT * FROM goa_guild WHERE name = ?";
@@ -657,7 +701,8 @@ public class DatabaseQueries {
                 "\tstorage_personal = VALUES(storage_personal),\n" +
                 "\tstorage_bazaar = VALUES(storage_bazaar),\n" +
                 "\tstorage_premium = VALUES(storage_premium),\n" +
-                "\tlang = VALUES(lang);";
+                "\tlang = VALUES(lang),\n" +
+                "\tfriend_uuids = VALUES(friend_uuids);";
         try (Connection con = ConnectionPool.getConnection()) {
             PreparedStatement pst = con.prepareStatement(SQL_QUERY);
 
@@ -1007,6 +1052,68 @@ public class DatabaseQueries {
             } else {
                 pst.setNull(22, Types.BLOB);
             }
+
+            //2 = replaced, 1 = new row added
+            int returnValue = pst.executeUpdate();
+
+            pst.close();
+            return returnValue;
+        }
+    }
+
+    public static int setCharacterClass(UUID uuid, int charNo, String className, RPGClassStats rpgClassStats) throws SQLException {
+        SkillRPGClassData skillRPGClassData = rpgClassStats.getSkillRPGClassData();
+        SkillTreeData skillTreeData = skillRPGClassData.getSkillTreeData();
+        SkillBarData skillBarData = skillRPGClassData.getSkillBarData();
+
+        HashMap<AttributeType, Integer> attributeInvested = rpgClassStats.getAttributeInvestedMap();
+        int totalExperience = rpgClassStats.getTotalExperience();
+
+        String SQL_QUERY = "INSERT INTO goa_player_character_class \n" +
+                "\t(class_name, uuid, character_no, skill_points, totalexp, attribute_points, skill_bar) \n" +
+                "VALUES \n" +
+                "\t(?, ?, ?, ?, ?, ?, ?)\n" +
+                "ON DUPLICATE KEY UPDATE\n" +
+                "\tclass_name = VALUES(class_name),\n" +
+                "\tuuid = VALUES(uuid),\n" +
+                "\tcharacter_no = VALUES(character_no),\n" +
+                "\tskill_points = VALUES(skill_points),\n" +
+                "\ttotalexp = VALUES(totalexp),\n" +
+                "\tattribute_points = VALUES(attribute_points),\n" +
+                "\tskill_bar = VALUES(skill_bar);";
+        try (Connection con = ConnectionPool.getConnection()) {
+            PreparedStatement pst = con.prepareStatement(SQL_QUERY);
+
+            pst.setString(1, className);
+            pst.setString(2, uuid.toString());
+            pst.setInt(3, charNo);
+
+            StringBuilder skill_points = new StringBuilder();
+            Set<Integer> skillIds = skillTreeData.getSkillIds();
+            for (int skillId : skillIds) {
+                int investedSkillPoints = skillTreeData.getInvestedSkillPoints(skillId);
+                skill_points.append(skillId).append(",").append(investedSkillPoints).append(";");
+            }
+            pst.setString(4, skill_points.toString());
+
+            pst.setInt(5, totalExperience);
+
+            StringBuilder attribute_points = new StringBuilder();
+            for (AttributeType attributeType : AttributeType.values()) {
+                int invested = 0;
+                if (attributeInvested.containsKey(attributeType)) {
+                    invested = attributeInvested.get(attributeType);
+                }
+                attribute_points.append(attributeType.name()).append(",").append(invested).append(";");
+            }
+            pst.setString(6, attribute_points.toString());
+
+            StringBuilder skill_bar = new StringBuilder();
+            for (int i = 0; i < 4; i++) {
+                int skillId = skillBarData.getSkillId(i);
+                skill_bar.append(skillId).append(";");
+            }
+            pst.setString(7, skill_bar.toString());
 
             //2 = replaced, 1 = new row added
             int returnValue = pst.executeUpdate();

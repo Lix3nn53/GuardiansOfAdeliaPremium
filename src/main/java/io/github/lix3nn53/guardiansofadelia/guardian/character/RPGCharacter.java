@@ -2,6 +2,7 @@ package io.github.lix3nn53.guardiansofadelia.guardian.character;
 
 import io.github.lix3nn53.guardiansofadelia.chat.ChatManager;
 import io.github.lix3nn53.guardiansofadelia.chat.ChatTag;
+import io.github.lix3nn53.guardiansofadelia.guardian.attribute.AttributeType;
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.SkillBar;
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.SkillDataManager;
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.SkillTree;
@@ -36,11 +37,17 @@ public final class RPGCharacter {
 
     public RPGCharacter(String rpgClassStr, Player player, HashMap<String, RPGClassStats> classToClassStats) {
         this.rpgInventory = new RPGInventory(player);
-        rpgCharacterStats = new RPGCharacterStats(player, rpgClassStr);
         this.rpgClassStr = rpgClassStr.toUpperCase();
-        this.classToClassStats = classToClassStats;
 
-        RPGClassStats rpgClassStats = this.classToClassStats.get(this.rpgClassStr);
+        this.classToClassStats = classToClassStats;
+        RPGClassStats rpgClassStats = new RPGClassStats();
+        if (classToClassStats.containsKey(rpgClassStr)) {
+            rpgClassStats = classToClassStats.get(rpgClassStr);
+        }
+
+        HashMap<AttributeType, Integer> attributeInvested = rpgClassStats.getAttributeInvestedMap();
+        this.rpgCharacterStats = new RPGCharacterStats(player, rpgClassStr, attributeInvested);
+
         SkillRPGClassData skillRPGClassData = rpgClassStats.getSkillRPGClassData();
         RPGClass rpgClass = RPGClassManager.getClass(rpgClassStr);
         this.skillBar = new SkillBar(player, rpgClass.getSkillTree(), skillRPGClassData, false);
@@ -49,14 +56,17 @@ public final class RPGCharacter {
 
     public RPGCharacter(String rpgClassStr, Player player) {
         this.rpgInventory = new RPGInventory(player);
-        rpgCharacterStats = new RPGCharacterStats(player, rpgClassStr);
         this.rpgClassStr = rpgClassStr.toUpperCase();
-        RPGClass rpgClass = RPGClassManager.getClass(rpgClassStr);
 
         this.classToClassStats = new HashMap<>();
         RPGClassStats rpgClassStats = new RPGClassStats();
         this.classToClassStats.put(rpgClassStr, rpgClassStats);
+
+        HashMap<AttributeType, Integer> attributeInvested = rpgClassStats.getAttributeInvestedMap();
+        this.rpgCharacterStats = new RPGCharacterStats(player, rpgClassStr, attributeInvested);
+
         SkillRPGClassData skillRPGClassData = rpgClassStats.getSkillRPGClassData();
+        RPGClass rpgClass = RPGClassManager.getClass(rpgClassStr);
         this.skillBar = new SkillBar(player, rpgClass.getSkillTree(), skillRPGClassData, false);
     }
 
@@ -100,7 +110,7 @@ public final class RPGCharacter {
         return rpgClassStats;
     }
 
-    public boolean changeClass(Player player, String newClassStr, String lang) {
+    public boolean changeClass(Player player, String newClassStr, HashMap<AttributeType, Integer> attributeInvested, String lang) {
         String s = newClassStr.toUpperCase();
         RPGClass rpgClass = RPGClassManager.getClass(s);
 
@@ -124,7 +134,7 @@ public final class RPGCharacter {
         this.skillBar.remakeSkillBar(skillTree, skillRPGClassData, lang);
 
         this.rpgCharacterStats.setRpgClassStr(s);
-        this.rpgCharacterStats.recalculateEquipment(rpgClassStr);
+        this.rpgCharacterStats.recalculateEquipment(rpgClassStr, attributeInvested);
         player.sendMessage(ChatPalette.YELLOW + "Changed class to " + rpgClass.getClassString() + ChatPalette.YELLOW + "!");
 
         ActionBarInfo actionBarInfo = rpgClass.getActionBarInfo();

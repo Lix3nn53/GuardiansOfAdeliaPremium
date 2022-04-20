@@ -85,7 +85,7 @@ public class RPGCharacterStats {
 
     private final BukkitTask actionBarTask;
 
-    public RPGCharacterStats(Player player, String startClass) {
+    public RPGCharacterStats(Player player, String startClass, HashMap<AttributeType, Integer> attributeInvested) {
         this.player = player;
         this.rpgClassStr = startClass;
 
@@ -112,7 +112,7 @@ public class RPGCharacterStats {
         //offhand slot
         shield = new ArmorStatHolder(0, 0);
 
-        onMaxHealthChange();
+        onMaxHealthChange(attributeInvested.get(AttributeType.BONUS_MAX_HEALTH));
 
         //start action bar scheduler
         actionBarTask = new BukkitRunnable() {
@@ -130,7 +130,9 @@ public class RPGCharacterStats {
 
                 String between = actionBarInfo.getActionBarBetween(player);
 
-                String message = ChatPalette.RED + "❤" + ((int) (player.getHealth() + 0.5)) + "/" + getTotalMaxHealth() + between + ChatPalette.BLUE_LIGHT + "✦" + currentMana + "/" + getTotalMaxMana();
+                String message = ChatPalette.RED + "❤" + ((int) (player.getHealth() + 0.5)) + "/" +
+                        getTotalMaxHealth(attributeInvested.get(AttributeType.BONUS_MAX_HEALTH)) + between +
+                        ChatPalette.BLUE_LIGHT + "✦" + currentMana + "/" + getTotalMaxMana(attributeInvested.get(AttributeType.BONUS_MAX_MANA));
 
                 player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(message));
             }
@@ -152,7 +154,7 @@ public class RPGCharacterStats {
         updateExpBar(level);
     }
 
-    public void giveExp(int expToGive) {
+    public void giveExp(int expToGive, HashMap<AttributeType, Integer> attributeInvested) {
         if (player.getLevel() >= 90) { //last level is 90
             return;
         }
@@ -168,11 +170,12 @@ public class RPGCharacterStats {
             currentLevel = newLevel;
 
             playLevelUpAnimation();
-            onMaxHealthChange();
+            onMaxHealthChange(attributeInvested.get(AttributeType.BONUS_MAX_HEALTH));
             sendLevelUpMessage(newLevel);
             player.sendTitle(ChatPalette.GOLD + "Level Up!", ChatPalette.YELLOW + "Your new level is " + ChatPalette.GOLD + newLevel, 30, 80, 30);
             player.setHealth(player.getAttribute(org.bukkit.attribute.Attribute.GENERIC_MAX_HEALTH).getValue());
-            setCurrentMana(getTotalMaxMana());
+            int investedMana = attributeInvested.get(AttributeType.BONUS_MAX_MANA);
+            setCurrentMana(getTotalMaxMana(investedMana), investedMana);
         }
 
         updateExpBar(currentLevel);
@@ -238,15 +241,15 @@ public class RPGCharacterStats {
         return currentMana;
     }
 
-    public void setCurrentMana(int currentMana) {
+    public void setCurrentMana(int currentMana, int invested) {
         this.currentMana = currentMana;
-        onCurrentManaChange();
+        onCurrentManaChange(invested);
     }
 
-    public void consumeMana(int manaToConsume) {
+    public void consumeMana(int manaToConsume, int invested) {
         this.currentMana -= manaToConsume;
         if (this.currentMana < 0) this.currentMana = 0;
-        onCurrentManaChange();
+        onCurrentManaChange(invested);
     }
 
     public Attribute getAttribute(AttributeType attributeType) {
@@ -257,7 +260,7 @@ public class RPGCharacterStats {
         return elementHashMap.get(elementType);
     }
 
-    public int getTotalMaxHealth() {
+    public int getTotalMaxHealth(int invested) {
         int totalMaxHealth = maxHealth;
 
         if (helmet != null) {
@@ -276,16 +279,17 @@ public class RPGCharacterStats {
             totalMaxHealth += shield.getMaxHealth();
         }
 
-        return (int) (totalMaxHealth + attributeHashMap.get(AttributeType.BONUS_MAX_HEALTH).getIncrement(player.getLevel(), rpgClassStr) + 0.5);
+        return (int) (totalMaxHealth + attributeHashMap.get(AttributeType.BONUS_MAX_HEALTH).getIncrement(player.getLevel(), rpgClassStr, invested) + 0.5);
     }
 
-    public int getTotalMaxMana() {
-        return (int) (maxMana + attributeHashMap.get(AttributeType.BONUS_MAX_MANA).getIncrement(player.getLevel(), rpgClassStr) + 0.5);
+    public int getTotalMaxMana(int invested) {
+        return (int) (maxMana + attributeHashMap.get(AttributeType.BONUS_MAX_MANA).getIncrement(player.getLevel(), rpgClassStr, invested) + 0.5);
     }
 
-    public int getTotalElementDefense() {
+    public int getTotalElementDefense(HashMap<AttributeType, Integer> attributeInvested) {
         int equipment = helmet.getDefense() + chestplate.getDefense() + leggings.getDefense() + boots.getDefense() + shield.getDefense();
-        float attr = attributeHashMap.get(AttributeType.BONUS_ELEMENT_DEFENSE).getIncrement(player.getLevel(), rpgClassStr);
+        int invested = attributeInvested.get(AttributeType.BONUS_ELEMENT_DEFENSE);
+        float attr = attributeHashMap.get(AttributeType.BONUS_ELEMENT_DEFENSE).getIncrement(player.getLevel(), rpgClassStr, invested);
 
         int def = (int) ((equipment + attr) * buffElementDefense + 0.5);
 
@@ -294,8 +298,9 @@ public class RPGCharacterStats {
         return def;
     }
 
-    public float getTotalCriticalChance() {
-        float chance = baseCriticalChance + attributeHashMap.get(AttributeType.BONUS_CRITICAL_CHANCE).getIncrement(player.getLevel(), rpgClassStr);
+    public float getTotalCriticalChance(HashMap<AttributeType, Integer> attributeInvested) {
+        int invested = attributeInvested.get(AttributeType.BONUS_CRITICAL_CHANCE);
+        float chance = baseCriticalChance + attributeHashMap.get(AttributeType.BONUS_CRITICAL_CHANCE).getIncrement(player.getLevel(), rpgClassStr, invested);
         if (chance > 0.4f) {
             chance = 0.4f;
         }
@@ -329,8 +334,11 @@ public class RPGCharacterStats {
         return v;
     }
 
-    public int getTotalElementDamage(Player player, String rpgClass) {
-        int bonus = (int) (attributeHashMap.get(AttributeType.BONUS_ELEMENT_DAMAGE).getIncrement(player.getLevel(), rpgClass) + 0.5) + damageBonusFromOffhand;
+    public int getTotalElementDamage(Player player, String rpgClass, HashMap<AttributeType, Integer> attributeInvested) {
+        int invested = attributeInvested.get(AttributeType.BONUS_ELEMENT_DAMAGE);
+        int bonus = (int)
+                (attributeHashMap.get(AttributeType.BONUS_ELEMENT_DAMAGE).getIncrement(player.getLevel(), rpgClass, invested) + 0.5)
+                + damageBonusFromOffhand;
 
         ItemStack itemInMainHand = player.getInventory().getItemInMainHand();
 
@@ -353,46 +361,16 @@ public class RPGCharacterStats {
         return (int) ((weapon + bonus) * buffElementDamage + 0.5);
     }
 
-    public void resetAttributes() {
-        for (AttributeType attributeType : AttributeType.values()) {
-            attributeHashMap.get(attributeType).setInvested(0, this, false); // we fix display on bottom of this method
-        }
-
-        onMaxHealthChange();
-        onCurrentManaChange();
-    }
-
-    public int getInvestedAttributePoints() {
-        int total = 0;
-        for (Attribute attribute : attributeHashMap.values()) {
-            int invested = attribute.getInvested();
-            total += invested;
-        }
-
-        return total;
-    }
-
-    public int getAttributePointsLeftToSpend() {
-        int totalExp = getTotalExp();
-        int level = RPGCharacterExperienceManager.getLevel(totalExp);
-
-        int inventedPointsOnAttributes = getInvestedAttributePoints();
-
-        int pointsPerLevel = 1;
-
-        return (level * pointsPerLevel) - inventedPointsOnAttributes;
-    }
-
-    public void onMaxHealthChange() {
-        int totalMaxHealth = getTotalMaxHealth();
+    public void onMaxHealthChange(int invested) {
+        int totalMaxHealth = getTotalMaxHealth(invested);
         player.getAttribute(org.bukkit.attribute.Attribute.GENERIC_MAX_HEALTH).setBaseValue(totalMaxHealth);
         if (player.getHealth() > totalMaxHealth) {
             player.setHealth(totalMaxHealth);
         }
     }
 
-    public void onCurrentManaChange() {
-        int totalMaxMana = getTotalMaxMana();
+    public void onCurrentManaChange(int invested) {
+        int totalMaxMana = getTotalMaxMana(invested);
         if (currentMana > totalMaxMana) {
             currentMana = totalMaxMana;
         }
@@ -413,7 +391,7 @@ public class RPGCharacterStats {
         player.setFoodLevel(foodLevel);
     }
 
-    public void onArmorEquip(ItemStack itemStack, boolean fixDisplay) {
+    public void onArmorEquip(ItemStack itemStack, HashMap<AttributeType, Integer> attributeInvested, boolean fixDisplay) {
         Material material = itemStack.getType();
         ArmorSlot armorSlot = ArmorSlot.getArmorSlot(material);
         if (armorSlot != null) {
@@ -430,24 +408,24 @@ public class RPGCharacterStats {
             switch (armorSlot) {
                 case HELMET:
                     helmet = new ArmorStatHolder(health, defense);
-                    setPassiveStatBonuses(EquipmentSlot.HEAD, itemStack);
+                    setPassiveStatBonuses(EquipmentSlot.HEAD, itemStack, attributeInvested);
                     break;
                 case CHESTPLATE:
                     chestplate = new ArmorStatHolder(health, defense);
-                    setPassiveStatBonuses(EquipmentSlot.CHEST, itemStack);
+                    setPassiveStatBonuses(EquipmentSlot.CHEST, itemStack, attributeInvested);
                     break;
                 case LEGGINGS:
                     leggings = new ArmorStatHolder(health, defense);
-                    setPassiveStatBonuses(EquipmentSlot.LEGS, itemStack);
+                    setPassiveStatBonuses(EquipmentSlot.LEGS, itemStack, attributeInvested);
                     break;
                 case BOOTS:
                     boots = new ArmorStatHolder(health, defense);
-                    setPassiveStatBonuses(EquipmentSlot.FEET, itemStack);
+                    setPassiveStatBonuses(EquipmentSlot.FEET, itemStack, attributeInvested);
                     break;
             }
 
             if (fixDisplay) {
-                onMaxHealthChange();
+                onMaxHealthChange(attributeInvested.get(AttributeType.BONUS_MAX_HEALTH));
 
                 if (PersistentDataContainerUtil.hasString(itemStack, "gearSet")) {
                     new BukkitRunnable() {
@@ -476,7 +454,7 @@ public class RPGCharacterStats {
         }
     }
 
-    public void onOffhandEquip(ItemStack itemStack, boolean fixDisplay) {
+    public void onOffhandEquip(ItemStack itemStack, HashMap<AttributeType, Integer> attributeInvested, boolean fixDisplay) {
         Material type = itemStack.getType();
 
         ShieldGearType shieldGearType = ShieldGearType.fromMaterial(type);
@@ -493,7 +471,7 @@ public class RPGCharacterStats {
             }
 
             shield = new ArmorStatHolder(health, defense);
-            setPassiveStatBonuses(EquipmentSlot.OFF_HAND, itemStack);
+            setPassiveStatBonuses(EquipmentSlot.OFF_HAND, itemStack, attributeInvested);
         } else {
             WeaponGearType weaponGearType = WeaponGearType.fromMaterial(type);
 
@@ -502,7 +480,7 @@ public class RPGCharacterStats {
                     StatOneType stat = (StatOneType) StatUtils.getStat(itemStack);
                     int damage = stat.getValue();
                     damageBonusFromOffhand = (int) ((damage * 0.6) + 0.5);
-                    setPassiveStatBonuses(EquipmentSlot.OFF_HAND, itemStack);
+                    setPassiveStatBonuses(EquipmentSlot.OFF_HAND, itemStack, attributeInvested);
                 }
             }
         }
@@ -534,20 +512,20 @@ public class RPGCharacterStats {
         }
     }
 
-    public void onOffhandUnequip(ItemStack itemStack) {
+    public void onOffhandUnequip(ItemStack itemStack, HashMap<AttributeType, Integer> attributeInvested) {
         Material type = itemStack.getType();
         ShieldGearType shieldGearType = ShieldGearType.fromMaterial(type);
 
         if (shieldGearType != null) {
             shield = new ArmorStatHolder(0, 0);
-            removePassiveStatBonusesOfEquipment(EquipmentSlot.OFF_HAND);
+            removePassiveStatBonusesOfEquipment(EquipmentSlot.OFF_HAND, attributeInvested);
         } else {
             WeaponGearType weaponGearType = WeaponGearType.fromMaterial(type);
 
             if (weaponGearType != null) {
                 if (weaponGearType.canEquipToOffHand()) {
                     damageBonusFromOffhand = 0;
-                    removePassiveStatBonusesOfEquipment(EquipmentSlot.OFF_HAND);
+                    removePassiveStatBonusesOfEquipment(EquipmentSlot.OFF_HAND, attributeInvested);
                 }
             }
         }
@@ -577,14 +555,15 @@ public class RPGCharacterStats {
         }
     }
 
-    private void setPassiveStatBonuses(EquipmentSlot equipmentSlot, ItemStack itemStack) {
+    private void setPassiveStatBonuses(EquipmentSlot equipmentSlot, ItemStack itemStack, HashMap<AttributeType, Integer> attributeInvested) {
         // Attributes
         for (AttributeType attributeType : AttributeType.values()) {
+            int invested = attributeInvested.get(attributeType);
             if (PersistentDataContainerUtil.hasInteger(itemStack, attributeType.name())) {
                 int bonus = PersistentDataContainerUtil.getInteger(itemStack, attributeType.name());
-                attributeHashMap.get(attributeType).setEquipmentBonus(equipmentSlot, bonus, this, false);
+                attributeHashMap.get(attributeType).setEquipmentBonus(equipmentSlot, bonus, this, invested, false);
             } else {
-                attributeHashMap.get(attributeType).setEquipmentBonus(equipmentSlot, 0, this, false);
+                attributeHashMap.get(attributeType).setEquipmentBonus(equipmentSlot, 0, this, invested, false);
             }
         }
         // Elements
@@ -598,24 +577,26 @@ public class RPGCharacterStats {
         }
     }
 
-    private void removePassiveStatBonusesOfEquipment(EquipmentSlot equipmentSlot) {
+    private void removePassiveStatBonusesOfEquipment(EquipmentSlot equipmentSlot, HashMap<AttributeType, Integer> attributeInvested) {
         // Attributes
         for (AttributeType attributeType : AttributeType.values()) {
-            attributeHashMap.get(attributeType).clearEquipmentBonus(equipmentSlot, this, false);
+            int invested = attributeInvested.get(attributeType);
+            attributeHashMap.get(attributeType).clearEquipmentBonus(equipmentSlot, this, invested, false);
         }
         // Elements
         for (ElementType elementType : ElementType.values()) {
             elementHashMap.get(elementType).clearEquipmentBonus(equipmentSlot);
         }
 
-        onMaxHealthChange();
-        onCurrentManaChange();
+        onMaxHealthChange(attributeInvested.get(AttributeType.BONUS_MAX_HEALTH));
+        onCurrentManaChange(attributeInvested.get(AttributeType.BONUS_MAX_MANA));
     }
 
-    public void recalculateRPGInventory(RPGInventory rpgInventory) {
+    public void recalculateRPGInventory(RPGInventory rpgInventory, HashMap<AttributeType, Integer> attributeInvested) {
         // Clear Attribute
         for (AttributeType attributeType : AttributeType.values()) {
-            attributeHashMap.get(attributeType).clearTotalPassive(this, false);
+            int invested = attributeInvested.get(attributeType);
+            attributeHashMap.get(attributeType).clearTotalPassive(this, invested, false);
         }
         // Clear Elements
         for (ElementType elementType : ElementType.values()) {
@@ -626,7 +607,8 @@ public class RPGCharacterStats {
 
         // Read Attributes
         for (AttributeType attributeType : AttributeType.values()) {
-            attributeHashMap.get(attributeType).addToTotalPassive(totalPassiveStat.getAttributeValue(attributeType), this, false);
+            int invested = attributeInvested.get(attributeType);
+            attributeHashMap.get(attributeType).addToTotalPassive(totalPassiveStat.getAttributeValue(attributeType), this, invested, false);
         }
 
         // Read Elements
@@ -634,14 +616,15 @@ public class RPGCharacterStats {
             elementHashMap.get(elementType).addToTotalPassive(totalPassiveStat.getElementValue(elementType));
         }
 
-        onMaxHealthChange();
-        onCurrentManaChange();
+        onMaxHealthChange(attributeInvested.get(AttributeType.BONUS_MAX_HEALTH));
+        onCurrentManaChange(attributeInvested.get(AttributeType.BONUS_MAX_MANA));
     }
 
-    public void recalculateEquipment(String rpgClass) {
+    public void recalculateEquipment(String rpgClass, HashMap<AttributeType, Integer> attributeInvested) {
         // Clear attributes
         for (AttributeType attributeType : AttributeType.values()) {
-            attributeHashMap.get(attributeType).clearAllEquipment(this, false);
+            int invested = attributeInvested.get(attributeType);
+            attributeHashMap.get(attributeType).clearAllEquipment(this, invested, false);
         }
         // Clear elements
         for (ElementType elementType : ElementType.values()) {
@@ -662,7 +645,7 @@ public class RPGCharacterStats {
         ItemStack itemInMainHand = inventory.getItem(4);
         if (!InventoryUtils.isAirOrNull(itemInMainHand)) {
             if (StatUtils.doesCharacterMeetRequirements(itemInMainHand, player, rpgClass)) {
-                setPassiveStatBonuses(EquipmentSlot.HAND, itemInMainHand);
+                setPassiveStatBonuses(EquipmentSlot.HAND, itemInMainHand, attributeInvested);
                 Material mainHandType = itemInMainHand.getType();
                 if (mainHandType.equals(Material.BOW) || mainHandType.equals(Material.CROSSBOW)) {
                     ItemStack arrow = OtherItems.getArrow(2);
@@ -681,7 +664,7 @@ public class RPGCharacterStats {
 
             if (shieldGearType != null) {
                 if (StatUtils.doesCharacterMeetRequirements(itemInOffHand, player, rpgClass)) {
-                    onOffhandEquip(itemInOffHand, false);
+                    onOffhandEquip(itemInOffHand, attributeInvested, false);
                 } else {
                     InventoryUtils.giveItemToPlayer(player, itemInOffHand);
                     inventory.setItemInOffHand(air);
@@ -690,7 +673,7 @@ public class RPGCharacterStats {
                 WeaponGearType weaponGearType = WeaponGearType.fromMaterial(offHandType);
 
                 if (weaponGearType != null && weaponGearType.canEquipToOffHand()) {
-                    onOffhandEquip(itemInOffHand, false);
+                    onOffhandEquip(itemInOffHand, attributeInvested, false);
                 } else if (!offHandType.equals(Material.ARROW)) {
                     InventoryUtils.giveItemToPlayer(player, itemInOffHand);
                     inventory.setItemInOffHand(air);
@@ -702,7 +685,7 @@ public class RPGCharacterStats {
         ArmorGearType helmetType = null;
         if (!InventoryUtils.isAirOrNull(inventoryHelmet)) {
             if (StatUtils.doesCharacterMeetRequirements(inventoryHelmet, player, rpgClass)) {
-                onArmorEquip(inventoryHelmet, false);
+                onArmorEquip(inventoryHelmet, attributeInvested, false);
                 helmetType = ArmorGearType.fromMaterial(inventoryHelmet.getType());
             } else {
                 InventoryUtils.giveItemToPlayer(player, inventoryHelmet);
@@ -714,7 +697,7 @@ public class RPGCharacterStats {
         ArmorGearType chestplateType = null;
         if (!InventoryUtils.isAirOrNull(inventoryChestplate)) {
             if (StatUtils.doesCharacterMeetRequirements(inventoryChestplate, player, rpgClass)) {
-                onArmorEquip(inventoryChestplate, false);
+                onArmorEquip(inventoryChestplate, attributeInvested, false);
                 chestplateType = ArmorGearType.fromMaterial(inventoryChestplate.getType());
             } else {
                 InventoryUtils.giveItemToPlayer(player, inventoryChestplate);
@@ -726,7 +709,7 @@ public class RPGCharacterStats {
         ArmorGearType leggingsType = null;
         if (!InventoryUtils.isAirOrNull(inventoryLeggings)) {
             if (StatUtils.doesCharacterMeetRequirements(inventoryLeggings, player, rpgClass)) {
-                onArmorEquip(inventoryLeggings, false);
+                onArmorEquip(inventoryLeggings, attributeInvested, false);
                 leggingsType = ArmorGearType.fromMaterial(inventoryLeggings.getType());
             } else {
                 InventoryUtils.giveItemToPlayer(player, inventoryLeggings);
@@ -738,7 +721,7 @@ public class RPGCharacterStats {
         ArmorGearType bootsType = null;
         if (!InventoryUtils.isAirOrNull(inventoryBoots)) {
             if (StatUtils.doesCharacterMeetRequirements(inventoryBoots, player, rpgClass)) {
-                onArmorEquip(inventoryBoots, false);
+                onArmorEquip(inventoryBoots, attributeInvested, false);
                 bootsType = ArmorGearType.fromMaterial(inventoryBoots.getType());
             } else {
                 InventoryUtils.giveItemToPlayer(player, inventoryBoots);
@@ -746,8 +729,8 @@ public class RPGCharacterStats {
             }
         }
 
-        onMaxHealthChange();
-        onCurrentManaChange();
+        onMaxHealthChange(attributeInvested.get(AttributeType.BONUS_MAX_HEALTH));
+        onCurrentManaChange(attributeInvested.get(AttributeType.BONUS_MAX_MANA));
 
         // GEAR SET EFFECTS
         recalculateGearSetEffects(inventoryHelmet, inventoryChestplate, inventoryLeggings, inventoryBoots, itemInMainHand, itemInOffHand,
@@ -758,13 +741,14 @@ public class RPGCharacterStats {
         return (int) (damageBonusFromOffhand * buffElementDamage + 0.5);
     }
 
-    public boolean onMainHandEquip(ItemStack itemStack, boolean fixDisplay) {
+    public boolean onMainHandEquip(ItemStack itemStack, HashMap<AttributeType, Integer> attributeInvested, boolean fixDisplay) {
         if (StatUtils.doesCharacterMeetRequirements(itemStack, player, rpgClassStr)) {
             // Add attribute bonuses
             for (AttributeType attributeType : AttributeType.values()) {
+                int invested = attributeInvested.get(attributeType);
                 if (PersistentDataContainerUtil.hasInteger(itemStack, attributeType.name())) {
                     int bonus = PersistentDataContainerUtil.getInteger(itemStack, attributeType.name());
-                    attributeHashMap.get(attributeType).setEquipmentBonus(EquipmentSlot.HAND, bonus, this, false);
+                    attributeHashMap.get(attributeType).setEquipmentBonus(EquipmentSlot.HAND, bonus, this, invested, false);
                 }
             }
             // Add element bonuses
@@ -806,10 +790,11 @@ public class RPGCharacterStats {
         return false;
     }
 
-    public void onMainHandUnequip(boolean fixDisplay) {
+    public void onMainHandUnequip(HashMap<AttributeType, Integer> attributeInvested, boolean fixDisplay) {
         // Remove attributes
         for (AttributeType attributeType : AttributeType.values()) {
-            attributeHashMap.get(attributeType).clearEquipmentBonus(EquipmentSlot.HAND, this, false);
+            int invested = attributeInvested.get(attributeType);
+            attributeHashMap.get(attributeType).clearEquipmentBonus(EquipmentSlot.HAND, this, invested, false);
         }
         // Remove elements
         for (ElementType elementType : ElementType.values()) {
@@ -839,8 +824,8 @@ public class RPGCharacterStats {
         }.runTaskLater(GuardiansOfAdelia.getInstance(), 1L);
 
         if (fixDisplay) {
-            onMaxHealthChange();
-            onCurrentManaChange();
+            onMaxHealthChange(attributeInvested.get(AttributeType.BONUS_MAX_HEALTH));
+            onCurrentManaChange(attributeInvested.get(AttributeType.BONUS_MAX_MANA));
         }
     }
 

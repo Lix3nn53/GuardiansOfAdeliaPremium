@@ -54,7 +54,7 @@ public class SkillBar {
             @Override
             public void run() {
                 for (int slotIndex = 0; slotIndex < 4; slotIndex++) {
-                    int skillId = skillBarData.get(slotIndex);
+                    int skillId = skillBarData.getSkillId(slotIndex);
                     if (skillId < 0) continue;
 
                     Skill skill = skillTree.getSkill(slotIndex);
@@ -75,7 +75,7 @@ public class SkillBar {
         SkillBarData skillBarData = skillRPGClassData.getSkillBarData();
         SkillTreeData skillTreeData = skillRPGClassData.getSkillTreeData();
         for (int slotIndex = 0; slotIndex < 4; slotIndex++) {
-            int skillId = skillBarData.get(slotIndex);
+            int skillId = skillBarData.getSkillId(slotIndex);
             if (skillId < 0) continue;
 
             int investedPoints = skillTreeData.getInvestedSkillPoints(skillId);
@@ -95,7 +95,7 @@ public class SkillBar {
 
     public void remakeSkillBarIcon(int slotIndex, SkillTree skillTree, SkillRPGClassData skillRPGClassData, String lang) {
         SkillBarData skillBarData = skillRPGClassData.getSkillBarData();
-        int skillId = skillBarData.get(slotIndex);
+        int skillId = skillBarData.getSkillId(slotIndex);
         if (skillId < 0) return;
 
         SkillTreeData skillTreeData = skillRPGClassData.getSkillTreeData();
@@ -131,7 +131,7 @@ public class SkillBar {
         }
 
         SkillBarData skillBarData = skillRPGClassData.getSkillBarData();
-        int skillId = skillBarData.get(slot);
+        int skillId = skillBarData.getSkillId(slot);
 
         SkillTreeData skillTreeData = skillRPGClassData.getSkillTreeData();
         int invested = skillTreeData.getInvestedSkillPoints(skillId);
