@@ -9,6 +9,7 @@ import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGClass;
 import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGClassManager;
 import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGClassStats;
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.SkillBar;
+import io.github.lix3nn53.guardiansofadelia.guardian.skill.player.SkillRPGClassData;
 import io.github.lix3nn53.guardiansofadelia.text.ChatPalette;
 import io.github.lix3nn53.guardiansofadelia.towns.Town;
 import io.github.lix3nn53.guardiansofadelia.towns.TownManager;
@@ -65,7 +66,10 @@ public class CommandAdmin implements CommandExecutor {
                             GuardianData guardianData = GuardianDataManager.getGuardianData(target);
                             if (guardianData.hasActiveCharacter()) {
                                 RPGCharacter activeCharacter = guardianData.getActiveCharacter();
-                                activeCharacter.getRpgCharacterStats().giveExp(expToGive);
+
+                                RPGClassStats rpgClassStats = activeCharacter.getRPGClassStats();
+
+                                activeCharacter.getRpgCharacterStats().giveExp(expToGive, rpgClassStats);
                             }
                         }
                     }
@@ -117,7 +121,6 @@ public class CommandAdmin implements CommandExecutor {
                 if (args.length == 1) {
                     player.sendMessage("/admin reload skills");
                 } else if (args[1].equals("skills")) {
-                    ClassConfigurations.createConfigs();
                     ClassConfigurations.loadConfigs();
                     player.sendMessage(ChatPalette.GREEN_DARK + "Reloaded class configs!");
                     Set<Player> onlinePlayers = GuardianDataManager.getOnlinePlayers();
@@ -130,7 +133,9 @@ public class CommandAdmin implements CommandExecutor {
                         RPGClass rpgClass = RPGClassManager.getClass(rpgClassStr);
 
                         SkillBar skillBar = activeCharacter.getSkillBar();
-                        skillBar.reloadSkillSet(rpgClass.getSkillTree(), guardianData.getLanguage());
+                        RPGClassStats rpgClassStats = activeCharacter.getRPGClassStats();
+                        SkillRPGClassData skillRPGClassData = rpgClassStats.getSkillRPGClassData();
+                        skillBar.reloadSkillSet(rpgClass.getSkillTree(), skillRPGClassData, guardianData.getLanguage());
                     }
                     player.sendMessage(ChatPalette.GREEN_DARK + "Reloaded player skills!");
                 }

@@ -4,6 +4,8 @@ import io.github.lix3nn53.guardiansofadelia.guardian.GuardianData;
 import io.github.lix3nn53.guardiansofadelia.guardian.GuardianDataManager;
 import io.github.lix3nn53.guardiansofadelia.guardian.attribute.Attribute;
 import io.github.lix3nn53.guardiansofadelia.guardian.attribute.AttributeType;
+import io.github.lix3nn53.guardiansofadelia.guardian.skill.SkillBar;
+import io.github.lix3nn53.guardiansofadelia.guardian.skill.SkillTree;
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.player.SkillRPGClassData;
 import io.github.lix3nn53.guardiansofadelia.sounds.CustomSound;
 import io.github.lix3nn53.guardiansofadelia.sounds.GoaSound;
@@ -27,6 +29,9 @@ public class RPGClassStats {
     public RPGClassStats() {
         this.skillRPGClassData = new SkillRPGClassData();
         this.attributeInvested = new HashMap<>();
+        for (AttributeType attributeType : AttributeType.values()) {
+            attributeInvested.put(attributeType, 0);
+        }
         this.totalExp = 0;
     }
 
@@ -82,7 +87,11 @@ public class RPGClassStats {
     }
 
     public int getInvested(AttributeType attributeType) {
-        return attributeInvested.get(attributeType);
+        if (attributeInvested.containsKey(attributeType)) {
+            return attributeInvested.get(attributeType);
+        }
+
+        return 0;
     }
 
     public void setInvested(Attribute attribute, int invested, RPGCharacterStats rpgCharacterStats, boolean fixDisplay) {
@@ -121,18 +130,19 @@ public class RPGClassStats {
 
     public void resetAttributes(RPGCharacterStats rpgCharacterStats) {
         attributeInvested.clear();
-
-        int invested = 0;
-        if (attributeInvested.containsKey(AttributeType.BONUS_MAX_HEALTH)) {
-            invested = attributeInvested.get(AttributeType.BONUS_MAX_HEALTH);
+        for (AttributeType attributeType : AttributeType.values()) {
+            attributeInvested.put(attributeType, 0);
         }
-        rpgCharacterStats.onMaxHealthChange(invested);
 
-        invested = 0;
-        if (attributeInvested.containsKey(AttributeType.BONUS_MAX_MANA)) {
-            invested = attributeInvested.get(AttributeType.BONUS_MAX_MANA);
-        }
-        rpgCharacterStats.onCurrentManaChange(invested);
+        rpgCharacterStats.onMaxHealthChange(this);
+        rpgCharacterStats.onCurrentManaChange(this);
+    }
+
+    public void resetAll(RPGCharacterStats rpgCharacterStats, Player player, SkillTree skillTree, SkillBar skillBar, String lang) {
+        resetAttributes(rpgCharacterStats);
+
+        totalExp = 0;
+        skillRPGClassData.resetSkillPoints(player, skillTree, skillBar, lang);
     }
 
     public int getInvestedAttributePoints() {
@@ -152,9 +162,5 @@ public class RPGClassStats {
         int pointsPerLevel = 1;
 
         return (level * pointsPerLevel) - inventedPointsOnAttributes;
-    }
-
-    public HashMap<AttributeType, Integer> getAttributeInvestedMap() {
-        return attributeInvested;
     }
 }

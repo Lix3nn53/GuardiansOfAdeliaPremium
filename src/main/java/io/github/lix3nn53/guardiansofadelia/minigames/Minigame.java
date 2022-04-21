@@ -5,6 +5,7 @@ import io.github.lix3nn53.guardiansofadelia.creatures.pets.PetManager;
 import io.github.lix3nn53.guardiansofadelia.guardian.GuardianData;
 import io.github.lix3nn53.guardiansofadelia.guardian.GuardianDataManager;
 import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGCharacter;
+import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGClassStats;
 import io.github.lix3nn53.guardiansofadelia.minigames.checkpoint.Checkpoint;
 import io.github.lix3nn53.guardiansofadelia.minigames.checkpoint.CheckpointManager;
 import io.github.lix3nn53.guardiansofadelia.party.Party;
@@ -147,7 +148,10 @@ public abstract class Minigame {
                                     GuardianData guardianData = GuardianDataManager.getGuardianData(member);
                                     RPGCharacter activeCharacter = guardianData.getActiveCharacter();
                                     String rpgClassStr = activeCharacter.getRpgClassStr();
-                                    activeCharacter.getRpgCharacterStats().recalculateEquipment(rpgClassStr);
+
+                                    RPGClassStats rpgClassStats = activeCharacter.getRPGClassStats();
+
+                                    activeCharacter.getRpgCharacterStats().recalculateEquipment(rpgClassStr, rpgClassStats);
                                 }
                             }
                         }.runTaskLater(GuardiansOfAdelia.getInstance(), 40);

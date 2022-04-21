@@ -35,6 +35,7 @@ public class CharacterInfoSlot {
 
                 RPGCharacter activeCharacter = targetData.getActiveCharacter();
                 RPGCharacterStats rpgCharacterStats = activeCharacter.getRpgCharacterStats();
+                RPGClassStats rpgClassStats = activeCharacter.getRPGClassStats();
 
                 ItemStack itemStack = new ItemStack(Material.PLAYER_HEAD);
                 SkullMeta skullMeta = (SkullMeta) itemStack.getItemMeta();
@@ -46,24 +47,23 @@ public class CharacterInfoSlot {
                 RPGClass rpgClass = RPGClassManager.getClass(rpgClassStr);
                 String className = rpgClass.getClassString();
                 int mana = rpgCharacterStats.getCurrentMana();
-                int maxMana = rpgCharacterStats.getTotalMaxMana();
+                int maxMana = rpgCharacterStats.getTotalMaxMana(rpgClassStats);
                 final int level = player.getLevel();
                 int totalExp = rpgCharacterStats.getTotalExp();
                 int exp = RPGCharacterExperienceManager.getCurrentExperience(totalExp, level);
                 int expReq = RPGCharacterExperienceManager.getRequiredExperience(level);
                 int maxHealth = (int) (player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() + 0.5);
                 int health = (int) (player.getHealth() + 0.5);
-                float criticalChance = rpgCharacterStats.getTotalCriticalChance() * 100;
+                float criticalChance = rpgCharacterStats.getTotalCriticalChance(rpgClassStats) * 100;
                 float criticalDamage = rpgCharacterStats.getTotalCriticalDamage() * 100;
 
-                final int totalDefense = rpgCharacterStats.getTotalElementDefense();
+                final int totalDefense = rpgCharacterStats.getTotalElementDefense(rpgClassStats);
                 float defenseReduction = StatUtils.getDefenseReduction(totalDefense);
 
                 ElementType mainElement = rpgClass.getMainElement();
 
                 float abilityHaste = rpgCharacterStats.getTotalAbilityHaste();
                 float cooldownReduction = SkillBar.abilityHasteToMultiplier(abilityHaste);
-                RPGClassStats rpgClassStats = activeCharacter.getCurrentRPGClassStats();
                 int classLevel = RPGClassExperienceManager.getLevel(rpgClassStats.getTotalExperience());
 
                 ArrayList<String> lore = new ArrayList<>();
@@ -76,7 +76,7 @@ public class CharacterInfoSlot {
                 lore.add(ChatPalette.GREEN_DARK + "❤ " + Translation.t(viewerData, "attribute.max_health") + ": " + ChatPalette.GRAY + "" + health + "/" + maxHealth);
                 lore.add(ChatPalette.BLUE_LIGHT + "✦ " + Translation.t(viewerData, "attribute.max_mana") + ": " + ChatPalette.GRAY + "" + mana + "/" + maxMana);
                 lore.add("");
-                lore.add(ChatPalette.RED + "✦ " + Translation.t(viewerData, "attribute.element_damage") + ": " + ChatPalette.GRAY + rpgCharacterStats.getTotalElementDamage(player, rpgClassStr));
+                lore.add(ChatPalette.RED + "✦ " + Translation.t(viewerData, "attribute.element_damage") + ": " + ChatPalette.GRAY + rpgCharacterStats.getTotalElementDamage(player, rpgClassStr, rpgClassStats));
                 lore.add(ChatPalette.BLUE_LIGHT + "■ " + Translation.t(viewerData, "attribute.element_defense") + ": " + ChatPalette.GRAY + totalDefense + " (" + new DecimalFormat("##.##").format((1.0 - defenseReduction) * 100) + "% " + Translation.t(viewerData, "attribute.reduction") + ")");
                 lore.add(ChatPalette.GOLD + "☆ " + Translation.t(viewerData, "attribute.crit_chance") + ": " + ChatPalette.GRAY + new DecimalFormat("##.##").format(criticalChance) + "%");
                 lore.add("");

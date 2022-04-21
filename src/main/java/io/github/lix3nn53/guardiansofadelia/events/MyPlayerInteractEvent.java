@@ -9,6 +9,7 @@ import io.github.lix3nn53.guardiansofadelia.bungeelistener.products.SkinChest;
 import io.github.lix3nn53.guardiansofadelia.guardian.GuardianData;
 import io.github.lix3nn53.guardiansofadelia.guardian.GuardianDataManager;
 import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGCharacter;
+import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGClassStats;
 import io.github.lix3nn53.guardiansofadelia.items.PrizeChest;
 import io.github.lix3nn53.guardiansofadelia.items.PrizeChestType;
 import io.github.lix3nn53.guardiansofadelia.items.list.armors.ArmorSlot;
@@ -62,10 +63,13 @@ public class MyPlayerInteractEvent implements Listener {
                     GuardianData guardianData = GuardianDataManager.getGuardianData(player);
 
                     if (guardianData.hasActiveCharacter()) {
-                        RPGCharacter rpgCharacter = guardianData.getActiveCharacter();
+                        RPGCharacter activeCharacter = guardianData.getActiveCharacter();
 
-                        if (StatUtils.doesCharacterMeetRequirements(itemInMainHand, player, rpgCharacter.getRpgClassStr())) {
-                            rpgCharacter.getRpgCharacterStats().onArmorEquip(itemInMainHand, true);
+                        if (StatUtils.doesCharacterMeetRequirements(itemInMainHand, player, activeCharacter.getRpgClassStr())) {
+
+                            RPGClassStats rpgClassStats = activeCharacter.getRPGClassStats();
+
+                            activeCharacter.getRpgCharacterStats().onArmorEquip(itemInMainHand, rpgClassStats, true);
 
                             if (itemInMainHandType.equals(HelmetSkin.getHelmetMaterial())) {
                                 EntityEquipment equipment = player.getEquipment();

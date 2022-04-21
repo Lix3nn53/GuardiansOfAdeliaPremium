@@ -4,6 +4,7 @@ import io.github.lix3nn53.guardiansofadelia.guardian.GuardianData;
 import io.github.lix3nn53.guardiansofadelia.guardian.GuardianDataManager;
 import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGCharacter;
 import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGCharacterStats;
+import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGClassStats;
 import io.github.lix3nn53.guardiansofadelia.items.RpgGears.ShieldGearType;
 import io.github.lix3nn53.guardiansofadelia.items.RpgGears.WeaponGearType;
 import io.github.lix3nn53.guardiansofadelia.items.stats.StatUtils;
@@ -27,9 +28,9 @@ public class MyPlayerSwapHandItemsEvent implements Listener {
             GuardianData guardianData = GuardianDataManager.getGuardianData(player);
 
             if (guardianData.hasActiveCharacter()) {
-                RPGCharacter rpgCharacter = guardianData.getActiveCharacter();
-                RPGCharacterStats rpgCharacterStats = rpgCharacter.getRpgCharacterStats();
-                String rpgClassStr = rpgCharacter.getRpgClassStr();
+                RPGCharacter activeCharacter = guardianData.getActiveCharacter();
+                RPGCharacterStats rpgCharacterStats = activeCharacter.getRpgCharacterStats();
+                String rpgClassStr = activeCharacter.getRpgClassStr();
 
                 ItemStack offHandItem = event.getMainHandItem(); // returns the item switched to mainhand, so it is in offhand before event
                 Material offHandItemType = offHandItem.getType();
@@ -44,6 +45,8 @@ public class MyPlayerSwapHandItemsEvent implements Listener {
                         offHandUnequip = true;
                     }
                 }
+
+                RPGClassStats rpgClassStats = activeCharacter.getRPGClassStats();
 
                 ItemStack mainHandItem = event.getOffHandItem(); // returns the item switched to offhand, so it is in mainhand before event
                 if (!InventoryUtils.isAirOrNull(mainHandItem)) {
@@ -64,17 +67,17 @@ public class MyPlayerSwapHandItemsEvent implements Listener {
                     }
 
                     if (mainHandEquip && StatUtils.doesCharacterMeetRequirements(mainHandItem, player, rpgClassStr)) {
-                        rpgCharacterStats.onMainHandUnequip(true);
-                        if (offHandUnequip) rpgCharacterStats.onMainHandEquip(offHandItem, true);
+                        rpgCharacterStats.onMainHandUnequip(rpgClassStats, true);
+                        if (offHandUnequip) rpgCharacterStats.onMainHandEquip(offHandItem, rpgClassStats, true);
 
-                        rpgCharacterStats.onOffhandEquip(mainHandItem, true);
+                        rpgCharacterStats.onOffhandEquip(mainHandItem, rpgClassStats, true);
                         // if (isMainhandShield) rpgCharacterStats.onMaxHealthChange();
                     } else {
                         event.setCancelled(true);
                     }
                 } else if (offHandUnequip) {
-                    rpgCharacterStats.onMainHandEquip(offHandItem, true);
-                    rpgCharacterStats.onOffhandUnequip(offHandItem);
+                    rpgCharacterStats.onMainHandEquip(offHandItem, rpgClassStats, true);
+                    rpgCharacterStats.onOffhandUnequip(offHandItem, rpgClassStats);
                     // if (offHandItemType is shield) rpgCharacterStats.onMaxHealthChange();
                 }
             }

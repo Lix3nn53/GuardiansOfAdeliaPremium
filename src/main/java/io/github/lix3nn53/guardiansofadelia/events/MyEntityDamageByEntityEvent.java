@@ -9,10 +9,7 @@ import io.github.lix3nn53.guardiansofadelia.creatures.pets.PetManager;
 import io.github.lix3nn53.guardiansofadelia.guardian.GuardianData;
 import io.github.lix3nn53.guardiansofadelia.guardian.GuardianDataManager;
 import io.github.lix3nn53.guardiansofadelia.guardian.attribute.AttributeType;
-import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGCharacter;
-import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGCharacterStats;
-import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGClass;
-import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGClassManager;
+import io.github.lix3nn53.guardiansofadelia.guardian.character.*;
 import io.github.lix3nn53.guardiansofadelia.guardian.element.ElementType;
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.SkillUtils;
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.component.mechanic.buff.BuffType;
@@ -191,8 +188,8 @@ public class MyEntityDamageByEntityEvent implements Listener {
                     if (!isAttackerPlayer) { //we are managing this on onPlayerAttackEntity() method if attacker is player
                         //custom defense formula if target is another player attacked by mob
                         if (GuardianDataManager.hasGuardianData(playerTarget)) {
-                            GuardianData guardianData = GuardianDataManager.getGuardianData(playerTarget);
-                            if (guardianData.hasActiveCharacter()) {
+                            GuardianData guardianDataTarget = GuardianDataManager.getGuardianData(playerTarget);
+                            if (guardianDataTarget.hasActiveCharacter()) {
                                 ActiveMob activeMob = MythicBukkit.inst().getMobManager().getMythicMobInstance(damageSource);
 
                                 if (activeMob != null) {
@@ -206,10 +203,12 @@ public class MyEntityDamageByEntityEvent implements Listener {
                                     }
                                 }
 
-                                RPGCharacter activeCharacter = guardianData.getActiveCharacter();
+                                RPGCharacter activeCharacterTarget = guardianDataTarget.getActiveCharacter();
+                                RPGCharacterStats targetRpgCharacterStats = activeCharacterTarget.getRpgCharacterStats();
 
-                                RPGCharacterStats targetRpgCharacterStats = activeCharacter.getRpgCharacterStats();
-                                int totalDefense = targetRpgCharacterStats.getTotalElementDefense();
+                                RPGClassStats rpgClassStats = activeCharacterTarget.getRPGClassStats();
+
+                                int totalDefense = targetRpgCharacterStats.getTotalElementDefense(rpgClassStats);
                                 totalDefense += targetRpgCharacterStats.getElement(damageType).getTotal(); // Element is added to defense
 
                                 float reduction = StatUtils.getDefenseReduction(totalDefense);
@@ -261,6 +260,8 @@ public class MyEntityDamageByEntityEvent implements Listener {
                     //custom damage modifiers
                     String rpgClassStr = activeCharacter.getRpgClassStr();
 
+                    RPGClassStats rpgClassStats = activeCharacter.getRPGClassStats();
+
                     if (isSkill) {
                         TriggerListener.onPlayerSkillAttack(player, livingTarget);
                     } else {
@@ -270,7 +271,8 @@ public class MyEntityDamageByEntityEvent implements Listener {
 
                         // Do this before melee damage reduction of ranged weapons
                         // Add bonus damage to normal attack, both melee and ranged
-                        damage += rpgCharacterStats.getAttribute(AttributeType.BONUS_ELEMENT_DAMAGE).getIncrement(player.getLevel(), rpgClassStr); // bonus from attribute
+                        int investedDamage = rpgClassStats.getInvested(AttributeType.BONUS_ELEMENT_DAMAGE);
+                        damage += rpgCharacterStats.getAttribute(AttributeType.BONUS_ELEMENT_DAMAGE).getIncrement(player.getLevel(), rpgClassStr, investedDamage); // bonus from attribute
                         damage += rpgCharacterStats.getElement(damageType).getTotal(); // bonus from element
 
                         if (isProjectile) { // NonSkill projectile like arrow from bow
@@ -316,7 +318,7 @@ public class MyEntityDamageByEntityEvent implements Listener {
                     damage *= rpgCharacterStats.getBuffValue(BuffType.ELEMENT_DAMAGE);
 
                     //add critical damage right before defense
-                    float totalCriticalChance = rpgCharacterStats.getTotalCriticalChance();
+                    float totalCriticalChance = rpgCharacterStats.getTotalCriticalChance(rpgClassStats);
                     float random = (float) Math.random();
                     if (random <= totalCriticalChance) {
                         damage *= rpgCharacterStats.getTotalCriticalDamage();
@@ -367,7 +369,10 @@ public class MyEntityDamageByEntityEvent implements Listener {
                             RPGCharacter targetActiveCharacter = targetGuardianData.getActiveCharacter();
 
                             RPGCharacterStats targetRpgCharacterStats = targetActiveCharacter.getRpgCharacterStats();
-                            int totalDefense = targetRpgCharacterStats.getTotalElementDefense();
+
+                            RPGClassStats rpgClassStats = targetActiveCharacter.getRPGClassStats();
+
+                            int totalDefense = targetRpgCharacterStats.getTotalElementDefense(rpgClassStats);
                             totalDefense += targetRpgCharacterStats.getElement(damageType).getTotal();
 
                             float reduction = StatUtils.getDefenseReduction(totalDefense);

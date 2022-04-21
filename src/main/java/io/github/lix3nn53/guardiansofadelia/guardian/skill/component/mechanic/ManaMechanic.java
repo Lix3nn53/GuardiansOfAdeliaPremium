@@ -4,6 +4,7 @@ import io.github.lix3nn53.guardiansofadelia.guardian.GuardianData;
 import io.github.lix3nn53.guardiansofadelia.guardian.GuardianDataManager;
 import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGCharacter;
 import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGCharacterStats;
+import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGClassStats;
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.SkillDataManager;
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.component.MechanicComponent;
 import io.github.lix3nn53.guardiansofadelia.text.ChatPalette;
@@ -65,7 +66,9 @@ public class ManaMechanic extends MechanicComponent {
                         RPGCharacterStats rpgCharacterStats = activeCharacter.getRpgCharacterStats();
                         int currentMana = rpgCharacterStats.getCurrentMana();
 
-                        float maxMana = rpgCharacterStats.getTotalMaxMana();
+                        RPGClassStats rpgClassStats = activeCharacter.getRPGClassStats();
+
+                        float maxMana = rpgCharacterStats.getTotalMaxMana(rpgClassStats);
 
                         if (currentMana == maxMana) continue;
 
@@ -91,7 +94,7 @@ public class ManaMechanic extends MechanicComponent {
                             nextMana = (int) maxMana;
                         }
 
-                        rpgCharacterStats.setCurrentMana(nextMana);
+                        rpgCharacterStats.setCurrentMana(nextMana, rpgClassStats);
                         manaFilled = true;
                     }
                 }

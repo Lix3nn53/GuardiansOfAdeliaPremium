@@ -7,6 +7,7 @@ import io.github.lix3nn53.guardiansofadelia.guardian.GuardianData;
 import io.github.lix3nn53.guardiansofadelia.guardian.GuardianDataManager;
 import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGCharacter;
 import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGCharacterStats;
+import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGClassStats;
 import io.github.lix3nn53.guardiansofadelia.guardian.element.Element;
 import io.github.lix3nn53.guardiansofadelia.guardian.element.ElementType;
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.SkillDataManager;
@@ -95,7 +96,10 @@ public class SpawnCompanionMechanic extends MechanicComponent {
                     int elementPoints = element.getTotal();
 
                     String rpgClassStr = activeCharacter.getRpgClassStr();
-                    float playerDamage = rpgCharacterStats.getTotalElementDamage(player, rpgClassStr);
+
+                    RPGClassStats rpgClassStats = activeCharacter.getRPGClassStats();
+
+                    float playerDamage = rpgCharacterStats.getTotalElementDamage(player, rpgClassStr, rpgClassStats);
 
                     float total = playerDamage + elementPoints;
 

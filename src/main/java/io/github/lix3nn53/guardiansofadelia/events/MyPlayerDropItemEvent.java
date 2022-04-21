@@ -6,6 +6,7 @@ import io.github.lix3nn53.guardiansofadelia.guardian.GuardianData;
 import io.github.lix3nn53.guardiansofadelia.guardian.GuardianDataManager;
 import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGCharacter;
 import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGCharacterStats;
+import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGClassStats;
 import io.github.lix3nn53.guardiansofadelia.text.ChatPalette;
 import io.github.lix3nn53.guardiansofadelia.utilities.InventoryUtils;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -60,8 +61,10 @@ public class MyPlayerDropItemEvent implements Listener {
                     RPGCharacter activeCharacter = guardianData.getActiveCharacter();
                     RPGCharacterStats rpgCharacterStats = activeCharacter.getRpgCharacterStats();
 
+                    RPGClassStats rpgClassStats = activeCharacter.getRPGClassStats();
+
                     // rpgCharacterStats.clearMainHandBonuses();
-                    rpgCharacterStats.onMainHandUnequip(true);
+                    rpgCharacterStats.onMainHandUnequip(rpgClassStats, true);
                 }
             }
         }

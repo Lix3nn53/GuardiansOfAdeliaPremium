@@ -4,6 +4,7 @@ import io.github.lix3nn53.guardiansofadelia.guardian.GuardianData;
 import io.github.lix3nn53.guardiansofadelia.guardian.GuardianDataManager;
 import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGCharacter;
 import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGCharacterStats;
+import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGClassStats;
 import io.github.lix3nn53.guardiansofadelia.guardian.element.ElementType;
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.SkillDataManager;
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.SkillUtils;
@@ -70,7 +71,9 @@ public class DamageMechanic extends MechanicComponent {
                         RPGCharacterStats rpgCharacterStats = activeCharacter.getRpgCharacterStats();
                         String rpgClassStr = activeCharacter.getRpgClassStr();
 
-                        float statValue = rpgCharacterStats.getTotalElementDamage(player, rpgClassStr);
+                        RPGClassStats rpgClassStats = activeCharacter.getRPGClassStats();
+
+                        float statValue = rpgCharacterStats.getTotalElementDamage(player, rpgClassStr, rpgClassStats);
                         statValue += rpgCharacterStats.getElement(damageType).getTotal();
 
                         float multiply = damageMultiplyList.get(skillLevel - 1);

@@ -2,7 +2,6 @@ package io.github.lix3nn53.guardiansofadelia.guardian.character;
 
 import io.github.lix3nn53.guardiansofadelia.chat.ChatManager;
 import io.github.lix3nn53.guardiansofadelia.chat.ChatTag;
-import io.github.lix3nn53.guardiansofadelia.guardian.attribute.AttributeType;
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.SkillBar;
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.SkillDataManager;
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.SkillTree;
@@ -13,10 +12,7 @@ import io.github.lix3nn53.guardiansofadelia.rpginventory.RPGInventory;
 import io.github.lix3nn53.guardiansofadelia.text.ChatPalette;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 public final class RPGCharacter {
 
@@ -45,8 +41,7 @@ public final class RPGCharacter {
             rpgClassStats = classToClassStats.get(rpgClassStr);
         }
 
-        HashMap<AttributeType, Integer> attributeInvested = rpgClassStats.getAttributeInvestedMap();
-        this.rpgCharacterStats = new RPGCharacterStats(player, rpgClassStr, attributeInvested);
+        this.rpgCharacterStats = new RPGCharacterStats(player, rpgClassStr, rpgClassStats);
 
         SkillRPGClassData skillRPGClassData = rpgClassStats.getSkillRPGClassData();
         RPGClass rpgClass = RPGClassManager.getClass(rpgClassStr);
@@ -62,8 +57,7 @@ public final class RPGCharacter {
         RPGClassStats rpgClassStats = new RPGClassStats();
         this.classToClassStats.put(rpgClassStr, rpgClassStats);
 
-        HashMap<AttributeType, Integer> attributeInvested = rpgClassStats.getAttributeInvestedMap();
-        this.rpgCharacterStats = new RPGCharacterStats(player, rpgClassStr, attributeInvested);
+        this.rpgCharacterStats = new RPGCharacterStats(player, rpgClassStr, rpgClassStats);
 
         SkillRPGClassData skillRPGClassData = rpgClassStats.getSkillRPGClassData();
         RPGClass rpgClass = RPGClassManager.getClass(rpgClassStr);
@@ -76,10 +70,6 @@ public final class RPGCharacter {
 
     public HashMap<String, RPGClassStats> getClassToClassStats() {
         return classToClassStats;
-    }
-
-    public RPGClassStats getCurrentRPGClassStats() {
-        return classToClassStats.get(this.rpgClassStr.toUpperCase());
     }
 
     public RPGClassStats getRPGClassStats() {
@@ -96,32 +86,26 @@ public final class RPGCharacter {
             return classToClassStats.get(rpgClassStr.toUpperCase());
         }
 
-        return new RPGClassStats();
+        RPGClassStats rpgClassStats = new RPGClassStats();
+        classToClassStats.put(rpgClassStr.toUpperCase(), rpgClassStats);
+        return rpgClassStats;
     }
 
     public void clearRPGClassStats() {
         classToClassStats.clear();
     }
 
-    public RPGClassStats addClassStats(String newClassStr) {
-        RPGClassStats rpgClassStats = new RPGClassStats();
-        classToClassStats.put(newClassStr.toUpperCase(), rpgClassStats);
-
-        return rpgClassStats;
+    public Set<String> getRPGClassStatsKeys() {
+        return classToClassStats.keySet();
     }
 
-    public boolean changeClass(Player player, String newClassStr, HashMap<AttributeType, Integer> attributeInvested, String lang) {
+    public boolean changeClass(Player player, String newClassStr, String lang) {
         String s = newClassStr.toUpperCase();
         RPGClass rpgClass = RPGClassManager.getClass(s);
 
         SkillDataManager.onPlayerQuit(player);
 
-        RPGClassStats rpgClassStats;
-        if (!classToClassStats.containsKey(s)) { // Add class stats if it does not exist
-            rpgClassStats = addClassStats(s);
-        } else {
-            rpgClassStats = classToClassStats.get(s);
-        }
+        RPGClassStats rpgClassStats = getRPGClassStats(s);
 
         this.rpgClassStr = s;
 
@@ -134,11 +118,10 @@ public final class RPGCharacter {
         this.skillBar.remakeSkillBar(skillTree, skillRPGClassData, lang);
 
         this.rpgCharacterStats.setRpgClassStr(s);
-        this.rpgCharacterStats.recalculateEquipment(rpgClassStr, attributeInvested);
+        this.rpgCharacterStats.recalculateEquipment(rpgClassStr, rpgClassStats);
         player.sendMessage(ChatPalette.YELLOW + "Changed class to " + rpgClass.getClassString() + ChatPalette.YELLOW + "!");
 
         ActionBarInfo actionBarInfo = rpgClass.getActionBarInfo();
-
 
         return true;
     }

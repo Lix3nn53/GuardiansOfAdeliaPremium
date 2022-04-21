@@ -5,6 +5,7 @@ import io.github.lix3nn53.guardiansofadelia.guardian.GuardianData;
 import io.github.lix3nn53.guardiansofadelia.guardian.GuardianDataManager;
 import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGCharacter;
 import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGCharacterStats;
+import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGClassStats;
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.component.mechanic.statuseffect.StatusEffectManager;
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.component.trigger.InitializeTrigger;
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.component.trigger.TriggerListener;
@@ -164,7 +165,8 @@ public class SkillBar {
         TriggerListener.onPlayerSkillCast(player);
 
         // mana cost
-        rpgCharacterStats.consumeMana(manaCost);
+        RPGClassStats rpgClassStats = activeCharacter.getRPGClassStats();
+        rpgCharacterStats.consumeMana(manaCost, rpgClassStats);
 
         float abilityHaste = rpgCharacterStats.getTotalAbilityHaste();
 

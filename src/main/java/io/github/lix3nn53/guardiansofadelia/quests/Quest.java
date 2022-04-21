@@ -9,6 +9,7 @@ import io.github.lix3nn53.guardiansofadelia.guardian.GuardianData;
 import io.github.lix3nn53.guardiansofadelia.guardian.GuardianDataManager;
 import io.github.lix3nn53.guardiansofadelia.guardian.attribute.Attribute;
 import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGCharacter;
+import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGClassStats;
 import io.github.lix3nn53.guardiansofadelia.items.GearLevel;
 import io.github.lix3nn53.guardiansofadelia.items.RpgGears.ItemTier;
 import io.github.lix3nn53.guardiansofadelia.items.RpgGears.gearset.GearSetManager;
@@ -451,8 +452,9 @@ public final class Quest {
                 GuardianData guardianData = GuardianDataManager.getGuardianData(player);
                 if (guardianData.hasActiveCharacter()) {
                     RPGCharacter activeCharacter = guardianData.getActiveCharacter();
+                    RPGClassStats rpgClassStats = activeCharacter.getRPGClassStats();
 
-                    activeCharacter.getRpgCharacterStats().giveExp(getExpPrize());
+                    activeCharacter.getRpgCharacterStats().giveExp(getExpPrize(), rpgClassStats);
                 }
             }
         }

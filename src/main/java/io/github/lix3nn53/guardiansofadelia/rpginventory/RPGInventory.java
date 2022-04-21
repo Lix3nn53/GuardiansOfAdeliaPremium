@@ -7,6 +7,7 @@ import io.github.lix3nn53.guardiansofadelia.guardian.GuardianDataManager;
 import io.github.lix3nn53.guardiansofadelia.guardian.attribute.AttributeType;
 import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGCharacter;
 import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGCharacterStats;
+import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGClassStats;
 import io.github.lix3nn53.guardiansofadelia.guardian.element.ElementType;
 import io.github.lix3nn53.guardiansofadelia.items.stats.GearStatType;
 import io.github.lix3nn53.guardiansofadelia.items.stats.StatPassive;
@@ -587,8 +588,11 @@ public class RPGInventory extends GuiGeneric {
 
                     RPGCharacterStats rpgCharacterStats = activeCharacter.getRpgCharacterStats();
 
+                    RPGClassStats rpgClassStats = activeCharacter.getRPGClassStats();
+
                     for (AttributeType attributeType : AttributeType.values()) {
-                        rpgCharacterStats.getAttribute(attributeType).removeFromTotalPassive(statPassive.getAttributeValue(attributeType), rpgCharacterStats, true);
+                        rpgCharacterStats.getAttribute(attributeType).removeFromTotalPassive(
+                                statPassive.getAttributeValue(attributeType), rpgCharacterStats, rpgClassStats, true);
                     }
                     for (ElementType elementType : ElementType.values()) {
                         rpgCharacterStats.getElement(elementType).removeFromTotalPassive(statPassive.getElementValue(elementType));
@@ -610,8 +614,11 @@ public class RPGInventory extends GuiGeneric {
 
                     RPGCharacterStats rpgCharacterStats = activeCharacter.getRpgCharacterStats();
 
+                    RPGClassStats rpgClassStats = activeCharacter.getRPGClassStats();
+
                     for (AttributeType attributeType : AttributeType.values()) {
-                        rpgCharacterStats.getAttribute(attributeType).addToTotalPassive(statPassive.getAttributeValue(attributeType), rpgCharacterStats, true);
+                        rpgCharacterStats.getAttribute(attributeType).addToTotalPassive(
+                                statPassive.getAttributeValue(attributeType), rpgCharacterStats, rpgClassStats, true);
                     }
                     for (ElementType elementType : ElementType.values()) {
                         rpgCharacterStats.getElement(elementType).addToTotalPassive(statPassive.getElementValue(elementType));

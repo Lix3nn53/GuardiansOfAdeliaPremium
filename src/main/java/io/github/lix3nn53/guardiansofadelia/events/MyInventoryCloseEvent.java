@@ -4,6 +4,7 @@ import io.github.lix3nn53.guardiansofadelia.guardian.GuardianData;
 import io.github.lix3nn53.guardiansofadelia.guardian.GuardianDataManager;
 import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGCharacter;
 import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGCharacterStats;
+import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGClassStats;
 import io.github.lix3nn53.guardiansofadelia.menu.ActiveGuiManager;
 import io.github.lix3nn53.guardiansofadelia.npc.merchant.MerchantManager;
 import io.github.lix3nn53.guardiansofadelia.utilities.gui.Gui;
@@ -33,7 +34,9 @@ public class MyInventoryCloseEvent implements Listener {
                 RPGCharacter activeCharacter = guardianData.getActiveCharacter();
                 RPGCharacterStats rpgCharacterStats = activeCharacter.getRpgCharacterStats();
 
-                rpgCharacterStats.recalculateEquipment(activeCharacter.getRpgClassStr());
+                RPGClassStats rpgClassStats = activeCharacter.getRPGClassStats();
+
+                rpgCharacterStats.recalculateEquipment(activeCharacter.getRpgClassStr(), rpgClassStats);
             }
         }
 

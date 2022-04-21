@@ -15,6 +15,8 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.util.Set;
+
 public class TutorialEndAction implements Action {
 
     @Override
@@ -23,7 +25,11 @@ public class TutorialEndAction implements Action {
             GuardianData guardianData = GuardianDataManager.getGuardianData(player);
 
             if (guardianData.hasActiveCharacter()) {
+                String lang = guardianData.getLanguage();
+
                 RPGCharacter activeCharacter = guardianData.getActiveCharacter();
+                RPGCharacterStats rpgCharacterStats = activeCharacter.getRpgCharacterStats();
+                SkillBar skillBar = activeCharacter.getSkillBar();
 
                 RPGInventory rpgInventory = activeCharacter.getRpgInventory();
                 rpgInventory.clearInventory(player);
@@ -32,24 +38,27 @@ public class TutorialEndAction implements Action {
 
                 // InventoryUtils.setMenuItemPlayer(player);
 
-                RPGCharacterStats rpgCharacterStats = activeCharacter.getRpgCharacterStats();
+                Set<String> rpgClassStatsKeys = activeCharacter.getRPGClassStatsKeys();
+                for (String rpgClassStr : rpgClassStatsKeys) {
+                    RPGClassStats rpgClassStats = activeCharacter.getRPGClassStats(rpgClassStr);
 
-                rpgCharacterStats.setTotalExp(0);
-                rpgCharacterStats.resetAttributes();
+                    RPGClass rpgClass = RPGClassManager.getClass(rpgClassStr);
+                    SkillTree skillTree = rpgClass.getSkillTree();
 
-                rpgCharacterStats.setCurrentHealth(rpgCharacterStats.getTotalMaxHealth());
-                rpgCharacterStats.setCurrentMana(rpgCharacterStats.getTotalMaxMana());
+                    rpgClassStats.resetAll(rpgCharacterStats, player, skillTree, skillBar, lang);
+                }
 
-                final String rpgClassStr = activeCharacter.getRpgClassStr();
-                RPGClassStats rpgClassStats = activeCharacter.getRPGClassStats(rpgClassStr);
-                RPGClass rpgClass = RPGClassManager.getClass(rpgClassStr);
-                SkillTree skillTree = rpgClass.getSkillTree();
-                SkillBar skillBar = activeCharacter.getSkillBar();
-                rpgClassStats.getSkillRPGClassData().resetSkillPoints(player, skillTree, skillBar, guardianData.getLanguage());
                 activeCharacter.clearRPGClassStats();
 
-                activeCharacter.changeClass(player, RPGClassManager.getStartingClass(), guardianData.getLanguage());
+                String rpgClassStr = RPGClassManager.getStartingClass();
+                activeCharacter.changeClass(player, rpgClassStr, lang);
+                RPGClassStats rpgClassStats = activeCharacter.getRPGClassStats();
                 activeCharacter.setChatTag(player, ChatTag.NOVICE);
+
+                rpgCharacterStats.setTotalExp(0);
+
+                rpgCharacterStats.setCurrentHealth(rpgCharacterStats.getTotalMaxHealth(rpgClassStats));
+                rpgCharacterStats.setCurrentMana(rpgCharacterStats.getTotalMaxMana(rpgClassStats), rpgClassStats);
 
                 new BukkitRunnable() {
                     @Override
@@ -57,8 +66,8 @@ public class TutorialEndAction implements Action {
                         player.removePotionEffect(PotionEffectType.WITHER);
                         player.addPotionEffect(new PotionEffect(PotionEffectType.ABSORPTION, 200, 4));
                         QuestNPCManager.setAllNpcHologramForPlayer(player);
-                        activeCharacter.getRpgCharacterStats().recalculateEquipment(rpgClassStr);
-                        activeCharacter.getRpgCharacterStats().recalculateRPGInventory(rpgInventory);
+                        activeCharacter.getRpgCharacterStats().recalculateEquipment(rpgClassStr, rpgClassStats);
+                        activeCharacter.getRpgCharacterStats().recalculateRPGInventory(rpgInventory, rpgClassStats);
                     }
                 }.runTaskLater(GuardiansOfAdelia.getInstance(), 5L);
 

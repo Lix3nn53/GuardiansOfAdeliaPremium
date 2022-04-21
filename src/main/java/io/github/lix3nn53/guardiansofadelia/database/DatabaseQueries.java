@@ -23,6 +23,7 @@ import io.github.lix3nn53.guardiansofadelia.quests.task.Task;
 import io.github.lix3nn53.guardiansofadelia.rpginventory.RPGInventory;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -232,6 +233,20 @@ public class DatabaseQueries {
                 if (!resultSet.wasNull()) {
                     guardianData.setLanguage(lang);
                 }
+
+                String friendUUIDs = resultSet.getString("friend_uuids");
+                if (!resultSet.wasNull()) {
+                    List<OfflinePlayer> friends = new ArrayList<>();
+
+                    String[] split = friendUUIDs.split(";");
+                    for (String s : split) {
+                        UUID friendUUID = UUID.fromString(s);
+                        OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(friendUUID);
+                        friends.add(offlinePlayer);
+                    }
+
+                    guardianData.setFriends(friends);
+                }
             }
             resultSet.close();
             pst.close();
@@ -280,7 +295,7 @@ public class DatabaseQueries {
             if (resultSet.next()) {
                 String rpgClassStr = resultSet.getString("rpg_class").toUpperCase();
 
-                HashMap<String, RPGClassStats> rpgClassStatsMap = getRPGClassStats(uuid, characterNo);
+                HashMap<String, RPGClassStats> rpgClassStatsMap = loadRPGClassStats(uuid, characterNo);
 
                 rpgCharacter = new RPGCharacter(rpgClassStr, player, rpgClassStatsMap);
                 RPGInventory rpgInventory = rpgCharacter.getRpgInventory();
@@ -481,14 +496,13 @@ public class DatabaseQueries {
                 }
 
                 RPGClassStats rpgClassStats = rpgClassStatsMap.get(rpgClassStr);
-                HashMap<AttributeType, Integer> attributeInvested = rpgClassStats.getAttributeInvestedMap();
 
                 // Escape IllegalStateException: Asynchronous effect add!
                 Bukkit.getScheduler().runTask(GuardiansOfAdelia.getInstance(), () -> {
-                    rpgCharacterStats.recalculateEquipment(rpgClassStr, attributeInvested);
+                    rpgCharacterStats.recalculateEquipment(rpgClassStr, rpgClassStats);
                 });
 
-                rpgCharacterStats.recalculateRPGInventory(rpgCharacter.getRpgInventory(), attributeInvested);
+                rpgCharacterStats.recalculateRPGInventory(rpgCharacter.getRpgInventory(), rpgClassStats);
             }
             resultSet.close();
             pst.close();
@@ -499,7 +513,7 @@ public class DatabaseQueries {
         return rpgCharacter;
     }
 
-    public static HashMap<String, RPGClassStats> getRPGClassStats(UUID uuid, int characterNo) {
+    public static HashMap<String, RPGClassStats> loadRPGClassStats(UUID uuid, int characterNo) {
         String SQL_QUERY = "SELECT * FROM goa_player_character_class WHERE uuid = ? AND character_no";
 
         HashMap<String, RPGClassStats> result = new HashMap<>();
@@ -1061,12 +1075,11 @@ public class DatabaseQueries {
         }
     }
 
-    public static int setCharacterClass(UUID uuid, int charNo, String className, RPGClassStats rpgClassStats) throws SQLException {
+    public static int setCharacterClassStats(UUID uuid, int charNo, String className, RPGClassStats rpgClassStats) throws SQLException {
         SkillRPGClassData skillRPGClassData = rpgClassStats.getSkillRPGClassData();
         SkillTreeData skillTreeData = skillRPGClassData.getSkillTreeData();
         SkillBarData skillBarData = skillRPGClassData.getSkillBarData();
 
-        HashMap<AttributeType, Integer> attributeInvested = rpgClassStats.getAttributeInvestedMap();
         int totalExperience = rpgClassStats.getTotalExperience();
 
         String SQL_QUERY = "INSERT INTO goa_player_character_class \n" +
@@ -1100,10 +1113,7 @@ public class DatabaseQueries {
 
             StringBuilder attribute_points = new StringBuilder();
             for (AttributeType attributeType : AttributeType.values()) {
-                int invested = 0;
-                if (attributeInvested.containsKey(attributeType)) {
-                    invested = attributeInvested.get(attributeType);
-                }
+                int invested = rpgClassStats.getInvested(attributeType);
                 attribute_points.append(attributeType.name()).append(",").append(invested).append(";");
             }
             pst.setString(6, attribute_points.toString());

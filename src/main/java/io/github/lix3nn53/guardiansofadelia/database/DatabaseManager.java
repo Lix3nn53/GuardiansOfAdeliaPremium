@@ -7,10 +7,9 @@ import io.github.lix3nn53.guardiansofadelia.chat.PremiumRank;
 import io.github.lix3nn53.guardiansofadelia.chat.StaffRank;
 import io.github.lix3nn53.guardiansofadelia.guardian.GuardianData;
 import io.github.lix3nn53.guardiansofadelia.guardian.GuardianDataManager;
-import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGCharacter;
-import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGCharacterExperienceManager;
-import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGClass;
-import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGClassManager;
+import io.github.lix3nn53.guardiansofadelia.guardian.character.*;
+import io.github.lix3nn53.guardiansofadelia.guardian.skill.SkillTree;
+import io.github.lix3nn53.guardiansofadelia.guardian.skill.player.SkillRPGClassData;
 import io.github.lix3nn53.guardiansofadelia.guild.Guild;
 import io.github.lix3nn53.guardiansofadelia.guild.GuildManager;
 import io.github.lix3nn53.guardiansofadelia.guild.PlayerRankInGuild;
@@ -69,10 +68,17 @@ public class DatabaseManager {
                     Bukkit.getScheduler().runTask(GuardiansOfAdelia.getInstance(), () -> player.teleport(location));
                     TablistUtils.updateTablist(player);
                     // InventoryUtils.setMenuItemPlayer(player);
-                    rpgCharacter.getSkillBar().remakeSkillBar(guardianData.getLanguage());
+                    String rpgClassStr = rpgCharacter.getRpgClassStr();
+                    SkillTree skillTree = RPGClassManager.getClass(rpgClassStr).getSkillTree();
+                    RPGClassStats rpgClassStats = rpgCharacter.getRPGClassStats();
+                    SkillRPGClassData skillRPGClassData = rpgClassStats.getSkillRPGClassData();
+
+                    rpgCharacter.getSkillBar().remakeSkillBar(skillTree, skillRPGClassData, guardianData.getLanguage());
+
                     player.setHealth(player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
-                    int totalMaxMana = rpgCharacter.getRpgCharacterStats().getTotalMaxMana();
-                    rpgCharacter.getRpgCharacterStats().setCurrentMana(totalMaxMana);
+
+                    int totalMaxMana = rpgCharacter.getRpgCharacterStats().getTotalMaxMana(rpgClassStats);
+                    rpgCharacter.getRpgCharacterStats().setCurrentMana(totalMaxMana, rpgClassStats);
                 }
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -94,9 +100,6 @@ public class DatabaseManager {
                 } else {
                     player.sendMessage(ChatPalette.GREEN_DARK + Translation.t(guardianData, "general.language.saved") + ": " + guardianData.getLanguage());
                 }
-
-                List<OfflinePlayer> friendsOfPlayer = DatabaseQueries.getFriendsOfPlayer(uuid);
-                guardianData.setFriends(friendsOfPlayer);
 
                 GuardianDataManager.addGuardianData(player, guardianData);
 
@@ -221,14 +224,17 @@ public class DatabaseManager {
         ItemStack[] bazaarStorage = guardianData.getBazaarStorage();
         ItemStack[] premiumStorage = guardianData.getPremiumStorage();
         String language = guardianData.getLanguage();
+        List<OfflinePlayer> friends = guardianData.getFriends();
+        StringBuilder friendUUIDs = new StringBuilder();
+        for (OfflinePlayer friend : friends) {
+            friendUUIDs.append(friend.getUniqueId()).append(";");
+        }
         try {
-            DatabaseQueries.setGuardianData(uuid, lastPrizeDate, staffRank, premiumRank, personalStorage, bazaarStorage, premiumStorage, language);
+            DatabaseQueries.setGuardianData(uuid, lastPrizeDate, staffRank, premiumRank, personalStorage, bazaarStorage,
+                    premiumStorage, language, friendUUIDs.toString());
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
-        List<OfflinePlayer> friends = guardianData.getFriends();
-        DatabaseQueries.setFriendsOfPlayer(uuid, friends);
 
         //character
         if (guardianData.hasActiveCharacter()) {
@@ -243,6 +249,17 @@ public class DatabaseManager {
                         player.getLocation(), player.getInventory().getArmorContents(), offHand);
             } catch (SQLException e) {
                 e.printStackTrace();
+            }
+
+            // class stats
+            Set<String> rpgClassStatsKeys = activeCharacter.getRPGClassStatsKeys();
+            for (String rpgClassStatsKey : rpgClassStatsKeys) {
+                RPGClassStats rpgClassStats = activeCharacter.getRPGClassStats(rpgClassStatsKey);
+                try {
+                    DatabaseQueries.setCharacterClassStats(player.getUniqueId(), activeCharacterNo, rpgClassStatsKey, rpgClassStats);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }

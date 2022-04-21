@@ -10,8 +10,10 @@ import io.github.lix3nn53.guardiansofadelia.database.DatabaseManager;
 import io.github.lix3nn53.guardiansofadelia.events.*;
 import io.github.lix3nn53.guardiansofadelia.guardian.GuardianData;
 import io.github.lix3nn53.guardiansofadelia.guardian.GuardianDataManager;
+import io.github.lix3nn53.guardiansofadelia.guardian.attribute.AttributeType;
 import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGCharacter;
 import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGCharacterStats;
+import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGClassStats;
 import io.github.lix3nn53.guardiansofadelia.guild.Guild;
 import io.github.lix3nn53.guardiansofadelia.guild.GuildManager;
 import io.github.lix3nn53.guardiansofadelia.minigames.MiniGameManager;
@@ -77,14 +79,17 @@ public class GuardiansOfAdelia extends JavaPlugin {
                             RPGCharacter activeCharacter = guardianData.getActiveCharacter();
                             RPGCharacterStats rpgCharacterStats = activeCharacter.getRpgCharacterStats();
 
+                            RPGClassStats rpgClassStats = activeCharacter.getRPGClassStats();
+                            int invested = rpgClassStats.getInvested(AttributeType.BONUS_MAX_MANA);
+
                             float currentMana = rpgCharacterStats.getCurrentMana();
-                            float maxMana = rpgCharacterStats.getTotalMaxMana();
+                            float maxMana = rpgCharacterStats.getTotalMaxMana(invested);
                             if (currentMana < (maxMana * maxManaPercent)) {
                                 float nextMana = currentMana + (maxMana * manaPercent);
                                 if (nextMana > maxMana) {
                                     nextMana = maxMana;
                                 }
-                                rpgCharacterStats.setCurrentMana((int) nextMana);
+                                rpgCharacterStats.setCurrentMana((int) nextMana, invested);
                             }
 
                             /*float maxHealth = player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();

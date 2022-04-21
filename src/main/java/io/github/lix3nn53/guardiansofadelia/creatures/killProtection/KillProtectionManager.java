@@ -92,7 +92,9 @@ public class KillProtectionManager {
                         int expToGive = getExperience(mobLevel, player.getLevel(), bestPlayers.size(), isDungeon);
                         if (CommandAdmin.DEBUG_MODE) once.sendMessage("expToGive: " + expToGive);
                         if (expToGive > 0) {
-                            rpgCharacterStats.giveExp(expToGive);
+                            RPGClassStats rpgClassStats = activeCharacter.getRPGClassStats();
+
+                            rpgCharacterStats.giveExp(expToGive, rpgClassStats);
                         }
 
                         // class exp
