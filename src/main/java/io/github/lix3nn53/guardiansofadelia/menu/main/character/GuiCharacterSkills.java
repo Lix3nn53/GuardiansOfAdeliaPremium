@@ -21,18 +21,15 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import java.util.HashMap;
 import java.util.List;
 
 public class GuiCharacterSkills extends GuiGeneric {
 
-    private final HashMap<Integer, Integer> skillIdToSlotVirtual = new HashMap<>();
-
-    private final int slotStart = 27; // first slot of middle line
-
     // This is where the skill tree displays and moves
     private final Integer[][] virtualSlots = new Integer[][]{{9, 10, 11, 12, 13, 14, 15, 16}, {18, 19, 20, 21, 22, 23, 24, 25},
             {27, 28, 29, 30, 31, 32, 33, 34}, {36, 37, 38, 39, 40, 41, 42, 43}, {45, 46, 47, 48, 49, 50, 51, 52}};
+
+    private final int slotStart = 27; // first slot of middle line
 
     // State, use this to calculate virtual slots
     private int offsetX = 0;

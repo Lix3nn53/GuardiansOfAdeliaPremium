@@ -24,7 +24,7 @@ public class SkillTree {
     // Parent skill must be unlocked
     public boolean canLearnSkill(int id, SkillTreeData skillTreeData) {
         Skill skill = skillSet.get(id);
-        int parentSkillId = skill.getParentSkillId();
+        int parentSkillId = skill.getSkillTreeConfig().getParentSkillId();
 
         if (parentSkillId == -1) {
             return true;

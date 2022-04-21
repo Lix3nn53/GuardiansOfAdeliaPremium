@@ -1,6 +1,7 @@
 package io.github.lix3nn53.guardiansofadelia.guardian.skill.tree;
 
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.List;
 
 public enum SkillTreeDirection {
     UP,
@@ -12,68 +13,69 @@ public enum SkillTreeDirection {
     RIGHT_UP,
     RIGHT_DOWN;
 
-    public int getIndex(int parentIndex) {
+    public int getOffsetX(int parentX) {
         switch (this) {
-            case UP -> {
-                return parentIndex - (9 * 2);
+            case UP, DOWN -> {
+                return parentX;
             }
-            case DOWN -> {
-                return parentIndex + (9 * 2);
+            case LEFT, LEFT_DOWN, LEFT_UP -> {
+                return parentX - 2;
             }
-            case LEFT -> {
-                return parentIndex - 2;
-            }
-            case RIGHT -> {
-                return parentIndex + 2;
-            }
-            case LEFT_UP -> {
-                return parentIndex - 11;
-            }
-            case LEFT_DOWN -> {
-                return parentIndex + 7;
-            }
-            case RIGHT_UP -> {
-                return parentIndex - 7;
-            }
-            case RIGHT_DOWN -> {
-                return parentIndex + 11;
+            case RIGHT, RIGHT_UP, RIGHT_DOWN -> {
+                return parentX + 2;
             }
         }
 
-        return -1;
+        return parentX;
     }
 
-    public HashMap<Integer, SkillTreeArrow> getArrows(int parentIndex) {
-        HashMap<Integer, SkillTreeArrow> result = new HashMap<>();
+    public int getOffsetY(int parentY) {
+        switch (this) {
+            case UP, RIGHT_UP, LEFT_UP -> {
+                return parentY + 1;
+            }
+            case DOWN, RIGHT_DOWN, LEFT_DOWN -> {
+                return parentY - 1;
+            }
+            case LEFT, RIGHT -> {
+                return parentY;
+            }
+        }
+
+        return parentY;
+    }
+
+    public List<SkillTreeArrowWithOffset> getArrows(int parentX, int parentY) {
+        List<SkillTreeArrowWithOffset> result = new ArrayList<>();
 
         switch (this) {
             case UP -> {
-                result.put(parentIndex - 9, SkillTreeArrow.UP);
+                result.add(new SkillTreeArrowWithOffset(SkillTreeArrow.UP, parentX, parentY + 1));
             }
             case DOWN -> {
-                result.put(parentIndex + 9, SkillTreeArrow.UP);
+                result.add(new SkillTreeArrowWithOffset(SkillTreeArrow.DOWN, parentX, parentY - 1));
             }
             case LEFT -> {
-                result.put(parentIndex - 1, SkillTreeArrow.UP);
+                result.add(new SkillTreeArrowWithOffset(SkillTreeArrow.LEFT, parentX - 1, parentY));
             }
             case RIGHT -> {
-                result.put(parentIndex + 1, SkillTreeArrow.UP);
+                result.add(new SkillTreeArrowWithOffset(SkillTreeArrow.RIGHT, parentX + 1, parentY));
             }
             case LEFT_UP -> {
-                result.put(parentIndex - 10, SkillTreeArrow.LEFT);
-                result.put(parentIndex - 9, SkillTreeArrow.UP);
+                result.add(new SkillTreeArrowWithOffset(SkillTreeArrow.UP, parentX, parentY + 1));
+                result.add(new SkillTreeArrowWithOffset(SkillTreeArrow.LEFT, parentX - 1, parentY + 1));
             }
             case LEFT_DOWN -> {
-                result.put(parentIndex + 8, SkillTreeArrow.LEFT);
-                result.put(parentIndex + 9, SkillTreeArrow.DOWN);
+                result.add(new SkillTreeArrowWithOffset(SkillTreeArrow.DOWN, parentX, parentY - 1));
+                result.add(new SkillTreeArrowWithOffset(SkillTreeArrow.LEFT, parentX - 1, parentY - 1));
             }
             case RIGHT_UP -> {
-                result.put(parentIndex - 8, SkillTreeArrow.RIGHT);
-                result.put(parentIndex - 9, SkillTreeArrow.UP);
+                result.add(new SkillTreeArrowWithOffset(SkillTreeArrow.UP, parentX, parentY + 1));
+                result.add(new SkillTreeArrowWithOffset(SkillTreeArrow.RIGHT, parentX + 1, parentY + 1));
             }
             case RIGHT_DOWN -> {
-                result.put(parentIndex + 10, SkillTreeArrow.RIGHT);
-                result.put(parentIndex + 9, SkillTreeArrow.DOWN);
+                result.add(new SkillTreeArrowWithOffset(SkillTreeArrow.DOWN, parentX, parentY - 1));
+                result.add(new SkillTreeArrowWithOffset(SkillTreeArrow.RIGHT, parentX + 1, parentY - 1));
             }
         }
 
