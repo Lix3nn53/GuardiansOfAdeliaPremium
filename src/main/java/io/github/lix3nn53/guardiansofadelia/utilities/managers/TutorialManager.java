@@ -3,8 +3,8 @@ package io.github.lix3nn53.guardiansofadelia.utilities.managers;
 import io.github.lix3nn53.guardiansofadelia.guardian.GuardianData;
 import io.github.lix3nn53.guardiansofadelia.guardian.GuardianDataManager;
 import io.github.lix3nn53.guardiansofadelia.guardian.character.*;
-import io.github.lix3nn53.guardiansofadelia.guardian.skill.SkillTree;
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.player.SkillRPGClassData;
+import io.github.lix3nn53.guardiansofadelia.guardian.skill.tree.SkillTree;
 import io.github.lix3nn53.guardiansofadelia.items.GearLevel;
 import io.github.lix3nn53.guardiansofadelia.items.RpgGears.ArmorGearType;
 import io.github.lix3nn53.guardiansofadelia.items.RpgGears.ItemTier;
@@ -33,7 +33,8 @@ public class TutorialManager {
 
             RPGClass rpgClass = RPGClassManager.getClass(startingClass);
             SkillTree skillTree = rpgClass.getSkillTree();
-            SkillRPGClassData skillRPGClassData = rpgCharacter.getRPGClassStats().getSkillRPGClassData();
+            RPGClassStats rpgClassStats = rpgCharacter.getRPGClassStats();
+            SkillRPGClassData skillRPGClassData = rpgClassStats.getSkillRPGClassData();
             rpgCharacter.getSkillBar().remakeSkillBar(skillTree, skillRPGClassData, guardianData.getLanguage());
 
             // Character level
@@ -46,8 +47,8 @@ public class TutorialManager {
             for (String className : classes) {
                 RPGClass rpgClassInner = RPGClassManager.getClass(className);
                 String classStringNoColor = rpgClassInner.getClassStringNoColor();
-                RPGClassStats rpgClassStats = rpgCharacter.addClassStats(classStringNoColor);
-                rpgClassStats.giveExpNoMessage(totalExpClass);
+                RPGClassStats rpgClassStatsInner = rpgCharacter.getRPGClassStats(classStringNoColor);
+                rpgClassStatsInner.giveExpNoMessage(totalExpClass);
             }
 
             // InventoryUtils.setMenuItemPlayer(player);
@@ -62,11 +63,11 @@ public class TutorialManager {
             Quest tutorialStartQuest = QuestNPCManager.getQuestCopyById(1);
             rpgCharacter.acceptQuest(tutorialStartQuest, player);
 
-            rpgCharacter.getRpgCharacterStats().recalculateEquipment(rpgCharacter.getRpgClassStr());
-            rpgCharacter.getRpgCharacterStats().recalculateRPGInventory(rpgCharacter.getRpgInventory());
+            rpgCharacter.getRpgCharacterStats().recalculateEquipment(rpgCharacter.getRpgClassStr(), rpgClassStats);
+            rpgCharacter.getRpgCharacterStats().recalculateRPGInventory(rpgCharacter.getRpgInventory(), rpgClassStats);
 
-            rpgCharacterStats.setCurrentHealth(rpgCharacterStats.getTotalMaxHealth());
-            rpgCharacterStats.setCurrentMana(rpgCharacterStats.getTotalMaxMana());
+            rpgCharacterStats.setCurrentHealth(rpgCharacterStats.getTotalMaxHealth(rpgClassStats));
+            rpgCharacterStats.setCurrentMana(rpgCharacterStats.getTotalMaxMana(rpgClassStats), rpgClassStats);
         }
     }
 

@@ -5,8 +5,8 @@ import io.github.lix3nn53.guardiansofadelia.guardian.GuardianDataManager;
 import io.github.lix3nn53.guardiansofadelia.guardian.attribute.Attribute;
 import io.github.lix3nn53.guardiansofadelia.guardian.attribute.AttributeType;
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.SkillBar;
-import io.github.lix3nn53.guardiansofadelia.guardian.skill.SkillTree;
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.player.SkillRPGClassData;
+import io.github.lix3nn53.guardiansofadelia.guardian.skill.tree.SkillTree;
 import io.github.lix3nn53.guardiansofadelia.sounds.CustomSound;
 import io.github.lix3nn53.guardiansofadelia.sounds.GoaSound;
 import io.github.lix3nn53.guardiansofadelia.text.ChatPalette;
@@ -98,7 +98,7 @@ public class RPGClassStats {
         AttributeType attributeType = attribute.getAttributeType();
         attributeInvested.put(attributeType, invested);
         if (fixDisplay && attributeType.getFixDisplayOnChange()) {
-            attribute.onValueChange(rpgCharacterStats, invested);
+            attribute.onValueChange(rpgCharacterStats, this);
         }
     }
 
@@ -111,7 +111,7 @@ public class RPGClassStats {
         invested += amount;
         attributeInvested.put(attributeType, invested);
         if (fixDisplay && attributeType.getFixDisplayOnChange()) {
-            attribute.onValueChange(rpgCharacterStats, invested);
+            attribute.onValueChange(rpgCharacterStats, this);
         }
     }
 
@@ -124,7 +124,7 @@ public class RPGClassStats {
         invested -= amount;
         attributeInvested.put(attributeType, invested);
         if (fixDisplay && attributeType.getFixDisplayOnChange()) {
-            attribute.onValueChange(rpgCharacterStats, invested);
+            attribute.onValueChange(rpgCharacterStats, this);
         }
     }
 
@@ -154,8 +154,8 @@ public class RPGClassStats {
         return total;
     }
 
-    public int getAttributePointsLeftToSpend(int totalExp) {
-        int level = RPGCharacterExperienceManager.getLevel(totalExp);
+    public int getAttributePointsLeftToSpend() {
+        int level = RPGCharacterExperienceManager.getLevel(this.totalExp);
 
         int inventedPointsOnAttributes = getInvestedAttributePoints();
 

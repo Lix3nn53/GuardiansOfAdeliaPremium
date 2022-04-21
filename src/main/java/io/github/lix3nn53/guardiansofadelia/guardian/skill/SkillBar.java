@@ -12,6 +12,7 @@ import io.github.lix3nn53.guardiansofadelia.guardian.skill.component.trigger.Tri
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.player.SkillBarData;
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.player.SkillRPGClassData;
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.player.SkillTreeData;
+import io.github.lix3nn53.guardiansofadelia.guardian.skill.tree.SkillTree;
 import io.github.lix3nn53.guardiansofadelia.items.list.OtherItems;
 import io.github.lix3nn53.guardiansofadelia.text.ChatPalette;
 import io.github.lix3nn53.guardiansofadelia.text.locale.Translation;

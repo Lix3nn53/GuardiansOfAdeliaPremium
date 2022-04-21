@@ -18,12 +18,13 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 public class GuiCharacterClassChange extends GuiGeneric {
 
-    private final List<RPGClass> values;
+    private final List<RPGClass> values = new ArrayList<>();
 
-    public GuiCharacterClassChange(Player player, GuardianData guardianData, int classTier) {
+    public GuiCharacterClassChange(GuardianData guardianData) {
         super(54, CustomCharacterGui.MENU_54.toString() + ChatPalette.BLACK + Translation.t(guardianData, "character.class.change"), 0);
 
         ItemStack backButton = OtherItems.getBackButton("Character Menu");
@@ -31,15 +32,14 @@ public class GuiCharacterClassChange extends GuiGeneric {
 
         RPGCharacter rpgCharacter = guardianData.getActiveCharacter();
 
-        int highestUnlockedClassTier = rpgCharacter.getHighestUnlockedClassTier(player);
-
-        values = RPGClassManager.getClassesAtTier(classTier);
+        Set<String> valuesStr = RPGClassManager.getClasses();
 
         List<ItemStack> items = new ArrayList<>();
-        for (int i = 0; i < values.size(); i++) {
-            RPGClass value = values.get(i);
+        for (String valueStr : valuesStr) {
+            RPGClass value = RPGClassManager.getClass(valueStr);
+            values.add(value);
 
-            ItemStack itemStack = RPGClassManager.getPersonalIcon(value, highestUnlockedClassTier, rpgCharacter);
+            ItemStack itemStack = RPGClassManager.getPersonalIcon(value, rpgCharacter);
 
             items.add(itemStack);
         }

@@ -10,7 +10,6 @@ import io.github.lix3nn53.guardiansofadelia.database.DatabaseManager;
 import io.github.lix3nn53.guardiansofadelia.events.*;
 import io.github.lix3nn53.guardiansofadelia.guardian.GuardianData;
 import io.github.lix3nn53.guardiansofadelia.guardian.GuardianDataManager;
-import io.github.lix3nn53.guardiansofadelia.guardian.attribute.AttributeType;
 import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGCharacter;
 import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGCharacterStats;
 import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGClassStats;
@@ -80,16 +79,15 @@ public class GuardiansOfAdelia extends JavaPlugin {
                             RPGCharacterStats rpgCharacterStats = activeCharacter.getRpgCharacterStats();
 
                             RPGClassStats rpgClassStats = activeCharacter.getRPGClassStats();
-                            int invested = rpgClassStats.getInvested(AttributeType.BONUS_MAX_MANA);
 
                             float currentMana = rpgCharacterStats.getCurrentMana();
-                            float maxMana = rpgCharacterStats.getTotalMaxMana(invested);
+                            float maxMana = rpgCharacterStats.getTotalMaxMana(rpgClassStats);
                             if (currentMana < (maxMana * maxManaPercent)) {
                                 float nextMana = currentMana + (maxMana * manaPercent);
                                 if (nextMana > maxMana) {
                                     nextMana = maxMana;
                                 }
-                                rpgCharacterStats.setCurrentMana((int) nextMana, invested);
+                                rpgCharacterStats.setCurrentMana((int) nextMana, rpgClassStats);
                             }
 
                             /*float maxHealth = player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();

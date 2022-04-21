@@ -7,9 +7,9 @@ import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGClassExperienc
 import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGClassStats;
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.Skill;
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.SkillBar;
-import io.github.lix3nn53.guardiansofadelia.guardian.skill.SkillTree;
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.component.trigger.InitializeTrigger;
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.component.trigger.TriggerListener;
+import io.github.lix3nn53.guardiansofadelia.guardian.skill.tree.SkillTree;
 import org.bukkit.entity.Player;
 
 import java.util.List;
@@ -130,21 +130,21 @@ public class SkillRPGClassData {
     }
 
     public int getSkillPointsLeftToSpend(Player player) {
-        int points = 1;
+        int pointsTotal = 1;
         if (GuardianDataManager.hasGuardianData(player)) {
             GuardianData guardianData = GuardianDataManager.getGuardianData(player);
             if (guardianData.hasActiveCharacter()) {
                 RPGCharacter activeCharacter = guardianData.getActiveCharacter();
-                RPGClassStats currentRPGClassStats = activeCharacter.getCurrentRPGClassStats();
+                RPGClassStats currentRPGClassStats = activeCharacter.getRPGClassStats();
 
                 int totalExperience = currentRPGClassStats.getTotalExperience();
 
-                points = RPGClassExperienceManager.getLevel(totalExperience);
+                pointsTotal = RPGClassExperienceManager.getLevel(totalExperience);
             }
         }
 
         int totalInvestedSkillPoints = skillTreeData.getTotalInvestedSkillPoints();
 
-        return points - totalInvestedSkillPoints;
+        return pointsTotal - totalInvestedSkillPoints;
     }
 }

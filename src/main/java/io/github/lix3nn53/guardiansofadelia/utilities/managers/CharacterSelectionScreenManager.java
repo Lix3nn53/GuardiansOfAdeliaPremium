@@ -7,6 +7,7 @@ import io.github.lix3nn53.guardiansofadelia.guardian.GuardianDataManager;
 import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGCharacter;
 import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGCharacterStats;
 import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGClassManager;
+import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGClassStats;
 import io.github.lix3nn53.guardiansofadelia.npc.QuestNPCManager;
 import io.github.lix3nn53.guardiansofadelia.quests.Quest;
 import io.github.lix3nn53.guardiansofadelia.text.ChatPalette;
@@ -171,12 +172,13 @@ public class CharacterSelectionScreenManager {
         boolean accept = rpgCharacter.acceptQuest(questCopyById, player);
         questCopyById.onComplete(player);
 
-        rpgCharacter.getRpgCharacterStats().recalculateEquipment(rpgCharacter.getRpgClassStr());
-        rpgCharacter.getRpgCharacterStats().recalculateRPGInventory(rpgCharacter.getRpgInventory());
+        RPGClassStats rpgClassStats = rpgCharacter.getRPGClassStats();
+        rpgCharacter.getRpgCharacterStats().recalculateEquipment(rpgCharacter.getRpgClassStr(), rpgClassStats);
+        rpgCharacter.getRpgCharacterStats().recalculateRPGInventory(rpgCharacter.getRpgInventory(), rpgClassStats);
 
         RPGCharacterStats rpgCharacterStats = rpgCharacter.getRpgCharacterStats();
-        rpgCharacterStats.setCurrentHealth(rpgCharacterStats.getTotalMaxHealth());
-        rpgCharacterStats.setCurrentMana(rpgCharacterStats.getTotalMaxMana());
+        rpgCharacterStats.setCurrentHealth(rpgCharacterStats.getTotalMaxHealth(rpgClassStats));
+        rpgCharacterStats.setCurrentMana(rpgCharacterStats.getTotalMaxMana(rpgClassStats), rpgClassStats);
     }
 
 

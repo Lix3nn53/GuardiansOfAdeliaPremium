@@ -2,6 +2,7 @@ package io.github.lix3nn53.guardiansofadelia.guardian.skill;
 
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.component.SkillComponent;
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.component.trigger.InitializeTrigger;
+import io.github.lix3nn53.guardiansofadelia.guardian.skill.tree.SkillTreeConfig;
 import io.github.lix3nn53.guardiansofadelia.text.ChatPalette;
 import org.bukkit.Material;
 import org.bukkit.entity.LivingEntity;
@@ -28,13 +29,13 @@ public class Skill {
     private final List<Integer> cooldowns;
 
     // skill tree
-    private final int parentSkillId;
+    private final SkillTreeConfig skillTreeConfig;
 
     private final List<SkillComponent> triggers = new ArrayList<>();
 
     public Skill(int id, String name, int maxSkillLevel, Material material, int customModelData,
                  List<String> description, List<Integer> reqSkillPoints, List<Integer> manaCosts,
-                 List<Integer> cooldowns, int parentSkillId) {
+                 List<Integer> cooldowns, SkillTreeConfig skillTreeConfig) {
         this.id = id;
         this.name = name;
         this.maxSkillLevel = maxSkillLevel;
@@ -44,7 +45,7 @@ public class Skill {
         this.reqSkillPoints = reqSkillPoints;
         this.manaCosts = manaCosts;
         this.cooldowns = cooldowns;
-        this.parentSkillId = parentSkillId;
+        this.skillTreeConfig = skillTreeConfig;
     }
 
     public int getId() {
@@ -78,8 +79,8 @@ public class Skill {
         return cooldowns.get(skillLevel - 1);
     }
 
-    public int getParentSkillId() {
-        return parentSkillId;
+    public SkillTreeConfig getSkillTreeConfig() {
+        return skillTreeConfig;
     }
 
     public int getCurrentSkillLevel(int pointsInvested) {

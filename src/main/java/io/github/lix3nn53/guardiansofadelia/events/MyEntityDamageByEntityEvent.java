@@ -271,8 +271,7 @@ public class MyEntityDamageByEntityEvent implements Listener {
 
                         // Do this before melee damage reduction of ranged weapons
                         // Add bonus damage to normal attack, both melee and ranged
-                        int investedDamage = rpgClassStats.getInvested(AttributeType.BONUS_ELEMENT_DAMAGE);
-                        damage += rpgCharacterStats.getAttribute(AttributeType.BONUS_ELEMENT_DAMAGE).getIncrement(player.getLevel(), rpgClassStr, investedDamage); // bonus from attribute
+                        damage += rpgCharacterStats.getAttribute(AttributeType.BONUS_ELEMENT_DAMAGE).getIncrement(player.getLevel(), rpgClassStr, rpgClassStats); // bonus from attribute
                         damage += rpgCharacterStats.getElement(damageType).getTotal(); // bonus from element
 
                         if (isProjectile) { // NonSkill projectile like arrow from bow

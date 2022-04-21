@@ -6,6 +6,7 @@ import io.github.lix3nn53.guardiansofadelia.guardian.attribute.Attribute;
 import io.github.lix3nn53.guardiansofadelia.guardian.attribute.AttributeType;
 import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGCharacter;
 import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGCharacterStats;
+import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGClassStats;
 import io.github.lix3nn53.guardiansofadelia.items.list.OtherItems;
 import io.github.lix3nn53.guardiansofadelia.menu.main.GuiCharacter;
 import io.github.lix3nn53.guardiansofadelia.quests.Quest;
@@ -27,10 +28,14 @@ public class GuiCharacterStatInvest extends GuiGeneric {
     public GuiCharacterStatInvest(int pointsLeft, GuardianData guardianData, RPGCharacterStats rpgCharacterStats) {
         super(27, CustomCharacterGui.MENU_27_FLAT.toString() + ChatPalette.BLACK + "Stat Points (Points: " + pointsLeft + ")", 0);
 
+        RPGCharacter activeCharacter = guardianData.getActiveCharacter();
+        RPGClassStats rpgClassStats = activeCharacter.getRPGClassStats();
+
         Attribute bonusElementDamage = rpgCharacterStats.getAttribute(AttributeType.BONUS_ELEMENT_DAMAGE);
+        int invested = rpgClassStats.getInvested(AttributeType.BONUS_ELEMENT_DAMAGE);
         ItemStack itemStack = new ItemStack(Material.PAPER);
         ItemMeta itemMeta = itemStack.getItemMeta();
-        itemMeta.setDisplayName(AttributeType.BONUS_ELEMENT_DAMAGE.getCustomName() + " (Invested: " + bonusElementDamage.getInvested() + ")");
+        itemMeta.setDisplayName(AttributeType.BONUS_ELEMENT_DAMAGE.getCustomName() + " (Invested: " + invested + ")");
         ArrayList<String> lore = new ArrayList<>();
         lore.add("");
         lore.add(ChatPalette.YELLOW + bonusElementDamage.getAttributeType().getDescription());
@@ -44,28 +49,32 @@ public class GuiCharacterStatInvest extends GuiGeneric {
         this.setItem(10, itemStack);
 
         Attribute bonusElementDefense = rpgCharacterStats.getAttribute(AttributeType.BONUS_ELEMENT_DEFENSE);
-        itemMeta.setDisplayName(AttributeType.BONUS_ELEMENT_DEFENSE.getCustomName() + " (Invested: " + bonusElementDefense.getInvested() + ")");
+        invested = rpgClassStats.getInvested(AttributeType.BONUS_ELEMENT_DEFENSE);
+        itemMeta.setDisplayName(AttributeType.BONUS_ELEMENT_DEFENSE.getCustomName() + " (Invested: " + invested + ")");
         lore.set(1, ChatPalette.YELLOW + bonusElementDefense.getAttributeType().getDescription());
         itemMeta.setLore(lore);
         itemStack.setItemMeta(itemMeta);
         this.setItem(13, itemStack);
 
         Attribute bonusMaxHealth = rpgCharacterStats.getAttribute(AttributeType.BONUS_MAX_HEALTH);
-        itemMeta.setDisplayName(AttributeType.BONUS_MAX_HEALTH.getCustomName() + " (Invested: " + bonusMaxHealth.getInvested() + ")");
+        invested = rpgClassStats.getInvested(AttributeType.BONUS_MAX_HEALTH);
+        itemMeta.setDisplayName(AttributeType.BONUS_MAX_HEALTH.getCustomName() + " (Invested: " + invested + ")");
         lore.set(1, ChatPalette.YELLOW + bonusMaxHealth.getAttributeType().getDescription());
         itemMeta.setLore(lore);
         itemStack.setItemMeta(itemMeta);
         this.setItem(16, itemStack);
 
         Attribute bonusMaxMana = rpgCharacterStats.getAttribute(AttributeType.BONUS_MAX_MANA);
-        itemMeta.setDisplayName(AttributeType.BONUS_MAX_MANA.getCustomName() + " (Invested: " + bonusMaxMana.getInvested() + ")");
+        invested = rpgClassStats.getInvested(AttributeType.BONUS_MAX_MANA);
+        itemMeta.setDisplayName(AttributeType.BONUS_MAX_MANA.getCustomName() + " (Invested: " + invested + ")");
         lore.set(1, ChatPalette.YELLOW + bonusMaxMana.getAttributeType().getDescription());
         itemMeta.setLore(lore);
         itemStack.setItemMeta(itemMeta);
         this.setItem(20, itemStack);
 
         Attribute bonusCriticalChance = rpgCharacterStats.getAttribute(AttributeType.BONUS_CRITICAL_CHANCE);
-        itemMeta.setDisplayName(AttributeType.BONUS_CRITICAL_CHANCE.getCustomName() + " (Invested: " + bonusCriticalChance.getInvested() + ")");
+        invested = rpgClassStats.getInvested(AttributeType.BONUS_CRITICAL_CHANCE);
+        itemMeta.setDisplayName(AttributeType.BONUS_CRITICAL_CHANCE.getCustomName() + " (Invested: " + invested + ")");
         lore.set(1, ChatPalette.YELLOW + bonusCriticalChance.getAttributeType().getDescription());
         itemMeta.setLore(lore);
         itemStack.setItemMeta(itemMeta);
@@ -96,6 +105,7 @@ public class GuiCharacterStatInvest extends GuiGeneric {
 
         if (rpgCharacter != null) {
             RPGCharacterStats rpgCharacterStats = rpgCharacter.getRpgCharacterStats();
+            RPGClassStats rpgClassStats = rpgCharacter.getRPGClassStats();
             Attribute attr = null;
             if (slot == 0) {
                 GuiCharacter gui = new GuiCharacter(guardianData);
@@ -114,7 +124,7 @@ public class GuiCharacterStatInvest extends GuiGeneric {
             }
             if (attr != null) {
                 if (event.isLeftClick()) {
-                    int pointsLeftToSpend = rpgCharacterStats.getAttributePointsLeftToSpend();
+                    int pointsLeftToSpend = rpgClassStats.getAttributePointsLeftToSpend();
                     if (pointsLeftToSpend > 0) {
                         int amount = 1;
                         if (event.isShiftClick()) {
@@ -125,8 +135,8 @@ public class GuiCharacterStatInvest extends GuiGeneric {
                             }
                         }
 
-                        attr.investPoint(amount, rpgCharacterStats, true);
-                        int pointsLeft = rpgCharacterStats.getAttributePointsLeftToSpend();
+                        rpgClassStats.investPoint(attr, amount, rpgCharacterStats, true);
+                        int pointsLeft = rpgClassStats.getAttributePointsLeftToSpend();
                         GuiCharacterStatInvest gui = new GuiCharacterStatInvest(pointsLeft, guardianData, rpgCharacterStats);
                         gui.openInventory(player);
 
@@ -136,7 +146,7 @@ public class GuiCharacterStatInvest extends GuiGeneric {
                         }
                     }
                 } else if (event.isRightClick()) {
-                    int invested = attr.getInvested();
+                    int invested = rpgClassStats.getInvested(attr.getAttributeType());
                     if (invested > 0) {
                         int amount = 1;
                         if (event.isShiftClick()) {
@@ -147,8 +157,8 @@ public class GuiCharacterStatInvest extends GuiGeneric {
                             }
                         }
 
-                        attr.downgradePoint(amount, rpgCharacterStats, true);
-                        int pointsLeft = rpgCharacterStats.getAttributePointsLeftToSpend();
+                        rpgClassStats.downgradePoint(attr, amount, rpgCharacterStats, true);
+                        int pointsLeft = rpgClassStats.getAttributePointsLeftToSpend();
                         GuiCharacterStatInvest gui = new GuiCharacterStatInvest(pointsLeft, guardianData, rpgCharacterStats);
                         gui.openInventory(player);
                     }

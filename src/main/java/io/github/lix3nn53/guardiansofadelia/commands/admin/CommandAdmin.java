@@ -83,7 +83,7 @@ public class CommandAdmin implements CommandExecutor {
                             GuardianData guardianData = GuardianDataManager.getGuardianData(target);
                             if (guardianData.hasActiveCharacter()) {
                                 RPGCharacter activeCharacter = guardianData.getActiveCharacter();
-                                RPGClassStats currentRPGClassStats = activeCharacter.getCurrentRPGClassStats();
+                                RPGClassStats currentRPGClassStats = activeCharacter.getRPGClassStats();
                                 currentRPGClassStats.giveExp(target, expToGive);
                             }
                         }

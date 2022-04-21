@@ -2,11 +2,9 @@ package io.github.lix3nn53.guardiansofadelia.menu.main;
 
 import io.github.lix3nn53.guardiansofadelia.guardian.GuardianData;
 import io.github.lix3nn53.guardiansofadelia.guardian.GuardianDataManager;
-import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGCharacter;
-import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGCharacterStats;
-import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGClass;
-import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGClassManager;
+import io.github.lix3nn53.guardiansofadelia.guardian.character.*;
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.SkillBar;
+import io.github.lix3nn53.guardiansofadelia.guardian.skill.player.SkillRPGClassData;
 import io.github.lix3nn53.guardiansofadelia.menu.GuiHelper;
 import io.github.lix3nn53.guardiansofadelia.menu.main.character.*;
 import io.github.lix3nn53.guardiansofadelia.text.ChatPalette;
@@ -112,15 +110,18 @@ public class GuiCharacter extends GuiGeneric {
             gui.openInventory(player);
         } else if (GuiHelper.get54BigButtonIndexes(1).contains(slot)) {
             SkillBar skillBar = rpgCharacter.getSkillBar();
+            RPGClassStats rpgClassStats = rpgCharacter.getRPGClassStats();
+            SkillRPGClassData skillRPGClassData = rpgClassStats.getSkillRPGClassData();
 
-            int pointsLeft = skillBar.getSkillPointsLeftToSpend();
+            int pointsLeft = skillRPGClassData.getSkillPointsLeftToSpend(player);
 
             GuiCharacterSkills gui = new GuiCharacterSkills(player, guardianData, rpgCharacter, skillBar, pointsLeft);
             gui.openInventory(player);
         } else if (GuiHelper.get54BigButtonIndexes(2).contains(slot)) {
             RPGCharacterStats rpgCharacterStats = rpgCharacter.getRpgCharacterStats();
+            RPGClassStats rpgClassStats = rpgCharacter.getRPGClassStats();
 
-            int pointsLeft = rpgCharacterStats.getAttributePointsLeftToSpend();
+            int pointsLeft = rpgClassStats.getAttributePointsLeftToSpend();
 
             GuiCharacterStatInvest gui = new GuiCharacterStatInvest(pointsLeft, guardianData, rpgCharacterStats);
             gui.openInventory(player);

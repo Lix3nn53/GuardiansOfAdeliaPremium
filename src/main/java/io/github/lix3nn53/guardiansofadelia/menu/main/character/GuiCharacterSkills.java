@@ -3,8 +3,12 @@ package io.github.lix3nn53.guardiansofadelia.menu.main.character;
 import io.github.lix3nn53.guardiansofadelia.guardian.GuardianData;
 import io.github.lix3nn53.guardiansofadelia.guardian.GuardianDataManager;
 import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGCharacter;
+import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGClass;
+import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGClassManager;
+import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGClassStats;
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.Skill;
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.SkillBar;
+import io.github.lix3nn53.guardiansofadelia.guardian.skill.tree.SkillTree;
 import io.github.lix3nn53.guardiansofadelia.items.list.OtherItems;
 import io.github.lix3nn53.guardiansofadelia.menu.main.GuiCharacter;
 import io.github.lix3nn53.guardiansofadelia.quests.Quest;
@@ -22,13 +26,27 @@ import java.util.List;
 
 public class GuiCharacterSkills extends GuiGeneric {
 
-    private final HashMap<Integer, String> slotToRpgClassStr = new HashMap<>();
+    private final HashMap<Integer, Integer> skillIdToSlotVirtual = new HashMap<>();
+
+    private final int slotStart = 27; // first slot of middle line
+
+    // This is where the skill tree displays and moves
+    private final Integer[][] virtualSlots = new Integer[][]{{9, 10, 11, 12, 13, 14, 15, 16}, {18, 19, 20, 21, 22, 23, 24, 25},
+            {27, 28, 29, 30, 31, 32, 33, 34}, {36, 37, 38, 39, 40, 41, 42, 43}, {45, 46, 47, 48, 49, 50, 51, 52}};
+
+    // State, use this to calculate virtual slots
+    private int offsetX = 0;
+    private int offsetY = 0;
 
     public GuiCharacterSkills(Player player, GuardianData guardianData, RPGCharacter rpgCharacter, SkillBar skillBar, int pointsLeft) {
-        super(27, CustomCharacterGui.MENU_27_FLAT.toString() + ChatPalette.BLACK + Translation.t(guardianData, "skill.name") +
+        super(54, CustomCharacterGui.MENU_54_FLAT.toString() + ChatPalette.BLACK + Translation.t(guardianData, "skill.name") +
                 " (" + Translation.t(guardianData, "skill.points") + ": " + pointsLeft + ")", 0);
 
-        HashMap<Integer, Skill> skillSet = rpgCharacter.getSkillBar().getSkillTree();
+        RPGClassStats rpgClassStats = rpgCharacter.getRPGClassStats();
+        String rpgClassStr = rpgCharacter.getRpgClassStr();
+        RPGClass rpgClass = RPGClassManager.getClass(rpgClassStr);
+        SkillTree skillTree = rpgClass.getSkillTree();
+
 
         String language = guardianData.getLanguage();
         if (skillSet.containsKey(0)) {
@@ -131,7 +149,7 @@ public class GuiCharacterSkills extends GuiGeneric {
 
         if (skillIndex != -1) {
             if (event.isLeftClick()) {
-                boolean upgradeSkill = skillBar.upgradeSkill(skillIndex, rpgCharacter.getCurrentRPGClassStats(), guardianData.getLanguage());
+                boolean upgradeSkill = skillBar.upgradeSkill(skillIndex, rpgCharacter.getRPGClassStats(), guardianData.getLanguage());
                 if (upgradeSkill) {
                     int pointsLeft = skillBar.getSkillPointsLeftToSpend();
                     GuiCharacterSkills guiCharacterSkills = new GuiCharacterSkills(player, guardianData, rpgCharacter, skillBar, pointsLeft);
@@ -151,5 +169,33 @@ public class GuiCharacterSkills extends GuiGeneric {
                 }
             }
         }
+    }
+
+    private void moveVirtualDisplay(VirtualMove direction) {
+        switch (direction) {
+            case LEFT -> {
+                this.offsetX -= 1;
+            }
+            case RIGHT -> {
+                this.offsetX += 1;
+            }
+            case UP -> {
+                this.offsetY += 1;
+            }
+            case DOWN -> {
+                this.offsetY -= 1;
+            }
+        }
+    }
+
+    private Integer[][] getDisplayedVirtualSlots() {
+
+    }
+
+    private enum VirtualMove {
+        LEFT,
+        RIGHT,
+        UP,
+        DOWN
     }
 }

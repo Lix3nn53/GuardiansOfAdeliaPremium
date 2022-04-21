@@ -1,5 +1,6 @@
-package io.github.lix3nn53.guardiansofadelia.guardian.skill;
+package io.github.lix3nn53.guardiansofadelia.guardian.skill.tree;
 
+import io.github.lix3nn53.guardiansofadelia.guardian.skill.Skill;
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.player.SkillTreeData;
 
 import java.util.HashMap;

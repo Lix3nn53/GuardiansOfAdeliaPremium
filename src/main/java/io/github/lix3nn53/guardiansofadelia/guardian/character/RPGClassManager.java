@@ -48,7 +48,7 @@ public class RPGClassManager {
         return rpgClassMap.keySet();
     }
 
-    public static ItemStack getPersonalIcon(RPGClass rpgClass, int highestUnlockedClassTier, RPGCharacter rpgCharacter) {
+    public static ItemStack getPersonalIcon(RPGClass rpgClass, RPGCharacter rpgCharacter) {
         ItemStack itemStack = new ItemStack(Material.WOODEN_PICKAXE);
         ItemMeta itemMeta = itemStack.getItemMeta();
         itemMeta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
