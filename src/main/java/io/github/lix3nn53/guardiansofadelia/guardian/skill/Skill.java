@@ -2,7 +2,9 @@ package io.github.lix3nn53.guardiansofadelia.guardian.skill;
 
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.component.SkillComponent;
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.component.trigger.InitializeTrigger;
-import io.github.lix3nn53.guardiansofadelia.guardian.skill.tree.SkillTreeConfig;
+import io.github.lix3nn53.guardiansofadelia.guardian.skill.tree.SkillTreeArrowWithOffset;
+import io.github.lix3nn53.guardiansofadelia.guardian.skill.tree.SkillTreeDirection;
+import io.github.lix3nn53.guardiansofadelia.guardian.skill.tree.SkillTreeOffset;
 import io.github.lix3nn53.guardiansofadelia.text.ChatPalette;
 import org.bukkit.Material;
 import org.bukkit.entity.LivingEntity;
@@ -11,6 +13,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class Skill {
@@ -24,18 +27,21 @@ public class Skill {
 
     private final List<Integer> reqSkillPoints;
 
-    //skill attributes
+    // skill attributes
     private final List<Integer> manaCosts;
     private final List<Integer> cooldowns;
 
-    // skill tree
-    private final SkillTreeConfig skillTreeConfig;
-
     private final List<SkillComponent> triggers = new ArrayList<>();
+
+    // skill tree
+    private final int parentId;
+    private final HashMap<Integer, SkillTreeDirection> childSkills;
+    private final SkillTreeDirection skillTreeDirection;
+    private SkillTreeOffset rootStartOffset; // Required if the skill is root
 
     public Skill(int id, String name, int maxSkillLevel, Material material, int customModelData,
                  List<String> description, List<Integer> reqSkillPoints, List<Integer> manaCosts,
-                 List<Integer> cooldowns, SkillTreeConfig skillTreeConfig) {
+                 List<Integer> cooldowns, int parentId, HashMap<Integer, SkillTreeDirection> childSkills, SkillTreeDirection skillTreeDirection) {
         this.id = id;
         this.name = name;
         this.maxSkillLevel = maxSkillLevel;
@@ -45,7 +51,9 @@ public class Skill {
         this.reqSkillPoints = reqSkillPoints;
         this.manaCosts = manaCosts;
         this.cooldowns = cooldowns;
-        this.skillTreeConfig = skillTreeConfig;
+        this.parentId = parentId;
+        this.childSkills = childSkills;
+        this.skillTreeDirection = skillTreeDirection;
     }
 
     public int getId() {
@@ -77,10 +85,6 @@ public class Skill {
     public int getCooldown(int skillLevel) {
         if (skillLevel == 0) return cooldowns.get(0);
         return cooldowns.get(skillLevel - 1);
-    }
-
-    public SkillTreeConfig getSkillTreeConfig() {
-        return skillTreeConfig;
     }
 
     public int getCurrentSkillLevel(int pointsInvested) {
@@ -172,5 +176,40 @@ public class Skill {
         }
 
         return initializeTriggers;
+    }
+
+    public int getParentId() {
+        return parentId;
+    }
+
+    public HashMap<Integer, SkillTreeDirection> getChildSkills() {
+        return childSkills;
+    }
+
+    public SkillTreeDirection getSkillTreeDirection() {
+        return skillTreeDirection;
+    }
+
+    public SkillTreeOffset getRootStartOffset() {
+        return rootStartOffset;
+    }
+
+    public void setRootStartOffset(SkillTreeOffset rootStartOffset) {
+        this.rootStartOffset = rootStartOffset;
+    }
+
+    public void applyChildSkillTreeOffsetAndArrows(HashMap<Integer, Skill> skillSet, HashMap<Integer, SkillTreeOffset> skillIdToOffset, List<SkillTreeArrowWithOffset> skillTreeArrows) {
+        for (int childSkillId : childSkills.keySet()) {
+            SkillTreeDirection skillTreeDirection = childSkills.get(childSkillId);
+            SkillTreeOffset offset = skillTreeDirection.getOffset(rootStartOffset);
+            skillIdToOffset.put(childSkillId, offset);
+
+            List<SkillTreeArrowWithOffset> arrows = skillTreeDirection.getArrows(rootStartOffset);
+            skillTreeArrows.addAll(arrows);
+
+            // Do the same for the child skills
+            Skill child = skillSet.get(childSkillId);
+            child.applyChildSkillTreeOffsetAndArrows(skillSet, skillIdToOffset, skillTreeArrows);
+        }
     }
 }

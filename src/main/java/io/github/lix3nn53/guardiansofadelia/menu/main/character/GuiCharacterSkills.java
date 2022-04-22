@@ -21,15 +21,21 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 public class GuiCharacterSkills extends GuiGeneric {
+
+    // calculations
+    private static final int LINE_COUNT = 5;
+    private static final int LINE_LENGTH = 8;
+    private final SkillTree skillTree;
+    private final int slotStart = 27; // first slot of middle line
 
     // This is where the skill tree displays and moves
     private final Integer[][] virtualSlots = new Integer[][]{{9, 10, 11, 12, 13, 14, 15, 16}, {18, 19, 20, 21, 22, 23, 24, 25},
             {27, 28, 29, 30, 31, 32, 33, 34}, {36, 37, 38, 39, 40, 41, 42, 43}, {45, 46, 47, 48, 49, 50, 51, 52}};
-
-    private final int slotStart = 27; // first slot of middle line
 
     // State, use this to calculate virtual slots
     private int offsetX = 0;
@@ -42,7 +48,7 @@ public class GuiCharacterSkills extends GuiGeneric {
         RPGClassStats rpgClassStats = rpgCharacter.getRPGClassStats();
         String rpgClassStr = rpgCharacter.getRpgClassStr();
         RPGClass rpgClass = RPGClassManager.getClass(rpgClassStr);
-        SkillTree skillTree = rpgClass.getSkillTree();
+        this.skillTree = rpgClass.getSkillTree();
 
 
         String language = guardianData.getLanguage();
@@ -188,6 +194,28 @@ public class GuiCharacterSkills extends GuiGeneric {
     private Integer[][] getDisplayedVirtualSlots() {
 
     }
+
+    private List<Integer> getLines() {
+        List<Integer> lines = new ArrayList<>();
+
+        Set<Integer> skillIds = this.skillTree.getSkillIds();
+        for (int skillId : skillIds) {
+            Skill skill = this.skillTree.getSkill(skillId);
+
+            SkillTreeConfig skillTreeConfig = skill.getSkillTreeConfig();
+            int parentSkillId = skillTreeConfig.getParentSkillId();
+        }
+
+        for (int i = 0; i < this.virtualSlots.length; i++) {
+            if (this.virtualSlots[i][0] != null) {
+                lines.add(i);
+            }
+        }
+
+        return lines;
+    }
+
+}
 
     private enum VirtualMove {
         LEFT,
