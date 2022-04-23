@@ -34,9 +34,7 @@ public class Skill {
     private final List<SkillComponent> triggers = new ArrayList<>();
 
     // skill tree
-    private int parentId;
-    private HashMap<Integer, SkillTreeDirection> childSkills;
-    private SkillTreeOffset rootStartOffset; // Required if the skill is root
+    private SkillDataForTree skillDataForTree;
 
     public Skill(int id, String name, int maxSkillLevel, Material material, int customModelData,
                  List<String> description, List<Integer> reqSkillPoints, List<Integer> manaCosts,
@@ -175,41 +173,35 @@ public class Skill {
     }
 
     public int getParentId() {
-        return parentId;
+        return this.skillDataForTree.getParentId();
     }
 
     public HashMap<Integer, SkillTreeDirection> getChildSkills() {
-        return childSkills;
+        return this.skillDataForTree.getChildSkills();
     }
 
     public SkillTreeOffset getRootStartOffset() {
-        return rootStartOffset;
+        return this.skillDataForTree.getRootStartOffset();
     }
 
-    public void applyChildSkillTreeOffsetAndArrows(HashMap<Integer, Skill> skillSet, HashMap<Integer, SkillTreeOffset> skillIdToOffset, List<SkillTreeArrowWithOffset> skillTreeArrows) {
+    public void applyChildSkillTreeOffsetAndArrows(HashMap<Integer, Skill> skillSet, HashMap<Integer, SkillTreeOffset> skillIdToOffset, List<SkillTreeArrowWithOffset> skillTreeArrows, SkillTreeOffset parentOffset) {
+        HashMap<Integer, SkillTreeDirection> childSkills = getChildSkills();
+
         for (int childSkillId : childSkills.keySet()) {
             SkillTreeDirection skillTreeDirection = childSkills.get(childSkillId);
-            SkillTreeOffset offset = skillTreeDirection.getOffset(rootStartOffset);
+            SkillTreeOffset offset = skillTreeDirection.getOffset(parentOffset);
             skillIdToOffset.put(childSkillId, offset);
 
-            List<SkillTreeArrowWithOffset> arrows = skillTreeDirection.getArrows(rootStartOffset);
+            List<SkillTreeArrowWithOffset> arrows = skillTreeDirection.getArrows(parentOffset);
             skillTreeArrows.addAll(arrows);
 
             // Do the same for the child skills
             Skill child = skillSet.get(childSkillId);
-            child.applyChildSkillTreeOffsetAndArrows(skillSet, skillIdToOffset, skillTreeArrows);
+            child.applyChildSkillTreeOffsetAndArrows(skillSet, skillIdToOffset, skillTreeArrows, offset);
         }
     }
 
-    public void setParentId(int parentId) {
-        this.parentId = parentId;
-    }
-
-    public void setChildSkills(HashMap<Integer, SkillTreeDirection> childSkills) {
-        this.childSkills = childSkills;
-    }
-
-    public void setRootStartOffset(SkillTreeOffset rootStartOffset) {
-        this.rootStartOffset = rootStartOffset;
+    public void setSkillDataForTree(SkillDataForTree skillDataForTree) {
+        this.skillDataForTree = skillDataForTree;
     }
 }

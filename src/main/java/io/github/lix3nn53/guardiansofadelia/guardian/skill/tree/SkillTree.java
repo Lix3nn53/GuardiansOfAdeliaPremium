@@ -13,30 +13,21 @@ public class SkillTree {
     private final HashMap<Integer, Skill> skillSet;
 
     // Skill GUI
+    private final List<Integer> rootSkillIds;
     private final HashMap<Integer, SkillTreeOffset> skillIdToOffset = new HashMap<>();
     private final List<SkillTreeArrowWithOffset> skillTreeArrows = new ArrayList<>();
 
-    public SkillTree(HashMap<Integer, Skill> skillSet) {
+    public SkillTree(HashMap<Integer, Skill> skillSet, List<Integer> rootSkillIds) {
         this.skillSet = skillSet;
+        this.rootSkillIds = rootSkillIds;
 
         // START calculate skill tree offset
-        List<Integer> rootSkillIds = new ArrayList<>();
-
-        for (int skillId : skillSet.keySet()) {
-            Skill skill = skillSet.get(skillId);
-            int rootSkillId = skill.getParentId();
-
-            if (rootSkillId < 0) {
-                rootSkillIds.add(skillId);
-            }
-        }
-
         for (int rootSkillId : rootSkillIds) {
             Skill rootSkill = skillSet.get(rootSkillId);
             SkillTreeOffset rootStartOffset = rootSkill.getRootStartOffset();
             skillIdToOffset.put(rootSkillId, rootStartOffset);
 
-            rootSkill.applyChildSkillTreeOffsetAndArrows(skillSet, skillIdToOffset, skillTreeArrows);
+            rootSkill.applyChildSkillTreeOffsetAndArrows(skillSet, skillIdToOffset, skillTreeArrows, rootStartOffset);
         }
         // END calculate skill tree offset
     }
@@ -67,11 +58,15 @@ public class SkillTree {
         return skillSet.keySet();
     }
 
-    public List<SkillTreeArrowWithOffset> getSkillTreeArrows() {
-        return skillTreeArrows;
+    public List<Integer> getRootSkillIds() {
+        return rootSkillIds;
     }
 
     public HashMap<Integer, SkillTreeOffset> getSkillIdToOffset() {
         return skillIdToOffset;
+    }
+
+    public List<SkillTreeArrowWithOffset> getSkillTreeArrows() {
+        return skillTreeArrows;
     }
 }

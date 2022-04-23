@@ -52,7 +52,7 @@ public class DatabaseQueries {
                     "     `storage_bazaar` mediumtext NULL,\n" +
                     "     `storage_premium` mediumtext NULL,\n" +
                     "     `lang` varchar(20) NOT NULL,\n" +
-                    "     `friend_uuids` text NOT NULL,\n" +
+                    "     `friend_uuids` text,\n" +
                     "     PRIMARY KEY (`uuid`)\n" +
                     ");");
             statement.addBatch("CREATE TABLE IF NOT EXISTS `goa_player_character` (\n" +
@@ -74,10 +74,10 @@ public class DatabaseQueries {
                     "     `armor_content` text NOT NULL,\n" +
                     "     `rpg_class` varchar(45) NOT NULL,\n" +
                     "     `totalexp` int NOT NULL,\n" +
-                    "     `slot_tool_axe` text NOT NULL,\n" +
-                    "     `slot_tool_bottle` text NOT NULL,\n" +
-                    "     `slot_tool_hoe` text NOT NULL,\n" +
-                    "     `slot_tool_pickaxe` text NOT NULL,\n" +
+                    "     `slot_tool_axe` text,\n" +
+                    "     `slot_tool_bottle` text,\n" +
+                    "     `slot_tool_hoe` text,\n" +
+                    "     `slot_tool_pickaxe` text,\n" +
                     "     UNIQUE KEY `Ind_88` (`uuid`, `character_no`),\n" +
                     "     KEY `fkIdx_55` (`uuid`),\n" +
                     "     CONSTRAINT `FK_55` FOREIGN KEY `fkIdx_55` (`uuid`) REFERENCES `goa_player` (`uuid`)\n" +
@@ -703,6 +703,10 @@ public class DatabaseQueries {
     public static int setGuardianData(UUID uuid, LocalDate lastPrizeDate, StaffRank staffRank, PremiumRank premiumRank,
                                       ItemStack[] personalStorage, ItemStack[] bazaarStorage,
                                       ItemStack[] premiumStorage, String language, String friendUUIDS) throws SQLException {
+        if (friendUUIDS.equals("")) {
+            friendUUIDS = null;
+        }
+
         String SQL_QUERY = "INSERT INTO goa_player \n" +
                 "\t(uuid, daily_last_date, staff_rank, premium_rank, storage_personal, storage_bazaar, storage_premium, lang, friend_uuids) \n" +
                 "VALUES \n" +

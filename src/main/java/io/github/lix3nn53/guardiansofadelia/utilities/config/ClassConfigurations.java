@@ -8,11 +8,13 @@ import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGClass;
 import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGClassManager;
 import io.github.lix3nn53.guardiansofadelia.guardian.element.ElementType;
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.Skill;
+import io.github.lix3nn53.guardiansofadelia.guardian.skill.SkillDataForTree;
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.SkillTier;
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.component.SkillComponent;
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.config.SkillComponentLoader;
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.tree.SkillTree;
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.tree.SkillTreeDirection;
+import io.github.lix3nn53.guardiansofadelia.guardian.skill.tree.SkillTreeOffset;
 import io.github.lix3nn53.guardiansofadelia.items.RpgGears.ArmorGearType;
 import io.github.lix3nn53.guardiansofadelia.items.RpgGears.ShieldGearType;
 import io.github.lix3nn53.guardiansofadelia.items.RpgGears.WeaponGearType;
@@ -25,7 +27,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
 
 public class ClassConfigurations {
 
@@ -37,6 +38,10 @@ public class ClassConfigurations {
 
     private static void loadClassConfigs() {
         RPGClassManager.clearClasses();
+
+        YamlConfiguration config = ConfigurationUtils.createConfig(filePath, "config.yml");
+        String startingClass = config.getString("startingClass");
+        RPGClassManager.setStartingClass(startingClass.toUpperCase());
 
         List<String> directories = ConfigurationUtils.getAllDirectoriesInFile(filePath);
 
@@ -76,7 +81,7 @@ public class ClassConfigurations {
 
         HashMap<Integer, Skill> skillSet = new HashMap<>();
         for (String skillTierStr : skillsFile) {
-            SkillTier skillTier = SkillTier.valueOf(skillTierStr);
+            SkillTier skillTier = SkillTier.valueOf(skillTierStr.toUpperCase());
 
             HashMap<String, YamlConfiguration> skillConfigs = ConfigurationUtils.getAllConfigsInFile(filePath + File.separator + className + File.separator + "skills" + File.separator + skillTierStr);
 
@@ -91,7 +96,10 @@ public class ClassConfigurations {
             }
         }
 
-        SkillTree skillTree = new SkillTree(skillSet);
+        YamlConfiguration skillTreeConfig = ConfigurationUtils.createConfig(filePath + File.separator + className, "skillTree.yml");
+        List<Integer> rootSkills = loadSkillTree(skillSet, skillTreeConfig);
+
+        SkillTree skillTree = new SkillTree(skillSet, rootSkills);
 
         // TODO make gear types unlock with skills not classes
         List<ShieldGearType> shieldGearTypes = new ArrayList<>();
@@ -153,26 +161,44 @@ public class ClassConfigurations {
         return skill;
     }
 
-    private static HashMap<Integer, SkillTreeDirection> loadSkillTree(ConfigurationSection skillTreeConfig) {
-        HashMap<Integer, SkillTreeDirection> skillTree = new HashMap<>();
+    private static List<Integer> loadSkillTree(HashMap<Integer, Skill> skills, ConfigurationSection skillTreeConfig) {
+        List<Integer> rootSkills = new ArrayList<>();
 
-        int parentSkillCount = skillTreeConfig.getInt("parentSkillCount");
-        for (int i = 1; i <= parentSkillCount; i++) {
-            int parentSkillId = skillTreeConfig.getInt("parentSkill" + i + ".id");
+        int rootSkillCount = ConfigurationUtils.getChildComponentCount(skillTreeConfig, "rootSkill");
 
-            skillTree.put(parentSkillId, null);
+        for (int i = 1; i <= rootSkillCount; i++) {
+            ConfigurationSection rootSkillSection = skillTreeConfig.getConfigurationSection("rootSkill" + i);
+            int rootSkillId = rootSkillSection.getInt("id");
+            rootSkills.add(rootSkillId);
 
-            ConfigurationSection childSkillsSection = skillTreeConfig.getConfigurationSection("parentSkill" + i + ".childSkills");
-            Set<String> keys = childSkillsSection.getKeys(false);
-            for (String key : keys) {
-                int childSkillId = Integer.parseInt(key);
-                String directionStr = childSkillsSection.getString(key);
-                SkillTreeDirection direction = SkillTreeDirection.valueOf(directionStr);
+            int rootX = rootSkillSection.getInt("rootX");
+            int rootY = rootSkillSection.getInt("rootY");
+            SkillTreeOffset rootOffset = new SkillTreeOffset(rootX, rootY);
 
-                skillTree.put(childSkillId, direction);
-            }
+            applySkillDataForTreeForSelfAndChild(skills, rootSkillSection, rootSkillId, -1, rootOffset);
         }
 
-        return skillTree;
+        return rootSkills;
+    }
+
+    private static void applySkillDataForTreeForSelfAndChild(HashMap<Integer, Skill> skills, ConfigurationSection skillSection, int id, int parentId, SkillTreeOffset rootOffset) {
+        HashMap<Integer, SkillTreeDirection> childSkillMap = new HashMap<>();
+
+        int childSkillCount = ConfigurationUtils.getChildComponentCount(skillSection, "child");
+        for (int i = 1; i <= childSkillCount; i++) {
+            ConfigurationSection childSection = skillSection.getConfigurationSection("child" + i);
+            int childSkillId = childSection.getInt("id");
+            String directionStr = childSection.getString("direction");
+            SkillTreeDirection direction = SkillTreeDirection.valueOf(directionStr);
+
+            childSkillMap.put(childSkillId, direction);
+
+            applySkillDataForTreeForSelfAndChild(skills, childSection, childSkillId, id, null);
+        }
+
+        SkillDataForTree skillDataForTree = new SkillDataForTree(parentId, childSkillMap, rootOffset);
+
+        Skill skill = skills.get(id);
+        skill.setSkillDataForTree(skillDataForTree);
     }
 }

@@ -79,4 +79,84 @@ public class OtherItems {
         itemStack.setItemMeta(itemMeta);
         return itemStack;
     }
+
+    public static ItemStack getArrowUp() {
+        ItemStack itemStack = new ItemStack(Material.WOODEN_PICKAXE);
+        ItemMeta itemMeta = itemStack.getItemMeta();
+        itemMeta.setDisplayName(ChatPalette.YELLOW + "Up");
+        itemMeta.setCustomModelData(44);
+        itemMeta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_UNBREAKABLE);
+        itemStack.setItemMeta(itemMeta);
+        return itemStack;
+    }
+
+    public static ItemStack getArrowDown() {
+        ItemStack itemStack = new ItemStack(Material.WOODEN_PICKAXE);
+        ItemMeta itemMeta = itemStack.getItemMeta();
+        itemMeta.setDisplayName(ChatPalette.YELLOW + "Down");
+        itemMeta.setCustomModelData(42);
+        itemMeta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_UNBREAKABLE);
+        itemStack.setItemMeta(itemMeta);
+        return itemStack;
+    }
+
+    public static ItemStack getArrowLeft() {
+        ItemStack itemStack = new ItemStack(Material.WOODEN_PICKAXE);
+        ItemMeta itemMeta = itemStack.getItemMeta();
+        itemMeta.setDisplayName(ChatPalette.YELLOW + "Left");
+        itemMeta.setCustomModelData(43);
+        itemMeta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_UNBREAKABLE);
+        itemStack.setItemMeta(itemMeta);
+        return itemStack;
+    }
+
+    public static ItemStack getArrowRight() {
+        ItemStack itemStack = new ItemStack(Material.WOODEN_PICKAXE);
+        ItemMeta itemMeta = itemStack.getItemMeta();
+        itemMeta.setDisplayName(ChatPalette.YELLOW + "Right");
+        itemMeta.setCustomModelData(45);
+        itemMeta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_UNBREAKABLE);
+        itemStack.setItemMeta(itemMeta);
+        return itemStack;
+    }
+
+    public static ItemStack getArrowUpLeft() {
+        ItemStack itemStack = new ItemStack(Material.WOODEN_PICKAXE);
+        ItemMeta itemMeta = itemStack.getItemMeta();
+        itemMeta.setDisplayName(ChatPalette.YELLOW + "Up Left");
+        itemMeta.setCustomModelData(47);
+        itemMeta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_UNBREAKABLE);
+        itemStack.setItemMeta(itemMeta);
+        return itemStack;
+    }
+
+    public static ItemStack getArrowUpRight() {
+        ItemStack itemStack = new ItemStack(Material.WOODEN_PICKAXE);
+        ItemMeta itemMeta = itemStack.getItemMeta();
+        itemMeta.setDisplayName(ChatPalette.YELLOW + "Up Right");
+        itemMeta.setCustomModelData(48);
+        itemMeta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_UNBREAKABLE);
+        itemStack.setItemMeta(itemMeta);
+        return itemStack;
+    }
+
+    public static ItemStack getArrowDownLeft() {
+        ItemStack itemStack = new ItemStack(Material.WOODEN_PICKAXE);
+        ItemMeta itemMeta = itemStack.getItemMeta();
+        itemMeta.setDisplayName(ChatPalette.YELLOW + "Down Left");
+        itemMeta.setCustomModelData(46);
+        itemMeta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_UNBREAKABLE);
+        itemStack.setItemMeta(itemMeta);
+        return itemStack;
+    }
+
+    public static ItemStack getArrowDownRight() {
+        ItemStack itemStack = new ItemStack(Material.WOODEN_PICKAXE);
+        ItemMeta itemMeta = itemStack.getItemMeta();
+        itemMeta.setDisplayName(ChatPalette.YELLOW + "Down Right");
+        itemMeta.setCustomModelData(49);
+        itemMeta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_UNBREAKABLE);
+        itemStack.setItemMeta(itemMeta);
+        return itemStack;
+    }
 }

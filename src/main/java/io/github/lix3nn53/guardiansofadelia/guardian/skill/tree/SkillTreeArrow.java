@@ -1,36 +1,46 @@
 package io.github.lix3nn53.guardiansofadelia.guardian.skill.tree;
 
-import io.github.lix3nn53.guardiansofadelia.text.ChatPalette;
-import org.bukkit.Material;
+import io.github.lix3nn53.guardiansofadelia.items.list.OtherItems;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 
 public enum SkillTreeArrow {
     UP,
     DOWN,
     LEFT,
-    RIGHT;
+    RIGHT,
+    UP_LEFT,
+    UP_RIGHT,
+    DOWN_LEFT,
+    DOWN_RIGHT;
 
     public ItemStack getItemStack() {
-        ItemStack itemStack = new ItemStack(Material.BLACK_STAINED_GLASS_PANE);
-        ItemMeta itemMeta = itemStack.getItemMeta();
-
         switch (this) {
             case UP -> {
-                itemMeta.setDisplayName(ChatPalette.GRAY_DARK + "UP");
+                return OtherItems.getArrowUp();
             }
             case DOWN -> {
-                itemMeta.setDisplayName(ChatPalette.GRAY_DARK + "DOWN");
+                return OtherItems.getArrowDown();
             }
             case LEFT -> {
-                itemMeta.setDisplayName(ChatPalette.GRAY_DARK + "LEFT");
+                return OtherItems.getArrowLeft();
             }
             case RIGHT -> {
-                itemMeta.setDisplayName(ChatPalette.GRAY_DARK + "RIGHT");
+                return OtherItems.getArrowRight();
+            }
+            case UP_LEFT -> {
+                return OtherItems.getArrowUpLeft();
+            }
+            case UP_RIGHT -> {
+                return OtherItems.getArrowUpRight();
+            }
+            case DOWN_LEFT -> {
+                return OtherItems.getArrowDownLeft();
+            }
+            case DOWN_RIGHT -> {
+                return OtherItems.getArrowDownRight();
             }
         }
 
-        itemStack.setItemMeta(itemMeta);
-        return itemStack;
+        return null;
     }
 }

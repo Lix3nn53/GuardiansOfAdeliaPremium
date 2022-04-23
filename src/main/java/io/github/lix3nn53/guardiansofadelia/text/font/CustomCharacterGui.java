@@ -9,4 +9,5 @@ public final class CustomCharacterGui {
     public static final CustomCharacter MENU_27_FLAT = new CustomCharacter("MENU_27_FLAT", '섆', 5, 41, ChatColor.WHITE, NegativeSpace.NEGATIVE_4, NegativeSpace.POSITIVE_4);
     public static final CustomCharacter LOGO = new CustomCharacter("LOGO", 'ꍋ', -5, 37, ChatColor.WHITE, NegativeSpace.NEGATIVE_4, NegativeSpace.POSITIVE_4);
 
+    public static final CustomCharacter SKILL_MENU = new CustomCharacter("SKILL_MENU", 'ꌃ', 1, 82, ChatColor.WHITE, NegativeSpace.NEGATIVE_2, NegativeSpace.POSITIVE_4);
 }

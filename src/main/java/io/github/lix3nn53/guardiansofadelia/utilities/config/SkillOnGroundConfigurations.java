@@ -41,7 +41,7 @@ public class SkillOnGroundConfigurations {
             List<String> description = new ArrayList<>();
 
             Skill skill = new Skill(-1, "skillOnGround", 1, Material.IRON_HOE, 1, description,
-                    new ArrayList<>(), new ArrayList<>(), cooldowns, -1);
+                    new ArrayList<>(), new ArrayList<>(), cooldowns);
 
             SkillComponent triggerComponent = SkillComponentLoader.loadSection(configurationSection.getConfigurationSection("trigger"));
             skill.addTrigger(triggerComponent);
