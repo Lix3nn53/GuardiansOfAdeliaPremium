@@ -66,4 +66,12 @@ public class SkillTree {
     public Set<Integer> getSkillIds() {
         return skillSet.keySet();
     }
+
+    public List<SkillTreeArrowWithOffset> getSkillTreeArrows() {
+        return skillTreeArrows;
+    }
+
+    public HashMap<Integer, SkillTreeOffset> getSkillIdToOffset() {
+        return skillIdToOffset;
+    }
 }

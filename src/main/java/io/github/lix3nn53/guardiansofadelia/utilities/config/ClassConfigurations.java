@@ -8,9 +8,11 @@ import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGClass;
 import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGClassManager;
 import io.github.lix3nn53.guardiansofadelia.guardian.element.ElementType;
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.Skill;
+import io.github.lix3nn53.guardiansofadelia.guardian.skill.SkillTier;
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.component.SkillComponent;
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.config.SkillComponentLoader;
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.tree.SkillTree;
+import io.github.lix3nn53.guardiansofadelia.guardian.skill.tree.SkillTreeDirection;
 import io.github.lix3nn53.guardiansofadelia.items.RpgGears.ArmorGearType;
 import io.github.lix3nn53.guardiansofadelia.items.RpgGears.ShieldGearType;
 import io.github.lix3nn53.guardiansofadelia.items.RpgGears.WeaponGearType;
@@ -23,6 +25,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 public class ClassConfigurations {
 
@@ -38,14 +41,14 @@ public class ClassConfigurations {
         List<String> directories = ConfigurationUtils.getAllDirectoriesInFile(filePath);
 
         for (String className : directories) {
-            HashMap<String, YamlConfiguration> skillConfigs = ConfigurationUtils.getAllConfigsInFile(filePath + File.separator + className + File.separator + "skills");
+            List<String> skillsFile = ConfigurationUtils.getAllDirectoriesInFile(filePath + File.separator + className + File.separator + "skills");
             YamlConfiguration classConfig = ConfigurationUtils.createConfig(filePath + File.separator + className, "class.yml");
 
-            loadClass(className, classConfig, skillConfigs);
+            loadClass(className, classConfig, skillsFile);
         }
     }
 
-    private static void loadClass(String className, YamlConfiguration classConfig, HashMap<String, YamlConfiguration> skillConfigs) {
+    private static void loadClass(String className, YamlConfiguration classConfig, List<String> skillsFile) {
         GuardiansOfAdelia.getInstance().getLogger().info("className: " + className);
 
         String colorStr = classConfig.getString("color");
@@ -72,15 +75,22 @@ public class ClassConfigurations {
         attributeTiers.put(AttributeType.BONUS_CRITICAL_CHANCE, attributeCriticalChance);
 
         HashMap<Integer, Skill> skillSet = new HashMap<>();
-        for (String skillName : skillConfigs.keySet()) {
-            YamlConfiguration skillConfig = skillConfigs.get(skillName);
-            Skill skill = loadSkill(skillConfig, 0);
-            int id = skill.getId();
-            if (skillSet.containsKey(id)) {
-                GuardiansOfAdelia.getInstance().getLogger().warning("Skill id " + id + " is already in use!");
+        for (String skillTierStr : skillsFile) {
+            SkillTier skillTier = SkillTier.valueOf(skillTierStr);
+
+            HashMap<String, YamlConfiguration> skillConfigs = ConfigurationUtils.getAllConfigsInFile(filePath + File.separator + className + File.separator + "skills" + File.separator + skillTierStr);
+
+            for (String skillName : skillConfigs.keySet()) {
+                YamlConfiguration skillConfig = skillConfigs.get(skillName);
+                Skill skill = loadSkill(skillName, skillConfig, skillTier);
+                int id = skill.getId();
+                if (skillSet.containsKey(id)) {
+                    GuardiansOfAdelia.getInstance().getLogger().warning("Skill id " + id + " is already in use!");
+                }
+                skillSet.put(id, skill);
             }
-            skillSet.put(id, skill);
         }
+
         SkillTree skillTree = new SkillTree(skillSet);
 
         // TODO make gear types unlock with skills not classes
@@ -122,17 +132,15 @@ public class ClassConfigurations {
         RPGClassManager.addClass(className, rpgClass);
     }
 
-    private static Skill loadSkill(ConfigurationSection skillSection, int skillIndex) {
+    private static Skill loadSkill(String name, ConfigurationSection skillSection, SkillTier skillTier) {
         int id = skillSection.getInt("id");
-        int parentSkillId = skillSection.getInt("parentSkillId");
-        String name = skillSection.getString("name");
         List<String> description = skillSection.getStringList("description");
         int customModelData = skillSection.getInt("customModelData");
-        List<Integer> reqPoints = getDefaultReqPoints(skillIndex);
+        List<Integer> reqPoints = skillTier.getDefaultReqPoints();
         List<Integer> manaCosts = skillSection.getIntegerList("manaCosts");
         List<Integer> cooldowns = skillSection.getIntegerList("cooldowns");
 
-        Skill skill = new Skill(id, name, 4, Material.IRON_HOE, customModelData, description, reqPoints, manaCosts, cooldowns, parentSkillId);
+        Skill skill = new Skill(id, name, 4, Material.IRON_HOE, customModelData, description, reqPoints, manaCosts, cooldowns);
         SkillComponent triggerComponent = SkillComponentLoader.loadSection(skillSection.getConfigurationSection("trigger"));
         skill.addTrigger(triggerComponent);
 
@@ -145,35 +153,26 @@ public class ClassConfigurations {
         return skill;
     }
 
-    private static List<Integer> getDefaultReqPoints(int skillIndex) {
-        List<Integer> reqPoints = new ArrayList<>();
-        if (skillIndex == 0) {
-            reqPoints.add(1);
-            reqPoints.add(1);
-            reqPoints.add(1);
-            reqPoints.add(1);
-        } else if (skillIndex == 1) {
-            reqPoints.add(1);
-            reqPoints.add(1);
-            reqPoints.add(1);
-            reqPoints.add(1);
-        } else if (skillIndex == 2) {
-            reqPoints.add(1);
-            reqPoints.add(1);
-            reqPoints.add(1);
-            reqPoints.add(1);
-        } else if (skillIndex == 3) {
-            reqPoints.add(2);
-            reqPoints.add(2);
-            reqPoints.add(2);
-            reqPoints.add(2);
-        } else if (skillIndex == 4) {
-            reqPoints.add(3);
-            reqPoints.add(3);
-            reqPoints.add(3);
-            reqPoints.add(3);
+    private static HashMap<Integer, SkillTreeDirection> loadSkillTree(ConfigurationSection skillTreeConfig) {
+        HashMap<Integer, SkillTreeDirection> skillTree = new HashMap<>();
+
+        int parentSkillCount = skillTreeConfig.getInt("parentSkillCount");
+        for (int i = 1; i <= parentSkillCount; i++) {
+            int parentSkillId = skillTreeConfig.getInt("parentSkill" + i + ".id");
+
+            skillTree.put(parentSkillId, null);
+
+            ConfigurationSection childSkillsSection = skillTreeConfig.getConfigurationSection("parentSkill" + i + ".childSkills");
+            Set<String> keys = childSkillsSection.getKeys(false);
+            for (String key : keys) {
+                int childSkillId = Integer.parseInt(key);
+                String directionStr = childSkillsSection.getString(key);
+                SkillTreeDirection direction = SkillTreeDirection.valueOf(directionStr);
+
+                skillTree.put(childSkillId, direction);
+            }
         }
 
-        return reqPoints;
+        return skillTree;
     }
 }

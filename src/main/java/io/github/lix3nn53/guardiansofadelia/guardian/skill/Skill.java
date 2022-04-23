@@ -34,14 +34,13 @@ public class Skill {
     private final List<SkillComponent> triggers = new ArrayList<>();
 
     // skill tree
-    private final int parentId;
-    private final HashMap<Integer, SkillTreeDirection> childSkills;
-    private final SkillTreeDirection skillTreeDirection;
+    private int parentId;
+    private HashMap<Integer, SkillTreeDirection> childSkills;
     private SkillTreeOffset rootStartOffset; // Required if the skill is root
 
     public Skill(int id, String name, int maxSkillLevel, Material material, int customModelData,
                  List<String> description, List<Integer> reqSkillPoints, List<Integer> manaCosts,
-                 List<Integer> cooldowns, int parentId, HashMap<Integer, SkillTreeDirection> childSkills, SkillTreeDirection skillTreeDirection) {
+                 List<Integer> cooldowns) {
         this.id = id;
         this.name = name;
         this.maxSkillLevel = maxSkillLevel;
@@ -51,9 +50,6 @@ public class Skill {
         this.reqSkillPoints = reqSkillPoints;
         this.manaCosts = manaCosts;
         this.cooldowns = cooldowns;
-        this.parentId = parentId;
-        this.childSkills = childSkills;
-        this.skillTreeDirection = skillTreeDirection;
     }
 
     public int getId() {
@@ -186,16 +182,8 @@ public class Skill {
         return childSkills;
     }
 
-    public SkillTreeDirection getSkillTreeDirection() {
-        return skillTreeDirection;
-    }
-
     public SkillTreeOffset getRootStartOffset() {
         return rootStartOffset;
-    }
-
-    public void setRootStartOffset(SkillTreeOffset rootStartOffset) {
-        this.rootStartOffset = rootStartOffset;
     }
 
     public void applyChildSkillTreeOffsetAndArrows(HashMap<Integer, Skill> skillSet, HashMap<Integer, SkillTreeOffset> skillIdToOffset, List<SkillTreeArrowWithOffset> skillTreeArrows) {
@@ -211,5 +199,17 @@ public class Skill {
             Skill child = skillSet.get(childSkillId);
             child.applyChildSkillTreeOffsetAndArrows(skillSet, skillIdToOffset, skillTreeArrows);
         }
+    }
+
+    public void setParentId(int parentId) {
+        this.parentId = parentId;
+    }
+
+    public void setChildSkills(HashMap<Integer, SkillTreeDirection> childSkills) {
+        this.childSkills = childSkills;
+    }
+
+    public void setRootStartOffset(SkillTreeOffset rootStartOffset) {
+        this.rootStartOffset = rootStartOffset;
     }
 }

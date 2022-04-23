@@ -3,8 +3,8 @@ package io.github.lix3nn53.guardiansofadelia.menu.main;
 import io.github.lix3nn53.guardiansofadelia.guardian.GuardianData;
 import io.github.lix3nn53.guardiansofadelia.guardian.GuardianDataManager;
 import io.github.lix3nn53.guardiansofadelia.guardian.character.*;
-import io.github.lix3nn53.guardiansofadelia.guardian.skill.SkillBar;
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.player.SkillRPGClassData;
+import io.github.lix3nn53.guardiansofadelia.guardian.skill.tree.SkillTreeOffset;
 import io.github.lix3nn53.guardiansofadelia.menu.GuiHelper;
 import io.github.lix3nn53.guardiansofadelia.menu.main.character.*;
 import io.github.lix3nn53.guardiansofadelia.text.ChatPalette;
@@ -109,13 +109,12 @@ public class GuiCharacter extends GuiGeneric {
             GuiCharacterClassManager gui = new GuiCharacterClassManager(guardianData);
             gui.openInventory(player);
         } else if (GuiHelper.get54BigButtonIndexes(1).contains(slot)) {
-            SkillBar skillBar = rpgCharacter.getSkillBar();
             RPGClassStats rpgClassStats = rpgCharacter.getRPGClassStats();
             SkillRPGClassData skillRPGClassData = rpgClassStats.getSkillRPGClassData();
 
             int pointsLeft = skillRPGClassData.getSkillPointsLeftToSpend(player);
 
-            GuiCharacterSkills gui = new GuiCharacterSkills(player, guardianData, rpgCharacter, skillBar, pointsLeft);
+            GuiCharacterSkills gui = new GuiCharacterSkills(player, guardianData, rpgCharacter, pointsLeft, new SkillTreeOffset(0, 0));
             gui.openInventory(player);
         } else if (GuiHelper.get54BigButtonIndexes(2).contains(slot)) {
             RPGCharacterStats rpgCharacterStats = rpgCharacter.getRpgCharacterStats();

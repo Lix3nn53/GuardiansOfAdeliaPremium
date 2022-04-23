@@ -8,7 +8,11 @@ import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGClassManager;
 import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGClassStats;
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.Skill;
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.SkillBar;
+import io.github.lix3nn53.guardiansofadelia.guardian.skill.player.SkillRPGClassData;
+import io.github.lix3nn53.guardiansofadelia.guardian.skill.player.SkillTreeData;
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.tree.SkillTree;
+import io.github.lix3nn53.guardiansofadelia.guardian.skill.tree.SkillTreeArrowWithOffset;
+import io.github.lix3nn53.guardiansofadelia.guardian.skill.tree.SkillTreeOffset;
 import io.github.lix3nn53.guardiansofadelia.items.list.OtherItems;
 import io.github.lix3nn53.guardiansofadelia.menu.main.GuiCharacter;
 import io.github.lix3nn53.guardiansofadelia.quests.Quest;
@@ -16,99 +20,104 @@ import io.github.lix3nn53.guardiansofadelia.text.ChatPalette;
 import io.github.lix3nn53.guardiansofadelia.text.font.CustomCharacterGui;
 import io.github.lix3nn53.guardiansofadelia.text.locale.Translation;
 import io.github.lix3nn53.guardiansofadelia.utilities.gui.GuiGeneric;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
 
 public class GuiCharacterSkills extends GuiGeneric {
 
-    // calculations
-    private static final int LINE_COUNT = 5;
-    private static final int LINE_LENGTH = 8;
+    private final GuardianData guardianData;
+
+    // Calculations
     private final SkillTree skillTree;
-    private final int slotStart = 27; // first slot of middle line
 
     // This is where the skill tree displays and moves
-    private final Integer[][] virtualSlots = new Integer[][]{{9, 10, 11, 12, 13, 14, 15, 16}, {18, 19, 20, 21, 22, 23, 24, 25},
-            {27, 28, 29, 30, 31, 32, 33, 34}, {36, 37, 38, 39, 40, 41, 42, 43}, {45, 46, 47, 48, 49, 50, 51, 52}};
+    /*private final Integer[][] virtualSlots = new Integer[][]{{9, 10, 11, 12, 13, 14, 15, 16}, {18, 19, 20, 21, 22, 23, 24, 25},
+            {27, 28, 29, 30, 31, 32, 33, 34}, {36, 37, 38, 39, 40, 41, 42, 43}, {45, 46, 47, 48, 49, 50, 51, 52}};*/
+    private final Integer[][] virtualSlots = new Integer[][]{{45, 46, 47, 48, 49, 50, 51, 52}, {36, 37, 38, 39, 40, 41, 42, 43}, {27, 28, 29, 30, 31, 32, 33, 34},
+            {18, 19, 20, 21, 22, 23, 24, 25}, {9, 10, 11, 12, 13, 14, 15, 16}};
 
     // State, use this to calculate virtual slots
-    private int offsetX = 0;
-    private int offsetY = 0;
+    private final SkillTreeOffset viewOffset;
 
-    public GuiCharacterSkills(Player player, GuardianData guardianData, RPGCharacter rpgCharacter, SkillBar skillBar, int pointsLeft) {
+    // Easier clicks
+    private final HashMap<Integer, Integer> slotToSkillIdForClick = new HashMap<>();
+
+    public GuiCharacterSkills(Player player, GuardianData guardianData, RPGCharacter rpgCharacter,
+                              int pointsLeft, SkillTreeOffset viewOffset) {
         super(54, CustomCharacterGui.MENU_54_FLAT.toString() + ChatPalette.BLACK + Translation.t(guardianData, "skill.name") +
                 " (" + Translation.t(guardianData, "skill.points") + ": " + pointsLeft + ")", 0);
 
-        RPGClassStats rpgClassStats = rpgCharacter.getRPGClassStats();
+        this.guardianData = guardianData;
+        this.viewOffset = viewOffset;
+
         String rpgClassStr = rpgCharacter.getRpgClassStr();
         RPGClass rpgClass = RPGClassManager.getClass(rpgClassStr);
         this.skillTree = rpgClass.getSkillTree();
 
-
         String language = guardianData.getLanguage();
-        if (skillSet.containsKey(0)) {
-            Skill skillOne = skillSet.get(0);
-            int investedSkillPoints = skillBar.getInvestedSkillPoints(0);
-            ItemStack icon = skillOne.getIcon(language, pointsLeft, investedSkillPoints);
-            ItemMeta itemMeta = icon.getItemMeta();
-            String displayName = itemMeta.getDisplayName();
-            itemMeta.setDisplayName(displayName + " (" + Translation.t(guardianData, "skill.invested") + ": " + investedSkillPoints + ")");
-            icon.setItemMeta(itemMeta);
-            this.setItem(10, icon);
-        }
-
-        if (skillSet.containsKey(1)) {
-            Skill skillTwo = skillSet.get(1);
-            int investedSkillPoints = skillBar.getInvestedSkillPoints(1);
-            ItemStack icon = skillTwo.getIcon(language, pointsLeft, investedSkillPoints);
-            ItemMeta itemMeta = icon.getItemMeta();
-            String displayName = itemMeta.getDisplayName();
-            itemMeta.setDisplayName(displayName + " (" + Translation.t(guardianData, "skill.invested") + ": " + investedSkillPoints + ")");
-            icon.setItemMeta(itemMeta);
-            this.setItem(13, icon);
-        }
-
-        if (skillSet.containsKey(2)) {
-            Skill skillThree = skillSet.get(2);
-            int investedSkillPoints = skillBar.getInvestedSkillPoints(2);
-            ItemStack icon = skillThree.getIcon(language, pointsLeft, investedSkillPoints);
-            ItemMeta itemMeta = icon.getItemMeta();
-            String displayName = itemMeta.getDisplayName();
-            itemMeta.setDisplayName(displayName + " (" + Translation.t(guardianData, "skill.invested") + ": " + investedSkillPoints + ")");
-            icon.setItemMeta(itemMeta);
-            this.setItem(16, icon);
-        }
-
-        if (skillSet.containsKey(3)) {
-            Skill skillFour = skillSet.get(3);
-            int investedSkillPoints = skillBar.getInvestedSkillPoints(3);
-            ItemStack icon = skillFour.getIcon(language, pointsLeft, investedSkillPoints);
-            ItemMeta itemMeta = icon.getItemMeta();
-            String displayName = itemMeta.getDisplayName();
-            itemMeta.setDisplayName(displayName + " (" + Translation.t(guardianData, "skill.invested") + ": " + investedSkillPoints + ")");
-            icon.setItemMeta(itemMeta);
-            this.setItem(20, icon);
-        }
-
-        if (skillSet.containsKey(4)) {
-            Skill skillFive = skillSet.get(4);
-            int investedSkillPoints = skillBar.getInvestedSkillPoints(4);
-            ItemStack icon = skillFive.getIcon(language, pointsLeft, investedSkillPoints);
-            ItemMeta itemMeta = icon.getItemMeta();
-            String displayName = itemMeta.getDisplayName();
-            itemMeta.setDisplayName(displayName + " (" + Translation.t(guardianData, "skill.invested") + ": " + investedSkillPoints + ")");
-            icon.setItemMeta(itemMeta);
-            this.setItem(24, icon);
-        }
 
         ItemStack backButton = OtherItems.getBackButton("Character Menu");
         this.setItem(0, backButton);
+
+        ItemStack rightButton = new ItemStack(Material.GLASS_PANE);
+        ItemMeta itemMeta = rightButton.getItemMeta();
+        itemMeta.setDisplayName(ChatPalette.YELLOW + "View Right");
+        List<String> lore = new ArrayList<>();
+        lore.add("");
+        lore.add(ChatPalette.GRAY + "Click to move view to right.");
+        itemMeta.setLore(lore);
+        rightButton.setItemMeta(itemMeta);
+        this.setItem(26, rightButton);
+
+        ItemStack leftButton = new ItemStack(Material.GLASS_PANE);
+        itemMeta = leftButton.getItemMeta();
+        itemMeta.setDisplayName(ChatPalette.YELLOW + "View Left");
+        lore = new ArrayList<>();
+        lore.add("");
+        lore.add(ChatPalette.GRAY + "Click to move view to left.");
+        itemMeta.setLore(lore);
+        leftButton.setItemMeta(itemMeta);
+        this.setItem(35, leftButton);
+
+        ItemStack upButton = new ItemStack(Material.GLASS_PANE);
+        itemMeta = upButton.getItemMeta();
+        itemMeta.setDisplayName(ChatPalette.YELLOW + "View Up");
+        lore = new ArrayList<>();
+        lore.add("");
+        lore.add(ChatPalette.GRAY + "Click to move view up.");
+        itemMeta.setLore(lore);
+        upButton.setItemMeta(itemMeta);
+        this.setItem(44, upButton);
+
+        ItemStack downButton = new ItemStack(Material.GLASS_PANE);
+        itemMeta = downButton.getItemMeta();
+        itemMeta.setDisplayName(ChatPalette.YELLOW + "View Down");
+        lore = new ArrayList<>();
+        lore.add("");
+        lore.add(ChatPalette.GRAY + "Click to move view down.");
+        itemMeta.setLore(lore);
+        downButton.setItemMeta(itemMeta);
+        this.setItem(53, downButton);
+
+        ItemStack fillItem = new ItemStack(Material.GLASS_PANE);
+        itemMeta = fillItem.getItemMeta();
+        itemMeta.setDisplayName("");
+        fillItem.setItemMeta(itemMeta);
+        for (int i = 1; i < 9; i++) {
+            this.setItem(i, fillItem);
+        }
+        this.setItem(17, fillItem);
+
+        RPGClassStats rpgClassStats = rpgCharacter.getRPGClassStats();
+        SkillRPGClassData skillRPGClassData = rpgClassStats.getSkillRPGClassData();
+        formVirtualView(player, skillRPGClassData);
     }
 
     @Override
@@ -128,46 +137,46 @@ public class GuiCharacterSkills extends GuiGeneric {
             return;
         }
 
-        SkillBar skillBar = rpgCharacter.getSkillBar();
-
-        int skillIndex = -1;
-
         int slot = event.getSlot();
 
         if (slot == 0) {
             GuiCharacter gui = new GuiCharacter(guardianData);
             gui.openInventory(player);
-            return;
-        } else if (slot == 10) {
-            skillIndex = 0;
-        } else if (slot == 13) {
-            skillIndex = 1;
-        } else if (slot == 16) {
-            skillIndex = 2;
-        } else if (slot == 20) {
-            skillIndex = 3;
-        } else if (slot == 24) {
-            skillIndex = 4;
-        }
+        } else if (slot == 26) {
+            moveVirtualDisplay(VirtualMove.RIGHT);
+        } else if (slot == 35) {
+            moveVirtualDisplay(VirtualMove.LEFT);
+        } else if (slot == 44) {
+            moveVirtualDisplay(VirtualMove.UP);
+        } else if (slot == 53) {
+            moveVirtualDisplay(VirtualMove.DOWN);
+        } else if (this.slotToSkillIdForClick.containsKey(slot)) {
+            int skillId = this.slotToSkillIdForClick.get(slot);
 
-        if (skillIndex != -1) {
+            RPGClassStats rpgClassStats = rpgCharacter.getRPGClassStats();
+            SkillRPGClassData skillRPGClassData = rpgClassStats.getSkillRPGClassData();
+
+            SkillBar skillBar = rpgCharacter.getSkillBar();
+
             if (event.isLeftClick()) {
-                boolean upgradeSkill = skillBar.upgradeSkill(skillIndex, rpgCharacter.getRPGClassStats(), guardianData.getLanguage());
+                boolean upgradeSkill = skillRPGClassData.upgradeSkill(player, skillId, this.skillTree, rpgClassStats, skillBar, guardianData.getLanguage());
                 if (upgradeSkill) {
-                    int pointsLeft = skillBar.getSkillPointsLeftToSpend();
-                    GuiCharacterSkills guiCharacterSkills = new GuiCharacterSkills(player, guardianData, rpgCharacter, skillBar, pointsLeft);
+                    int pointsLeft = rpgClassStats.getSkillRPGClassData().getSkillPointsLeftToSpend(player);
+
+                    GuiCharacterSkills guiCharacterSkills = new GuiCharacterSkills(player, guardianData, rpgCharacter, pointsLeft, this.viewOffset);
                     guiCharacterSkills.openInventory(player);
 
                     List<Quest> questList = rpgCharacter.getQuestList();
                     for (Quest quest : questList) {
-                        quest.progressUpgradeSkillTasks(player, skillIndex);
+                        quest.progressUpgradeSkillTasks(player, skillId);
                     }
                 }
             } else if (event.isRightClick()) {
-                boolean downgradeSkill = skillBar.downgradeSkill(skillIndex, rpgCharacter.getCurrentRPGClassStats(), guardianData.getLanguage());
+                boolean downgradeSkill = skillRPGClassData.downgradeSkill(player, skillId, this.skillTree, rpgClassStats, skillBar, guardianData.getLanguage());
                 if (downgradeSkill) {
-                    int pointsLeft = skillBar.getSkillPointsLeftToSpend();
-                    GuiCharacterSkills guiCharacterSkills = new GuiCharacterSkills(player, guardianData, rpgCharacter, skillBar, pointsLeft);
+                    int pointsLeft = rpgClassStats.getSkillRPGClassData().getSkillPointsLeftToSpend(player);
+
+                    GuiCharacterSkills guiCharacterSkills = new GuiCharacterSkills(player, guardianData, rpgCharacter, pointsLeft, this.viewOffset);
                     guiCharacterSkills.openInventory(player);
                 }
             }
@@ -177,47 +186,89 @@ public class GuiCharacterSkills extends GuiGeneric {
     private void moveVirtualDisplay(VirtualMove direction) {
         switch (direction) {
             case LEFT -> {
-                this.offsetX -= 1;
+                this.viewOffset.setX(this.viewOffset.getX() - 1);
             }
             case RIGHT -> {
-                this.offsetX += 1;
+                this.viewOffset.setX(this.viewOffset.getX() + 1);
             }
             case UP -> {
-                this.offsetY += 1;
+                this.viewOffset.setY(this.viewOffset.getY() + 1);
             }
             case DOWN -> {
-                this.offsetY -= 1;
+                this.viewOffset.setY(this.viewOffset.getY() - 1);
             }
         }
     }
 
-    private Integer[][] getDisplayedVirtualSlots() {
-
+    private int getMaxX() {
+        return this.viewOffset.getX() + 2;
     }
 
-    private List<Integer> getLines() {
-        List<Integer> lines = new ArrayList<>();
+    private int getMinX() {
+        return this.viewOffset.getX() - 2;
+    }
 
-        Set<Integer> skillIds = this.skillTree.getSkillIds();
-        for (int skillId : skillIds) {
-            Skill skill = this.skillTree.getSkill(skillId);
+    private int getMaxY() {
+        return this.viewOffset.getY() + 8;
+    }
 
-            SkillTreeConfig skillTreeConfig = skill.getSkillTreeConfig();
-            int parentSkillId = skillTreeConfig.getParentSkillId();
-        }
+    private int getMinY() {
+        return this.viewOffset.getY();
+    }
 
-        for (int i = 0; i < this.virtualSlots.length; i++) {
-            if (this.virtualSlots[i][0] != null) {
-                lines.add(i);
+    private void formVirtualView(Player player, SkillRPGClassData rpgClassData) {
+        String lang = this.guardianData.getLanguage();
+
+        HashMap<Integer, SkillTreeOffset> skillIdToOffset = this.skillTree.getSkillIdToOffset();
+        List<SkillTreeArrowWithOffset> skillTreeArrows = this.skillTree.getSkillTreeArrows();
+
+        int maxX = getMaxX();
+        int minX = getMinX();
+        int maxY = getMaxY();
+        int minY = getMinY();
+
+        for (int i = 0; i < skillTreeArrows.size(); i++) {
+            SkillTreeArrowWithOffset skillTreeArrow = skillTreeArrows.get(i);
+
+            SkillTreeOffset skillTreeOffset = skillTreeArrow.getSkillTreeOffset();
+
+            boolean b = skillTreeOffset.inBounds(minX, maxX, minY, maxY);
+            if (b) {
+                int slot = virtualOffsetToSlot(skillTreeOffset);
+
+                ItemStack itemStack = skillTreeArrow.getSkillTreeArrow().getItemStack();
+                this.setItem(slot, itemStack);
             }
         }
 
-        return lines;
+        slotToSkillIdForClick.clear();
+        SkillTreeData skillTreeData = rpgClassData.getSkillTreeData();
+        for (int skillId : skillIdToOffset.keySet()) {
+            SkillTreeOffset skillTreeOffset = skillIdToOffset.get(skillId);
+            boolean b = skillTreeOffset.inBounds(minX, maxX, minY, maxY);
+            if (b) {
+                int slot = virtualOffsetToSlot(skillTreeOffset);
+
+                Skill skill = this.skillTree.getSkill(skillId);
+                int skillPointsLeftToSpend = rpgClassData.getSkillPointsLeftToSpend(player);
+                int investedSkillPoints = skillTreeData.getInvestedSkillPoints(skillId);
+                ItemStack icon = skill.getIcon(lang, skillPointsLeftToSpend, investedSkillPoints);
+
+                this.setItem(slot, icon);
+
+                slotToSkillIdForClick.put(slot, skillId);
+            }
+        }
     }
 
-}
+    public int virtualOffsetToSlot(SkillTreeOffset skillTreeOffset) {
+        int x = skillTreeOffset.getX() - this.viewOffset.getX();
+        int y = skillTreeOffset.getY() - this.viewOffset.getY();
 
-    private enum VirtualMove {
+        return this.virtualSlots[y][x];
+    }
+
+    enum VirtualMove {
         LEFT,
         RIGHT,
         UP,
