@@ -1,10 +1,17 @@
 package io.github.lix3nn53.guardiansofadelia.items.stats;
 
 import io.github.lix3nn53.guardiansofadelia.bungeelistener.products.HelmetSkin;
+import io.github.lix3nn53.guardiansofadelia.guardian.GuardianData;
+import io.github.lix3nn53.guardiansofadelia.guardian.GuardianDataManager;
 import io.github.lix3nn53.guardiansofadelia.guardian.attribute.AttributeType;
+import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGCharacter;
 import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGClass;
 import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGClassManager;
+import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGClassStats;
 import io.github.lix3nn53.guardiansofadelia.guardian.element.ElementType;
+import io.github.lix3nn53.guardiansofadelia.guardian.skill.component.mechanic.GearMechanicSkillManager;
+import io.github.lix3nn53.guardiansofadelia.guardian.skill.player.SkillRPGClassData;
+import io.github.lix3nn53.guardiansofadelia.guardian.skill.player.SkillTreeData;
 import io.github.lix3nn53.guardiansofadelia.items.GearLevel;
 import io.github.lix3nn53.guardiansofadelia.items.RpgGears.ArmorGearType;
 import io.github.lix3nn53.guardiansofadelia.items.RpgGears.ItemTier;
@@ -186,6 +193,22 @@ public class StatUtils {
                 ItemStack itemInOffHand = player.getInventory().getItemInOffHand();
                 if (StatUtils.hasStatType(itemInOffHand.getType())) {
                     player.sendMessage(ChatPalette.RED + "You can't dual wield " + weaponGearType);
+                    return false;
+                }
+            }
+
+            if (weaponGearType.requiresSkillToUnlock()) {
+                int requiredSkillId = GearMechanicSkillManager.getRequiredSkillId(weaponGearType);
+
+                GuardianData guardianData = GuardianDataManager.getGuardianData(player);
+                RPGCharacter activeCharacter = guardianData.getActiveCharacter();
+                RPGClassStats rpgClassStats = activeCharacter.getRPGClassStats();
+                SkillRPGClassData skillRPGClassData = rpgClassStats.getSkillRPGClassData();
+                SkillTreeData skillTreeData = skillRPGClassData.getSkillTreeData();
+                int investedSkillPoints = skillTreeData.getInvestedSkillPoints(requiredSkillId);
+
+                if (investedSkillPoints < 1) {
+                    player.sendMessage(ChatPalette.RED + "You need to invest at least 1 skill point in required skill to use this item");
                     return false;
                 }
             }

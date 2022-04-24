@@ -71,7 +71,7 @@ public class GuiQuestPrizeSelect extends GuiGeneric {
         }
 
         if (weaponPrizesSelectOneOf != null) {
-            List<ItemStack> items = weaponPrizesSelectOneOf.getItems(rpgCharacter.getRpgClassStr());
+            List<ItemStack> items = weaponPrizesSelectOneOf.getItems();
             for (ItemStack itemStack : items) {
                 Integer slotNo = slotsToUse.get(index);
                 this.setItem(slotNo, itemStack);

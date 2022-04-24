@@ -24,14 +24,14 @@ import java.util.List;
 
 public class SkillComponentLoader {
 
-    public static SkillComponent loadSection(ConfigurationSection configurationSection) {
+    public static SkillComponent loadSection(ConfigurationSection configurationSection, int skillId) {
         GuardiansOfAdelia.getInstance().getLogger().info(configurationSection.getCurrentPath());
-        SkillComponent skillComponent = loadComponent(configurationSection);
+        SkillComponent skillComponent = loadComponent(configurationSection, skillId);
 
         int childComponentCount = ConfigurationUtils.getChildComponentCount(configurationSection, "child");
 
         if (childComponentCount > 0) {
-            List<SkillComponent> children = loadChildrenOfSection(configurationSection, childComponentCount);
+            List<SkillComponent> children = loadChildrenOfSection(configurationSection, childComponentCount, skillId);
 
             for (SkillComponent child : children) {
                 skillComponent.addChildren(child);
@@ -41,7 +41,7 @@ public class SkillComponentLoader {
         return skillComponent;
     }
 
-    private static SkillComponent loadComponent(ConfigurationSection configurationSection) {
+    private static SkillComponent loadComponent(ConfigurationSection configurationSection, int skillId) {
         String componentType = configurationSection.getString("componentType");
 
         if (componentType == null) {
@@ -225,6 +225,8 @@ public class SkillComponentLoader {
             return new FlyRemoveMechanic(false);
         } else if (componentType.equals(CastTimeMechanic.class.getSimpleName())) {
             return new CastTimeMechanic(configurationSection);
+        } else if (componentType.equals(WeaponGearMechanic.class.getSimpleName())) {
+            return new WeaponGearMechanic(configurationSection, skillId);
         }
 
         GuardiansOfAdelia.getInstance().getLogger().info(ChatPalette.RED + "NO SUCH COMPONENT IN LOADER: " + componentType);
@@ -234,20 +236,20 @@ public class SkillComponentLoader {
         return null;
     }
 
-    private static List<SkillComponent> loadChildrenOfSection(ConfigurationSection configurationSection, int childComponentCount) {
+    private static List<SkillComponent> loadChildrenOfSection(ConfigurationSection configurationSection, int childComponentCount, int skillId) {
         List<SkillComponent> children = new ArrayList<>();
 
         for (int i = 1; i <= childComponentCount; i++) {
             GuardiansOfAdelia.getInstance().getLogger().info(configurationSection.getCurrentPath() + ".child" + i);
             ConfigurationSection childSection = configurationSection.getConfigurationSection("child" + i);
 
-            SkillComponent child = loadComponent(childSection);
+            SkillComponent child = loadComponent(childSection, skillId);
             children.add(child);
 
             int childComponentCountOfChild = ConfigurationUtils.getChildComponentCount(childSection, "child");
 
             if (childComponentCountOfChild > 0) {
-                List<SkillComponent> childrenOfChild = loadChildrenOfSection(childSection, childComponentCountOfChild);
+                List<SkillComponent> childrenOfChild = loadChildrenOfSection(childSection, childComponentCountOfChild, skillId);
 
                 for (SkillComponent childOfChild : childrenOfChild) {
                     child.addChildren(childOfChild);

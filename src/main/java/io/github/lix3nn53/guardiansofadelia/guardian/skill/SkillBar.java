@@ -78,7 +78,10 @@ public class SkillBar {
         SkillTreeData skillTreeData = skillRPGClassData.getSkillTreeData();
         for (int slotIndex = 0; slotIndex < 4; slotIndex++) {
             int skillId = skillBarData.getSkillId(slotIndex);
-            if (skillId < 0) continue;
+            if (skillId < 0) {
+                player.getInventory().setItem(slotIndex, OtherItems.getUnassignedSkill());
+                continue;
+            }
 
             int investedPoints = skillTreeData.getInvestedSkillPoints(skillId);
 
@@ -98,7 +101,14 @@ public class SkillBar {
     public void remakeSkillBarIcon(int slotIndex, SkillTree skillTree, SkillRPGClassData skillRPGClassData, String lang) {
         SkillBarData skillBarData = skillRPGClassData.getSkillBarData();
         int skillId = skillBarData.getSkillId(slotIndex);
-        if (skillId < 0) return;
+        if (slotIndex < 0) {
+            return;
+        }
+
+        if (skillId < 0) {
+            player.getInventory().setItem(slotIndex, OtherItems.getUnassignedSkill());
+            return;
+        }
 
         SkillTreeData skillTreeData = skillRPGClassData.getSkillTreeData();
         int invested = skillTreeData.getInvestedSkillPoints(skillId);
@@ -139,6 +149,9 @@ public class SkillBar {
         int invested = skillTreeData.getInvestedSkillPoints(skillId);
 
         Skill skill = skillTree.getSkill(skillId);
+        if (skill == null) {
+            return false;
+        }
         int skillLevel = skill.getCurrentSkillLevel(invested);
 
         if (skillLevel <= 0) {

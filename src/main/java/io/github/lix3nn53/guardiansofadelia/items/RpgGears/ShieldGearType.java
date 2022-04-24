@@ -26,4 +26,8 @@ public enum ShieldGearType {
     public float getElementDefenseReduction() {
         return 0.7f;
     }
+
+    public boolean requiresSkillToUnlock() {
+        return true;
+    }
 }

@@ -41,12 +41,12 @@ public class PetData {
                 Skill skill = new Skill(-1, "petskill", 1, Material.IRON_HOE, 1, description,
                         new ArrayList<>(), new ArrayList<>(), cooldowns);
 
-                SkillComponent triggerComponent = SkillComponentLoader.loadSection(skillSection.getConfigurationSection("trigger"));
+                SkillComponent triggerComponent = SkillComponentLoader.loadSection(skillSection.getConfigurationSection("trigger"), -1);
                 skill.addTrigger(triggerComponent);
 
                 int triggerCount = ConfigurationUtils.getChildComponentCount(skillSection, "trigger");
                 for (int t = 1; t <= triggerCount; t++) {
-                    SkillComponent triggerComponentExtra = SkillComponentLoader.loadSection(skillSection.getConfigurationSection("trigger" + t));
+                    SkillComponent triggerComponentExtra = SkillComponentLoader.loadSection(skillSection.getConfigurationSection("trigger" + t), -1);
                     skill.addTrigger(triggerComponentExtra);
                 }
 

@@ -46,6 +46,16 @@ public class SkillRPGClassData {
 
         Skill skill = skillTree.getSkill(skillId);
 
+        int parentId = skill.getParentId();
+        if (parentId > 0) {
+            Skill skillParent = skillTree.getSkill(parentId);
+            int parentInvested = skillTreeData.getInvestedSkillPoints(parentId);
+            if (parentInvested < 1) {
+                player.sendMessage("You need to invest at least 1 skill point in " + skillParent.getName() + " to upgrade " + skill.getName() + ".");
+                return false;
+            }
+        }
+
         int invested = skillTreeData.getInvestedSkillPoints(skillId);
         int currentSkillLevel = skill.getCurrentSkillLevel(invested);
 

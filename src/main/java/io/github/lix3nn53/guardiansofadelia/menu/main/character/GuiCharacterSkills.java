@@ -8,6 +8,7 @@ import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGClassManager;
 import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGClassStats;
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.Skill;
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.SkillBar;
+import io.github.lix3nn53.guardiansofadelia.guardian.skill.player.SkillBarData;
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.player.SkillRPGClassData;
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.player.SkillTreeData;
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.tree.SkillTree;
@@ -48,6 +49,11 @@ public class GuiCharacterSkills extends GuiGeneric {
     // Easier clicks
     private final HashMap<Integer, Integer> slotToSkillIdForClick = new HashMap<>();
 
+    // other
+    private final String lang;
+    // Skill bar select
+    private int skillBarSelectIndex = -1;
+
     public GuiCharacterSkills(Player player, GuardianData guardianData, RPGCharacter rpgCharacter,
                               int pointsLeft, SkillTreeOffset viewOffset) {
         super(54, CustomCharacterGui.SKILL_MENU.toString() + ChatPalette.BLACK + Translation.t(guardianData, "skill.name") +
@@ -60,15 +66,49 @@ public class GuiCharacterSkills extends GuiGeneric {
         RPGClass rpgClass = RPGClassManager.getClass(rpgClassStr);
         this.skillTree = rpgClass.getSkillTree();
 
-        String language = guardianData.getLanguage();
+        this.lang = guardianData.getLanguage();
 
         ItemStack backButton = OtherItems.getBackButton("Character Menu");
         this.setItem(0, backButton);
 
-        ItemStack rightButton = OtherItems.getArrowRight();
-        ItemMeta itemMeta = rightButton.getItemMeta();
-        itemMeta.setDisplayName(ChatPalette.YELLOW + "View Right");
+        ItemStack unassignedSkill = OtherItems.getUnassignedSkill();
+        ItemMeta itemMeta = unassignedSkill.getItemMeta();
+        itemMeta.setDisplayName("Select skill for slot 1");
         List<String> lore = new ArrayList<>();
+        lore.add("Click here then click on the skill you want");
+        lore.add("to assign to slot 1");
+        itemMeta.setLore(lore);
+        unassignedSkill.setItemMeta(itemMeta);
+        this.setItem(4, unassignedSkill);
+
+        itemMeta.setDisplayName("Select skill for slot 2");
+        lore = new ArrayList<>();
+        lore.add("Click here then click on the skill you want");
+        lore.add("to assign to slot 2");
+        itemMeta.setLore(lore);
+        unassignedSkill.setItemMeta(itemMeta);
+        this.setItem(5, unassignedSkill);
+
+        itemMeta.setDisplayName("Select skill for slot 3");
+        lore = new ArrayList<>();
+        lore.add("Click here then click on the skill you want");
+        lore.add("to assign to slot 3");
+        itemMeta.setLore(lore);
+        unassignedSkill.setItemMeta(itemMeta);
+        this.setItem(6, unassignedSkill);
+
+        itemMeta.setDisplayName("Select skill for slot 4");
+        lore = new ArrayList<>();
+        lore.add("Click here then click on the skill you want");
+        lore.add("to assign to slot 4");
+        itemMeta.setLore(lore);
+        unassignedSkill.setItemMeta(itemMeta);
+        this.setItem(7, unassignedSkill);
+
+        ItemStack rightButton = OtherItems.getArrowRight();
+        itemMeta = rightButton.getItemMeta();
+        itemMeta.setDisplayName(ChatPalette.YELLOW + "View Right");
+        lore = new ArrayList<>();
         lore.add("");
         lore.add(ChatPalette.GRAY + "Click to move view to right.");
         itemMeta.setLore(lore);
@@ -132,6 +172,14 @@ public class GuiCharacterSkills extends GuiGeneric {
         if (slot == 0) {
             GuiCharacter gui = new GuiCharacter(guardianData);
             gui.openInventory(player);
+        } else if (slot == 4) {
+            this.skillBarSelectIndex = 0;
+        } else if (slot == 5) {
+            this.skillBarSelectIndex = 1;
+        } else if (slot == 6) {
+            this.skillBarSelectIndex = 2;
+        } else if (slot == 7) {
+            this.skillBarSelectIndex = 3;
         } else if (slot == 26) {
             moveVirtualDisplay(VirtualMove.RIGHT);
             RPGClassStats rpgClassStats = rpgCharacter.getRPGClassStats();
@@ -157,6 +205,17 @@ public class GuiCharacterSkills extends GuiGeneric {
 
             RPGClassStats rpgClassStats = rpgCharacter.getRPGClassStats();
             SkillRPGClassData skillRPGClassData = rpgClassStats.getSkillRPGClassData();
+
+            if (skillBarSelectIndex > -1) {
+                SkillBarData skillBarData = skillRPGClassData.getSkillBarData();
+                skillBarData.set(skillBarSelectIndex, skillId);
+
+                SkillBar skillBar = rpgCharacter.getSkillBar();
+                skillBar.remakeSkillBar(skillTree, skillRPGClassData, lang);
+                this.skillBarSelectIndex = -1;
+
+                return;
+            }
 
             SkillBar skillBar = rpgCharacter.getSkillBar();
 

@@ -149,12 +149,12 @@ public class ClassConfigurations {
         List<Integer> cooldowns = skillSection.getIntegerList("cooldowns");
 
         Skill skill = new Skill(id, name, 4, Material.IRON_HOE, customModelData, description, reqPoints, manaCosts, cooldowns);
-        SkillComponent triggerComponent = SkillComponentLoader.loadSection(skillSection.getConfigurationSection("trigger"));
+        SkillComponent triggerComponent = SkillComponentLoader.loadSection(skillSection.getConfigurationSection("trigger"), id);
         skill.addTrigger(triggerComponent);
 
         int triggerCount = ConfigurationUtils.getChildComponentCount(skillSection, "trigger");
         for (int i = 1; i <= triggerCount; i++) {
-            SkillComponent triggerComponentExtra = SkillComponentLoader.loadSection(skillSection.getConfigurationSection("trigger" + i));
+            SkillComponent triggerComponentExtra = SkillComponentLoader.loadSection(skillSection.getConfigurationSection("trigger" + i), id);
             skill.addTrigger(triggerComponentExtra);
         }
 

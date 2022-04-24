@@ -43,12 +43,12 @@ public class SkillOnGroundConfigurations {
             Skill skill = new Skill(-1, "skillOnGround", 1, Material.IRON_HOE, 1, description,
                     new ArrayList<>(), new ArrayList<>(), cooldowns);
 
-            SkillComponent triggerComponent = SkillComponentLoader.loadSection(configurationSection.getConfigurationSection("trigger"));
+            SkillComponent triggerComponent = SkillComponentLoader.loadSection(configurationSection.getConfigurationSection("trigger"), -1);
             skill.addTrigger(triggerComponent);
 
             int triggerCount = ConfigurationUtils.getChildComponentCount(configurationSection, "trigger");
             for (int t = 1; t <= triggerCount; t++) {
-                SkillComponent triggerComponentExtra = SkillComponentLoader.loadSection(configurationSection.getConfigurationSection("trigger" + t));
+                SkillComponent triggerComponentExtra = SkillComponentLoader.loadSection(configurationSection.getConfigurationSection("trigger" + t), -1);
                 skill.addTrigger(triggerComponentExtra);
             }
 
