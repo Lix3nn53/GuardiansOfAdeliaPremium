@@ -1,8 +1,9 @@
-package io.github.lix3nn53.guardiansofadelia.guardian.skill.component.trigger;
+package io.github.lix3nn53.guardiansofadelia.guardian.skill.managers;
 
 import io.github.lix3nn53.guardiansofadelia.GuardiansOfAdelia;
 import io.github.lix3nn53.guardiansofadelia.commands.admin.CommandAdmin;
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.component.TriggerComponent;
+import io.github.lix3nn53.guardiansofadelia.guardian.skill.component.trigger.*;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -13,47 +14,57 @@ import java.util.HashMap;
 import java.util.List;
 
 public class TriggerListener {
-    //Every player can have only one trigger of a type
+    // Every skill can have only one trigger of a type
 
     // Player to skillid to triggerType to trigger
-    private static final HashMap<Player, HashMap<Integer, HashMap<String, TriggerComponent>>> playerToTriggerList = new HashMap<>();
+    private static final HashMap<Player, HashMap<Integer, HashMap<String, TriggerComponent>>> playerToSkillToTriggerClassToTrigger = new HashMap<>();
 
     public static void onPlayerQuit(Player player) {
-        playerToTriggerList.remove(player);
+        if (playerToSkillToTriggerClassToTrigger.containsKey(player)) {
+            HashMap<Integer, HashMap<String, TriggerComponent>> skillToTriggers = playerToSkillToTriggerClassToTrigger.get(player);
+
+            for (HashMap<String, TriggerComponent> triggers : skillToTriggers.values()) {
+                for (TriggerComponent trigger : triggers.values()) {
+                    trigger.stopEffects();
+                }
+            }
+
+            playerToSkillToTriggerClassToTrigger.remove(player);
+        }
     }
 
     public static void add(Player player, TriggerComponent triggerComponent, int skillId) {
         HashMap<Integer, HashMap<String, TriggerComponent>> map = new HashMap<>();
-        if (playerToTriggerList.containsKey(player)) {
-            map = playerToTriggerList.get(player);
+        if (playerToSkillToTriggerClassToTrigger.containsKey(player)) {
+            map = playerToSkillToTriggerClassToTrigger.get(player);
         }
         HashMap<String, TriggerComponent> triggerComponents = new HashMap<>();
         if (map.containsKey(skillId)) {
             triggerComponents = map.get(skillId);
         }
         triggerComponents.put(triggerComponent.getClass().getName(), triggerComponent);
-        playerToTriggerList.put(player, map);
+        playerToSkillToTriggerClassToTrigger.put(player, map);
         if (CommandAdmin.DEBUG_MODE) player.sendMessage("ADD, new size: " + map.size());
     }
 
-    public static void remove(Player player, int skillId, String triggerType) {
-        if (playerToTriggerList.containsKey(player)) {
-            HashMap<Integer, HashMap<String, TriggerComponent>> map = playerToTriggerList.get(player);
+    public static void remove(Player player, String triggerType, int skillId) {
+        if (playerToSkillToTriggerClassToTrigger.containsKey(player)) {
+            HashMap<Integer, HashMap<String, TriggerComponent>> map = playerToSkillToTriggerClassToTrigger.get(player);
 
             HashMap<String, TriggerComponent> triggers = map.get(skillId);
             triggers.remove(triggerType);
             if (map.isEmpty()) {
-                playerToTriggerList.remove(player);
+                playerToSkillToTriggerClassToTrigger.remove(player);
             } else {
-                playerToTriggerList.put(player, map);
+                playerToSkillToTriggerClassToTrigger.put(player, map);
             }
             if (CommandAdmin.DEBUG_MODE) player.sendMessage("REMOVE trigger, new size: " + map.size());
         }
     }
 
     public static void onPlayerLandGround(Player player) {
-        if (playerToTriggerList.containsKey(player)) {
-            HashMap<Integer, HashMap<String, TriggerComponent>> map = playerToTriggerList.get(player);
+        if (playerToSkillToTriggerClassToTrigger.containsKey(player)) {
+            HashMap<Integer, HashMap<String, TriggerComponent>> map = playerToSkillToTriggerClassToTrigger.get(player);
 
             List<Integer> toRemove = new ArrayList<>();
 
@@ -69,14 +80,14 @@ public class TriggerListener {
             }
 
             for (int skillId : toRemove) {
-                TriggerListener.remove(player, skillId, LandTrigger.class.getName());
+                TriggerListener.remove(player, LandTrigger.class.getName(), skillId);
             }
         }
     }
 
     public static void onPlayerTookDamage(Player player, LivingEntity attacker) {
-        if (playerToTriggerList.containsKey(player)) {
-            HashMap<Integer, HashMap<String, TriggerComponent>> map = playerToTriggerList.get(player);
+        if (playerToSkillToTriggerClassToTrigger.containsKey(player)) {
+            HashMap<Integer, HashMap<String, TriggerComponent>> map = playerToSkillToTriggerClassToTrigger.get(player);
 
             HashMap<Integer, TookDamageTrigger> toRemove = new HashMap<>();
 
@@ -99,7 +110,7 @@ public class TriggerListener {
                 List<Integer> cooldowns = trigger.getCooldowns();
 
                 if (!cooldowns.isEmpty()) {
-                    TriggerListener.remove(player, skillId, TookDamageTrigger.class.getName());
+                    TriggerListener.remove(player, TookDamageTrigger.class.getName(), skillId);
 
                     new BukkitRunnable() {
                         @Override
@@ -113,8 +124,8 @@ public class TriggerListener {
     }
 
     public static void onPlayerNormalAttack(Player player, LivingEntity target, boolean isProjectile) {
-        if (playerToTriggerList.containsKey(player)) {
-            HashMap<Integer, HashMap<String, TriggerComponent>> map = playerToTriggerList.get(player);
+        if (playerToSkillToTriggerClassToTrigger.containsKey(player)) {
+            HashMap<Integer, HashMap<String, TriggerComponent>> map = playerToSkillToTriggerClassToTrigger.get(player);
 
             HashMap<Integer, NormalAttackTrigger> toRemove = new HashMap<>();
 
@@ -137,7 +148,7 @@ public class TriggerListener {
                 List<Integer> cooldowns = trigger.getCooldowns();
 
                 if (!cooldowns.isEmpty()) {
-                    TriggerListener.remove(player, skillId, NormalAttackTrigger.class.getName());
+                    TriggerListener.remove(player, NormalAttackTrigger.class.getName(), skillId);
 
                     new BukkitRunnable() {
                         @Override
@@ -151,8 +162,8 @@ public class TriggerListener {
     }
 
     public static void onPlayerSkillAttack(Player player, LivingEntity target) {
-        if (playerToTriggerList.containsKey(player)) {
-            HashMap<Integer, HashMap<String, TriggerComponent>> map = playerToTriggerList.get(player);
+        if (playerToSkillToTriggerClassToTrigger.containsKey(player)) {
+            HashMap<Integer, HashMap<String, TriggerComponent>> map = playerToSkillToTriggerClassToTrigger.get(player);
 
             HashMap<Integer, SkillAttackTrigger> toRemove = new HashMap<>();
 
@@ -175,7 +186,7 @@ public class TriggerListener {
                 List<Integer> cooldowns = trigger.getCooldowns();
 
                 if (!cooldowns.isEmpty()) {
-                    TriggerListener.remove(player, skillId, SkillAttackTrigger.class.getName());
+                    TriggerListener.remove(player, SkillAttackTrigger.class.getName(), skillId);
 
                     new BukkitRunnable() {
                         @Override
@@ -189,8 +200,8 @@ public class TriggerListener {
     }
 
     public static void onPlayerSkillCast(Player player) {
-        if (playerToTriggerList.containsKey(player)) {
-            HashMap<Integer, HashMap<String, TriggerComponent>> map = playerToTriggerList.get(player);
+        if (playerToSkillToTriggerClassToTrigger.containsKey(player)) {
+            HashMap<Integer, HashMap<String, TriggerComponent>> map = playerToSkillToTriggerClassToTrigger.get(player);
 
             HashMap<Integer, SkillCastTrigger> toRemove = new HashMap<>();
 
@@ -213,7 +224,7 @@ public class TriggerListener {
                 List<Integer> cooldowns = trigger.getCooldowns();
 
                 if (!cooldowns.isEmpty()) {
-                    TriggerListener.remove(player, skillId, SkillCastTrigger.class.getName());
+                    TriggerListener.remove(player, SkillCastTrigger.class.getName(), skillId);
 
                     new BukkitRunnable() {
                         @Override
@@ -227,8 +238,8 @@ public class TriggerListener {
     }
 
     public static void onPlayerShootCrossbow(Player player, Arrow arrow) {
-        if (playerToTriggerList.containsKey(player)) {
-            HashMap<Integer, HashMap<String, TriggerComponent>> map = playerToTriggerList.get(player);
+        if (playerToSkillToTriggerClassToTrigger.containsKey(player)) {
+            HashMap<Integer, HashMap<String, TriggerComponent>> map = playerToSkillToTriggerClassToTrigger.get(player);
 
             for (HashMap<String, TriggerComponent> skillTriggers : map.values()) {
                 for (TriggerComponent triggerComponent : skillTriggers.values()) {
@@ -241,8 +252,8 @@ public class TriggerListener {
     }
 
     public static void onPlayerSavedEntitySpawn(Player player, LivingEntity created) {
-        if (playerToTriggerList.containsKey(player)) {
-            HashMap<Integer, HashMap<String, TriggerComponent>> map = playerToTriggerList.get(player);
+        if (playerToSkillToTriggerClassToTrigger.containsKey(player)) {
+            HashMap<Integer, HashMap<String, TriggerComponent>> map = playerToSkillToTriggerClassToTrigger.get(player);
 
             HashMap<Integer, SavedEntitySpawnTrigger> toRemove = new HashMap<>();
 
@@ -265,7 +276,7 @@ public class TriggerListener {
                 List<Integer> cooldowns = trigger.getCooldowns();
 
                 if (!cooldowns.isEmpty()) {
-                    TriggerListener.remove(player, skillId, SavedEntitySpawnTrigger.class.getName());
+                    TriggerListener.remove(player, SavedEntitySpawnTrigger.class.getName(), skillId);
 
                     new BukkitRunnable() {
                         @Override
@@ -279,8 +290,8 @@ public class TriggerListener {
     }
 
     public static void onPlayerCompanionSpawn(Player player, LivingEntity spawned) {
-        if (playerToTriggerList.containsKey(player)) {
-            HashMap<Integer, HashMap<String, TriggerComponent>> map = playerToTriggerList.get(player);
+        if (playerToSkillToTriggerClassToTrigger.containsKey(player)) {
+            HashMap<Integer, HashMap<String, TriggerComponent>> map = playerToSkillToTriggerClassToTrigger.get(player);
 
             HashMap<Integer, CompanionSpawnTrigger> toRemove = new HashMap<>();
 
@@ -303,7 +314,7 @@ public class TriggerListener {
                 List<Integer> cooldowns = trigger.getCooldowns();
 
                 if (!cooldowns.isEmpty()) {
-                    TriggerListener.remove(player, skillId, CompanionSpawnTrigger.class.getName());
+                    TriggerListener.remove(player, CompanionSpawnTrigger.class.getName(), skillId);
 
                     new BukkitRunnable() {
                         @Override
@@ -338,21 +349,19 @@ public class TriggerListener {
     }
 
     private static void stopInit(Player player, int skillId) {
-        if (playerToTriggerList.containsKey(player)) {
-            HashMap<Integer, HashMap<String, TriggerComponent>> skillToTriggers = playerToTriggerList.get(player);
+        if (playerToSkillToTriggerClassToTrigger.containsKey(player)) {
+            HashMap<Integer, HashMap<String, TriggerComponent>> skillToTriggers = playerToSkillToTriggerClassToTrigger.get(player);
 
             HashMap<String, TriggerComponent> removed = skillToTriggers.remove(skillId);
 
-            /*for (TriggerComponent triggerComponent : removed.values()) {
-                // TODO trigger clear?
-                // trigger.stopEffects(player);
-                // SkillDataManager.onPlayerQuit(player); // stop effects
-            }*/
+            for (TriggerComponent trigger : removed.values()) {
+                trigger.stopEffects();
+            }
 
             if (skillToTriggers.isEmpty()) {
-                playerToTriggerList.remove(player);
+                playerToSkillToTriggerClassToTrigger.remove(player);
             } else {
-                playerToTriggerList.put(player, skillToTriggers);
+                playerToSkillToTriggerClassToTrigger.put(player, skillToTriggers);
             }
         }
     }

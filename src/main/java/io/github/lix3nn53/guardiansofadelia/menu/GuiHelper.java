@@ -46,8 +46,8 @@ public class GuiHelper {
             if (i > 7) break;
             if (button != null) {
                 add54BigButton(guiGeneric, button, get54BigButtonIndexes(i));
-                i++;
             }
+            i++;
         }
     }
 

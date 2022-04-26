@@ -2,8 +2,6 @@ package io.github.lix3nn53.guardiansofadelia.utilities.config;
 
 import io.github.lix3nn53.guardiansofadelia.GuardiansOfAdelia;
 import io.github.lix3nn53.guardiansofadelia.guardian.attribute.AttributeType;
-import io.github.lix3nn53.guardiansofadelia.guardian.character.ActionBarInfo;
-import io.github.lix3nn53.guardiansofadelia.guardian.character.ActionBarInfoType;
 import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGClass;
 import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGClassManager;
 import io.github.lix3nn53.guardiansofadelia.guardian.element.ElementType;
@@ -87,7 +85,7 @@ public class ClassConfigurations {
 
             for (String skillName : skillConfigs.keySet()) {
                 YamlConfiguration skillConfig = skillConfigs.get(skillName);
-                Skill skill = loadSkill(skillName, skillConfig, skillTier);
+                Skill skill = loadSkill(className, skillName, skillConfig, skillTier);
                 int id = skill.getId();
                 if (skillSet.containsKey(id)) {
                     GuardiansOfAdelia.getInstance().getLogger().warning("Skill id " + id + " is already in use!");
@@ -127,20 +125,13 @@ public class ClassConfigurations {
             }
         }
 
-        // TODO make actionBarInfo unlock with skills not classes
-        ActionBarInfoType actionBarInfoType = classConfig.contains("actionBarInfoType") ? ActionBarInfoType.valueOf(classConfig.getString("actionBarInfoType")) : null;
-        String actionBarIcon = classConfig.getString("actionBarIcon");
-        String actionBarKey = classConfig.getString("actionBarKey");
-
-        ActionBarInfo actionBarInfo = new ActionBarInfo(actionBarInfoType, actionBarIcon, actionBarKey);
-
-        RPGClass rpgClass = new RPGClass(color, mainElement, className, classIconCustomModelData, attributeTiers, skillTree,
-                actionBarInfo, shieldGearTypes, weaponGearTypes, armorGearTypes, description);
+        RPGClass rpgClass = new RPGClass(color, mainElement, className, classIconCustomModelData, attributeTiers,
+                skillTree, shieldGearTypes, weaponGearTypes, armorGearTypes, description);
 
         RPGClassManager.addClass(className, rpgClass);
     }
 
-    private static Skill loadSkill(String name, ConfigurationSection skillSection, SkillTier skillTier) {
+    private static Skill loadSkill(String rpgClass, String name, ConfigurationSection skillSection, SkillTier skillTier) {
         int id = skillSection.getInt("id");
         List<String> description = skillSection.getStringList("description");
         int customModelData = skillSection.getInt("customModelData");
@@ -149,12 +140,12 @@ public class ClassConfigurations {
         List<Integer> cooldowns = skillSection.getIntegerList("cooldowns");
 
         Skill skill = new Skill(id, name, 4, Material.IRON_HOE, customModelData, description, reqPoints, manaCosts, cooldowns);
-        SkillComponent triggerComponent = SkillComponentLoader.loadSection(skillSection.getConfigurationSection("trigger"), id);
+        SkillComponent triggerComponent = SkillComponentLoader.loadSection(rpgClass, skillSection.getConfigurationSection("trigger"), id);
         skill.addTrigger(triggerComponent);
 
         int triggerCount = ConfigurationUtils.getChildComponentCount(skillSection, "trigger");
         for (int i = 1; i <= triggerCount; i++) {
-            SkillComponent triggerComponentExtra = SkillComponentLoader.loadSection(skillSection.getConfigurationSection("trigger" + i), id);
+            SkillComponent triggerComponentExtra = SkillComponentLoader.loadSection(rpgClass, skillSection.getConfigurationSection("trigger" + i), id);
             skill.addTrigger(triggerComponentExtra);
         }
 

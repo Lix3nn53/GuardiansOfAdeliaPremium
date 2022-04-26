@@ -8,7 +8,7 @@ import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGCharacterStats
 import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGClassStats;
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.component.mechanic.statuseffect.StatusEffectManager;
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.component.trigger.InitializeTrigger;
-import io.github.lix3nn53.guardiansofadelia.guardian.skill.component.trigger.TriggerListener;
+import io.github.lix3nn53.guardiansofadelia.guardian.skill.managers.TriggerListener;
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.player.SkillBarData;
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.player.SkillRPGClassData;
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.player.SkillTreeData;
@@ -26,6 +26,7 @@ import org.bukkit.scheduler.BukkitTask;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Each player character has unique skill-bar
@@ -50,16 +51,15 @@ public class SkillBar {
         //activate init triggers
         new BukkitRunnable() {
 
-            final SkillBarData skillBarData = skillRPGClassData.getSkillBarData();
             final SkillTreeData skillTreeData = skillRPGClassData.getSkillTreeData();
+            final Set<Integer> skillIds = skillTreeData.getSkillIds();
 
             @Override
             public void run() {
-                for (int slotIndex = 0; slotIndex < 4; slotIndex++) {
-                    int skillId = skillBarData.getSkillId(slotIndex);
+                for (int skillId : skillIds) {
                     if (skillId < 0) continue;
 
-                    Skill skill = skillTree.getSkill(slotIndex);
+                    Skill skill = skillTree.getSkill(skillId);
                     int investedPoints = skillTreeData.getInvestedSkillPoints(skillId);
 
                     List<InitializeTrigger> initializeTriggers = skill.getInitializeTriggers();

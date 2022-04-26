@@ -1,6 +1,7 @@
 package io.github.lix3nn53.guardiansofadelia.guardian.skill.component.trigger;
 
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.component.TriggerComponent;
+import io.github.lix3nn53.guardiansofadelia.guardian.skill.managers.TriggerListener;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -16,7 +17,7 @@ public class SkillAttackTrigger extends TriggerComponent {
     int castCounter;
 
     public SkillAttackTrigger(ConfigurationSection configurationSection) {
-        super(!configurationSection.contains("addLore") || configurationSection.getBoolean("addLore"));
+        super(!configurationSection.contains("addLore") || configurationSection.getBoolean("addLore"), SkillAttackTrigger.class.getName());
 
         if (configurationSection.contains("cooldowns")) {
             this.cooldowns = configurationSection.getIntegerList("cooldowns");

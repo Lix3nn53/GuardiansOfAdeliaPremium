@@ -1,6 +1,7 @@
 package io.github.lix3nn53.guardiansofadelia.guardian.skill.component.trigger;
 
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.component.TriggerComponent;
+import io.github.lix3nn53.guardiansofadelia.guardian.skill.managers.TriggerListener;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -16,7 +17,7 @@ public class TookDamageTrigger extends TriggerComponent {
     int castCounter;
 
     public TookDamageTrigger(ConfigurationSection configurationSection) {
-        super(!configurationSection.contains("addLore") || configurationSection.getBoolean("addLore"));
+        super(!configurationSection.contains("addLore") || configurationSection.getBoolean("addLore"), TookDamageTrigger.class.getName());
 
         if (configurationSection.contains("cooldowns")) {
             this.cooldowns = configurationSection.getIntegerList("cooldowns");
@@ -28,17 +29,18 @@ public class TookDamageTrigger extends TriggerComponent {
     @Override
     public boolean execute(LivingEntity caster, int skillLevel, List<LivingEntity> targets, int castCounter, int skillId) {
         if (targets.isEmpty()) return false;
+        super.execute(caster, skillLevel, targets, castCounter, skillId);
 
         this.skillId = skillId;
         this.caster = caster;
         this.skillLevel = skillLevel;
         this.castCounter = castCounter;
 
-        TookDamageTrigger tookDamageTrigger = this;
+        this.saveTargets = targets;
 
         for (LivingEntity target : targets) {
             if (target instanceof Player) {
-                TriggerListener.add((Player) target, tookDamageTrigger, skillId);
+                TriggerListener.add((Player) target, this, skillId);
             }
         }
 

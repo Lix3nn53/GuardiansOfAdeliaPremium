@@ -11,12 +11,12 @@ import java.util.List;
 
 public class ActionBarInfo {
 
-    private ActionBarInfoType actionBarInfoType;
-    private String actionBarIcon;
+    private final ActionBarInfoType actionBarInfoType;
+    private final String actionBarIcon;
 
-    private String key;
+    private final String key;
 
-    public ActionBarInfo(@Nullable ActionBarInfoType actionBarInfoType, String actionBarIcon, @Nullable String key) {
+    public ActionBarInfo(ActionBarInfoType actionBarInfoType, String actionBarIcon, @Nullable String key) {
         this.actionBarInfoType = actionBarInfoType;
         this.actionBarIcon = actionBarIcon != null ? ChatColor.translateAlternateColorCodes('&', actionBarIcon) : "";
         this.key = key;
@@ -25,25 +25,16 @@ public class ActionBarInfo {
     public String getActionBarBetween(Player player) {
         if (actionBarInfoType == null) return "                    ";
 
+        int value = -99;
         if (actionBarInfoType.equals(ActionBarInfoType.VARIABLE)) {
-            int value = SkillDataManager.getValue(player, key);
-
-            return "        " + actionBarIcon + " " + value + "        ";
+            value = SkillDataManager.getValue(player, key);
         } else if (actionBarInfoType.equals(ActionBarInfoType.PASSIVE_COOLDOWN)) {
-
+            // TODO passive cooldown
         } else if (actionBarInfoType.equals(ActionBarInfoType.COMPANION_COUNT)) {
             List<LivingEntity> companions = PetManager.getCompanions(player);
-            int value = companions != null ? companions.size() : 0;
-
-            return "        " + actionBarIcon + " " + value + "        ";
+            value = companions != null ? companions.size() : 0;
         }
 
-        return "                    ";
-    }
-
-    public void onClassChange(@Nullable ActionBarInfoType actionBarInfoType, String actionBarIcon, @Nullable String key) {
-        this.actionBarInfoType = actionBarInfoType;
-        this.actionBarIcon = actionBarIcon != null ? ChatColor.translateAlternateColorCodes('&', actionBarIcon) : "";
-        this.key = key;
+        return actionBarIcon + " " + value;
     }
 }

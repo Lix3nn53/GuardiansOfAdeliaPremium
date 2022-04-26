@@ -8,7 +8,7 @@ import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGClassStats;
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.Skill;
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.SkillBar;
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.component.trigger.InitializeTrigger;
-import io.github.lix3nn53.guardiansofadelia.guardian.skill.component.trigger.TriggerListener;
+import io.github.lix3nn53.guardiansofadelia.guardian.skill.managers.TriggerListener;
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.tree.SkillTree;
 import org.bukkit.entity.Player;
 

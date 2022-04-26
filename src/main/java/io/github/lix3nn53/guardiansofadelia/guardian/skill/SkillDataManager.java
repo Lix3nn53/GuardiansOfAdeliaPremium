@@ -1,7 +1,8 @@
 package io.github.lix3nn53.guardiansofadelia.guardian.skill;
 
 import io.github.lix3nn53.guardiansofadelia.GuardiansOfAdelia;
-import io.github.lix3nn53.guardiansofadelia.guardian.skill.component.trigger.TriggerListener;
+import io.github.lix3nn53.guardiansofadelia.guardian.skill.managers.ActionBarInfoManager;
+import io.github.lix3nn53.guardiansofadelia.guardian.skill.managers.TriggerListener;
 import io.github.lix3nn53.guardiansofadelia.text.ChatPalette;
 import io.lumine.mythic.bukkit.BukkitAPIHelper;
 import io.lumine.mythic.bukkit.MythicBukkit;
@@ -256,7 +257,6 @@ public class SkillDataManager {
     /**
      * clear player cast number
      *
-     * @param player
      */
     public static void onPlayerQuit(Player player) {
         keyEntityToSkillFlags.remove(player);
@@ -279,6 +279,9 @@ public class SkillDataManager {
             }
             keyEntityToCastCounterToSavedEntities.remove(player);
         }
+
+        TriggerListener.onPlayerQuit(player);
+        ActionBarInfoManager.clearActionBarInfo(player);
     }
 
     /**

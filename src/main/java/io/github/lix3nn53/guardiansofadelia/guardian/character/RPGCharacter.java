@@ -121,8 +121,6 @@ public final class RPGCharacter {
         this.rpgCharacterStats.recalculateEquipment(rpgClassStr, rpgClassStats);
         player.sendMessage(ChatPalette.YELLOW + "Changed class to " + rpgClass.getClassString() + ChatPalette.YELLOW + "!");
 
-        ActionBarInfo actionBarInfo = rpgClass.getActionBarInfo();
-
         return true;
     }
 

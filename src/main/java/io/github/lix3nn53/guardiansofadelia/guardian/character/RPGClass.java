@@ -19,8 +19,6 @@ public class RPGClass {
     private final HashMap<AttributeType, Integer> attributeTiers;
     private final SkillTree skillTree;
 
-    private final ActionBarInfo actionBarInfo;
-
     private final List<ShieldGearType> shieldGearTypes;
     private final List<WeaponGearType> weaponGearTypes;
     private final List<ArmorGearType> armorGearTypes;
@@ -28,7 +26,7 @@ public class RPGClass {
     private final List<String> description;
 
     public RPGClass(ChatPalette color, ElementType mainElement, String name, int customModelData, HashMap<AttributeType, Integer> attributeTiers,
-                    SkillTree skillTree, ActionBarInfo actionBarInfo, List<ShieldGearType> shieldGearTypes, List<WeaponGearType> weaponGearTypes,
+                    SkillTree skillTree, List<ShieldGearType> shieldGearTypes, List<WeaponGearType> weaponGearTypes,
                     List<ArmorGearType> armorGearTypes, List<String> description) {
         this.color = color;
         this.mainElement = mainElement;
@@ -36,7 +34,6 @@ public class RPGClass {
         this.customModelData = customModelData;
         this.attributeTiers = attributeTiers;
         this.skillTree = skillTree;
-        this.actionBarInfo = actionBarInfo;
         this.shieldGearTypes = shieldGearTypes;
         this.weaponGearTypes = weaponGearTypes;
         this.armorGearTypes = armorGearTypes;
@@ -73,10 +70,6 @@ public class RPGClass {
 
     public SkillTree getSkillTree() {
         return skillTree;
-    }
-
-    public ActionBarInfo getActionBarInfo() {
-        return actionBarInfo;
     }
 
     public WeaponGearType getDefaultWeaponGearType() {

@@ -6,6 +6,7 @@ import io.github.lix3nn53.guardiansofadelia.guardian.attribute.AttributeType;
 import io.github.lix3nn53.guardiansofadelia.guardian.element.Element;
 import io.github.lix3nn53.guardiansofadelia.guardian.element.ElementType;
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.component.mechanic.buff.BuffType;
+import io.github.lix3nn53.guardiansofadelia.guardian.skill.managers.ActionBarInfoManager;
 import io.github.lix3nn53.guardiansofadelia.items.RpgGears.ArmorGearType;
 import io.github.lix3nn53.guardiansofadelia.items.RpgGears.ShieldGearType;
 import io.github.lix3nn53.guardiansofadelia.items.RpgGears.WeaponGearType;
@@ -124,10 +125,23 @@ public class RPGCharacterStats {
                     return;
                 }*/
 
-                RPGClass rpgClass = RPGClassManager.getClass(rpgClassStr);
-                ActionBarInfo actionBarInfo = rpgClass.getActionBarInfo();
+                String between = "                    ";
 
-                String between = actionBarInfo.getActionBarBetween(player);
+                List<ActionBarInfo> actionBarInfos = ActionBarInfoManager.getActionBarInfo(player);
+                if (actionBarInfos != null) {
+                    StringBuilder sb = new StringBuilder(between);
+
+                    int length = between.length();
+                    int space = length / (actionBarInfos.size() + 1);
+
+                    int i = 1;
+                    for (ActionBarInfo actionBarInfo : actionBarInfos) {
+                        String actionBarBetween = actionBarInfo.getActionBarBetween(player);
+                        sb.insert(space * i, actionBarBetween);
+                    }
+
+                    between = sb.toString();
+                }
 
                 String message = ChatPalette.RED + "❤" + ((int) (player.getHealth() + 0.5)) + "/" +
                         getTotalMaxHealth(rpgClassStats) + between +

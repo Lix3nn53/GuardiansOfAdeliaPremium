@@ -2,6 +2,7 @@ package io.github.lix3nn53.guardiansofadelia.guardian.skill.component.trigger;
 
 import io.github.lix3nn53.guardiansofadelia.GuardiansOfAdelia;
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.component.TriggerComponent;
+import io.github.lix3nn53.guardiansofadelia.guardian.skill.managers.TriggerListener;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -17,7 +18,7 @@ public class LandTrigger extends TriggerComponent {
     int castCounter;
 
     public LandTrigger(ConfigurationSection configurationSection) {
-        super(!configurationSection.contains("addLore") || configurationSection.getBoolean("addLore"));
+        super(!configurationSection.contains("addLore") || configurationSection.getBoolean("addLore"), LandTrigger.class.getName());
 
     }
 
