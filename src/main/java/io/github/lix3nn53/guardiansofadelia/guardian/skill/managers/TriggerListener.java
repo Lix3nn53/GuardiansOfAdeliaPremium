@@ -354,8 +354,10 @@ public class TriggerListener {
 
             HashMap<String, TriggerComponent> removed = skillToTriggers.remove(skillId);
 
-            for (TriggerComponent trigger : removed.values()) {
-                trigger.stopEffects();
+            if (removed != null) {
+                for (TriggerComponent trigger : removed.values()) {
+                    trigger.stopEffects();
+                }
             }
 
             if (skillToTriggers.isEmpty()) {

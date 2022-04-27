@@ -9,33 +9,42 @@ import java.util.List;
 
 public class ActionBarInfoManager {
 
-    private static final HashMap<Player, List<ActionBarInfo>> playerToActionBarInfo = new HashMap<>();
-
-    public static void setActionBarInfo(Player player, List<ActionBarInfo> actionBarInfo) {
-        playerToActionBarInfo.put(player, actionBarInfo);
-    }
+    private static final HashMap<Player, HashMap<Integer, ActionBarInfo>> playerToCastCounterToActionBar = new HashMap<>();
 
     public static List<ActionBarInfo> getActionBarInfo(Player player) {
-        return playerToActionBarInfo.get(player);
+        HashMap<Integer, ActionBarInfo> castCounterToActionBars = playerToCastCounterToActionBar.get(player);
+
+        if (castCounterToActionBars == null) {
+            return null;
+        }
+
+        return new ArrayList<>(castCounterToActionBars.values());
     }
 
     public static void clearActionBarInfo(Player player) {
-        playerToActionBarInfo.remove(player);
+        playerToCastCounterToActionBar.remove(player);
     }
 
-    public static void addActionBarInfo(Player player, ActionBarInfo actionBarInfo) {
-        List<ActionBarInfo> actionBarInfos = playerToActionBarInfo.get(player);
-        if (actionBarInfos == null) {
-            actionBarInfos = new ArrayList<>();
-            playerToActionBarInfo.put(player, actionBarInfos);
+    public static void setActionBarInfo(Player player, ActionBarInfo actionBarInfo, int castCounter) {
+        HashMap<Integer, ActionBarInfo> castCounterToActionBars = playerToCastCounterToActionBar.get(player);
+
+        if (castCounterToActionBars == null) {
+            castCounterToActionBars = new HashMap<>();
+            playerToCastCounterToActionBar.put(player, castCounterToActionBars);
         }
-        actionBarInfos.add(actionBarInfo);
+
+        castCounterToActionBars.put(castCounter, actionBarInfo);
     }
 
-    public static void removeActionBarInfo(Player player, ActionBarInfo actionBarInfo) {
-        List<ActionBarInfo> actionBarInfos = playerToActionBarInfo.get(player);
+    public static void removeActionBarInfo(Player player, int castCounter) {
+        player.sendMessage("removeActionBarInfo: castCounter: " + castCounter);
+
+        HashMap<Integer, ActionBarInfo> actionBarInfos = playerToCastCounterToActionBar.get(player);
         if (actionBarInfos != null) {
-            actionBarInfos.remove(actionBarInfo);
+            actionBarInfos.remove(castCounter);
+            if (actionBarInfos.isEmpty()) {
+                playerToCastCounterToActionBar.remove(player);
+            }
         }
     }
 }

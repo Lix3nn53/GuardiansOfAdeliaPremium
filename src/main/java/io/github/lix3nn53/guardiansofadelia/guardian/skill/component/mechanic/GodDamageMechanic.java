@@ -77,22 +77,22 @@ public class GodDamageMechanic extends MechanicComponent {
 
         if (skillLevel == 0) {
             if (!damagePercentList.isEmpty()) {
-                additions.add("God Damage: " + (damagePercentList.get(skillLevel) + 0.5) + "%");
+                additions.add("God Damage: " + (int) (damagePercentList.get(skillLevel) * 100 + 0.5) + "%");
             }
             if (!damageList.isEmpty()) {
                 additions.add("God Damage: " + (int) (damageList.get(skillLevel) + 0.5));
             }
         } else if (skillLevel == damageList.size() || skillLevel == damagePercentList.size()) {
             if (!damagePercentList.isEmpty()) {
-                additions.add("God Damage: " + (damagePercentList.get(skillLevel - 1) + 0.5) + "%");
+                additions.add("God Damage: " + (int) (damagePercentList.get(skillLevel) * 100 + 0.5) + "%");
             }
             if (!damageList.isEmpty()) {
                 additions.add("God Damage: " + (int) (damageList.get(skillLevel - 1) + 0.5));
             }
         } else {
             if (!damagePercentList.isEmpty()) {
-                String lore1 = "God Damage: " + (damagePercentList.get(skillLevel - 1) + 0.5) + "%";
-                String lore2 = "God Damage: " + (damagePercentList.get(skillLevel) + 0.5) + "%";
+                String lore1 = "God Damage: " + (int) (damagePercentList.get(skillLevel - 1) * 100 + 0.5) + "%";
+                String lore2 = "God Damage: " + (int) (damagePercentList.get(skillLevel) * 100 + 0.5) + "%";
                 additions.add(lore1 + " -> " + lore2);
             }
             if (!damageList.isEmpty()) {

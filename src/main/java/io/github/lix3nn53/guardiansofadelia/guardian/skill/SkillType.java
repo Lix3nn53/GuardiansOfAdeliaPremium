@@ -3,7 +3,7 @@ package io.github.lix3nn53.guardiansofadelia.guardian.skill;
 import java.util.ArrayList;
 import java.util.List;
 
-public enum SkillTier {
+public enum SkillType {
     NORMAL,
     PASSIVE,
     ULTIMATE;

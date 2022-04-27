@@ -35,6 +35,6 @@ public class ActionBarInfo {
             value = companions != null ? companions.size() : 0;
         }
 
-        return actionBarIcon + " " + value;
+        return actionBarIcon + value;
     }
 }

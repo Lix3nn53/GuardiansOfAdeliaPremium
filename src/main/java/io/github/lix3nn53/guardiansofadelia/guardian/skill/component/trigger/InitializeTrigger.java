@@ -2,6 +2,7 @@ package io.github.lix3nn53.guardiansofadelia.guardian.skill.component.trigger;
 
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.SkillDataManager;
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.component.SkillComponent;
+import io.github.lix3nn53.guardiansofadelia.guardian.skill.managers.ActionBarInfoManager;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -14,7 +15,7 @@ import java.util.List;
 public class InitializeTrigger extends SkillComponent {
 
     private int skillId;
-    private int lastCastCounter;
+    private int lastCastCounter = -1;
 
     public InitializeTrigger(ConfigurationSection configurationSection) {
         super(!configurationSection.contains("addLore") || configurationSection.getBoolean("addLore"));
@@ -40,7 +41,12 @@ public class InitializeTrigger extends SkillComponent {
     }
 
     public void stopPreviousEffects(Player caster) {
+        if (lastCastCounter == -1) {
+            return;
+        }
+
         SkillDataManager.stopRepeatTasksOfCast(caster, lastCastCounter);
         SkillDataManager.removeSavedEntities(caster, lastCastCounter);
+        ActionBarInfoManager.removeActionBarInfo(caster, lastCastCounter);
     }
 }

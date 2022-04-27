@@ -100,15 +100,14 @@ public final class RPGCharacter {
     }
 
     public boolean changeClass(Player player, String newClassStr, String lang) {
-        String s = newClassStr.toUpperCase();
-        RPGClass rpgClass = RPGClassManager.getClass(s);
+        String newClassUpper = newClassStr.toUpperCase();
+        RPGClass rpgClass = RPGClassManager.getClass(newClassUpper);
 
         SkillDataManager.onPlayerQuit(player);
 
-        RPGClassStats rpgClassStats = getRPGClassStats(s);
+        RPGClassStats rpgClassStats = getRPGClassStats(newClassUpper);
 
-        this.rpgClassStr = s;
-
+        this.rpgClassStr = newClassUpper;
         this.skillBar.onQuit();
 
         SkillTree skillTree = rpgClass.getSkillTree();
@@ -117,7 +116,7 @@ public final class RPGCharacter {
         this.skillBar = new SkillBar(player, skillTree, skillRPGClassData, true);
         this.skillBar.remakeSkillBar(skillTree, skillRPGClassData, lang);
 
-        this.rpgCharacterStats.setRpgClassStr(s);
+        this.rpgCharacterStats.setRpgClassStr(newClassUpper);
         this.rpgCharacterStats.recalculateEquipment(rpgClassStr, rpgClassStats);
         player.sendMessage(ChatPalette.YELLOW + "Changed class to " + rpgClass.getClassString() + ChatPalette.YELLOW + "!");
 

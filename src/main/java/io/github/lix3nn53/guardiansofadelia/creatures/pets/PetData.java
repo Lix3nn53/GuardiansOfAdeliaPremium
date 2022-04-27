@@ -2,7 +2,7 @@ package io.github.lix3nn53.guardiansofadelia.creatures.pets;
 
 import io.github.lix3nn53.guardiansofadelia.GuardiansOfAdelia;
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.Skill;
-import io.github.lix3nn53.guardiansofadelia.guardian.skill.SkillTier;
+import io.github.lix3nn53.guardiansofadelia.guardian.skill.SkillType;
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.component.SkillComponent;
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.config.SkillComponentLoader;
 import io.github.lix3nn53.guardiansofadelia.text.ChatPalette;
@@ -39,7 +39,7 @@ public class PetData {
 
                 List<String> description = skillSection.getStringList("description");
 
-                Skill skill = new Skill(-1, "petskill", SkillTier.NORMAL, 1, Material.IRON_HOE, 1, description,
+                Skill skill = new Skill(-1, "petskill", SkillType.NORMAL, 1, Material.IRON_HOE, 1, description,
                         new ArrayList<>(), new ArrayList<>(), cooldowns);
 
                 SkillComponent triggerComponent = SkillComponentLoader.loadSection("pet", skillSection.getConfigurationSection("trigger"), -1);

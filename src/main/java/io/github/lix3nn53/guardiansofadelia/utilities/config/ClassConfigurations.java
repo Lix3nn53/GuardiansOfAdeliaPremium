@@ -7,7 +7,7 @@ import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGClassManager;
 import io.github.lix3nn53.guardiansofadelia.guardian.element.ElementType;
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.Skill;
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.SkillDataForTree;
-import io.github.lix3nn53.guardiansofadelia.guardian.skill.SkillTier;
+import io.github.lix3nn53.guardiansofadelia.guardian.skill.SkillType;
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.component.SkillComponent;
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.config.SkillComponentLoader;
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.tree.SkillTree;
@@ -79,13 +79,13 @@ public class ClassConfigurations {
 
         HashMap<Integer, Skill> skillSet = new HashMap<>();
         for (String skillTierStr : skillsFile) {
-            SkillTier skillTier = SkillTier.valueOf(skillTierStr.toUpperCase());
+            SkillType skillType = SkillType.valueOf(skillTierStr.toUpperCase());
 
             HashMap<String, YamlConfiguration> skillConfigs = ConfigurationUtils.getAllConfigsInFile(filePath + File.separator + className + File.separator + "skills" + File.separator + skillTierStr);
 
             for (String skillName : skillConfigs.keySet()) {
                 YamlConfiguration skillConfig = skillConfigs.get(skillName);
-                Skill skill = loadSkill(className, skillName, skillConfig, skillTier);
+                Skill skill = loadSkill(className, skillName, skillConfig, skillType);
                 int id = skill.getId();
                 if (skillSet.containsKey(id)) {
                     GuardiansOfAdelia.getInstance().getLogger().warning("Skill id " + id + " is already in use!");
@@ -131,15 +131,16 @@ public class ClassConfigurations {
         RPGClassManager.addClass(className, rpgClass);
     }
 
-    private static Skill loadSkill(String rpgClass, String name, ConfigurationSection skillSection, SkillTier skillTier) {
+    private static Skill loadSkill(String rpgClass, String name, ConfigurationSection skillSection, SkillType skillType) {
+        GuardiansOfAdelia.getInstance().getLogger().info("Loading skill " + name + " for class " + rpgClass);
         int id = skillSection.getInt("id");
         List<String> description = skillSection.getStringList("description");
         int customModelData = skillSection.getInt("customModelData");
-        List<Integer> reqPoints = skillTier.getDefaultReqPoints();
+        List<Integer> reqPoints = skillType.getDefaultReqPoints();
         List<Integer> manaCosts = skillSection.getIntegerList("manaCosts");
         List<Integer> cooldowns = skillSection.getIntegerList("cooldowns");
 
-        Skill skill = new Skill(id, name, skillTier, 4, Material.IRON_HOE, customModelData, description, reqPoints, manaCosts, cooldowns);
+        Skill skill = new Skill(id, name, skillType, 4, Material.IRON_HOE, customModelData, description, reqPoints, manaCosts, cooldowns);
         SkillComponent triggerComponent = SkillComponentLoader.loadSection(rpgClass, skillSection.getConfigurationSection("trigger"), id);
         skill.addTrigger(triggerComponent);
 

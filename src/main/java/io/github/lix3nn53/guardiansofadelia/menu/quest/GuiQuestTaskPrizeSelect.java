@@ -29,7 +29,7 @@ public class GuiQuestTaskPrizeSelect extends GuiGeneric {
 
     public GuiQuestTaskPrizeSelect(GuardianData guardianData, int questNo, int resourceNPC,
                                    int taskIndex, List<ItemStack> items) {
-        super(27, CustomCharacterGui.MENU_27_FLAT.toString() + ChatPalette.BLACK +
+        super(54, CustomCharacterGui.MENU_54_FLAT.toString() + ChatPalette.BLACK +
                 Translation.t(guardianData, "quest.task.prize.selection") + " #" + questNo + "&" + taskIndex, resourceNPC);
         this.questNo = questNo;
         this.taskIndex = taskIndex;

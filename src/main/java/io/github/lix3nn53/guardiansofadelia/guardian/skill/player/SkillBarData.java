@@ -1,7 +1,7 @@
 package io.github.lix3nn53.guardiansofadelia.guardian.skill.player;
 
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.Skill;
-import io.github.lix3nn53.guardiansofadelia.guardian.skill.SkillTier;
+import io.github.lix3nn53.guardiansofadelia.guardian.skill.SkillType;
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.tree.SkillTree;
 import org.bukkit.entity.Player;
 
@@ -40,18 +40,21 @@ public class SkillBarData {
 
     public void set(Player player, SkillTree skillTree, int slot, int skillId) {
         Skill skill = skillTree.getSkill(skillId);
-        SkillTier skillTier = skill.getSkillTier();
+        SkillType skillType = skill.getSkillTier();
 
-        if (skillTier.equals(SkillTier.PASSIVE)) {
+        if (skillType.equals(SkillType.PASSIVE)) {
             player.sendMessage("You cannot assign passive skills to the skill bar.");
             return;
-        } else if (skillTier.equals(SkillTier.ULTIMATE)) {
+        } else if (skillType.equals(SkillType.ULTIMATE)) {
             for (int i = 0; i < 4; i++) {
+                if (i == slot) {
+                    continue;
+                }
                 int skillIdOnSlot = getSkillId(i);
                 if (skillIdOnSlot != -1) {
                     Skill skillOnSlot = skillTree.getSkill(skillIdOnSlot);
-                    SkillTier skillTierOnSlot = skillOnSlot.getSkillTier();
-                    if (skillTierOnSlot.equals(SkillTier.ULTIMATE)) {
+                    SkillType skillTypeOnSlot = skillOnSlot.getSkillTier();
+                    if (skillTypeOnSlot.equals(SkillType.ULTIMATE)) {
                         player.sendMessage("You cannot assign more than one ultimate skill to the skill bar.");
                         return;
                     }

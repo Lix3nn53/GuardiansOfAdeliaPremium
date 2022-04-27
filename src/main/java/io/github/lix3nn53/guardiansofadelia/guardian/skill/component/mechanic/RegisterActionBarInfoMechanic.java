@@ -47,7 +47,7 @@ public class RegisterActionBarInfoMechanic extends MechanicComponent {
                 boolean b = GuardianDataManager.hasGuardianData(player);
                 if (!b) continue;
 
-                ActionBarInfoManager.addActionBarInfo(player, this.actionBarInfo);
+                ActionBarInfoManager.setActionBarInfo(player, this.actionBarInfo, castCounter);
             }
         }
 

@@ -129,18 +129,19 @@ public class RPGCharacterStats {
 
                 List<ActionBarInfo> actionBarInfos = ActionBarInfoManager.getActionBarInfo(player);
                 if (actionBarInfos != null) {
-                    StringBuilder sb = new StringBuilder(between);
-
-                    int length = between.length();
-                    int space = length / (actionBarInfos.size() + 1);
+                    StringBuilder actionBar = new StringBuilder();
 
                     int i = 1;
                     for (ActionBarInfo actionBarInfo : actionBarInfos) {
                         String actionBarBetween = actionBarInfo.getActionBarBetween(player);
-                        sb.insert(space * i, actionBarBetween);
+                        actionBar.append(actionBarBetween);
+                        if (i < actionBarInfos.size()) {
+                            actionBar.append("    ");
+                        }
+                        i++;
                     }
 
-                    between = sb.toString();
+                    between = "        " + actionBar + "        ";
                 }
 
                 String message = ChatPalette.RED + "❤" + ((int) (player.getHealth() + 0.5)) + "/" +

@@ -58,19 +58,21 @@ public class SkillBar {
             public void run() {
                 for (int skillId : skillIds) {
                     if (skillId < 0) continue;
-
+                    player.sendMessage("init trigger for skill " + skillId);
                     Skill skill = skillTree.getSkill(skillId);
                     int investedPoints = skillTreeData.getInvestedSkillPoints(skillId);
 
-                    List<InitializeTrigger> initializeTriggers = skill.getInitializeTriggers();
-                    for (InitializeTrigger initializeTrigger : initializeTriggers) {
-                        int currentSkillLevel = skill.getCurrentSkillLevel(investedPoints);
-                        TriggerListener.onSkillUpgrade(player, initializeTrigger, skillId, currentSkillLevel, castCounter);
-                        castCounter++;
+                    if (investedPoints > 0) {
+                        List<InitializeTrigger> initializeTriggers = skill.getInitializeTriggers();
+                        for (InitializeTrigger initializeTrigger : initializeTriggers) {
+                            int currentSkillLevel = skill.getCurrentSkillLevel(investedPoints);
+                            TriggerListener.onSkillUpgrade(player, initializeTrigger, skillId, currentSkillLevel, castCounter);
+                            castCounter++;
+                        }
                     }
                 }
             }
-        }.runTaskLaterAsynchronously(GuardiansOfAdelia.getInstance(), 40L);
+        }.runTaskLaterAsynchronously(GuardiansOfAdelia.getInstance(), 10L);
     }
 
     public void remakeSkillBar(SkillTree skillTree, SkillRPGClassData skillRPGClassData, String lang) {
