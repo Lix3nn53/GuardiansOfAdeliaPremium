@@ -20,6 +20,7 @@ public class Skill {
 
     private final int id;
     private final String name;
+    private final SkillTier skillTier;
     private final int maxSkillLevel;
     private final Material material;
     private final int customModelData;
@@ -36,11 +37,12 @@ public class Skill {
     // skill tree
     private SkillDataForTree skillDataForTree;
 
-    public Skill(int id, String name, int maxSkillLevel, Material material, int customModelData,
+    public Skill(int id, String name, SkillTier skillTier, int maxSkillLevel, Material material, int customModelData,
                  List<String> description, List<Integer> reqSkillPoints, List<Integer> manaCosts,
                  List<Integer> cooldowns) {
         this.id = id;
         this.name = name;
+        this.skillTier = skillTier;
         this.maxSkillLevel = maxSkillLevel;
         this.material = material;
         this.customModelData = customModelData;
@@ -203,5 +205,9 @@ public class Skill {
 
     public void setSkillDataForTree(SkillDataForTree skillDataForTree) {
         this.skillDataForTree = skillDataForTree;
+    }
+
+    public SkillTier getSkillTier() {
+        return skillTier;
     }
 }

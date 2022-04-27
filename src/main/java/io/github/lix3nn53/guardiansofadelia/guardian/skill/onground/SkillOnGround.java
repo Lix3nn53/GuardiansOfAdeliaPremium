@@ -3,6 +3,7 @@ package io.github.lix3nn53.guardiansofadelia.guardian.skill.onground;
 import io.github.lix3nn53.guardiansofadelia.GuardiansOfAdelia;
 import io.github.lix3nn53.guardiansofadelia.events.MyChunkEvents;
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.Skill;
+import io.github.lix3nn53.guardiansofadelia.guardian.skill.SkillTier;
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.component.SkillComponent;
 import io.github.lix3nn53.guardiansofadelia.utilities.hologram.Hologram;
 import net.md_5.bungee.api.ChatColor;
@@ -38,7 +39,7 @@ public class SkillOnGround {
         cooldowns.add(0);
         List<String> description = new ArrayList<>();
 
-        Skill skill = new Skill(-1, "skillOnGround", 1, Material.IRON_HOE, 1, description,
+        Skill skill = new Skill(-1, "skillOnGround", SkillTier.NORMAL, 1, Material.IRON_HOE, 1, description,
                 new ArrayList<>(), new ArrayList<>(), cooldowns);
 
         for (SkillComponent trigger : triggerComponents) {

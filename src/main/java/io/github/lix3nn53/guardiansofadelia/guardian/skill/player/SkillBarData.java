@@ -1,5 +1,10 @@
 package io.github.lix3nn53.guardiansofadelia.guardian.skill.player;
 
+import io.github.lix3nn53.guardiansofadelia.guardian.skill.Skill;
+import io.github.lix3nn53.guardiansofadelia.guardian.skill.SkillTier;
+import io.github.lix3nn53.guardiansofadelia.guardian.skill.tree.SkillTree;
+import org.bukkit.entity.Player;
+
 public class SkillBarData {
 
     // Which skills to use in the skill bar
@@ -33,12 +38,32 @@ public class SkillBarData {
         };
     }
 
-    public void set(int i, int skill) {
-        switch (i) {
-            case 0 -> one = skill;
-            case 1 -> two = skill;
-            case 2 -> three = skill;
-            case 3 -> ultimate = skill;
+    public void set(Player player, SkillTree skillTree, int slot, int skillId) {
+        Skill skill = skillTree.getSkill(skillId);
+        SkillTier skillTier = skill.getSkillTier();
+
+        if (skillTier.equals(SkillTier.PASSIVE)) {
+            player.sendMessage("You cannot assign passive skills to the skill bar.");
+            return;
+        } else if (skillTier.equals(SkillTier.ULTIMATE)) {
+            for (int i = 0; i < 4; i++) {
+                int skillIdOnSlot = getSkillId(i);
+                if (skillIdOnSlot != -1) {
+                    Skill skillOnSlot = skillTree.getSkill(skillIdOnSlot);
+                    SkillTier skillTierOnSlot = skillOnSlot.getSkillTier();
+                    if (skillTierOnSlot.equals(SkillTier.ULTIMATE)) {
+                        player.sendMessage("You cannot assign more than one ultimate skill to the skill bar.");
+                        return;
+                    }
+                }
+            }
+        }
+
+        switch (slot) {
+            case 0 -> one = skillId;
+            case 1 -> two = skillId;
+            case 2 -> three = skillId;
+            case 3 -> ultimate = skillId;
         }
     }
 

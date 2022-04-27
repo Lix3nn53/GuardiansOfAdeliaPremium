@@ -114,7 +114,7 @@ public class GuiCharacter extends GuiGeneric {
 
             int pointsLeft = skillRPGClassData.getSkillPointsLeftToSpend(player);
 
-            GuiCharacterSkills gui = new GuiCharacterSkills(player, guardianData, rpgCharacter, pointsLeft, new SkillTreeOffset(0, 0));
+            GuiCharacterSkillTree gui = new GuiCharacterSkillTree(player, guardianData, rpgCharacter, pointsLeft, new SkillTreeOffset(0, 0));
             gui.openInventory(player);
         } else if (GuiHelper.get54BigButtonIndexes(2).contains(slot)) {
             RPGCharacterStats rpgCharacterStats = rpgCharacter.getRpgCharacterStats();

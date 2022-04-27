@@ -2,6 +2,7 @@ package io.github.lix3nn53.guardiansofadelia.creatures.pets;
 
 import io.github.lix3nn53.guardiansofadelia.GuardiansOfAdelia;
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.Skill;
+import io.github.lix3nn53.guardiansofadelia.guardian.skill.SkillTier;
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.component.SkillComponent;
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.config.SkillComponentLoader;
 import io.github.lix3nn53.guardiansofadelia.text.ChatPalette;
@@ -38,15 +39,15 @@ public class PetData {
 
                 List<String> description = skillSection.getStringList("description");
 
-                Skill skill = new Skill(-1, "petskill", 1, Material.IRON_HOE, 1, description,
+                Skill skill = new Skill(-1, "petskill", SkillTier.NORMAL, 1, Material.IRON_HOE, 1, description,
                         new ArrayList<>(), new ArrayList<>(), cooldowns);
 
-                SkillComponent triggerComponent = SkillComponentLoader.loadSection(skillSection.getConfigurationSection("trigger"), -1);
+                SkillComponent triggerComponent = SkillComponentLoader.loadSection("pet", skillSection.getConfigurationSection("trigger"), -1);
                 skill.addTrigger(triggerComponent);
 
                 int triggerCount = ConfigurationUtils.getChildComponentCount(skillSection, "trigger");
                 for (int t = 1; t <= triggerCount; t++) {
-                    SkillComponent triggerComponentExtra = SkillComponentLoader.loadSection(skillSection.getConfigurationSection("trigger" + t), -1);
+                    SkillComponent triggerComponentExtra = SkillComponentLoader.loadSection("pet", skillSection.getConfigurationSection("trigger" + t), -1);
                     skill.addTrigger(triggerComponentExtra);
                 }
 

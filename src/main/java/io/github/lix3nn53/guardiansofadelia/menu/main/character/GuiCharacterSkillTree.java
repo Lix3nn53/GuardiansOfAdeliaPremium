@@ -30,7 +30,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class GuiCharacterSkills extends GuiGeneric {
+public class GuiCharacterSkillTree extends GuiGeneric {
 
     private final GuardianData guardianData;
 
@@ -54,8 +54,8 @@ public class GuiCharacterSkills extends GuiGeneric {
     // Skill bar select
     private int skillBarSelectIndex = -1;
 
-    public GuiCharacterSkills(Player player, GuardianData guardianData, RPGCharacter rpgCharacter,
-                              int pointsLeft, SkillTreeOffset viewOffset) {
+    public GuiCharacterSkillTree(Player player, GuardianData guardianData, RPGCharacter rpgCharacter,
+                                 int pointsLeft, SkillTreeOffset viewOffset) {
         super(54, CustomCharacterGui.SKILL_MENU.toString() + ChatPalette.BLACK + Translation.t(guardianData, "skill.name") +
                 " (" + Translation.t(guardianData, "skill.points") + ": " + pointsLeft + ")", 0);
 
@@ -208,7 +208,7 @@ public class GuiCharacterSkills extends GuiGeneric {
 
             if (skillBarSelectIndex > -1) {
                 SkillBarData skillBarData = skillRPGClassData.getSkillBarData();
-                skillBarData.set(skillBarSelectIndex, skillId);
+                skillBarData.set(player, skillTree, skillBarSelectIndex, skillId);
 
                 SkillBar skillBar = rpgCharacter.getSkillBar();
                 skillBar.remakeSkillBar(skillTree, skillRPGClassData, lang);
@@ -224,7 +224,7 @@ public class GuiCharacterSkills extends GuiGeneric {
                 if (upgradeSkill) {
                     int pointsLeft = rpgClassStats.getSkillRPGClassData().getSkillPointsLeftToSpend(player);
 
-                    GuiCharacterSkills guiCharacterSkills = new GuiCharacterSkills(player, guardianData, rpgCharacter, pointsLeft, this.viewOffset);
+                    GuiCharacterSkillTree guiCharacterSkills = new GuiCharacterSkillTree(player, guardianData, rpgCharacter, pointsLeft, this.viewOffset);
                     guiCharacterSkills.openInventory(player);
 
                     List<Quest> questList = rpgCharacter.getQuestList();
@@ -237,7 +237,7 @@ public class GuiCharacterSkills extends GuiGeneric {
                 if (downgradeSkill) {
                     int pointsLeft = rpgClassStats.getSkillRPGClassData().getSkillPointsLeftToSpend(player);
 
-                    GuiCharacterSkills guiCharacterSkills = new GuiCharacterSkills(player, guardianData, rpgCharacter, pointsLeft, this.viewOffset);
+                    GuiCharacterSkillTree guiCharacterSkills = new GuiCharacterSkillTree(player, guardianData, rpgCharacter, pointsLeft, this.viewOffset);
                     guiCharacterSkills.openInventory(player);
                 }
             }
