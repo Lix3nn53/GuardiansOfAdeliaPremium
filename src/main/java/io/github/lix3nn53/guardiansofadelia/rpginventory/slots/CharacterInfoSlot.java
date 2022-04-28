@@ -60,8 +60,6 @@ public class CharacterInfoSlot {
                 final int totalDefense = rpgCharacterStats.getTotalElementDefense(rpgClassStats);
                 float defenseReduction = StatUtils.getDefenseReduction(totalDefense);
 
-                ElementType mainElement = rpgClass.getMainElement();
-
                 float abilityHaste = rpgCharacterStats.getTotalAbilityHaste();
                 float cooldownReduction = SkillBar.abilityHasteToMultiplier(abilityHaste);
                 int classLevel = RPGClassExperienceManager.getLevel(rpgClassStats.getTotalExperience());
@@ -69,7 +67,6 @@ public class CharacterInfoSlot {
                 ArrayList<String> lore = new ArrayList<>();
                 lore.add("");
                 lore.add(ChatPalette.PURPLE_LIGHT + Translation.t(viewerData, "character.class.name") + ": " + ChatPalette.GRAY + "" + className);
-                lore.add(ChatPalette.PINK + Translation.t(viewerData, "character.class.element") + ": " + mainElement.getFullName(language));
                 lore.add(ChatPalette.PURPLE + Translation.t(viewerData, "character.class.level") + ": " + ChatPalette.GRAY + "" + classLevel);
                 lore.add(ChatPalette.GOLD + Translation.t(viewerData, "general.level") + ": " + ChatPalette.GRAY + "" + level);
                 lore.add(ChatPalette.YELLOW + Translation.t(viewerData, "general.experience.name") + ": " + ChatPalette.GRAY + exp + "/" + expReq);

@@ -22,6 +22,7 @@ import io.github.lix3nn53.guardiansofadelia.text.font.CustomCharacterGui;
 import io.github.lix3nn53.guardiansofadelia.text.locale.Translation;
 import io.github.lix3nn53.guardiansofadelia.utilities.gui.GuiGeneric;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -51,8 +52,6 @@ public class GuiCharacterSkillTree extends GuiGeneric {
 
     // other
     private final String lang;
-    // Skill bar select
-    private int skillBarSelectIndex = -1;
 
     public GuiCharacterSkillTree(Player player, GuardianData guardianData, RPGCharacter rpgCharacter,
                                  int pointsLeft, SkillTreeOffset viewOffset) {
@@ -75,32 +74,28 @@ public class GuiCharacterSkillTree extends GuiGeneric {
         ItemMeta itemMeta = unassignedSkill.getItemMeta();
         itemMeta.setDisplayName("Select skill for slot 1");
         List<String> lore = new ArrayList<>();
-        lore.add("Click here then click on the skill you want");
-        lore.add("to assign to slot 1");
+        lore.add("Hover over the skill you want and then press 1 KEY");
         itemMeta.setLore(lore);
         unassignedSkill.setItemMeta(itemMeta);
         this.setItem(4, unassignedSkill);
 
         itemMeta.setDisplayName("Select skill for slot 2");
         lore = new ArrayList<>();
-        lore.add("Click here then click on the skill you want");
-        lore.add("to assign to slot 2");
+        lore.add("Hover over the skill you want and then press 2 KEY");
         itemMeta.setLore(lore);
         unassignedSkill.setItemMeta(itemMeta);
         this.setItem(5, unassignedSkill);
 
         itemMeta.setDisplayName("Select skill for slot 3");
         lore = new ArrayList<>();
-        lore.add("Click here then click on the skill you want");
-        lore.add("to assign to slot 3");
+        lore.add("Hover over the skill you want and then press 3 KEY");
         itemMeta.setLore(lore);
         unassignedSkill.setItemMeta(itemMeta);
         this.setItem(6, unassignedSkill);
 
         itemMeta.setDisplayName("Select skill for slot 4");
         lore = new ArrayList<>();
-        lore.add("Click here then click on the skill you want");
-        lore.add("to assign to slot 4");
+        lore.add("Hover over the skill you want and then press 4 KEY");
         itemMeta.setLore(lore);
         unassignedSkill.setItemMeta(itemMeta);
         this.setItem(7, unassignedSkill);
@@ -173,13 +168,45 @@ public class GuiCharacterSkillTree extends GuiGeneric {
             GuiCharacter gui = new GuiCharacter(guardianData);
             gui.openInventory(player);
         } else if (slot == 4) {
-            this.skillBarSelectIndex = 0;
+            //this.skillBarSelectIndex = 0;
         } else if (slot == 5) {
-            this.skillBarSelectIndex = 1;
+            //this.skillBarSelectIndex = 1;
         } else if (slot == 6) {
-            this.skillBarSelectIndex = 2;
+            //this.skillBarSelectIndex = 2;
         } else if (slot == 7) {
-            this.skillBarSelectIndex = 3;
+            //this.skillBarSelectIndex = 3;
+        } else if (event.getCurrentItem() != null && event.getCurrentItem().getType().equals(OtherItems.ARROW_MAT)) {
+            ItemStack currentItem = event.getCurrentItem();
+            ItemMeta itemMeta = currentItem.getItemMeta();
+            int customModelData = itemMeta.getCustomModelData();
+
+            if (customModelData == OtherItems.ARROW_UP_MODEL) {
+                moveVirtualDisplay(VirtualMove.UP);
+            } else if (customModelData == OtherItems.ARROW_DOWN_MODEL) {
+                moveVirtualDisplay(VirtualMove.DOWN);
+            } else if (customModelData == OtherItems.ARROW_LEFT_MODEL) {
+                moveVirtualDisplay(VirtualMove.LEFT);
+            } else if (customModelData == OtherItems.ARROW_RIGHT_MODEL) {
+                moveVirtualDisplay(VirtualMove.RIGHT);
+            } else if (customModelData == OtherItems.ARROW_UP_LEFT_MODEL) {
+                moveVirtualDisplay(VirtualMove.UP);
+                moveVirtualDisplay(VirtualMove.LEFT);
+            } else if (customModelData == OtherItems.ARROW_UP_RIGHT_MODEL) {
+                moveVirtualDisplay(VirtualMove.UP);
+                moveVirtualDisplay(VirtualMove.RIGHT);
+            } else if (customModelData == OtherItems.ARROW_DOWN_LEFT_MODEL) {
+                moveVirtualDisplay(VirtualMove.DOWN);
+                moveVirtualDisplay(VirtualMove.LEFT);
+            } else if (customModelData == OtherItems.ARROW_DOWN_RIGHT_MODEL) {
+                moveVirtualDisplay(VirtualMove.DOWN);
+                moveVirtualDisplay(VirtualMove.RIGHT);
+            } else {
+                return;
+            }
+
+            RPGClassStats rpgClassStats = rpgCharacter.getRPGClassStats();
+            SkillRPGClassData skillRPGClassData = rpgClassStats.getSkillRPGClassData();
+            formVirtualView(player, skillRPGClassData);
         } else if (slot == 26) {
             moveVirtualDisplay(VirtualMove.RIGHT);
             RPGClassStats rpgClassStats = rpgCharacter.getRPGClassStats();
@@ -206,7 +233,7 @@ public class GuiCharacterSkillTree extends GuiGeneric {
             RPGClassStats rpgClassStats = rpgCharacter.getRPGClassStats();
             SkillRPGClassData skillRPGClassData = rpgClassStats.getSkillRPGClassData();
 
-            if (skillBarSelectIndex > -1) {
+            /*if (skillBarSelectIndex > -1) {
                 SkillBarData skillBarData = skillRPGClassData.getSkillBarData();
                 skillBarData.set(player, skillTree, skillBarSelectIndex, skillId);
 
@@ -215,6 +242,21 @@ public class GuiCharacterSkillTree extends GuiGeneric {
                 this.skillBarSelectIndex = -1;
 
                 return;
+            }*/
+
+            player.sendMessage(event.getClick().toString());
+            if (event.getClick().equals(ClickType.NUMBER_KEY)) {
+                int hotbarButton = event.getHotbarButton();
+                if (hotbarButton >= 0 && hotbarButton <= 3) { //skill bar
+                    SkillBarData skillBarData = skillRPGClassData.getSkillBarData();
+
+                    skillBarData.set(player, skillTree, hotbarButton, skillId);
+
+                    SkillBar skillBar = rpgCharacter.getSkillBar();
+                    skillBar.remakeSkillBar(skillTree, skillRPGClassData, lang);
+
+                    return;
+                }
             }
 
             SkillBar skillBar = rpgCharacter.getSkillBar();

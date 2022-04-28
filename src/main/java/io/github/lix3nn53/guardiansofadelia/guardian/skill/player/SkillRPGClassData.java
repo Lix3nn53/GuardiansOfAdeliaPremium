@@ -10,8 +10,10 @@ import io.github.lix3nn53.guardiansofadelia.guardian.skill.SkillBar;
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.component.trigger.InitializeTrigger;
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.managers.TriggerListener;
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.tree.SkillTree;
+import io.github.lix3nn53.guardiansofadelia.guardian.skill.tree.SkillTreeDirection;
 import org.bukkit.entity.Player;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
@@ -48,10 +50,9 @@ public class SkillRPGClassData {
 
         int parentId = skill.getParentId();
         if (parentId > 0) {
-            Skill skillParent = skillTree.getSkill(parentId);
             int parentInvested = skillTreeData.getInvestedSkillPoints(parentId);
             if (parentInvested < 1) {
-                player.sendMessage("You need to invest at least 1 skill point in " + skillParent.getName() + " to upgrade " + skill.getName() + ".");
+                player.sendMessage("You need to invest at least 1 skill point in parent skill.");
                 return false;
             }
         }
@@ -78,7 +79,9 @@ public class SkillRPGClassData {
             int newInvested = invested + reqSkillPoints;
             skillTreeData.setInvestedSkillPoint(skillId, newInvested);
             int slotIndex = skillBarData.skillToSlot(skillId);
-            skillBar.remakeSkillBarIcon(slotIndex, skillTree, this, lang);
+            if (slotIndex != -1) {
+                skillBar.remakeSkillBarIcon(slotIndex, skillTree, this, lang);
+            }
 
             return true;
         }
@@ -93,6 +96,15 @@ public class SkillRPGClassData {
         if (!skillTree.containsSkill(skillId)) return false;
 
         Skill skill = skillTree.getSkill(skillId);
+
+        HashMap<Integer, SkillTreeDirection> childSkills = skill.getChildSkills();
+        for (Integer childSkillId : childSkills.keySet()) {
+            int investedInChild = skillTreeData.getInvestedSkillPoints(childSkillId);
+            if (investedInChild > 0) {
+                player.sendMessage("You can't downgrade skill because you have invested in child skill.");
+                return false;
+            }
+        }
 
         int invested = skillTreeData.getInvestedSkillPoints(skillId);
         int currentSkillLevel = skill.getCurrentSkillLevel(invested);
@@ -111,7 +123,9 @@ public class SkillRPGClassData {
         int newInvested = invested - reqSkillPoints;
         skillTreeData.setInvestedSkillPoint(skillId, newInvested);
         int slotIndex = skillBarData.skillToSlot(skillId);
-        skillBar.remakeSkillBarIcon(slotIndex, skillTree, this, lang);
+        if (slotIndex != -1) {
+            skillBar.remakeSkillBarIcon(slotIndex, skillTree, this, lang);
+        }
 
         return true;
     }

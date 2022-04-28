@@ -24,7 +24,8 @@ public enum ElementType {
             case LIGHTNING:
                 return getChatPalette() + Translation.t(lang, "element.lightning");
         }
-        return "elementCustomNameErr";
+
+        throw new IllegalArgumentException("ElementType not found");
     }
 
     public ChatPalette getChatPalette() {
@@ -41,7 +42,7 @@ public enum ElementType {
                 return ChatPalette.PURPLE;
         }
 
-        return null;
+        throw new IllegalArgumentException("ElementType not found");
     }
 
     public String getIcon() {
@@ -49,16 +50,16 @@ public enum ElementType {
             case FIRE:
                 return "\uD83D\uDD25";
             case WATER:
-                return "\uD83C\uDF0A";
+                return "⚗";
             case EARTH:
                 return "◎";
             case AIR:
-                return "๑";
+                return "\uD83C\uDF0A";
             case LIGHTNING:
                 return "⚡";
         }
 
-        return null;
+        throw new IllegalArgumentException("ElementType not found");
     }
 
     public String getFullName(String lang) {

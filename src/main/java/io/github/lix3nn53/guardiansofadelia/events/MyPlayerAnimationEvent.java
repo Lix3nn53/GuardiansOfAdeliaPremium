@@ -5,6 +5,8 @@ import io.github.lix3nn53.guardiansofadelia.economy.bazaar.BazaarManager;
 import io.github.lix3nn53.guardiansofadelia.guardian.GuardianData;
 import io.github.lix3nn53.guardiansofadelia.guardian.GuardianDataManager;
 import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGCharacter;
+import io.github.lix3nn53.guardiansofadelia.items.RpgGears.WeaponGearType;
+import io.github.lix3nn53.guardiansofadelia.items.RpgGears.WeaponGearTypeSkillManager;
 import io.github.lix3nn53.guardiansofadelia.jobs.gathering.GatheringManager;
 import io.github.lix3nn53.guardiansofadelia.jobs.gathering.GatheringModelState;
 import io.github.lix3nn53.guardiansofadelia.minigames.MiniGameManager;
@@ -53,6 +55,7 @@ public class MyPlayerAnimationEvent implements Listener {
         Material targetType = targetBlock.getType();
 
         //quest TaskReach
+        // TODO listen movement event instead
         if (targetType.equals(Material.EMERALD_BLOCK) || targetType.equals(Material.GOLD_BLOCK) || targetType.equals(Material.REDSTONE_BLOCK) || targetType.equals(Material.DIAMOND_BLOCK)) {
             if (GuardianDataManager.hasGuardianData(player)) {
                 GuardianData guardianData = GuardianDataManager.getGuardianData(player);
@@ -83,7 +86,7 @@ public class MyPlayerAnimationEvent implements Listener {
                         return;
 
                     GatheringManager.startGathering(player, gatheringModelState);
-                    break;
+                    return;
                 } else if (portal != null) { //portal model
                     if (PortalManager.isInstantTeleportPortal(portal)) {
                         InstantTeleportPortal instantTeleport = PortalManager.getInstantTeleportPortal(portal);
@@ -96,7 +99,7 @@ public class MyPlayerAnimationEvent implements Listener {
                             theme.getJoinQueueGui(player).openInventory(player);
                         }
                     }
-                    break;
+                    return;
                 } else if (BazaarManager.isBazaar(armorStand)) {
                     Player owner = BazaarManager.getOwner(armorStand);
                     if (GuardianDataManager.hasGuardianData(owner)) {
@@ -106,22 +109,28 @@ public class MyPlayerAnimationEvent implements Listener {
                             bazaar.showToCustomer(player);
                         }
                     }
-                    break;
+                    return;
                 } else if (TombManager.hasTomb(player)) {
                     TombManager.onReachToTomb(player);
-                    break;
+                    return;
                 } else {
                     Checkpoint checkpoint = CheckpointManager.getCheckpointFromArmorStand(armorStand);
                     if (checkpoint != null) { //portal model
                         if (MiniGameManager.isInMinigame(player)) {
                             boolean b = MiniGameManager.onCheckpointSet(player, checkpoint);
                             if (b) {
-                                break;
+                                return;
                             }
                         }
                     }
                 }
             }
+        }
+
+        ItemStack itemInMainHand = player.getInventory().getItemInMainHand();
+        WeaponGearType weaponGearType = WeaponGearType.fromMaterial(itemInMainHand.getType());
+        if (weaponGearType != null) {
+            WeaponGearTypeSkillManager.cast(player, weaponGearType);
         }
     }
 }

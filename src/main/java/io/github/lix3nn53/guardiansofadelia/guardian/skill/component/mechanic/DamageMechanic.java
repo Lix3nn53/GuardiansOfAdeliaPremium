@@ -49,7 +49,8 @@ public class DamageMechanic extends MechanicComponent {
             this.multiplyWithValue = null;
         }
 
-        this.damageType = ElementType.valueOf(configurationSection.getString("damageType"));
+        String damageTypeStr = configurationSection.getString("damageType");
+        this.damageType = damageTypeStr.equals("PHYSICAL") ? null : ElementType.valueOf(damageTypeStr);
         this.damageList = configurationSection.contains("damageList") ? configurationSection.getFloatList("damageList") : new ArrayList<>();
 
         this.damageMultiplyList = configurationSection.contains("damageMultiplyList") ? configurationSection.getFloatList("damageMultiplyList") : new ArrayList<>();
@@ -74,7 +75,9 @@ public class DamageMechanic extends MechanicComponent {
                         RPGClassStats rpgClassStats = activeCharacter.getRPGClassStats();
 
                         float statValue = rpgCharacterStats.getTotalElementDamage(player, rpgClassStr, rpgClassStats);
-                        statValue += rpgCharacterStats.getElement(damageType).getTotal();
+                        if (damageType != null) {
+                            statValue += rpgCharacterStats.getElement(damageType).getTotal();
+                        }
 
                         float multiply = damageMultiplyList.get(skillLevel - 1);
 

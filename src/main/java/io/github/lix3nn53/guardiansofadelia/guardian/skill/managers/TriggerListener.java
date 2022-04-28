@@ -43,6 +43,7 @@ public class TriggerListener {
             triggerComponents = map.get(skillId);
         }
         triggerComponents.put(triggerComponent.getClass().getName(), triggerComponent);
+        map.put(skillId, triggerComponents);
         playerToSkillToTriggerClassToTrigger.put(player, map);
         if (CommandAdmin.DEBUG_MODE) player.sendMessage("ADD, new size: " + map.size());
     }

@@ -55,12 +55,10 @@ public class MyInventoryClickEvent implements Listener {
                 int hotbarButton = event.getHotbarButton();
                 if (hotbarButton >= 0 && hotbarButton <= 3) { //skill bar
                     event.setCancelled(true);
-                    return;
                 }
             } else if (clickedInventory != null && clickedInventory.getType().equals(InventoryType.PLAYER)) {
                 if (slot >= 0 && slot <= 3) { //skill bar
                     event.setCancelled(true);
-                    return;
                 }
             }
         }

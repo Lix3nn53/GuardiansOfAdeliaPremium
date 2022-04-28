@@ -9,7 +9,9 @@ import io.github.lix3nn53.guardiansofadelia.creatures.pets.PetManager;
 import io.github.lix3nn53.guardiansofadelia.guardian.GuardianData;
 import io.github.lix3nn53.guardiansofadelia.guardian.GuardianDataManager;
 import io.github.lix3nn53.guardiansofadelia.guardian.attribute.AttributeType;
-import io.github.lix3nn53.guardiansofadelia.guardian.character.*;
+import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGCharacter;
+import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGCharacterStats;
+import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGClassStats;
 import io.github.lix3nn53.guardiansofadelia.guardian.element.ElementType;
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.SkillUtils;
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.component.mechanic.buff.BuffType;
@@ -199,7 +201,7 @@ public class MyEntityDamageByEntityEvent implements Listener {
                                         damageType = MMManager.getElementType(internalName);
                                     } else {
                                         GuardiansOfAdelia.getInstance().getLogger().info(ChatPalette.RED + "damageType of mob NULL, internalName: " + internalName);
-                                        damageType = ElementType.FIRE;
+                                        damageType = null;
                                     }
                                 }
 
@@ -209,7 +211,9 @@ public class MyEntityDamageByEntityEvent implements Listener {
                                 RPGClassStats rpgClassStats = activeCharacterTarget.getRPGClassStats();
 
                                 int totalDefense = targetRpgCharacterStats.getTotalElementDefense(rpgClassStats);
-                                totalDefense += targetRpgCharacterStats.getElement(damageType).getTotal(); // Element is added to defense
+                                if (damageType != null) {
+                                    totalDefense += targetRpgCharacterStats.getElement(damageType).getTotal(); // Element is added to defense
+                                }
 
                                 float reduction = StatUtils.getDefenseReduction(totalDefense);
 
@@ -265,14 +269,13 @@ public class MyEntityDamageByEntityEvent implements Listener {
                     if (isSkill) {
                         TriggerListener.onPlayerSkillAttack(player, livingTarget);
                     } else {
-                        // If attack is not a skill, element type of attack is element of rpgClass of player
-                        RPGClass rpgClass = RPGClassManager.getClass(rpgClassStr);
-                        damageType = rpgClass.getMainElement();
+                        // If attack is not a skill, damageType is physical
+                        damageType = null;
 
                         // Do this before melee damage reduction of ranged weapons
                         // Add bonus damage to normal attack, both melee and ranged
                         damage += rpgCharacterStats.getAttribute(AttributeType.BONUS_ELEMENT_DAMAGE).getIncrement(player.getLevel(), rpgClassStr, rpgClassStats); // bonus from attribute
-                        damage += rpgCharacterStats.getElement(damageType).getTotal(); // bonus from element
+                        // damage += rpgCharacterStats.getElement(damageType).getTotal(); // bonus from element no more because its physical now
 
                         if (isProjectile) { // NonSkill projectile like arrow from bow
                             player.playSound(player.getLocation(), Sound.ENTITY_ARROW_HIT_PLAYER, 0.6F, 0.4F);
@@ -337,7 +340,7 @@ public class MyEntityDamageByEntityEvent implements Listener {
                             damageType = MMManager.getElementType(internalName);
                         } else {
                             GuardiansOfAdelia.getInstance().getLogger().info(ChatPalette.RED + "damageType of mob NULL, internalName: " + internalName);
-                            damageType = ElementType.FIRE;
+                            damageType = null;
                         }
                     }
 
@@ -372,7 +375,9 @@ public class MyEntityDamageByEntityEvent implements Listener {
                             RPGClassStats rpgClassStats = targetActiveCharacter.getRPGClassStats();
 
                             int totalDefense = targetRpgCharacterStats.getTotalElementDefense(rpgClassStats);
-                            totalDefense += targetRpgCharacterStats.getElement(damageType).getTotal();
+                            if (damageType != null) {
+                                totalDefense += targetRpgCharacterStats.getElement(damageType).getTotal();
+                            }
 
                             float reduction = StatUtils.getDefenseReduction(totalDefense);
 
@@ -430,8 +435,13 @@ public class MyEntityDamageByEntityEvent implements Listener {
                 }
 
                 //indicator
-                ChatPalette indicatorColor = damageType.getChatPalette();
-                String indicatorIcon = damageType.getIcon() + "";
+                ChatPalette indicatorColor = ChatPalette.GRAY;
+                String indicatorIcon = "\uD83D\uDDE1";
+                if (damageType != null) {
+                    indicatorColor = damageType.getChatPalette();
+                    indicatorIcon = damageType.getIcon() + "";
+                }
+
                 if (isCritical) {
                     indicatorColor = ChatPalette.GOLD;
                 }

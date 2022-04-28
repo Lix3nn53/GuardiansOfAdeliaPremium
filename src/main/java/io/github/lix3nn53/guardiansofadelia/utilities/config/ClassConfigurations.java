@@ -4,7 +4,6 @@ import io.github.lix3nn53.guardiansofadelia.GuardiansOfAdelia;
 import io.github.lix3nn53.guardiansofadelia.guardian.attribute.AttributeType;
 import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGClass;
 import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGClassManager;
-import io.github.lix3nn53.guardiansofadelia.guardian.element.ElementType;
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.Skill;
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.SkillDataForTree;
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.SkillType;
@@ -57,9 +56,6 @@ public class ClassConfigurations {
         String colorStr = classConfig.getString("color");
         GuardiansOfAdelia.getInstance().getLogger().info("colorStr: " + colorStr);
         ChatPalette color = ChatPalette.valueOf(colorStr);
-
-        String mainElementStr = classConfig.getString("mainElement");
-        ElementType mainElement = ElementType.valueOf(mainElementStr);
 
         List<String> description = classConfig.getStringList("description");
 
@@ -125,7 +121,7 @@ public class ClassConfigurations {
             }
         }
 
-        RPGClass rpgClass = new RPGClass(color, mainElement, className, classIconCustomModelData, attributeTiers,
+        RPGClass rpgClass = new RPGClass(color, className, classIconCustomModelData, attributeTiers,
                 skillTree, shieldGearTypes, weaponGearTypes, armorGearTypes, description);
 
         RPGClassManager.addClass(className, rpgClass);
