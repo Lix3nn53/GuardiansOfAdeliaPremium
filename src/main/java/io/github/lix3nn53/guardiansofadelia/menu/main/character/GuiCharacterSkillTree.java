@@ -72,30 +72,34 @@ public class GuiCharacterSkillTree extends GuiGeneric {
 
         ItemStack unassignedSkill = OtherItems.getUnassignedSkill();
         ItemMeta itemMeta = unassignedSkill.getItemMeta();
-        itemMeta.setDisplayName("Select skill for slot 1");
+        itemMeta.setDisplayName("Skillbar slot 1");
         List<String> lore = new ArrayList<>();
-        lore.add("Hover over the skill you want and then press 1 KEY");
+        lore.add("To assign skill to this slot, hover over");
+        lore.add("the skill you want and then press 1 KEY");
         itemMeta.setLore(lore);
         unassignedSkill.setItemMeta(itemMeta);
         this.setItem(4, unassignedSkill);
 
-        itemMeta.setDisplayName("Select skill for slot 2");
+        itemMeta.setDisplayName("Skillbar slot 2");
         lore = new ArrayList<>();
-        lore.add("Hover over the skill you want and then press 2 KEY");
+        lore.add("To assign skill to this slot, hover over");
+        lore.add("the skill you want and then press 2 KEY");
         itemMeta.setLore(lore);
         unassignedSkill.setItemMeta(itemMeta);
         this.setItem(5, unassignedSkill);
 
-        itemMeta.setDisplayName("Select skill for slot 3");
+        itemMeta.setDisplayName("Skillbar slot 3");
         lore = new ArrayList<>();
-        lore.add("Hover over the skill you want and then press 3 KEY");
+        lore.add("To assign skill to this slot, hover over");
+        lore.add("the skill you want and then press 3 KEY");
         itemMeta.setLore(lore);
         unassignedSkill.setItemMeta(itemMeta);
         this.setItem(6, unassignedSkill);
 
-        itemMeta.setDisplayName("Select skill for slot 4");
+        itemMeta.setDisplayName("Skillbar slot 4");
         lore = new ArrayList<>();
-        lore.add("Hover over the skill you want and then press 4 KEY");
+        lore.add("To assign skill to this slot, hover over");
+        lore.add("the skill you want and then press 4 KEY");
         itemMeta.setLore(lore);
         unassignedSkill.setItemMeta(itemMeta);
         this.setItem(7, unassignedSkill);
@@ -244,7 +248,6 @@ public class GuiCharacterSkillTree extends GuiGeneric {
                 return;
             }*/
 
-            player.sendMessage(event.getClick().toString());
             if (event.getClick().equals(ClickType.NUMBER_KEY)) {
                 int hotbarButton = event.getHotbarButton();
                 if (hotbarButton >= 0 && hotbarButton <= 3) { //skill bar

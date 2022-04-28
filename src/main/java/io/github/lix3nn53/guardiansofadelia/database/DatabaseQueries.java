@@ -86,10 +86,10 @@ public class DatabaseQueries {
                     "     `class_name` varchar(40) NOT NULL,\n" +
                     "     `uuid` varchar(40) NOT NULL,\n" +
                     "     `character_no` smallint NOT NULL,\n" +
-                    "     `skill_points` mediumtext NOT NULL,\n" +
+                    "     `skill_points` mediumtext,\n" +
                     "     `totalexp` int NOT NULL,\n" +
-                    "     `attribute_points` mediumtext NOT NULL,\n" +
-                    "     `skill_bar` mediumtext NOT NULL,\n" +
+                    "     `attribute_points` mediumtext,\n" +
+                    "     `skill_bar` mediumtext,\n" +
                     "     UNIQUE KEY `Index_228` (`class_name`, `uuid`, `character_no`),\n" +
                     "     KEY `FK_215` (`uuid`),\n" +
                     "     CONSTRAINT `FK_213` FOREIGN KEY `FK_215` (`uuid`) REFERENCES `goa_player` (`uuid`)\n" +
@@ -514,7 +514,7 @@ public class DatabaseQueries {
     }
 
     public static HashMap<String, RPGClassStats> loadRPGClassStats(UUID uuid, int characterNo) {
-        String SQL_QUERY = "SELECT * FROM goa_player_character_class WHERE uuid = ? AND character_no";
+        String SQL_QUERY = "SELECT * FROM goa_player_character_class WHERE uuid = ? AND character_no = ?";
 
         HashMap<String, RPGClassStats> result = new HashMap<>();
         try (Connection con = ConnectionPool.getConnection()) {
@@ -525,7 +525,7 @@ public class DatabaseQueries {
 
             ResultSet resultSet = pst.executeQuery();
 
-            if (resultSet.next()) {
+            while (resultSet.next()) {
                 String className = resultSet.getString("class_name");
                 String skillPointsTotal = resultSet.getString("skill_points");
                 String totalexpStr = resultSet.getString("totalexp");
@@ -534,42 +534,48 @@ public class DatabaseQueries {
                 String skillBar = resultSet.getString("skill_bar");
 
                 HashMap<Integer, Integer> investedSkillPoints = new HashMap<>();
-                String[] skillPoints = skillPointsTotal.split(";");
-                for (int i = 0; i < skillPoints.length; i++) {
-                    String skillPoint = skillPoints[i];
-                    String[] skillPointSplit = skillPoint.split(",");
+                if (skillPointsTotal != null) {
+                    String[] skillPoints = skillPointsTotal.split(";");
+                    for (int i = 0; i < skillPoints.length; i++) {
+                        String skillPoint = skillPoints[i];
+                        String[] skillPointSplit = skillPoint.split(",");
 
-                    int skillId = Integer.parseInt(skillPointSplit[0]);
-                    int investedPoints = Integer.parseInt(skillPointSplit[1]);
+                        int skillId = Integer.parseInt(skillPointSplit[0]);
+                        int investedPoints = Integer.parseInt(skillPointSplit[1]);
 
-                    investedSkillPoints.put(skillId, investedPoints);
+                        investedSkillPoints.put(skillId, investedPoints);
+                    }
                 }
                 SkillTreeData skillTreeData = new SkillTreeData(investedSkillPoints);
 
                 HashMap<AttributeType, Integer> investedAttributePoints = new HashMap<>();
-                String[] attrSplit = attributePoints.split(";");
-                for (String attrWithPointStr : attrSplit) {
-                    String[] attrWithPoint = attrWithPointStr.split(",");
-                    AttributeType attributeType = AttributeType.valueOf(attrWithPoint[0]);
-                    int investedPoints = Integer.parseInt(attrWithPoint[1]);
-                    investedAttributePoints.put(attributeType, investedPoints);
+                if (attributePoints != null) {
+                    String[] attrSplit = attributePoints.split(";");
+                    for (String attrWithPointStr : attrSplit) {
+                        String[] attrWithPoint = attrWithPointStr.split(",");
+                        AttributeType attributeType = AttributeType.valueOf(attrWithPoint[0]);
+                        int investedPoints = Integer.parseInt(attrWithPoint[1]);
+                        investedAttributePoints.put(attributeType, investedPoints);
+                    }
                 }
 
                 int barOne = -1;
                 int barTwo = -1;
                 int barThree = -1;
                 int barFour = -1;
-                String[] skillBarSplit = skillBar.split(";");
-                for (int i = 0; i < 4; i++) {
-                    String skillBarString = skillBarSplit[i];
-                    if (i == 0) {
-                        barOne = Integer.parseInt(skillBarString);
-                    } else if (i == 1) {
-                        barTwo = Integer.parseInt(skillBarString);
-                    } else if (i == 2) {
-                        barThree = Integer.parseInt(skillBarString);
-                    } else {
-                        barFour = Integer.parseInt(skillBarString);
+                if (skillBar != null) {
+                    String[] skillBarSplit = skillBar.split(";");
+                    for (int i = 0; i < 4; i++) {
+                        String skillBarString = skillBarSplit[i];
+                        if (i == 0) {
+                            barOne = Integer.parseInt(skillBarString);
+                        } else if (i == 1) {
+                            barTwo = Integer.parseInt(skillBarString);
+                        } else if (i == 2) {
+                            barThree = Integer.parseInt(skillBarString);
+                        } else {
+                            barFour = Integer.parseInt(skillBarString);
+                        }
                     }
                 }
                 SkillBarData skillBarData = new SkillBarData(barOne, barTwo, barThree, barFour);
@@ -1105,13 +1111,17 @@ public class DatabaseQueries {
             pst.setString(2, uuid.toString());
             pst.setInt(3, charNo);
 
-            StringBuilder skill_points = new StringBuilder();
             Set<Integer> skillIds = skillTreeData.getSkillIds();
-            for (int skillId : skillIds) {
-                int investedSkillPoints = skillTreeData.getInvestedSkillPoints(skillId);
-                skill_points.append(skillId).append(",").append(investedSkillPoints).append(";");
+            if (skillIds.isEmpty()) {
+                pst.setString(4, null);
+            } else {
+                StringBuilder skill_points = new StringBuilder();
+                for (int skillId : skillIds) {
+                    int investedSkillPoints = skillTreeData.getInvestedSkillPoints(skillId);
+                    skill_points.append(skillId).append(",").append(investedSkillPoints).append(";");
+                }
+                pst.setString(4, skill_points.toString());
             }
-            pst.setString(4, skill_points.toString());
 
             pst.setInt(5, totalExperience);
 

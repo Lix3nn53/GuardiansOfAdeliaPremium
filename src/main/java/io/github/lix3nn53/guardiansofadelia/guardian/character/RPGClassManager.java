@@ -20,7 +20,7 @@ public class RPGClassManager {
     private static final HashMap<String, RPGClass> rpgClassMap = new HashMap<>();
     private static String startingClass;
 
-    public static void addClass(String className, RPGClass rpgClass) {
+    public static void setClass(String className, RPGClass rpgClass) {
         rpgClassMap.put(className.toUpperCase(), rpgClass);
     }
 

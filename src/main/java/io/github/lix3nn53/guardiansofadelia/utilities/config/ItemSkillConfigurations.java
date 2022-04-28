@@ -20,11 +20,11 @@ public class ItemSkillConfigurations {
     private static final String filePath = ConfigManager.DATA_FOLDER + File.separator + "items" + File.separator + "skillOnLeft";
     private static HashMap<String, YamlConfiguration> fileConfigurations;
 
-    static void createConfigs() {
+    public static void createConfigs() {
         fileConfigurations = ConfigurationUtils.getAllConfigsInFile(filePath);
     }
 
-    static void loadConfigs() {
+    public static void loadConfigs() {
         load();
     }
 

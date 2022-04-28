@@ -124,7 +124,7 @@ public class ClassConfigurations {
         RPGClass rpgClass = new RPGClass(color, className, classIconCustomModelData, attributeTiers,
                 skillTree, shieldGearTypes, weaponGearTypes, armorGearTypes, description);
 
-        RPGClassManager.addClass(className, rpgClass);
+        RPGClassManager.setClass(className, rpgClass);
     }
 
     private static Skill loadSkill(String rpgClass, String name, ConfigurationSection skillSection, SkillType skillType) {

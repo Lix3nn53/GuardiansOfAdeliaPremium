@@ -1,8 +1,11 @@
 package io.github.lix3nn53.guardiansofadelia.items.RpgGears;
 
 import io.github.lix3nn53.guardiansofadelia.GuardiansOfAdelia;
+import io.github.lix3nn53.guardiansofadelia.guardian.GuardianDataManager;
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.Skill;
+import io.github.lix3nn53.guardiansofadelia.items.stats.StatUtils;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
@@ -21,7 +24,7 @@ public class WeaponGearTypeSkillManager {
         skillMap.put(weaponGearType, skill);
     }
 
-    public static void cast(Player player, WeaponGearType weaponGearType) {
+    public static void cast(Player player, WeaponGearType weaponGearType, ItemStack itemStack) {
         Skill skill = skillMap.get(weaponGearType);
         if (skill == null) {
             return;
@@ -31,11 +34,18 @@ public class WeaponGearTypeSkillManager {
             return; // player is on cooldown
         }
 
+        String rpgClassStr = GuardianDataManager.getGuardianData(player).getActiveCharacter().getRpgClassStr();
+        if (!StatUtils.doesCharacterMeetRequirements(itemStack, player, rpgClassStr)) {
+            return;
+        }
+
         boolean cast = skill.cast(player, 1, new ArrayList<>(), -1, -1);
         if (cast) {
             playersOnCooldown.add(player);
 
             int cooldown = skill.getCooldown(1);
+
+            player.setCooldown(weaponGearType.getMaterial(), cooldown);
 
             new BukkitRunnable() {
 

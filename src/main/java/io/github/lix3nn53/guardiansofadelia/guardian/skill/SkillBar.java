@@ -58,7 +58,6 @@ public class SkillBar {
             public void run() {
                 for (int skillId : skillIds) {
                     if (skillId < 0) continue;
-                    player.sendMessage("init trigger for skill " + skillId);
                     Skill skill = skillTree.getSkill(skillId);
                     int investedPoints = skillTreeData.getInvestedSkillPoints(skillId);
 

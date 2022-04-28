@@ -14,6 +14,7 @@ import io.github.lix3nn53.guardiansofadelia.text.ChatPalette;
 import io.github.lix3nn53.guardiansofadelia.towns.Town;
 import io.github.lix3nn53.guardiansofadelia.towns.TownManager;
 import io.github.lix3nn53.guardiansofadelia.utilities.config.ClassConfigurations;
+import io.github.lix3nn53.guardiansofadelia.utilities.config.ItemSkillConfigurations;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -137,6 +138,10 @@ public class CommandAdmin implements CommandExecutor {
                         SkillRPGClassData skillRPGClassData = rpgClassStats.getSkillRPGClassData();
                         skillBar.reloadSkillSet(rpgClass.getSkillTree(), skillRPGClassData, guardianData.getLanguage());
                     }
+
+                    ItemSkillConfigurations.createConfigs();
+                    ItemSkillConfigurations.loadConfigs();
+
                     player.sendMessage(ChatPalette.GREEN_DARK + "Reloaded player skills!");
                 }
             } else if (args[0].equals("build")) {

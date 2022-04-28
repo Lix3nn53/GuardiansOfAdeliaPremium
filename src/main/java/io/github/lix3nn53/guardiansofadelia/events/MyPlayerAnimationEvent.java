@@ -130,7 +130,7 @@ public class MyPlayerAnimationEvent implements Listener {
         ItemStack itemInMainHand = player.getInventory().getItemInMainHand();
         WeaponGearType weaponGearType = WeaponGearType.fromMaterial(itemInMainHand.getType());
         if (weaponGearType != null) {
-            WeaponGearTypeSkillManager.cast(player, weaponGearType);
+            WeaponGearTypeSkillManager.cast(player, weaponGearType, itemInMainHand);
         }
     }
 }

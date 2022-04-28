@@ -1,13 +1,12 @@
 package io.github.lix3nn53.guardiansofadelia.guardian.skill.component.mechanic.projectile;
 
 import com.comphenix.protocol.ProtocolLibrary;
-import com.comphenix.protocol.ProtocolManager;
+import com.comphenix.protocol.events.PacketContainer;
 import io.github.lix3nn53.guardiansofadelia.GuardiansOfAdelia;
 import io.github.lix3nn53.guardiansofadelia.commands.admin.CommandAdmin;
 import io.github.lix3nn53.guardiansofadelia.creatures.custom.TemporaryEntity;
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.SkillDataManager;
 import io.github.lix3nn53.guardiansofadelia.utilities.PersistentDataContainerUtil;
-import io.github.lix3nn53.guardiansofadelia.utilities.packetwrapper.WrapperPlayServerEntityDestroy;
 import io.github.lix3nn53.guardiansofadelia.utilities.particle.ParticleArrangementLoader;
 import io.github.lix3nn53.guardiansofadelia.utilities.particle.arrangement.ParticleArrangement;
 import me.libraryaddict.disguise.DisguiseAPI;
@@ -16,6 +15,7 @@ import me.libraryaddict.disguise.disguisetypes.MiscDisguise;
 import me.libraryaddict.disguise.disguisetypes.MobDisguise;
 import me.libraryaddict.disguise.disguisetypes.watchers.ArmorStandWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.LivingWatcher;
+import me.libraryaddict.disguise.utilities.DisguiseUtilities;
 import net.citizensnpcs.api.CitizensAPI;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -360,14 +360,12 @@ public class ProjectileMechanicBase {
     private void changeToParticleProjectile(Projectile p) {
         if (particleArrangement != null) {
             if (isProjectileInvisible) {
-                WrapperPlayServerEntityDestroy destroy = new WrapperPlayServerEntityDestroy();
-                destroy.setEntityIds(new int[]{p.getEntityId()});
-                try {
-                    ProtocolManager protocolManager = ProtocolLibrary.getProtocolManager();
+                PacketContainer destroyPacket = DisguiseUtilities.getDestroyPacket(p.getEntityId());
 
+                try {
                     List<Player> players = p.getWorld().getPlayers();
                     for (Player player : players) {
-                        protocolManager.sendServerPacket(player, destroy.getHandle());
+                        ProtocolLibrary.getProtocolManager().sendServerPacket(player, destroyPacket, false);
                     }
                 } catch (InvocationTargetException e) {
                     e.printStackTrace();
