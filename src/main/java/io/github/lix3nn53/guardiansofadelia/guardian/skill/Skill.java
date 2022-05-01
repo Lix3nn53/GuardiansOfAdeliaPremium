@@ -152,6 +152,10 @@ public class Skill {
     }
 
     public boolean cast(LivingEntity caster, int skillLevel, List<LivingEntity> targets, int castCounter, int skillId) {
+        if (skillLevel <= 0) {
+            throw new IllegalArgumentException("Skill level must be greater than 0");
+        }
+
         boolean didCast = false;
         for (SkillComponent trigger : triggers) {
             didCast = trigger.execute(caster, skillLevel, targets, castCounter, skillId) || didCast;

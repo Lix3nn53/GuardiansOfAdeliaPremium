@@ -5,6 +5,7 @@ import io.github.lix3nn53.guardiansofadelia.guardian.GuardianDataManager;
 import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGCharacter;
 import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGClass;
 import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGClassManager;
+import io.github.lix3nn53.guardiansofadelia.items.list.OtherItems;
 import io.github.lix3nn53.guardiansofadelia.menu.GuiHelper;
 import io.github.lix3nn53.guardiansofadelia.menu.main.GuiCharacter;
 import io.github.lix3nn53.guardiansofadelia.quests.Quest;
@@ -15,6 +16,7 @@ import io.github.lix3nn53.guardiansofadelia.utilities.gui.GuiGeneric;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,8 +39,17 @@ public class GuiCharacterClassManager extends GuiGeneric {
         List<ItemStack> items = new ArrayList<>();
 
         items.add(currentRPGClass);
-        items.add(null);
-        items.add(null);
+        ItemStack arrowLeft = OtherItems.getArrowLeft();
+        ItemMeta itemMeta = arrowLeft.getItemMeta();
+        itemMeta.setDisplayName("This is your current class");
+        arrowLeft.setItemMeta(itemMeta);
+        items.add(arrowLeft);
+
+        ItemStack arrowDown = OtherItems.getArrowDown();
+        itemMeta = arrowDown.getItemMeta();
+        itemMeta.setDisplayName("Change your class below");
+        arrowDown.setItemMeta(itemMeta);
+        items.add(arrowDown);
         items.add(null);
 
         Set<String> valuesStr = RPGClassManager.getClasses();

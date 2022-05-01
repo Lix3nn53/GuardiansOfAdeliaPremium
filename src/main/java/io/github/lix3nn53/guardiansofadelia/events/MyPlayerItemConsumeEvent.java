@@ -18,6 +18,7 @@ import java.util.List;
 
 public class MyPlayerItemConsumeEvent implements Listener {
 
+    private static final int COOLDOWN = 80;
     private final static HashMap<Player, List<String>> playerToConsumableOnCooldowns = new HashMap<>();
 
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
@@ -48,7 +49,7 @@ public class MyPlayerItemConsumeEvent implements Listener {
 
                 int consumableLevel = PersistentDataContainerUtil.getInteger(item, "consumableLevel");
                 Consumable consumable = Consumable.valueOf(customConsumable);
-                consumable.consume(player, consumableLevel, player.getInventory().getItemInMainHand());
+                consumable.consume(player, consumableLevel, player.getInventory().getItemInMainHand(), COOLDOWN);
 
                 new BukkitRunnable() {
                     @Override
@@ -64,7 +65,7 @@ public class MyPlayerItemConsumeEvent implements Listener {
                             }
                         }
                     }
-                }.runTaskLater(GuardiansOfAdelia.getInstance(), 80L);
+                }.runTaskLater(GuardiansOfAdelia.getInstance(), COOLDOWN);
             }
         }
     }

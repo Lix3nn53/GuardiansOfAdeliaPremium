@@ -560,7 +560,16 @@ public class DungeonInstance extends Minigame {
             String internalName = mythicMobInstance.getType().getInternalName();
 
             if (internalName.equals(this.theme.getBossInternalName())) { // BOSS
-                return this.theme.isPlayerInBossRoom(this.getStartLocation(1), attacker);
+                boolean playerInBossRoom = this.theme.isPlayerInBossRoom(this.getStartLocation(1), attacker);
+                if (playerInBossRoom) {
+                    if (this.keepBossSafeRunnable == null || this.keepBossSafeRunnable.isCancelled()) {
+                        startKeepBossSafeRunnable(defender, defender.getLocation());
+                    }
+                } else {
+                    attacker.sendMessage(ChatPalette.RED + "You can't attack boss from this location.");
+                }
+
+                return playerInBossRoom;
             }
         }
 

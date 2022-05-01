@@ -212,20 +212,24 @@ public class GuardianData {
         return dailyRewardInfo;
     }
 
-    public void setLanguage(Player player, String language) {
+    public void setLanguage(Player player, String language, boolean message) {
         boolean exists = Translation.exists(language);
 
         if (exists) {
-            player.sendMessage(ChatPalette.YELLOW + Translation.t(language, "general.language.changing") + ": " + language);
-            player.sendMessage(ChatPalette.GREEN_DARK + Translation.t(language, "general.language.success") + " " + language);
+            if (message) {
+                player.sendMessage(ChatPalette.YELLOW + Translation.t(language, "general.language.changing") + ": " + language);
+                player.sendMessage(ChatPalette.GREEN_DARK + Translation.t(language, "general.language.success") + " " + language);
+            }
         } else {
+            if (message) {
+                player.sendMessage(ChatPalette.YELLOW + Translation.t(Translation.DEFAULT_LANG, "general.language.changing") + ": " + language);
+                player.sendMessage(ChatPalette.RED + Translation.t(Translation.DEFAULT_LANG, "general.language.error") + ": " + language);
+            }
             language = Translation.DEFAULT_LANG;
-            player.sendMessage(ChatPalette.YELLOW + Translation.t(Translation.DEFAULT_LANG, "general.language.changing") + ": " + language);
-            player.sendMessage(ChatPalette.RED + Translation.t(language, "general.language.error") + ": " + language);
         }
 
-        TablistUtils.updateTablist(player);
         this.language = language;
+        TablistUtils.updateTablist(player);
     }
 
     public String getLanguage() {

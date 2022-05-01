@@ -401,7 +401,6 @@ public class MyEntityDamageByEntityEvent implements Listener {
                         if (!livingTarget.getType().equals(EntityType.PLAYER)) {
                             boolean b = MiniGameManager.onPlayerDealDamageToEntity(player, livingTarget);
                             if (!b) {
-                                player.sendMessage(ChatPalette.RED + "You can't attack boss from this location.");
                                 event.setCancelled(true);
                                 return true;
                             }

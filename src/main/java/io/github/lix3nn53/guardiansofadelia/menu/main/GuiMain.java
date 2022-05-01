@@ -186,9 +186,9 @@ public class GuiMain extends GuiGeneric {
             gui.openInventory(player);
         } else if (GuiHelper.get54BigButtonIndexes(5).contains(slot)) {
             player.closeInventory();
-            TextComponent message = new TextComponent(" Donation ♥ ! (Click Me)");
-            message.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://guardiansofadelia.com/store"));
-            message.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(ChatPalette.PURPLE_LIGHT + "Click to donate ♥")));
+            TextComponent message = new TextComponent(" Website ♥ ! (Click Me)");
+            message.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://www.guardiansofadelia.com/store/ranks"));
+            message.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(ChatPalette.PURPLE_LIGHT + "Click to open website")));
             message.setColor(ChatPalette.PURPLE_LIGHT.toChatColor());
             message.setBold(true);
             player.spigot().sendMessage(message);

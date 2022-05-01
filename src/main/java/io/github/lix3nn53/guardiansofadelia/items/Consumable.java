@@ -31,7 +31,7 @@ public enum Consumable {
     private final float HYBRID_NERF = 0.8f;
     private final float REGEN_NERF = 0.05f;
 
-    public void consume(Player player, int skillLevel, ItemStack itemStack) {
+    public void consume(Player player, int skillLevel, ItemStack itemStack, int cooldown) {
         if (PersistentDataContainerUtil.hasInteger(itemStack, "reqLevel")) {
             int reqLevel = PersistentDataContainerUtil.getInteger(itemStack, "reqLevel");
             if (player.getLevel() < reqLevel) {
@@ -56,6 +56,8 @@ public enum Consumable {
                     itemMeta.setDisplayName(replace);
                     itemStack.setItemMeta(itemMeta);
                 }
+
+                player.setCooldown(itemStack.getType(), cooldown);
             } else {
                 itemStack.setAmount(amount - 1);
             }

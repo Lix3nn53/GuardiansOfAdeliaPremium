@@ -66,6 +66,9 @@ public class ChangeSkillLevelMechanic extends MechanicComponent {
                         SkillTreeData skillTreeData = skillRPGClassData.getSkillTreeData();
 
                         newSkillLevel = skillTreeData.getCurrentSkillLevel(skill);
+                        if (newSkillLevel <= 0) {
+                            newSkillLevel = 1;
+                        }
                     }
                 }
             }

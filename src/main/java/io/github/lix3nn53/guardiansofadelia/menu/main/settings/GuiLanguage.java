@@ -65,9 +65,9 @@ public class GuiLanguage extends GuiGeneric {
             GuiSettings gui = new GuiSettings(guardianData);
             gui.openInventory(player);
         } else if (GuiHelper.get27SmallButtonIndex(0) == slot) {
-            guardianData.setLanguage(player, "en_us");
+            guardianData.setLanguage(player, "en_us", true);
         } else if (GuiHelper.get27SmallButtonIndex(1) == slot) {
-            guardianData.setLanguage(player, "tr_tr");
+            guardianData.setLanguage(player, "tr_tr", true);
         }
     }
 }

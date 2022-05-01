@@ -8,6 +8,7 @@ import io.github.lix3nn53.guardiansofadelia.guardian.GuardianDataManager;
 import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGCharacter;
 import io.github.lix3nn53.guardiansofadelia.menu.GuiHelper;
 import io.github.lix3nn53.guardiansofadelia.menu.main.settings.GuiLanguage;
+import io.github.lix3nn53.guardiansofadelia.sounds.CustomSoundtrack;
 import io.github.lix3nn53.guardiansofadelia.text.ChatPalette;
 import io.github.lix3nn53.guardiansofadelia.text.font.CustomCharacterGui;
 import io.github.lix3nn53.guardiansofadelia.text.locale.Translation;
@@ -30,10 +31,21 @@ public class GuiSettings extends GuiGeneric {
     public GuiSettings(GuardianData guardianData) {
         super(27, CustomCharacterGui.MENU_27_FLAT.toString() + ChatPalette.BLACK + Translation.t(guardianData, "menu.settings.name"), 0);
 
-        ItemStack language = new ItemStack(Material.LIGHT_BLUE_WOOL);
-        ItemMeta itemMeta = language.getItemMeta();
-        itemMeta.setDisplayName(ChatPalette.BLUE_LIGHT + "Language");
+        ItemStack soundtrack = new ItemStack(Material.NOTE_BLOCK);
+        ItemMeta itemMeta = soundtrack.getItemMeta();
+        itemMeta.setDisplayName(ChatPalette.YELLOW + "Turn on/off soundtrack");
         ArrayList<String> lore = new ArrayList<>();
+        lore.add("Click to turn on/off soundtrack");
+        lore.add("");
+        lore.add("Current song: ");
+        lore.add(CustomSoundtrack.getCurrentSongName());
+        itemMeta.setLore(lore);
+        soundtrack.setItemMeta(itemMeta);
+
+        ItemStack language = new ItemStack(Material.LIGHT_BLUE_WOOL);
+        itemMeta = language.getItemMeta();
+        itemMeta.setDisplayName(ChatPalette.BLUE_LIGHT + "Change Language");
+        lore = new ArrayList<>();
         lore.add("");
         lore.add("Click to select server language.");
         itemMeta.setLore(lore);
@@ -41,7 +53,7 @@ public class GuiSettings extends GuiGeneric {
 
         ItemStack characterSelect = new ItemStack(Material.BARRIER);
         itemMeta = characterSelect.getItemMeta();
-        itemMeta.setDisplayName(ChatPalette.BLUE_LIGHT + "Character selection");
+        itemMeta.setDisplayName(ChatPalette.RED + "Back to character selection");
         lore = new ArrayList<>();
         lore.add("");
         lore.add("Go back to character selection.");
@@ -52,7 +64,7 @@ public class GuiSettings extends GuiGeneric {
         itemMeta.setLore(lore);
         characterSelect.setItemMeta(itemMeta);
 
-        GuiHelper.form27Small(this, new ItemStack[]{language, characterSelect}, "Main Menu");
+        GuiHelper.form27Small(this, new ItemStack[]{soundtrack, language, characterSelect}, "Main Menu");
     }
 
     @Override
@@ -77,9 +89,11 @@ public class GuiSettings extends GuiGeneric {
             GuiMain gui = new GuiMain(guardianData);
             gui.openInventory(player);
         } else if (GuiHelper.get27SmallButtonIndex(0) == slot) {
+            CustomSoundtrack.togglePlayer(player);
+        } else if (GuiHelper.get27SmallButtonIndex(1) == slot) {
             GuiLanguage gui = new GuiLanguage(guardianData);
             gui.openInventory(player);
-        } else if (GuiHelper.get27SmallButtonIndex(1) == slot) {
+        } else if (GuiHelper.get27SmallButtonIndex(2) == slot) {
             if (guardianData.isFreeToAct()) {
                 player.closeInventory();
 

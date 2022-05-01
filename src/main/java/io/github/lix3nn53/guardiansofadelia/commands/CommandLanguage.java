@@ -35,7 +35,7 @@ public class CommandLanguage implements CommandExecutor {
                 if (GuardianDataManager.hasGuardianData(player)) {
                     GuardianData guardianData = GuardianDataManager.getGuardianData(player);
 
-                    guardianData.setLanguage(player, language);
+                    guardianData.setLanguage(player, language, true);
                 }
             }
             // If the player (or console) uses our command correct, we can return true

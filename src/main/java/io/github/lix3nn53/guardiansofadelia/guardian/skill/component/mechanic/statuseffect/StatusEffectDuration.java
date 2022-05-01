@@ -26,14 +26,14 @@ class StatusEffectDuration {
 
             @Override
             public void run() {
-                if (durationLeft > 0) {
-                    durationLeft -= 5;
+                if (durationLeft > 1) {
+                    durationLeft -= 1;
                     return;
                 }
                 cancel();
                 StatusEffectManager.removeStatus(target, effectType);
             }
-        }.runTaskTimerAsynchronously(GuardiansOfAdelia.getInstance(), 0L, 5L);
+        }.runTaskTimerAsynchronously(GuardiansOfAdelia.getInstance(), 0L, 1L);
     }
 
     public int getDurationLeft() {

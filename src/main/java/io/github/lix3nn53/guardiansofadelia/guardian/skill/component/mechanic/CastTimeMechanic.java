@@ -20,7 +20,6 @@ import java.util.List;
  */
 public class CastTimeMechanic extends MechanicComponent {
 
-    private static final int MIN_DELAY = 2;
     private final int DELAY;
     private final String TEXT;
 
@@ -55,9 +54,9 @@ public class CastTimeMechanic extends MechanicComponent {
         int holoTime = Math.max(DELAY, 50);
 
         for (LivingEntity target : targets) {
-            if (DELAY - MIN_DELAY > 0) {
-                StatusEffectManager.addStatus(target, StatusEffectType.SILENCE, DELAY - 2);
-                StatusEffectManager.addStatus(target, StatusEffectType.DISARM, DELAY - 2);
+            if (DELAY > 0) {
+                StatusEffectManager.addStatus(target, StatusEffectType.SILENCE, DELAY);
+                StatusEffectManager.addStatus(target, StatusEffectType.DISARM, DELAY);
             }
 
             // float height = (float) target.getHeight();
@@ -74,15 +73,19 @@ public class CastTimeMechanic extends MechanicComponent {
             }*/
         }
 
-        new BukkitRunnable() {
+        if (DELAY > 0) {
+            new BukkitRunnable() {
 
-            @Override
-            public void run() {
-                if (!caster.isDead()) {
-                    executeChildren(caster, skillLevel, targets, castCounter, skillIndex);
+                @Override
+                public void run() {
+                    if (!caster.isDead()) {
+                        executeChildren(caster, skillLevel, targets, castCounter, skillIndex);
+                    }
                 }
-            }
-        }.runTaskLater(GuardiansOfAdelia.getInstance(), DELAY);
+            }.runTaskLater(GuardiansOfAdelia.getInstance(), DELAY);
+        } else {
+            executeChildren(caster, skillLevel, targets, castCounter, skillIndex);
+        }
 
         return true;
     }
@@ -91,7 +94,7 @@ public class CastTimeMechanic extends MechanicComponent {
     public List<String> getSkillLoreAdditions(String lang, List<String> additions, int skillLevel) {
         if (!this.addLore) return getSkillLoreAdditionsOfChildren(lang, additions, skillLevel);
 
-        if (DELAY - MIN_DELAY > 0) {
+        if (DELAY > 0) {
             additions.add(ChatPalette.GOLD + "Cast time: " + ChatPalette.YELLOW + DELAY + " ticks");
         }
 

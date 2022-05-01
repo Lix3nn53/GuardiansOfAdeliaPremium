@@ -95,11 +95,10 @@ public class DatabaseManager {
 
                 if (guardianData.getLanguage() == null) {
                     String locale = player.getLocale();
-                    player.sendMessage(ChatPalette.YELLOW + Translation.t(locale, "general.language.client") + "...");
-                    guardianData.setLanguage(player, locale);
-                } else {
-                    player.sendMessage(ChatPalette.GREEN_DARK + Translation.t(guardianData, "general.language.saved") + ": " + guardianData.getLanguage());
-                }
+                    // player.sendMessage(ChatPalette.YELLOW + Translation.t(locale, "general.language.client") + "...");
+                    guardianData.setLanguage(player, locale, false);
+                }  // else { player.sendMessage(ChatPalette.GREEN_DARK + Translation.t(guardianData, "general.language.saved") + ": " + guardianData.getLanguage());
+
 
                 GuardianDataManager.addGuardianData(player, guardianData);
 

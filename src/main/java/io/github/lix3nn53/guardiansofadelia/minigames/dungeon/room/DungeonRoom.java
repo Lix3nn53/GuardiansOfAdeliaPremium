@@ -63,13 +63,13 @@ public class DungeonRoom {
             int mobLevel = theme.getMonsterLevel(darkness);
 
             List<Entity> entities = spawner.firstSpawn(mobCode, mobLevel, dungeonStart, roomNo, spawnerIndex, spawnerState);
-            if (spawner.isBoss()) {
+            /*if (spawner.isBoss()) {
                 if (!entities.isEmpty()) {
                     Entity boss = entities.get(0);
                     GuardiansOfAdelia.getInstance().getLogger().info("onRoomStart: boss spawned");
                     roomState.getDungeonInstance().startKeepBossSafeRunnable(boss, boss.getLocation());
                 }
-            }
+            }*/
         }
 
         for (RandomSkillOnGroundWithOffset skillOnGround : skillsOnGround) {
@@ -137,13 +137,13 @@ public class DungeonRoom {
                             int mobLevel = theme.getMonsterLevel(darkness);
 
                             List<Entity> entities = spawner.firstSpawn(mobCode, mobLevel, dungeonStart, roomNo, spawnerIndex, spawnerState);
-                            if (spawner.isBoss()) {
+                            /*if (spawner.isBoss()) {
                                 if (!entities.isEmpty()) {
                                     Entity boss = entities.get(0);
                                     GuardiansOfAdelia.getInstance().getLogger().info("onMobKill: boss spawned");
                                     roomState.getDungeonInstance().startKeepBossSafeRunnable(boss, boss.getLocation());
                                 }
-                            }
+                            }*/
                         }
                     }
                 }.runTaskLater(GuardiansOfAdelia.getInstance(), 20 * 4L);

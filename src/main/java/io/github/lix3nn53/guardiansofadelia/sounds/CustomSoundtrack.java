@@ -13,9 +13,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 /**
  * How to create soundtrack files:
@@ -77,13 +75,30 @@ public class CustomSoundtrack {
 
     public static void addPlayer(Player player) {
         radioSongPlayer.addPlayer(player);
-        sendCurrentSongMessage(player);
+        // sendCurrentSongMessage(player);
     }
 
+    public static void removePlayer(Player player) {
+        radioSongPlayer.removePlayer(player);
+        player.sendMessage(ChatPalette.RED + "Stopped listening to soundtrack.");
+    }
+
+    public static void togglePlayer(Player player) {
+        UUID uuid = player.getUniqueId();
+        if (radioSongPlayer.getPlayerUUIDs().contains(uuid)) {
+            removePlayer(player);
+        } else {
+            addPlayer(player);
+        }
+    }
 
     public static void sendCurrentSongMessage(Player player) {
         String songName = songNames.get(CURRENT_SONG_INDEX);
         player.sendMessage(ChatPalette.YELLOW + "Now playing: " + ChatPalette.GOLD + songName);
+    }
+
+    public static String getCurrentSongName() {
+        return songNames.get(CURRENT_SONG_INDEX);
     }
 
     protected static void onSongEnd() {
@@ -108,11 +123,14 @@ public class CustomSoundtrack {
     }
 
     private static void play(int index) {
-        Collection<? extends Player> onlinePlayers = Bukkit.getOnlinePlayers();
+        Set<UUID> playerUUIDs = radioSongPlayer.getPlayerUUIDs();
 
         String songName = songNames.get(index);
-        for (Player player : onlinePlayers) {
-            player.sendMessage(ChatPalette.YELLOW + "Now playing: " + ChatPalette.GOLD + songName);
+        for (UUID uuid : playerUUIDs) {
+            Player player = Bukkit.getPlayer(uuid);
+            if (player != null) {
+                player.sendMessage(ChatPalette.YELLOW + "Now playing: " + ChatPalette.GOLD + songName);
+            }
         }
 
         radioSongPlayer.playSong(CURRENT_SONG_INDEX);

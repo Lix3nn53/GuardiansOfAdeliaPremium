@@ -126,10 +126,14 @@ public class GatheringManager {
         // Check item on rpg inventory slot if main hand is not found
         if (itemToUse == null) {
             ToolSlot toolSlot = rpgInventory.getToolSlot(modelToolType);
-            ItemStack itemOnSlot = toolSlot.getItemOnSlot();
-            if (!InventoryUtils.isAirOrNull(itemOnSlot)) {
-                gatheringToolType = GatheringToolType.materialToGatheringTool(itemOnSlot.getType());
-                itemToUse = itemOnSlot;
+            if (toolSlot != null) {
+                ItemStack itemOnSlot = toolSlot.getItemOnSlot();
+                if (!InventoryUtils.isAirOrNull(itemOnSlot)) {
+                    gatheringToolType = GatheringToolType.materialToGatheringTool(itemOnSlot.getType());
+                    itemToUse = itemOnSlot;
+                }
+            } else {
+                GuardiansOfAdelia.getInstance().getLogger().warning("Could not find tool slot for " + modelToolType.name());
             }
         }
 

@@ -44,6 +44,10 @@ public class SkillTreeData {
         int id = skill.getId();
 
         Integer invested = investedSkillPoints.get(id);
+        if (invested == null) {
+            return 0;
+        }
+
         return skill.getCurrentSkillLevel(invested);
     }
 

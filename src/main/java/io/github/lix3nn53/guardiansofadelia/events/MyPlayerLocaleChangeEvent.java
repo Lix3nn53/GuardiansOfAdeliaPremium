@@ -18,7 +18,7 @@ public class MyPlayerLocaleChangeEvent implements Listener {
 
         if (GuardianDataManager.hasGuardianData(player)) {
             GuardianData guardianData = GuardianDataManager.getGuardianData(player);
-            guardianData.setLanguage(player, locale);
+            guardianData.setLanguage(player, locale, true);
         }
     }
 }

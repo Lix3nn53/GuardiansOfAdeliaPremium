@@ -48,10 +48,10 @@ public class StatusEffectManager {
         }
     }
 
-    public static void removeStatus(LivingEntity livingEntity, StatusEffectType statusEffectType) {
-        if (!entityToStatusToDuration.containsKey(livingEntity)) return;
+    public static void removeStatus(LivingEntity target, StatusEffectType statusEffectType) {
+        if (!entityToStatusToDuration.containsKey(target)) return;
 
-        HashMap<StatusEffectType, StatusEffectDuration> typeToDuration = entityToStatusToDuration.get(livingEntity);
+        HashMap<StatusEffectType, StatusEffectDuration> typeToDuration = entityToStatusToDuration.get(target);
 
         StatusEffectDuration remove = typeToDuration.remove(statusEffectType);
         if (remove != null) {
@@ -59,7 +59,7 @@ public class StatusEffectManager {
         }
 
         if (typeToDuration.isEmpty()) {
-            entityToStatusToDuration.remove(livingEntity);
+            entityToStatusToDuration.remove(target);
         }
     }
 

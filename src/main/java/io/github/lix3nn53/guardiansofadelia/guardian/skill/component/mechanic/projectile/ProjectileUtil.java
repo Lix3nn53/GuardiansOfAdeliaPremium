@@ -49,23 +49,23 @@ public class ProjectileUtil {
             vBaseAngle = -vBaseAngle;
         }
         float hAngle = (float) Math.toDegrees(Math.acos(Math.max(-1f, Math.min(1f, (float) base.dot(X_VEC)))));
-        System.out.println("hAngle: " + hAngle);
+        // System.out.println("hAngle: " + hAngle);
         if (dir.getZ() < 0) {
             hAngle = -hAngle;
         }
 
         // Calculate directions
         float angleIncrement = angle / amount;
-        System.out.println("angleIncrement: " + angleIncrement);
+        // System.out.println("angleIncrement: " + angleIncrement);
         if (amount % 2 == 1) {
             angle += angleIncrement;
         }
         for (int i = 0; i < amount; i++) {
             // Initial calculations
             float bonusAngle = angle / 2 - angleIncrement * i;
-            System.out.println("bonusAngle: " + bonusAngle);
+            // System.out.println("bonusAngle: " + bonusAngle);
             float totalAngle = hAngle + bonusAngle;
-            System.out.println("totalAngle" + totalAngle);
+            // System.out.println("totalAngle" + totalAngle);
             float vAngle = (float) (vBaseAngle * Math.cos(Math.toRadians(bonusAngle)));
             float x = (float) Math.cos(vAngle);
 

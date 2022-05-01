@@ -20,6 +20,7 @@ import io.github.lix3nn53.guardiansofadelia.sounds.CustomSoundtrack;
 import io.github.lix3nn53.guardiansofadelia.sounds.MySongLoopEvent;
 import io.github.lix3nn53.guardiansofadelia.sounds.MySongNextEvent;
 import io.github.lix3nn53.guardiansofadelia.text.font.CustomCharacterLoader;
+import io.github.lix3nn53.guardiansofadelia.utilities.GlobalMessageLoop;
 import io.github.lix3nn53.guardiansofadelia.utilities.MyPacketListeners;
 import io.github.lix3nn53.guardiansofadelia.utilities.config.ConfigManager;
 import io.github.lix3nn53.guardiansofadelia.utilities.shutdown.AutomaticShutdown;
@@ -246,7 +247,7 @@ public class GuardiansOfAdelia extends JavaPlugin {
             w.setGameRule(GameRule.UNIVERSAL_ANGER, true); //Makes angered neutral mobs attack any nearby player, not just the player that angered them. Works best if forgiveDeadPlayers is disabled.
             w.setGameRule(GameRule.RANDOM_TICK_SPEED, 0); //DISABLED
             w.setGameRule(GameRule.SPAWN_RADIUS, 10); //DEFAULT
-            w.setGameRule(GameRule.MAX_ENTITY_CRAMMING, 24); //DEFAULT
+            w.setGameRule(GameRule.MAX_ENTITY_CRAMMING, 8); //DEFAULT
             w.setGameRule(GameRule.MAX_COMMAND_CHAIN_LENGTH, 0); //DISABLED
             w.setGameRule(GameRule.FREEZE_DAMAGE, false); //DISABLED
             w.setTime(3000);
@@ -311,5 +312,7 @@ public class GuardiansOfAdelia extends JavaPlugin {
         for (World world : Bukkit.getWorlds()) {
             world.setAutoSave(false);
         }
+
+        GlobalMessageLoop.start();
     }
 }

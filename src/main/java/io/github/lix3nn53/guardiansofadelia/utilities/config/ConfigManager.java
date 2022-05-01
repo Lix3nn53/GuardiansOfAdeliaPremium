@@ -62,6 +62,7 @@ public class ConfigManager {
         TranslationConfigurations.createConfigs();
         NPCConfiguration.createConfigs();
         ItemSkillConfigurations.createConfigs();
+        GlobalMessageConfigurations.createConfig();
     }
 
     public static void loadConfigALL() {
@@ -90,6 +91,7 @@ public class ConfigManager {
         MerchantConfiguration.loadConfigs();
         NPCConfiguration.loadConfigs();
         ItemSkillConfigurations.loadConfigs();
+        GlobalMessageConfigurations.loadConfig();
         loadHologramsConfig();
     }
 
