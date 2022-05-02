@@ -24,7 +24,6 @@ import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
-import org.bukkit.inventory.meta.ItemMeta;
 
 public class MyInventoryClickEvent implements Listener {
 
@@ -89,10 +88,11 @@ public class MyInventoryClickEvent implements Listener {
             return;
         }
 
-        if (event.getCurrentItem() == null) return;
+        /*if (event.getCurrentItem() == null) return;
         if (event.getCurrentItem().getType().equals(Material.AIR)) return;
         if (!(event.getCurrentItem().hasItemMeta())) return;
-        if (!(event.getCurrentItem().getItemMeta().hasDisplayName())) return;
+        if (!(event.getCurrentItem().getItemMeta().hasDisplayName())) return;*/
+        if (event.getClickedInventory() == null) return;
 
         if (ActiveGuiManager.hasActiveGui(player)) {
             Gui activeGui = ActiveGuiManager.getActiveGui(player);
@@ -122,9 +122,6 @@ public class MyInventoryClickEvent implements Listener {
 
             activeGui.onClick(event);
         }
-
-        ItemMeta itemMeta = current.getItemMeta();
-        String currentName = itemMeta.getDisplayName();
 
         if (currentType.equals(Material.ARROW)) {
             event.setCancelled(true);

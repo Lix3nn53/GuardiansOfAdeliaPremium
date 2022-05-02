@@ -31,6 +31,6 @@ public class GlobalMessageLoop {
 
             globalMessages.get(currentIndex).sendAll();
             currentIndex++;
-        }, 1200, 2400);
+        }, 1200, 6000);
     }
 }

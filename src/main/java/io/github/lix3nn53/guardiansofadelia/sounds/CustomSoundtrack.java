@@ -13,7 +13,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 
 /**
  * How to create soundtrack files:
@@ -64,10 +67,10 @@ public class CustomSoundtrack {
     }
 
     public static void startPlayLoopForEveryone() {
-        Collection<? extends Player> onlinePlayers = Bukkit.getOnlinePlayers();
+        /*Collection<? extends Player> onlinePlayers = Bukkit.getOnlinePlayers();
         for (Player player : onlinePlayers) {
             radioSongPlayer.addPlayer(player);
-        }
+        }*/
 
         radioSongPlayer.playSong(CURRENT_SONG_INDEX);
         radioSongPlayer.setPlaying(true);

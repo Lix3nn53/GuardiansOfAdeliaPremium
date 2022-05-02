@@ -51,7 +51,8 @@ public class ClassConfigurations {
     }
 
     private static void loadClass(String className, YamlConfiguration classConfig, List<String> skillsFile) {
-        GuardiansOfAdelia.getInstance().getLogger().info("className: " + className);
+        className = className.toUpperCase();
+        GuardiansOfAdelia.getInstance().getLogger().info("LOADING CLASS: " + className);
 
         String colorStr = classConfig.getString("color");
         GuardiansOfAdelia.getInstance().getLogger().info("colorStr: " + colorStr);

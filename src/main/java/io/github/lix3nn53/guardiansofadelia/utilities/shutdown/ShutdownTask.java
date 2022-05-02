@@ -11,7 +11,7 @@ public class ShutdownTask extends TimerTask {
 
     private static void showMessage(String message) {
         if (!message.isEmpty()) {
-            Bukkit.broadcastMessage(message);
+            GuardiansOfAdelia.getInstance().getServer().broadcastMessage(message);
         }
     }
 
@@ -43,11 +43,11 @@ public class ShutdownTask extends TimerTask {
     }
 
     enum Stage {
-        MINUTE_10("Server restarting in 5 minutes!", 0, DatabaseOperation.CLEAR_EXPIRED_PREMIUM_RANKS),
+        MINUTE_10("Server restarting in 10 minutes!", 0, DatabaseOperation.CLEAR_EXPIRED_PREMIUM_RANKS),
         MINUTE_5("Server restarting in 5 minutes!", 5 * 60),
-        MINUTE_4("Server restarting in 5 minutes!", 6 * 60),
-        MINUTE_3("Server restarting in 5 minutes!", 7 * 60),
-        MINUTE_2("Server restarting in 5 minutes!", 8 * 60),
+        MINUTE_4("Server restarting in 4 minutes!", 6 * 60),
+        MINUTE_3("Server restarting in 3 minutes!", 7 * 60),
+        MINUTE_2("Server restarting in 2 minutes!", 8 * 60),
         MINUTE_1("Server restarting in 60 seconds!", 9 * 60),
         SECONDS_30("Server restarting in 30 seconds!", 9 * 60 + 30),
         SECONDS_20("Server restarting in 20 seconds!", 9 * 60 + 40),

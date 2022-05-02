@@ -9,6 +9,7 @@ import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGCharacter;
 import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGCharacterStats;
 import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGClassStats;
 import io.github.lix3nn53.guardiansofadelia.guardian.element.ElementType;
+import io.github.lix3nn53.guardiansofadelia.items.list.OtherItems;
 import io.github.lix3nn53.guardiansofadelia.items.stats.GearStatType;
 import io.github.lix3nn53.guardiansofadelia.items.stats.StatPassive;
 import io.github.lix3nn53.guardiansofadelia.items.stats.StatUtils;
@@ -158,6 +159,13 @@ public class RPGInventory extends GuiGeneric {
 
         GuardianData guardianData = GuardianDataManager.getGuardianData(player);
         this.setItem(RPGSlotType.CHARACTER_INFO.getSlotNo(), new CharacterInfoSlot(player).getItem(guardianData));
+
+        ItemStack empty = OtherItems.getEmpty("-", new ArrayList<>());
+        for (int i = 0; i < this.getSize(); i++) {
+            if (this.getItem(i) == null) {
+                this.setItem(i, empty);
+            }
+        }
 
         // InventoryUtils.fillEmptySlotsWithGlass(this);
         this.setLocked(false);
@@ -1091,6 +1099,7 @@ public class RPGInventory extends GuiGeneric {
         String rpgClassStr = rpgCharacter.getRpgClassStr();
         if (clickedInventory.getType().equals(InventoryType.CHEST)) {
             event.setCancelled(true);
+            player.sendMessage(ChatColor.RED + "You cannot use this inventory.");
             if (cursorType.equals(Material.AIR)) {
                 boolean change = this.onCursorClickWithAir(player, slot, topInventory, event.isShiftClick());
 
