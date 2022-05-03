@@ -8,7 +8,6 @@ import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGCharacterStats
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.component.target.TargetHelper;
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.managers.TriggerListener;
 import io.github.lix3nn53.guardiansofadelia.rpginventory.slots.EggSlot;
-import io.github.lix3nn53.guardiansofadelia.text.ChatPalette;
 import io.github.lix3nn53.guardiansofadelia.utilities.EntityUtils;
 import io.github.lix3nn53.guardiansofadelia.utilities.LocationUtils;
 import io.github.lix3nn53.guardiansofadelia.utilities.PersistentDataContainerUtil;
@@ -38,9 +37,6 @@ import java.util.Optional;
 
 public class PetManager {
 
-    public static final long RESPAWN_DELAY = 20 * 300L;
-    // Pets Only
-    private final static List<Player> deathPetPlayerList = new ArrayList<>();
     private static final HashMap<Player, LivingEntity> ownerToPet = new HashMap<>();
     protected final static List<Player> petSkillOnCooldown = new ArrayList<>();
     // Pets and Companions
@@ -206,8 +202,8 @@ public class PetManager {
         if (isCompanion(livingEntity)) {
             Player owner = getOwner(livingEntity);
             companionToOwner.remove(livingEntity);
-            // On pet death
-            if (isCompanionAlsoPet(livingEntity)) {
+            // On pet death // pets dont die anymore
+            /*if (isCompanionAlsoPet(livingEntity)) {
                 owner.sendMessage(ChatPalette.RED + "Your pet is dead. Respawning in 2 minutes");
 
                 ownerToPet.remove(owner);
@@ -226,23 +222,22 @@ public class PetManager {
                         }
                     }
                 }.runTaskLater(GuardiansOfAdelia.getInstance(), RESPAWN_DELAY);
-            } else {
-                // On companion death
-                //TriggerListener.onPlayerCompanionDeath(owner, livingEntity); // REMOVED CUZ DEATH EVENT NOT RELIABLE
-                if (ownerToCompanions.containsKey(owner)) {
-                    List<LivingEntity> livingEntities = ownerToCompanions.get(owner);
-                    boolean remove = livingEntities.remove(livingEntity);
-                    if (remove && livingEntities.isEmpty()) {
-                        ownerToCompanions.remove(owner);
-                    }
+            } else {*/
+            // On companion death
+            //TriggerListener.onPlayerCompanionDeath(owner, livingEntity); // REMOVED CUZ DEATH EVENT NOT RELIABLE
+            if (ownerToCompanions.containsKey(owner)) {
+                List<LivingEntity> livingEntities = ownerToCompanions.get(owner);
+                boolean remove = livingEntities.remove(livingEntity);
+                if (remove && livingEntities.isEmpty()) {
+                    ownerToCompanions.remove(owner);
                 }
             }
         }
     }
 
-    public static boolean isPetDead(Player player) {
+    /*public static boolean isPetDead(Player player) {
         return deathPetPlayerList.contains(player);
-    }
+    }*/
 
     public static void onTakeDamage(LivingEntity livingEntity, float currentHealth, float finalDamage) {
         if (!livingEntity.isDead()) {
@@ -322,11 +317,18 @@ public class PetManager {
         }
     }*/
 
-    private static void removePet(Player player) {
+    private static void clearPet(Player player) {
         if (hasPet(player)) {
             LivingEntity activePet = getPet(player);
             companionToOwner.remove(activePet);
             ownerToPet.remove(player);
+            activePet.remove();
+        }
+    }
+
+    public static void despawnPet(Player player) {
+        if (hasPet(player)) {
+            LivingEntity activePet = getPet(player);
             activePet.remove();
         }
     }
@@ -456,14 +458,14 @@ public class PetManager {
                         }
                     }
                 } else {
-                    removePet(player);
+                    clearPet(player);
                 }
             }
         }
     }
 
     public static void onEggUnequip(Player player) {
-        removePet(player);
+        clearPet(player);
 
         player.removePotionEffect(PotionEffectType.SPEED);
 
@@ -479,12 +481,12 @@ public class PetManager {
     }
 
     public static void onPlayerQuit(Player player) {
-        removePet(player);
+        clearPet(player);
     }
 
     public static void respawnPet(Player player) {
         if (hasPet(player)) {
-            removePet(player);
+            despawnPet(player);
             Bukkit.getScheduler().runTaskLater(GuardiansOfAdelia.getInstance(), () -> onEggEquip(player), 20L);
         }
     }

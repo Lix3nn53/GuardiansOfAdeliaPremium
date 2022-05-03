@@ -135,14 +135,14 @@ public abstract class Minigame {
                 Party party = teams.get(teamNo);
                 for (Player member : party.getMembers()) {
                     if (member.isOnline()) {
-                        PetManager.onEggUnequip(member);
+                        PetManager.despawnPet(member);
 
                         member.teleport(startLocations.get(teamNo - 1));
 
                         new BukkitRunnable() {
                             @Override
                             public void run() {
-                                PetManager.onEggEquip(member);
+                                PetManager.respawnPet(member);
 
                                 if (GuardianDataManager.hasGuardianData(member)) {
                                     GuardianData guardianData = GuardianDataManager.getGuardianData(member);
@@ -731,7 +731,7 @@ public abstract class Minigame {
                                 }
                                 player.setGameMode(GameMode.ADVENTURE);
                                 player.teleport(respawnLocation);
-                                PetManager.onEggEquip(player);
+                                PetManager.respawnPet(player);
                                 break;
                             }
                         }

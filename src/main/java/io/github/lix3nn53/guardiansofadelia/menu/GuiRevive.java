@@ -4,10 +4,8 @@ import io.github.lix3nn53.guardiansofadelia.revive.TombManager;
 import io.github.lix3nn53.guardiansofadelia.text.ChatPalette;
 import io.github.lix3nn53.guardiansofadelia.utilities.gui.GuiGeneric;
 import org.bukkit.Material;
-import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
@@ -23,7 +21,7 @@ public class GuiRevive extends GuiGeneric {
 
         ItemStack respawn = new ItemStack(Material.IRON_HOE);
         ItemMeta itemMeta = respawn.getItemMeta();
-        itemMeta.setCustomModelData(18);
+        itemMeta.setCustomModelData(34);
         itemMeta.setDisplayName(ChatPalette.GREEN_DARK + "Respawn");
         ArrayList<String> lore = new ArrayList<>();
         lore.add("");
@@ -38,15 +36,15 @@ public class GuiRevive extends GuiGeneric {
 
         ItemStack soul = new ItemStack(Material.IRON_HOE);
         itemMeta = soul.getItemMeta();
-        itemMeta.setCustomModelData(10);
+        itemMeta.setCustomModelData(58);
         itemMeta.setDisplayName(ChatPalette.BLUE_LIGHT + "Search your tomb in soul mode");
         lore = new ArrayList<>();
         lore.add("");
         lore.add(ChatPalette.GRAY + "Find your tomb and left");
-        lore.add(ChatPalette.GRAY + "click near it to respawn");
-        lore.add(ChatPalette.RED + "Time limit is 2 minutes after your death");
+        lore.add(ChatPalette.GRAY + "click near it to respawn.");
+        lore.add(ChatPalette.RED + "Time limit is 2 minutes.");
         lore.add(ChatPalette.GRAY + "You will respawn here if you cant");
-        lore.add(ChatPalette.GRAY + "find your tomb in time");
+        lore.add(ChatPalette.GRAY + "find your tomb in time.");
         itemMeta.setLore(lore);
         soul.setItemMeta(itemMeta);
 
@@ -58,12 +56,15 @@ public class GuiRevive extends GuiGeneric {
     @Override
     public void onClick(InventoryClickEvent event) {
         Player player = (Player) event.getWhoClicked();
+        player.sendMessage("Revive gui click");
 
         Inventory clickedInventory = event.getClickedInventory();
 
         if (clickedInventory.getType().equals(InventoryType.CHEST)) {
+            player.sendMessage("Revive gui click chest");
             int slot = event.getSlot();
             if (slot == 5) {
+                player.sendMessage("Revive gui click soul");
                 TombManager.startSearch(player);
                 player.closeInventory(); //calling inventory close event after startSearch doesn't cancel search
             } else if (slot == 3) {
@@ -71,11 +72,5 @@ public class GuiRevive extends GuiGeneric {
                 player.closeInventory();
             }
         }
-    }
-
-    @Override
-    public void onClose(InventoryCloseEvent event) {
-        HumanEntity player = event.getPlayer();
-        TombManager.closeTombGui((Player) player);
     }
 }

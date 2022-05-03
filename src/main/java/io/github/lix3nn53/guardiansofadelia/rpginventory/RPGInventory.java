@@ -528,7 +528,7 @@ public class RPGInventory extends GuiGeneric {
             change = setRing(itemStack, player);
             rpgSlotType = RPGSlotType.RING;
         } else if (eggSlot.doesFit(itemStack)) {
-            if (PetManager.isPetDead(player) || petSpawnCooldownList.contains(player)) {
+            if (petSpawnCooldownList.contains(player)) {
                 return false;
             }
             if (!eggSlot.isEmpty()) {
@@ -750,7 +750,7 @@ public class RPGInventory extends GuiGeneric {
                 }
             }
         } else if (slot == RPGSlotType.PET.getSlotNo()) {
-            if (PetManager.isPetDead(player) || petSpawnCooldownList.contains(player)) {
+            if (petSpawnCooldownList.contains(player)) {
                 return false;
             }
             EggSlot rpgSlot = getEggSlot();
@@ -931,9 +931,6 @@ public class RPGInventory extends GuiGeneric {
                 return true;
             }
         } else if (slot == RPGSlotType.PET.getSlotNo()) {
-            if (PetManager.isPetDead(player)) {
-                return false;
-            }
             EggSlot rpgSlot = getEggSlot();
             if (!rpgSlot.isEmpty()) {
                 ItemStack itemOnSlot = rpgSlot.getItemOnSlot();

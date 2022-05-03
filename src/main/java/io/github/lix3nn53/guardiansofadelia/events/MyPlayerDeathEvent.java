@@ -6,10 +6,8 @@ import io.github.lix3nn53.guardiansofadelia.minigames.MiniGameManager;
 import io.github.lix3nn53.guardiansofadelia.revive.TombManager;
 import io.github.lix3nn53.guardiansofadelia.towns.Town;
 import io.github.lix3nn53.guardiansofadelia.towns.TownManager;
-import io.github.lix3nn53.guardiansofadelia.utilities.InventoryUtils;
 import io.github.lix3nn53.guardiansofadelia.utilities.managers.CharacterSelectionScreenManager;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -34,7 +32,7 @@ public class MyPlayerDeathEvent implements Listener {
             @Override
             public void run() {
                 player.spigot().respawn();
-                PetManager.onEggUnequip(player); // Deactivate Pet
+                PetManager.despawnPet(player); // Deactivate Pet
 
                 if (deathLocation.getWorld().getName().equals("world")) {
                     if (CharacterSelectionScreenManager.isPlayerInCharSelection(player)) {
@@ -44,16 +42,14 @@ public class MyPlayerDeathEvent implements Listener {
                     }
                 } else if (deathLocation.getWorld().getName().equals("tutorial")) {
                     player.teleport(CharacterSelectionScreenManager.getTutorialStart());
-                    PetManager.onEggEquip(player);
+                    PetManager.respawnPet(player);
                 } else if (MiniGameManager.isInMinigame(player)) {
                     MiniGameManager.onPlayerDeath(player);
                 } else {
                     Town town = TownManager.getTown(1);
                     player.teleport(town.getLocation());
-                    PetManager.onEggEquip(player);
+                    PetManager.respawnPet(player);
                 }
-
-                InventoryUtils.removeAllFromInventoryByMaterial(player.getInventory(), Material.COMPASS);
             }
         }.runTaskLater(GuardiansOfAdelia.getInstance(), 5L);
     }

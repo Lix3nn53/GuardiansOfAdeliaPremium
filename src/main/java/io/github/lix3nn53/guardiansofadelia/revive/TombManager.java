@@ -20,6 +20,8 @@ import java.util.List;
 
 public class TombManager {
 
+    private static final boolean tombCooldown = false;
+
     private static final HashMap<Player, Tomb> playerToTomb = new HashMap<>();
     private static final HashMap<String, List<Tomb>> chunkKeyToTomb = new HashMap<>();
     private static final List<Player> playersInTombCooldown = new ArrayList<>();
@@ -34,6 +36,7 @@ public class TombManager {
     public static void onDeath(Player player, Location deathLocation) {
         Town town = TownManager.getNearestTown(deathLocation);
         player.teleport(town.getLocation());
+        PetManager.respawnPet(player);
 
         if (playersInTombCooldown.contains(player)) {
             player.sendMessage(ChatPalette.RED + "You can't search for your tomb again. Your soul needs to rest for 5 minutes.");
@@ -80,22 +83,23 @@ public class TombManager {
                 player.addPotionEffect(new PotionEffect(PotionEffectType.LEVITATION, 40, 1));
                 player.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 60, 1));
                 player.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, 60, 1));
-                PetManager.onEggEquip(player);
+
+                clearIfNotSearching(player);
             }
         }
     }
 
-    public static void closeTombGui(Player player) {
+    public static void clearIfNotSearching(Player player) {
         if (!playerToTomb.containsKey(player)) {
-            PetManager.onEggEquip(player);
-
             playerToDeathLocation.remove(player);
             playerToSpawnTown.remove(player);
         }
     }
 
     public static void startSearch(Player player) {
-        if (!playerToDeathLocation.containsKey(player)) return;
+        if (!playerToDeathLocation.containsKey(player)) {
+            return;
+        }
 
         Location deathLocation = playerToDeathLocation.get(player);
         Town town = playerToSpawnTown.get(player);
@@ -111,7 +115,6 @@ public class TombManager {
         tombs.add(tomb);
         chunkKeyToTomb.put(chunkKey, tombs);
         playerToTomb.put(player, tomb);
-        playersInTombCooldown.add(player);
 
         new BukkitRunnable() {
 
@@ -135,7 +138,6 @@ public class TombManager {
                         player.setGameMode(GameMode.ADVENTURE);
                         player.teleport(town.getLocation());
                         player.sendMessage(ChatPalette.RED + "Tomb search timeout");
-                        PetManager.onEggEquip(player);
                         cancel();
                     } else {
                         player.sendMessage(ChatPalette.BLUE_LIGHT.toString() + ((timeLimitIn10Seconds * 10) - (10 * count)) + " seconds left for your soul to give up");
@@ -147,13 +149,17 @@ public class TombManager {
             }
         }.runTaskTimer(GuardiansOfAdelia.getInstance(), 20L, 20 * 10L);
 
-        //remove from playersInTombCooldown after 5 minutes
-        new BukkitRunnable() {
+        if (tombCooldown) {
+            playersInTombCooldown.add(player);
 
-            @Override
-            public void run() {
-                playersInTombCooldown.remove(player);
-            }
-        }.runTaskLaterAsynchronously(GuardiansOfAdelia.getInstance(), 20 * 300L);
+            //remove from playersInTombCooldown after 5 minutes
+            new BukkitRunnable() {
+
+                @Override
+                public void run() {
+                    playersInTombCooldown.remove(player);
+                }
+            }.runTaskLaterAsynchronously(GuardiansOfAdelia.getInstance(), 20 * 300L);
+        }
     }
 }
