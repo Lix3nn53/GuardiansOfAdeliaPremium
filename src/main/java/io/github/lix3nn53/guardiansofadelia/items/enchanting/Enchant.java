@@ -141,8 +141,7 @@ public class Enchant {
     }
 
     private void applyChange(boolean success) {
-        ItemMeta itemMeta = this.itemStack.getItemMeta();
-        List<String> lore = itemMeta.getLore();
+        List<String> lore = this.itemStack.getItemMeta().getLore();
 
         GearStatType type = StatUtils.getStatType(itemStack.getType());
 
@@ -206,9 +205,10 @@ public class Enchant {
                     }
                     lore.set(lineToChange, statString + rootValue + "[+" + (oldBonus + bonus) + "]");
                 }
-                itemMeta.setLore(lore);
             }
 
+            ItemMeta itemMeta = this.itemStack.getItemMeta();
+            itemMeta.setLore(lore);
             this.itemStack.setItemMeta(itemMeta);
 
             if (type.equals(GearStatType.WEAPON_GEAR)) {
@@ -227,7 +227,8 @@ public class Enchant {
             }
 
             int bonus = EnchantManager.getBonusPassive(gearLevel, enchantLevel);
-            if (!success) bonus = -bonus;
+            int signMultiplier = 1;
+            if (!success) signMultiplier = -1;
 
             // Attributes start
             HashMap<AttributeType, Integer> attributeTypeToLineToChange = new HashMap<>();
@@ -256,7 +257,13 @@ public class Enchant {
             for (AttributeType attributeType : AttributeType.values()) {
                 int baseValue = stat.getAttributeValue(attributeType);
                 float decreaseOfAttribute = stat.getDecreaseOfAttribute(attributeType);
+
                 int currentBonus = (int) (bonus * decreaseOfAttribute + 0.5);
+                if (currentBonus < 1) {
+                    currentBonus = 1;
+                }
+                currentBonus = currentBonus * signMultiplier;
+
                 int nextValue = baseValue + currentBonus;
                 if (attributeTypeToLineToChange.containsKey(attributeType)) {
                     Integer lineToChange = attributeTypeToLineToChange.get(attributeType);
@@ -317,7 +324,13 @@ public class Enchant {
             for (ElementType elementType : ElementType.values()) {
                 int baseValue = stat.getElementValue(elementType);
                 float decreaseOfAttribute = stat.getDecreaseOfElement(elementType);
+
                 int currentBonus = (int) (bonus * decreaseOfAttribute + 0.5);
+                if (currentBonus < 1) {
+                    currentBonus = 1;
+                }
+                currentBonus = currentBonus * signMultiplier;
+
                 int nextValue = baseValue + currentBonus;
                 if (elementTypeToLineToChange.containsKey(elementType)) {
                     Integer lineToChange = elementTypeToLineToChange.get(elementType);
@@ -343,6 +356,8 @@ public class Enchant {
                     elementTypeToNextValues.put(elementType, nextValue);
                 }
             }
+
+            ItemMeta itemMeta = this.itemStack.getItemMeta();
             itemMeta.setLore(lore);
             this.itemStack.setItemMeta(itemMeta);
 

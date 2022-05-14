@@ -24,6 +24,11 @@ public class GearMechanicSkillManager {
         if (weaponGearTypeIntegerHashMap == null) {
             return -1;
         }
+
+        if (!weaponGearTypeIntegerHashMap.containsKey(weaponGearType)) {
+            return -1;
+        }
+
         return weaponGearTypeIntegerHashMap.get(weaponGearType);
     }
 

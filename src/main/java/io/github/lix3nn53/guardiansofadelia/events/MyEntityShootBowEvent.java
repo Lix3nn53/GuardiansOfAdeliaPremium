@@ -57,10 +57,8 @@ public class MyEntityShootBowEvent implements Listener {
                             player.getInventory().setItemInOffHand(arrow);
 
                             Entity projectile = event.getProjectile();
-                            if (type.equals(Material.CROSSBOW)) {
-                                if (projectile instanceof Arrow) {
-                                    TriggerListener.onPlayerShootCrossbow(player, (Arrow) projectile);
-                                }
+                            if (projectile instanceof Arrow) {
+                                TriggerListener.onPlayerShootCrossbow(player, (Arrow) projectile);
                             }
                         }
                     }

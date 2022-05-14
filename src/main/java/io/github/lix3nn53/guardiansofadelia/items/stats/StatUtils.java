@@ -197,9 +197,9 @@ public class StatUtils {
                 }
             }
 
-            if (weaponGearType.requiresSkillToUnlock()) {
-                int requiredSkillId = GearMechanicSkillManager.getRequiredSkillId(rpgClassStr, weaponGearType);
-                player.sendMessage(ChatPalette.RED + "You need to learn " + requiredSkillId + " to unlock " + weaponGearType.getDisplayName());
+            int requiredSkillId = GearMechanicSkillManager.getRequiredSkillId(rpgClassStr, weaponGearType);
+            if (requiredSkillId != -1) {
+                // player.sendMessage(ChatPalette.RED + "You need to learn " + requiredSkillId + " to unlock " + weaponGearType.getDisplayName());
 
                 GuardianData guardianData = GuardianDataManager.getGuardianData(player);
                 RPGCharacter activeCharacter = guardianData.getActiveCharacter();

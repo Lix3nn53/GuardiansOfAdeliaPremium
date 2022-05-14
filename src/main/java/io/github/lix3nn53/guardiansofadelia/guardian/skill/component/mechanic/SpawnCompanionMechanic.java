@@ -70,9 +70,13 @@ public class SpawnCompanionMechanic extends MechanicComponent {
 
         if (configurationSection.contains("maxAmountVar")) {
             this.maxAmountVar = Optional.of(configurationSection.getString("maxAmountVar"));
-            this.maxAmountIfVarEmpty = configurationSection.getInt("maxAmountIfVarEmpty");
         } else {
             this.maxAmountVar = Optional.empty();
+        }
+
+        if (configurationSection.contains("maxAmountIfVarEmpty")) {
+            this.maxAmountIfVarEmpty = configurationSection.getInt("maxAmountIfVarEmpty");
+        } else {
             this.maxAmountIfVarEmpty = 0;
         }
     }

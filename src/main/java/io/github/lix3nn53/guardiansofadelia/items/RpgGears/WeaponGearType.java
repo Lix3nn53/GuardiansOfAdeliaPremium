@@ -254,17 +254,4 @@ public enum WeaponGearType {
 
         return true;
     }
-
-    public boolean requiresSkillToUnlock() {
-        switch (this) {
-            case SWORD, GREAT_SWORD, DAGGER, BOW, CROSSBOW, STAFF, WAND -> {
-                return false;
-            }
-            case BATTLE_AXE, WAR_HAMMER, SPEAR -> {
-                return true;
-            }
-        }
-
-        return false;
-    }
 }

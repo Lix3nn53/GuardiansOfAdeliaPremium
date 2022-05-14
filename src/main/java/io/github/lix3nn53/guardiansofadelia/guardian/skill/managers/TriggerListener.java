@@ -52,14 +52,18 @@ public class TriggerListener {
         if (playerToSkillToTriggerClassToTrigger.containsKey(player)) {
             HashMap<Integer, HashMap<String, TriggerComponent>> map = playerToSkillToTriggerClassToTrigger.get(player);
 
-            HashMap<String, TriggerComponent> triggers = map.get(skillId);
-            triggers.remove(triggerType);
-            if (map.isEmpty()) {
-                playerToSkillToTriggerClassToTrigger.remove(player);
+            if (map.containsKey(skillId)) {
+                HashMap<String, TriggerComponent> triggers = map.get(skillId);
+                triggers.remove(triggerType);
+                if (map.isEmpty()) {
+                    playerToSkillToTriggerClassToTrigger.remove(player);
+                } else {
+                    playerToSkillToTriggerClassToTrigger.put(player, map);
+                }
+                if (CommandAdmin.DEBUG_MODE) player.sendMessage("REMOVE trigger, new size: " + map.size());
             } else {
-                playerToSkillToTriggerClassToTrigger.put(player, map);
+                if (CommandAdmin.DEBUG_MODE) player.sendMessage("REMOVE trigger, map empty for skillid: " + skillId);
             }
-            if (CommandAdmin.DEBUG_MODE) player.sendMessage("REMOVE trigger, new size: " + map.size());
         }
     }
 
