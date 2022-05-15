@@ -62,7 +62,7 @@ public class RPGCharacterStats {
 
     private final float baseAbilityHaste = 0;
     private final float baseCriticalChance = 0.01f;
-    private final float baseCriticalDamageDamage = 1.5f;
+    private final float baseCriticalDamage = 1.4f;
     //armor slots
     private ArmorStatHolder helmet;
     private ArmorStatHolder chestplate;
@@ -97,6 +97,7 @@ public class RPGCharacterStats {
         attributeHashMap.put(AttributeType.BONUS_MAX_HEALTH, new Attribute(AttributeType.BONUS_MAX_HEALTH));
         attributeHashMap.put(AttributeType.BONUS_MAX_MANA, new Attribute(AttributeType.BONUS_MAX_MANA));
         attributeHashMap.put(AttributeType.BONUS_CRITICAL_CHANCE, new Attribute(AttributeType.BONUS_CRITICAL_CHANCE));
+        attributeHashMap.put(AttributeType.BONUS_CRITICAL_DAMAGE, new Attribute(AttributeType.BONUS_CRITICAL_DAMAGE));
 
         elementHashMap.put(ElementType.FIRE, new Element(ElementType.FIRE));
         elementHashMap.put(ElementType.WATER, new Element(ElementType.WATER));
@@ -329,8 +330,8 @@ public class RPGCharacterStats {
         return chance;
     }
 
-    public float getTotalCriticalDamage() {
-        return baseCriticalDamageDamage + buffCriticalDamage;
+    public float getTotalCriticalDamage(RPGClassStats rpgClassStats) {
+        return baseCriticalDamage + attributeHashMap.get(AttributeType.BONUS_CRITICAL_DAMAGE).getIncrement(player.getLevel(), rpgClassStr, rpgClassStats);
     }
 
     public float getTotalAbilityHaste() {

@@ -323,7 +323,7 @@ public class MyEntityDamageByEntityEvent implements Listener {
                     float totalCriticalChance = rpgCharacterStats.getTotalCriticalChance(rpgClassStats);
                     float random = (float) Math.random();
                     if (random <= totalCriticalChance) {
-                        damage *= rpgCharacterStats.getTotalCriticalDamage();
+                        damage *= rpgCharacterStats.getTotalCriticalDamage(rpgClassStats);
                         isCritical = true;
                         Particle particle = Particle.CRIT;
                         // ParticleShapes.playSingleParticle(targetLocation, particle, null);

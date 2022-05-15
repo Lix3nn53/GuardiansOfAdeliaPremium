@@ -194,7 +194,7 @@ public enum WeaponGearType {
 
     public int getBonusAbilityHaste() {
         if (this.equals(WeaponGearType.STAFF)) {
-            return 20;
+            return 30;
         }
 
         return 0;
@@ -220,7 +220,7 @@ public enum WeaponGearType {
             case WAR_HAMMER:
                 return ChatPalette.PURPLE_LIGHT + "Sweep Attack";
             case STAFF:
-                return ChatPalette.PURPLE_LIGHT + "Ability Haste: " + ChatPalette.GRAY + "+20";
+                return ChatPalette.PURPLE_LIGHT + "Ability Haste: " + ChatPalette.GRAY + "+30";
         }
 
         return null;

@@ -99,7 +99,7 @@ guide:
       type: One Handed
       speed: Fast
       range: Magic
-      bonus: 'Ability Haste: +20'
+      bonus: 'Ability Haste: +30'
       crit_chance: +5%
     wand:
       h: Wand

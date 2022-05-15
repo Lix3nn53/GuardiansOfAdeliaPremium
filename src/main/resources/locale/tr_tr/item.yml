@@ -101,7 +101,7 @@ guide:
       type: Çift Elli
       speed: Hızlı
       range: Büyü
-      bonus: 'Yetenek Hızı: +20'
+      bonus: 'Yetenek Hızı: +30'
       crit_chance: +5%
     wand:
       h: Asa

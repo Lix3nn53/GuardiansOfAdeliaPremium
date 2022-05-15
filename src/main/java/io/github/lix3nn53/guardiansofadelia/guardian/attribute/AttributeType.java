@@ -10,7 +10,8 @@ public enum AttributeType {
     BONUS_ELEMENT_DEFENSE,
     BONUS_MAX_HEALTH,
     BONUS_MAX_MANA,
-    BONUS_CRITICAL_CHANCE;
+    BONUS_CRITICAL_CHANCE,
+    BONUS_CRITICAL_DAMAGE;
 
     public String getCustomName() {
         switch (this) {
@@ -24,6 +25,8 @@ public enum AttributeType {
                 return ChatPalette.BLUE + "Bonus Max Mana";
             case BONUS_CRITICAL_CHANCE:
                 return ChatPalette.GOLD + "Bonus Critical Chance";
+            case BONUS_CRITICAL_DAMAGE:
+                return ChatPalette.RED + "Bonus Critical Damage";
         }
         return "attributeCustomName";
     }
@@ -40,6 +43,8 @@ public enum AttributeType {
                 return ChatPalette.BLUE + "MP";
             case BONUS_CRITICAL_CHANCE:
                 return ChatPalette.GOLD + "Crit%";
+            case BONUS_CRITICAL_DAMAGE:
+                return ChatPalette.RED + "CritDmg%";
         }
         return "attributeCustomName";
     }
@@ -56,6 +61,8 @@ public enum AttributeType {
                 return getIncrementPerPoint() + " bonus max mana per point";
             case BONUS_CRITICAL_CHANCE:
                 return getIncrementPerPoint() * 100 + "% bonus critical chance per point";
+            case BONUS_CRITICAL_DAMAGE:
+                return getIncrementPerPoint() * 100 + "% bonus critical damage per point";
         }
         return "attributeDescription";
     }
@@ -72,6 +79,8 @@ public enum AttributeType {
                 return 1;
             case BONUS_CRITICAL_CHANCE:
                 return 0.0005f;
+            case BONUS_CRITICAL_DAMAGE:
+                return 0.005f;
         }
         return 1;
     }
@@ -88,6 +97,8 @@ public enum AttributeType {
                 return 0.05f;
             case BONUS_CRITICAL_CHANCE:
                 return 0.05f;
+            case BONUS_CRITICAL_DAMAGE:
+                return 0.04f;
         }
         return 1;
     }
@@ -100,6 +111,8 @@ public enum AttributeType {
             case BONUS_ELEMENT_DEFENSE:
                 return (int) (value * getIncrementPerPoint() + 0.5) + "";
             case BONUS_CRITICAL_CHANCE:
+                return new DecimalFormat("##.##").format(value * getIncrementPerPoint() * 100) + "%";
+            case BONUS_CRITICAL_DAMAGE:
                 return new DecimalFormat("##.##").format(value * getIncrementPerPoint() * 100) + "%";
         }
 

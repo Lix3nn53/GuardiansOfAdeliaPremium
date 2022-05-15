@@ -2,6 +2,7 @@ package io.github.lix3nn53.guardiansofadelia.rpginventory.slots;
 
 import io.github.lix3nn53.guardiansofadelia.guardian.GuardianData;
 import io.github.lix3nn53.guardiansofadelia.guardian.GuardianDataManager;
+import io.github.lix3nn53.guardiansofadelia.guardian.attribute.AttributeType;
 import io.github.lix3nn53.guardiansofadelia.guardian.character.*;
 import io.github.lix3nn53.guardiansofadelia.guardian.element.Element;
 import io.github.lix3nn53.guardiansofadelia.guardian.element.ElementType;
@@ -54,8 +55,11 @@ public class CharacterInfoSlot {
                 int expReq = RPGCharacterExperienceManager.getRequiredExperience(level);
                 int maxHealth = (int) (player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue() + 0.5);
                 int health = (int) (player.getHealth() + 0.5);
+
                 float criticalChance = rpgCharacterStats.getTotalCriticalChance(rpgClassStats) * 100;
-                float criticalDamage = rpgCharacterStats.getTotalCriticalDamage() * 100;
+                int critChanceAttr = rpgClassStats.getInvested(AttributeType.BONUS_CRITICAL_CHANCE) + rpgCharacterStats.getAttribute(AttributeType.BONUS_CRITICAL_CHANCE).getBonusFromEquipment();
+                float criticalDamage = rpgCharacterStats.getTotalCriticalDamage(rpgClassStats) * 100;
+                int critDamageAttr = rpgClassStats.getInvested(AttributeType.BONUS_CRITICAL_DAMAGE) + rpgCharacterStats.getAttribute(AttributeType.BONUS_CRITICAL_DAMAGE).getBonusFromEquipment();
 
                 final int totalDefense = rpgCharacterStats.getTotalElementDefense(rpgClassStats);
                 float defenseReduction = StatUtils.getDefenseReduction(totalDefense);
@@ -75,9 +79,9 @@ public class CharacterInfoSlot {
                 lore.add("");
                 lore.add(ChatPalette.RED + "✦ " + Translation.t(viewerData, "attribute.element_damage") + ": " + ChatPalette.GRAY + rpgCharacterStats.getTotalElementDamage(player, rpgClassStr, rpgClassStats));
                 lore.add(ChatPalette.BLUE_LIGHT + "■ " + Translation.t(viewerData, "attribute.element_defense") + ": " + ChatPalette.GRAY + totalDefense + " (" + new DecimalFormat("##.##").format((1.0 - defenseReduction) * 100) + "% " + Translation.t(viewerData, "attribute.reduction") + ")");
-                lore.add(ChatPalette.GOLD + "☆ " + Translation.t(viewerData, "attribute.crit_chance") + ": " + ChatPalette.GRAY + new DecimalFormat("##.##").format(criticalChance) + "%");
+                lore.add(ChatPalette.GOLD + "☆ " + Translation.t(viewerData, "attribute.crit_chance") + ": " + ChatPalette.GRAY + critChanceAttr + " (" + new DecimalFormat("##.##").format(criticalChance) + "%)");
                 lore.add("");
-                lore.add(ChatPalette.GOLD + "? " + Translation.t(viewerData, "attribute.crit_damage") + ": " + ChatPalette.GRAY + new DecimalFormat("##.##").format(criticalDamage) + "%");
+                lore.add(ChatPalette.GOLD + "? " + Translation.t(viewerData, "attribute.crit_damage") + ": " + ChatPalette.GRAY + critDamageAttr + " (" + new DecimalFormat("##.##").format(criticalDamage) + "%)");
                 lore.add(ChatPalette.BLUE_LIGHT + "? " + Translation.t(viewerData, "attribute.ability_haste") + ": " + ChatPalette.GRAY + abilityHaste + " (" + new DecimalFormat("##.##").format((1.0 - cooldownReduction) * 100) + "% " + Translation.t(viewerData, "attribute.reduction") + ")");
 
                 /*lore.add("");

@@ -1,6 +1,7 @@
 package io.github.lix3nn53.guardiansofadelia.guardian;
 
 import io.github.lix3nn53.guardiansofadelia.GuardiansOfAdelia;
+import io.github.lix3nn53.guardiansofadelia.chat.ChatChannelData;
 import io.github.lix3nn53.guardiansofadelia.chat.PremiumRank;
 import io.github.lix3nn53.guardiansofadelia.chat.StaffRank;
 import io.github.lix3nn53.guardiansofadelia.economy.bazaar.Bazaar;
@@ -47,6 +48,8 @@ public class GuardianData {
     private final DailyRewardInfo dailyRewardInfo = new DailyRewardInfo();
 
     private String language = null;
+
+    private final ChatChannelData chatChannelData = new ChatChannelData();
 
     public RPGCharacter getActiveCharacter() {
         return activeCharacter;
@@ -241,5 +244,9 @@ public class GuardianData {
             language = Translation.DEFAULT_LANG;
         }
         this.language = language;
+    }
+
+    public ChatChannelData getChatChannelData() {
+        return chatChannelData;
     }
 }

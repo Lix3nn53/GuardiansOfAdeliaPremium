@@ -271,7 +271,7 @@ public class Enchant {
 
                     String statString = attributeTypeToPrefix.get(attributeType);
                     if (this.currentEnchantLevel == 1 && !success) {
-                        lore.set(lineToChange, statString + nextValue);
+                        lore.set(lineToChange, statString + attributeType.getIncrementLore(nextValue));
                     } else {
                         String[] split = line.split("\\[\\+");
                         int oldBonus = 0;
@@ -283,7 +283,7 @@ public class Enchant {
                             String[] splitAgain = split[0].split("\\+");
                             rootValue = Integer.parseInt(splitAgain[1]);
                         }
-                        lore.set(lineToChange, statString + rootValue + "[+" + (oldBonus + currentBonus) + "]");
+                        lore.set(lineToChange, statString + attributeType.getIncrementLore(rootValue) + "[+" + attributeType.getIncrementLore(oldBonus + currentBonus) + "]");
                     }
 
                     attributeTypeToNextValues.put(attributeType, nextValue);

@@ -67,12 +67,14 @@ public class ClassConfigurations {
         int attributeMaxHealth = classConfig.getInt("attributeMaxHealth");
         int attributeMaxMana = classConfig.getInt("attributeMaxMana");
         int attributeCriticalChance = classConfig.getInt("attributeCriticalChance");
+        int attributeCriticalDamage = classConfig.getInt("attributeCriticalDamage");
         HashMap<AttributeType, Integer> attributeTiers = new HashMap<>();
         attributeTiers.put(AttributeType.BONUS_ELEMENT_DAMAGE, attributeElementDamage);
         attributeTiers.put(AttributeType.BONUS_ELEMENT_DEFENSE, attributeElementDefense);
         attributeTiers.put(AttributeType.BONUS_MAX_HEALTH, attributeMaxHealth);
         attributeTiers.put(AttributeType.BONUS_MAX_MANA, attributeMaxMana);
         attributeTiers.put(AttributeType.BONUS_CRITICAL_CHANCE, attributeCriticalChance);
+        attributeTiers.put(AttributeType.BONUS_CRITICAL_DAMAGE, attributeCriticalDamage);
 
         HashMap<Integer, Skill> skillSet = new HashMap<>();
         for (String skillTierStr : skillsFile) {

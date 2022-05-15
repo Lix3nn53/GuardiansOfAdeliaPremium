@@ -26,7 +26,7 @@ import java.util.List;
 public class GuiCharacterStatInvest extends GuiGeneric {
 
     public GuiCharacterStatInvest(int pointsLeft, GuardianData guardianData, RPGCharacterStats rpgCharacterStats) {
-        super(27, CustomCharacterGui.MENU_27_FLAT.toString() + ChatPalette.BLACK + "Stat Points (Points: " + pointsLeft + ")", 0);
+        super(54, CustomCharacterGui.MENU_54_FLAT.toString() + ChatPalette.BLACK + "Stat Points (Points: " + pointsLeft + ")", 0);
 
         RPGCharacter activeCharacter = guardianData.getActiveCharacter();
         RPGClassStats rpgClassStats = activeCharacter.getRPGClassStats();
@@ -70,7 +70,7 @@ public class GuiCharacterStatInvest extends GuiGeneric {
         lore.set(1, ChatPalette.YELLOW + bonusMaxMana.getAttributeType().getDescription());
         itemMeta.setLore(lore);
         itemStack.setItemMeta(itemMeta);
-        this.setItem(20, itemStack);
+        this.setItem(28, itemStack);
 
         Attribute bonusCriticalChance = rpgCharacterStats.getAttribute(AttributeType.BONUS_CRITICAL_CHANCE);
         invested = rpgClassStats.getInvested(AttributeType.BONUS_CRITICAL_CHANCE);
@@ -78,7 +78,15 @@ public class GuiCharacterStatInvest extends GuiGeneric {
         lore.set(1, ChatPalette.YELLOW + bonusCriticalChance.getAttributeType().getDescription());
         itemMeta.setLore(lore);
         itemStack.setItemMeta(itemMeta);
-        this.setItem(24, itemStack);
+        this.setItem(31, itemStack);
+
+        Attribute bonusCriticalDamage = rpgCharacterStats.getAttribute(AttributeType.BONUS_CRITICAL_DAMAGE);
+        invested = rpgClassStats.getInvested(AttributeType.BONUS_CRITICAL_DAMAGE);
+        itemMeta.setDisplayName(AttributeType.BONUS_CRITICAL_DAMAGE.getCustomName() + " (Invested: " + invested + ")");
+        lore.set(1, ChatPalette.YELLOW + bonusCriticalDamage.getAttributeType().getDescription());
+        itemMeta.setLore(lore);
+        itemStack.setItemMeta(itemMeta);
+        this.setItem(34, itemStack);
 
         ItemStack backButton = OtherItems.getBackButton("Character Menu");
         this.setItem(0, backButton);
@@ -117,11 +125,14 @@ public class GuiCharacterStatInvest extends GuiGeneric {
                 attr = rpgCharacterStats.getAttribute(AttributeType.BONUS_ELEMENT_DEFENSE);
             } else if (slot == 16) {
                 attr = rpgCharacterStats.getAttribute(AttributeType.BONUS_MAX_HEALTH);
-            } else if (slot == 20) {
+            } else if (slot == 28) {
                 attr = rpgCharacterStats.getAttribute(AttributeType.BONUS_MAX_MANA);
-            } else if (slot == 24) {
+            } else if (slot == 31) {
                 attr = rpgCharacterStats.getAttribute(AttributeType.BONUS_CRITICAL_CHANCE);
+            } else if (slot == 34) {
+                attr = rpgCharacterStats.getAttribute(AttributeType.BONUS_CRITICAL_DAMAGE);
             }
+
             if (attr != null) {
                 if (event.isLeftClick()) {
                     int pointsLeftToSpend = rpgClassStats.getAttributePointsLeftToSpend();

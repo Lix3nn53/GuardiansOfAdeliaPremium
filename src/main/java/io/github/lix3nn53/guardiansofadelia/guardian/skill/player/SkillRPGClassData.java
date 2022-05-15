@@ -97,19 +97,21 @@ public class SkillRPGClassData {
 
         Skill skill = skillTree.getSkill(skillId);
 
-        HashMap<Integer, SkillTreeDirection> childSkills = skill.getChildSkills();
-        for (Integer childSkillId : childSkills.keySet()) {
-            int investedInChild = skillTreeData.getInvestedSkillPoints(childSkillId);
-            if (investedInChild > 0) {
-                player.sendMessage("You can't downgrade skill because you have invested in child skill.");
-                return false;
-            }
-        }
-
         int invested = skillTreeData.getInvestedSkillPoints(skillId);
         int currentSkillLevel = skill.getCurrentSkillLevel(invested);
 
         if (currentSkillLevel <= 0) return false;
+
+        if (currentSkillLevel == 1) {
+            HashMap<Integer, SkillTreeDirection> childSkills = skill.getChildSkills();
+            for (Integer childSkillId : childSkills.keySet()) {
+                int investedInChild = skillTreeData.getInvestedSkillPoints(childSkillId);
+                if (investedInChild > 0) {
+                    player.sendMessage("You can't downgrade skill because you have invested in child skill.");
+                    return false;
+                }
+            }
+        }
 
         List<InitializeTrigger> initializeTriggers = skill.getInitializeTriggers();
         for (InitializeTrigger initializeTrigger : initializeTriggers) {
