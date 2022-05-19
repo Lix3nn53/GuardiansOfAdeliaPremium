@@ -53,6 +53,8 @@ public class SkillComponentLoader {
             return new ParticleMechanic(configurationSection);
         } else if (componentType.equals(AreaTarget.class.getSimpleName())) {
             return new AreaTarget(configurationSection);
+        } else if (componentType.equals(LookAtNearestTarget.class.getSimpleName())) {
+            return new LookAtNearestTarget(configurationSection);
         } else if (componentType.equals(ConeTarget.class.getSimpleName())) {
             return new ConeTarget(configurationSection);
         } else if (componentType.equals(CubeTarget.class.getSimpleName())) {

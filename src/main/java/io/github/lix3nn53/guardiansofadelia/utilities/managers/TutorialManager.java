@@ -42,7 +42,7 @@ public class TutorialManager {
             RPGCharacterStats rpgCharacterStats = rpgCharacter.getRpgCharacterStats();
             rpgCharacterStats.setTotalExp(totalExpForLevel);
 
-            int totalExpClass = RPGClassExperienceManager.getTotalRequiredExperience(20);
+            int totalExpClass = RPGClassExperienceManager.getTotalRequiredExperience(RPGClassExperienceManager.MAX_LEVEL);
             Set<String> classes = RPGClassManager.getClasses();
             for (String className : classes) {
                 RPGClass rpgClassInner = RPGClassManager.getClass(className);

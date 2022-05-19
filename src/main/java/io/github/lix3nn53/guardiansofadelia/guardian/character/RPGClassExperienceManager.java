@@ -6,9 +6,10 @@ import java.util.List;
 public class RPGClassExperienceManager {
 
     private static final List<Integer> levelToRequiredExperience = new ArrayList<>();
+    public static final int MAX_LEVEL = 40;
 
     static {
-        for (int level = 1; level <= 20; level++) {
+        for (int level = 1; level <= MAX_LEVEL; level++) {
             int experience = (int) (10 + Math.round(5 * Math.pow(level, 3) / 4) + 0.5); // exp formula
             levelToRequiredExperience.add(experience);
         }
@@ -16,13 +17,13 @@ public class RPGClassExperienceManager {
 
     public static int getLevel(int totalExp) {
         int experience = 0;
-        for (int i = 0; i < 20; i++) {
+        for (int i = 0; i < MAX_LEVEL; i++) {
             experience += levelToRequiredExperience.get(i);
             if (totalExp < experience) {
                 return i + 1;
             }
         }
-        return 20;
+        return MAX_LEVEL;
     }
 
     public static int getRequiredExperience(int level) {

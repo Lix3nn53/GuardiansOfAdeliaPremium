@@ -159,7 +159,7 @@ public class DungeonTheme {
                 chestItems.addAll(ItemPoolGenerator.generatePassives(ItemTier.LEGENDARY, gearLevel, false, true));
                 break;
             case PET:
-                chestItems.addAll(ItemPoolGenerator.generateEggs(gearLevel));
+                chestItems.addAll(ItemPoolGenerator.generateEggs(gearLevel, 1));
                 break;
         }
 

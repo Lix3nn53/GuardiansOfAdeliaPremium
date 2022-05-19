@@ -1,8 +1,9 @@
 package io.github.lix3nn53.guardiansofadelia.creatures.pets;
 
 import java.util.HashMap;
+import java.util.Set;
 
-public class PetSkillManager {
+public class PetDataManager {
 
     private static final HashMap<String, PetData> petToData = new HashMap<>();
 
@@ -14,5 +15,7 @@ public class PetSkillManager {
         return petToData.get(key);
     }
 
-
+    public static Set<String> getKeys() {
+        return petToData.keySet();
+    }
 }

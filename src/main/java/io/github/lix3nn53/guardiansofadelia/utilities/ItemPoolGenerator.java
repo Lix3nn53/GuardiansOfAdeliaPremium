@@ -1,12 +1,14 @@
 package io.github.lix3nn53.guardiansofadelia.utilities;
 
+import io.github.lix3nn53.guardiansofadelia.GuardiansOfAdelia;
+import io.github.lix3nn53.guardiansofadelia.creatures.pets.PetData;
+import io.github.lix3nn53.guardiansofadelia.creatures.pets.PetDataManager;
 import io.github.lix3nn53.guardiansofadelia.items.Consumable;
 import io.github.lix3nn53.guardiansofadelia.items.GearLevel;
 import io.github.lix3nn53.guardiansofadelia.items.RpgGears.ArmorGearType;
 import io.github.lix3nn53.guardiansofadelia.items.RpgGears.ItemTier;
 import io.github.lix3nn53.guardiansofadelia.items.RpgGears.ShieldGearType;
 import io.github.lix3nn53.guardiansofadelia.items.RpgGears.WeaponGearType;
-import io.github.lix3nn53.guardiansofadelia.items.list.Eggs;
 import io.github.lix3nn53.guardiansofadelia.items.list.armors.ArmorManager;
 import io.github.lix3nn53.guardiansofadelia.items.list.armors.ArmorSlot;
 import io.github.lix3nn53.guardiansofadelia.items.list.passiveItems.PassiveManager;
@@ -99,17 +101,22 @@ public class ItemPoolGenerator {
         return temp;
     }
 
-    public static List<ItemStack> generateEggs(GearLevel gearLevel) {
+    public static List<ItemStack> generateEggs(GearLevel gearLevel, int petLevel) {
+        if (petLevel < 1) {
+            GuardiansOfAdelia.getInstance().getLogger().warning("generateEggs: Pet level is less than 1");
+            return null;
+        }
+
         List<ItemStack> temp = new ArrayList<>();
 
-        for (String key : Eggs.getKeys()) {
-            // Check if skin
-            // TODO check if skin?
-            /*for (PetSkin c : PetSkin.values()) {
-                if (c.name().equals(key)) {
-                }
-            }*/
-            temp.add(Eggs.get(key, gearLevel, 1));
+        for (String key : PetDataManager.getKeys()) {
+            PetData petData = PetDataManager.getPetData(key);
+
+            GearLevel gearLevelPet = petData.getGearLevel();
+
+            if (gearLevelPet.equals(gearLevel)) {
+                temp.add(petData.getEgg(petLevel));
+            }
         }
 
         return temp;

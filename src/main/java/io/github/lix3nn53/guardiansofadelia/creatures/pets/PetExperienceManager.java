@@ -44,31 +44,33 @@ public class PetExperienceManager {
     }
 
     public static int getNextExperienceTarget(int eggLevel) {
+        int result = 40;
+
         if (eggLevel == 2) {
-            return 200;
+            result += 90;
         } else if (eggLevel == 3) {
-            return 300;
+            result += 150;
         } else if (eggLevel == 4) {
-            return 400;
+            result += 220;
         } else if (eggLevel == 5) {
-            return 500;
+            result += 300;
         } else if (eggLevel == 6) {
-            return 600;
+            result += 400;
         } else if (eggLevel == 7) {
-            return 700;
+            result += 520;
         } else if (eggLevel == 8) {
-            return 800;
+            result += 660;
         } else if (eggLevel == 9) {
-            return 900;
+            result += 820;
         } else if (eggLevel == 10) {
-            return 1000;
+            result += 1000;
         } else if (eggLevel == 11) {
-            return 1100;
+            result += 1300;
         } else if (eggLevel == 12) {
-            return 1200;
+            result += 1600;
         }
 
-        return 100;
+        return result;
     }
 
     private static void updateEggExp(Player player, int nextExperience, int currentLevel) {
@@ -83,7 +85,13 @@ public class PetExperienceManager {
 
                     ItemMeta itemMeta = egg.getItemMeta();
                     List<String> lore = itemMeta.getLore();
-                    lore.set(5, ChatPalette.PURPLE_LIGHT + "Experience: " + ChatPalette.GRAY + nextExperience + " / " + getNextExperienceTarget(currentLevel));
+
+                    int totalNextExperience = getNextExperienceTarget(currentLevel);
+                    for (int i = currentLevel - 1; i > 0; i--) {
+                        totalNextExperience += getNextExperienceTarget(i);
+                    }
+
+                    lore.set(5, ChatPalette.PURPLE_LIGHT + "Experience: " + ChatPalette.GRAY + nextExperience + " / " + totalNextExperience);
                     itemMeta.setLore(lore);
                     egg.setItemMeta(itemMeta);
 

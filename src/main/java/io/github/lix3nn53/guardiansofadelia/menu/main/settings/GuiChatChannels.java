@@ -30,14 +30,40 @@ public class GuiChatChannels extends GuiGeneric {
         ItemStack backButton = OtherItems.getBackButton("Settings");
         setItem(0, backButton);
 
-        int index = 9;
-
         this.chatChannelData = guardianData.getChatChannelData();
+        ChatChannel textingTo = chatChannelData.getTextingTo();
+
+        ItemStack global;
+        if (textingTo == null) {
+            global = new ItemStack(Material.YELLOW_WOOL);
+            ItemMeta itemMeta = global.getItemMeta();
+            itemMeta.setDisplayName(ChatPalette.GOLD + "Global");
+            ArrayList<String> lore = new ArrayList<>();
+            lore.add("");
+            lore.add(ChatPalette.GOLD + "This channel is active.");
+            lore.add(ChatPalette.GOLD + "Your messages will be sent to this channel.");
+            lore.add("");
+            lore.add(ChatPalette.GREEN + "You are listening to this channel.");
+            itemMeta.setLore(lore);
+            global.setItemMeta(itemMeta);
+        } else {
+            global = new ItemStack(Material.LIME_WOOL);
+            ItemMeta itemMeta = global.getItemMeta();
+            itemMeta.setDisplayName(ChatPalette.GREEN + "Global");
+            ArrayList<String> lore = new ArrayList<>();
+            lore.add("");
+            lore.add(ChatPalette.GOLD + "Right click to set this channel active.");
+            lore.add("");
+            lore.add(ChatPalette.GREEN + "You are listening to this channel.");
+            itemMeta.setLore(lore);
+            global.setItemMeta(itemMeta);
+        }
+        setItem(9, global);
+
+        int index = 11;
 
         for (ChatChannel chatChannel : ChatChannel.values()) {
-            ChatChannel textingTo = chatChannelData.getTextingTo();
             ItemStack itemStack;
-            boolean listening = chatChannelData.isListening(chatChannel);
             if (chatChannel.equals(textingTo)) {
                 itemStack = new ItemStack(Material.YELLOW_WOOL);
                 ItemMeta itemMeta = itemStack.getItemMeta();
@@ -50,7 +76,7 @@ public class GuiChatChannels extends GuiGeneric {
                 lore.add(ChatPalette.GREEN + "You are listening to this channel.");
                 itemMeta.setLore(lore);
                 itemStack.setItemMeta(itemMeta);
-            } else if (listening) {
+            } else if (chatChannelData.isListening(chatChannel)) {
                 itemStack = new ItemStack(Material.LIME_WOOL);
                 ItemMeta itemMeta = itemStack.getItemMeta();
                 itemMeta.setDisplayName(ChatPalette.GREEN + chatChannel.toString());
@@ -59,7 +85,11 @@ public class GuiChatChannels extends GuiGeneric {
                 lore.add(ChatPalette.GOLD + "Right click to set this channel active.");
                 lore.add("");
                 lore.add(ChatPalette.GREEN + "You are listening to this channel.");
-                lore.add(ChatPalette.RED + "Left click to stop listening to this channel.");
+                if (chatChannel.canStopListening()) {
+                    lore.add(ChatPalette.RED + "Left click to stop listening to this channel.");
+                } else {
+                    lore.add(ChatPalette.GRAY + "You cannot stop listening to this channel.");
+                }
                 itemMeta.setLore(lore);
                 itemStack.setItemMeta(itemMeta);
             } else {
@@ -95,15 +125,28 @@ public class GuiChatChannels extends GuiGeneric {
         if (slot == 0) {
             GuiSettings gui = new GuiSettings(guardianData);
             gui.openInventory(player);
+        } else if (slot == 9) {
+            chatChannelData.setTextingTo(null);
+
+            new GuiChatChannels(guardianData).openInventory(player);
         } else if (indexToChannel.containsKey(slot)) {
             ChatChannel chatChannel = indexToChannel.get(slot);
-            if (event.getClick().isLeftClick()) {
+            if (event.getClick().isLeftClick() && chatChannel.canStopListening()) {
                 chatChannelData.toggleListening(chatChannel);
             } else if (event.getClick().isRightClick()) {
                 chatChannelData.setTextingTo(chatChannel);
             }
 
             new GuiChatChannels(guardianData).openInventory(player);
+
+            if (chatChannel.equals(ChatChannel.PRIVATE)) {
+                Player privateChatTo = chatChannelData.getPrivateChatTo();
+                if (privateChatTo != null) {
+                    player.sendMessage(ChatPalette.GREEN + "You are now chatting with " + ChatPalette.GOLD + privateChatTo.getName() + ChatPalette.GREEN + ".");
+                } else {
+                    player.sendMessage(ChatPalette.RED + "You are not chatting with anyone. Use " + ChatPalette.GOLD + "/pm <player>" + ChatPalette.RED + " to start chatting.");
+                }
+            }
         }
     }
 }

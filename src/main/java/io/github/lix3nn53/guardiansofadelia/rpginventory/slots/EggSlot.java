@@ -11,11 +11,12 @@ import java.util.ArrayList;
 
 public class EggSlot {
 
-    private final String requiredTag = "petCode";
+    public static final Material EGG_MATERIAL = Material.STONE_HOE;
+    public static final String REQUIRED_TAG = "petCode";
     private ItemStack itemOnSlot;
 
     public boolean doesFit(ItemStack itemStack) {
-        return PersistentDataContainerUtil.hasString(itemStack, requiredTag);
+        return PersistentDataContainerUtil.hasString(itemStack, REQUIRED_TAG);
     }
 
     public boolean isEmpty() {

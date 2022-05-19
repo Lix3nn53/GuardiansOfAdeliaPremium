@@ -171,8 +171,17 @@ public class ChatManager {
         } else if (chatChannel.equals(ChatChannel.PRIVATE)) {
             Player privateChatTo = chatChannelData.getPrivateChatTo();
             if (privateChatTo != null) {
-                privateChatTo.sendMessage(messageWithPrefix);
-                player.sendMessage(messageWithPrefix);
+                if (GuardianDataManager.hasGuardianData(privateChatTo)) {
+                    GuardianData guardianData = GuardianDataManager.getGuardianData(privateChatTo);
+                    ChatChannelData chatChannelDataTo = guardianData.getChatChannelData();
+                    boolean listening = chatChannelDataTo.isListening(ChatChannel.PRIVATE);
+                    if (listening) {
+                        privateChatTo.sendMessage(messageWithPrefix);
+                        player.sendMessage(messageWithPrefix);
+                    } else {
+                        player.sendMessage(ChatColor.RED + "That player is not listening to private chat.");
+                    }
+                }
             } else {
                 player.sendMessage(ChatPalette.RED + "You are not chatting to anyone.");
             }
@@ -242,7 +251,7 @@ public class ChatManager {
         return prefix + ChatPalette.WHITE + NegativeSpace.POSITIVE_2;
     }
 
-    private static String getChatSuffix() {
+    public static String getChatSuffix() {
         return ChatPalette.YELLOW + " > " + ChatPalette.GRAY;
     }
 

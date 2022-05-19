@@ -3,6 +3,7 @@ package io.github.lix3nn53.guardiansofadelia.guardian.skill.component;
 import io.github.lix3nn53.guardiansofadelia.utilities.EntityUtils;
 import net.citizensnpcs.api.CitizensAPI;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 
@@ -100,6 +101,18 @@ public abstract class TargetComponent extends SkillComponent {
         }
 
         return list;
+    }
+
+    protected LivingEntity determineTarget(final LivingEntity caster, final List<Entity> targets) {
+        for (Entity target : targets) {
+            if (!(target instanceof LivingEntity)) continue;
+            LivingEntity living = (LivingEntity) target;
+            if (isValidTarget(caster, living)) {
+                return living;
+            }
+        }
+
+        return null;
     }
 
     /**

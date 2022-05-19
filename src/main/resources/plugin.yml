@@ -78,6 +78,10 @@ commands:
       - pt
     permission: guardian.player
     permission-message: You do not have permission!
+  pm:
+    description: Private message command
+    permission: guardian.player
+    permission-message: You do not have permission!
   minigame:
     description: Minigame command
     aliases:
@@ -115,3 +119,4 @@ permissions:
     default: false
     children:
       guardian.admin: true
+      guardian.player: true

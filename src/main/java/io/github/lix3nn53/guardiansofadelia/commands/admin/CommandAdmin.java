@@ -1,6 +1,7 @@
 package io.github.lix3nn53.guardiansofadelia.commands.admin;
 
 import io.github.lix3nn53.guardiansofadelia.chat.StaffRank;
+import io.github.lix3nn53.guardiansofadelia.creatures.pets.PetExperienceManager;
 import io.github.lix3nn53.guardiansofadelia.events.MyBlockEvents;
 import io.github.lix3nn53.guardiansofadelia.guardian.GuardianData;
 import io.github.lix3nn53.guardiansofadelia.guardian.GuardianDataManager;
@@ -15,6 +16,7 @@ import io.github.lix3nn53.guardiansofadelia.towns.Town;
 import io.github.lix3nn53.guardiansofadelia.towns.TownManager;
 import io.github.lix3nn53.guardiansofadelia.utilities.config.ClassConfigurations;
 import io.github.lix3nn53.guardiansofadelia.utilities.config.ItemSkillConfigurations;
+import io.github.lix3nn53.guardiansofadelia.utilities.config.PetConfigurations;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -37,7 +39,7 @@ public class CommandAdmin implements CommandExecutor {
             if (args.length < 1) {
                 player.sendMessage(ChatPalette.PURPLE + "---- ADMIN ----");
                 player.sendMessage(ChatPalette.PURPLE + "/admin debug");
-                player.sendMessage(ChatPalette.PURPLE + "/admin reload <skills|?>");
+                player.sendMessage(ChatPalette.PURPLE + "/admin reload <skills|pets>");
                 player.sendMessage(ChatPalette.PURPLE + "/admin setstaff <player> [NONE|OWNER|ADMIN|DEVELOPER|BUILDER|SUPPORT|YOUTUBER|TRAINEE]");
                 player.sendMessage(ChatPalette.PURPLE + "/admin build");
                 player.sendMessage(ChatPalette.PURPLE_LIGHT + "---- UTILS ----");
@@ -46,7 +48,8 @@ public class CommandAdmin implements CommandExecutor {
                 player.sendMessage(ChatPalette.PURPLE_LIGHT + "/admin tp town <num>");
                 player.sendMessage(ChatPalette.BLUE_DARK + "---- RPG ----");
                 player.sendMessage(ChatPalette.BLUE_DARK + "/admin exp <player> <amount>");
-                player.sendMessage(ChatPalette.BLUE_DARK + "/admin cexp <player> <amount>");
+                player.sendMessage(ChatPalette.BLUE_DARK + "/admin cexp <player> <amount> - class exp");
+                player.sendMessage(ChatPalette.BLUE_DARK + "/admin pexp <player> <amount> - pet exp");
             } else if (args[0].equals("debug")) {
                 DEBUG_MODE = !DEBUG_MODE;
                 player.sendMessage("DEBUG MODE: " + DEBUG_MODE);
@@ -88,6 +91,14 @@ public class CommandAdmin implements CommandExecutor {
                                 currentRPGClassStats.giveExp(target, expToGive);
                             }
                         }
+                    }
+                }
+            } else if (args[0].equals("pexp")) {
+                if (args.length == 3) {
+                    int expToGive = Integer.parseInt(args[2]);
+                    Player target = Bukkit.getPlayer(args[1]);
+                    if (target != null) {
+                        PetExperienceManager.giveExperienceToActivePet(target, expToGive);
                     }
                 }
             } else if (args[0].equals("setstaff")) {
@@ -143,6 +154,11 @@ public class CommandAdmin implements CommandExecutor {
                     ItemSkillConfigurations.loadConfigs();
 
                     player.sendMessage(ChatPalette.GREEN_DARK + "Reloaded player skills!");
+                } else if (args[1].equals("pets")) {
+                    PetConfigurations.createConfigs();
+                    PetConfigurations.loadConfigs();
+
+                    player.sendMessage(ChatPalette.GREEN_DARK + "Reloaded pets!");
                 }
             } else if (args[0].equals("build")) {
                 if (MyBlockEvents.allow.contains(player)) {

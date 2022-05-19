@@ -82,4 +82,14 @@ public enum ChatChannel {
 
         return false;
     }
+
+    public boolean canStopListening() {
+        switch (this) {
+            case GUILD, PARTY -> {
+                return false;
+            }
+        }
+
+        return true;
+    }
 }

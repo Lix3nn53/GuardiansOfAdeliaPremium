@@ -19,16 +19,16 @@ import java.util.List;
  */
 public class AreaTarget extends TargetComponent {
 
-    private final List<Float> radiusList;
-    private final List<Integer> amountList;
-    private final List<Float> offset_xList;
-    private final List<Float> offset_yList;
-    private final List<Float> offset_zList;
+    protected final List<Float> radiusList;
+    protected final List<Integer> amountList;
+    protected final List<Float> offset_xList;
+    protected final List<Float> offset_yList;
+    protected final List<Float> offset_zList;
     // PARTICLE
-    private final float particleHeight;
-    private final ArrangementSingle arrangementSingle;
+    protected final float particleHeight;
+    protected final ArrangementSingle arrangementSingle;
 
-    private final String multiplyWithValue;
+    protected final String multiplyWithValue;
 
     public AreaTarget(boolean addLore, boolean allies, boolean enemy, boolean self, int max, boolean armorStand, boolean keepCurrent,
                       boolean addToBeginning, List<Float> radiusList, List<Integer> amountList, List<Float> offset_xList,

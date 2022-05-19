@@ -3,11 +3,7 @@ package io.github.lix3nn53.guardiansofadelia.creatures.pets;
 import io.github.lix3nn53.guardiansofadelia.GuardiansOfAdelia;
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.Skill;
 import io.github.lix3nn53.guardiansofadelia.minigames.MiniGameManager;
-import io.github.lix3nn53.guardiansofadelia.utilities.EntityUtils;
-import net.citizensnpcs.api.CitizensAPI;
 import org.bukkit.Location;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
@@ -16,14 +12,12 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class PetMovement {
 
     public static void onPetSpawn(Player player, String petCode, LivingEntity pet, int level) {
-        PetData petData = PetSkillManager.getPetData(petCode);
+        PetData petData = PetDataManager.getPetData(petCode);
         int speed = petData.getSpeed();
-        int range = petData.getRange();
 
         if (!MiniGameManager.isInMinigame(player)) {
             PotionEffect potionEffect = new PotionEffect(PotionEffectType.SPEED, Integer.MAX_VALUE, speed, false, false);
@@ -46,35 +40,25 @@ public class PetMovement {
 
                 // Skill section
                 if (!PetManager.petSkillOnCooldown.contains(player)) {
-                    List<Entity> nearbyEntities = pet.getNearbyEntities(range, range, range);
-                    LivingEntity targetEnemy = determineTarget(player, nearbyEntities);
-                    if (targetEnemy != null) {
-                        float height = (float) (targetEnemy.getHeight()) / 2f;
-                        Location enemyLocation = targetEnemy.getLocation().add(0, height, 0);
-                        Vector vectorBetweenPoints = enemyLocation.toVector().subtract(start.toVector());
-                        start.setDirection(vectorBetweenPoints);
-                        pet.teleport(start);
+                    Skill skill = petData.getSkill(level);
+                    if (skill != null) {
+                        ArrayList<LivingEntity> targets = new ArrayList<>();
+                        targets.add(pet);
+                        boolean cast = skill.cast(player, 1, targets, 1, 999);
 
-                        Skill skill = petData.getSkill(level);
-                        if (skill != null) {
-                            ArrayList<LivingEntity> targets = new ArrayList<>();
-                            targets.add(pet);
-                            boolean cast = skill.cast(player, 1, targets, 1, 999);
+                        if (cast) {
+                            PetManager.petSkillOnCooldown.add(player);
 
-                            if (cast) {
-                                PetManager.petSkillOnCooldown.add(player);
+                            int cooldown = skill.getCooldown(0);
+                            new BukkitRunnable() {
 
-                                int cooldown = skill.getCooldown(0);
-                                new BukkitRunnable() {
+                                @Override
+                                public void run() {
+                                    PetManager.petSkillOnCooldown.remove(player);
+                                }
+                            }.runTaskLaterAsynchronously(GuardiansOfAdelia.getInstance(), cooldown);
 
-                                    @Override
-                                    public void run() {
-                                        PetManager.petSkillOnCooldown.remove(player);
-                                    }
-                                }.runTaskLaterAsynchronously(GuardiansOfAdelia.getInstance(), cooldown);
-
-                                PetExperienceManager.giveExperienceToActivePet(player, 1);
-                            }
+                            PetExperienceManager.giveExperienceToActivePet(player, 1);
 
                             return;
                         }
@@ -119,30 +103,5 @@ public class PetMovement {
                 previousDirection = nextDirection; // Update previousDirection
             }
         }.runTaskTimer(GuardiansOfAdelia.getInstance(), 0L, 1L);
-    }
-
-    protected static LivingEntity determineTarget(final LivingEntity caster, final List<Entity> targets) {
-        for (Entity target : targets) {
-            if (!(target instanceof LivingEntity)) continue;
-            LivingEntity living = (LivingEntity) target;
-            if (isValidTarget(caster, living)) {
-                return living;
-            }
-        }
-
-        return null;
-    }
-
-    private static boolean isValidTarget(final LivingEntity caster, final LivingEntity target) {
-        if (target == null) return false;
-        if (CitizensAPI.getNPCRegistry().isNPC(target)) return false;
-        EntityType type = target.getType();
-        if (type.equals(EntityType.ARMOR_STAND)) {
-            return false;
-        }
-
-        if (caster == target) return false;
-
-        return EntityUtils.canAttack(caster, target);
     }
 }

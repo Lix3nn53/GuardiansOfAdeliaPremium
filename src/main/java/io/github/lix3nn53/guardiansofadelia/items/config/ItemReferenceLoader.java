@@ -1,13 +1,14 @@
 package io.github.lix3nn53.guardiansofadelia.items.config;
 
 import io.github.lix3nn53.guardiansofadelia.GuardiansOfAdelia;
+import io.github.lix3nn53.guardiansofadelia.creatures.pets.PetData;
+import io.github.lix3nn53.guardiansofadelia.creatures.pets.PetDataManager;
 import io.github.lix3nn53.guardiansofadelia.items.Consumable;
 import io.github.lix3nn53.guardiansofadelia.items.GearLevel;
 import io.github.lix3nn53.guardiansofadelia.items.RpgGears.ArmorGearType;
 import io.github.lix3nn53.guardiansofadelia.items.RpgGears.ItemTier;
 import io.github.lix3nn53.guardiansofadelia.items.RpgGears.ShieldGearType;
 import io.github.lix3nn53.guardiansofadelia.items.RpgGears.WeaponGearType;
-import io.github.lix3nn53.guardiansofadelia.items.list.Eggs;
 import io.github.lix3nn53.guardiansofadelia.items.list.armors.ArmorManager;
 import io.github.lix3nn53.guardiansofadelia.items.list.armors.ArmorSlot;
 import io.github.lix3nn53.guardiansofadelia.items.list.passiveItems.PassiveManager;
@@ -49,11 +50,12 @@ public class ItemReferenceLoader {
 
             return ArmorManager.get(armorSlot, gearType, gearLevel, itemTier, false, true, itemIndex);
         } else if (itemType.equals("Egg")) {
-            String petType = configurationSection.getString("petCode");
-            GearLevel gearLevel = GearLevel.values()[configurationSection.getInt("gearLevel")];
+            String petCode = configurationSection.getString("petCode");
             int petLevel = configurationSection.getInt("petLevel");
 
-            return Eggs.get(petType, gearLevel, petLevel);
+            PetData petData = PetDataManager.getPetData(petCode);
+
+            return petData.getEgg(petLevel);
         } else if (itemType.equals("Passive")) {
             GearLevel gearLevel = GearLevel.values()[configurationSection.getInt("gearLevel")];
             int itemIndex = configurationSection.getInt("itemIndex");

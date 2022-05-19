@@ -200,6 +200,7 @@ public class GuardiansOfAdelia extends JavaPlugin {
         this.getCommand("language").setExecutor(new CommandLanguage());
         this.getCommand("trade").setExecutor(new CommandTrade());
         this.getCommand("party").setExecutor(new CommandParty());
+        this.getCommand("pm").setExecutor(new CommandPrivateMessage());
         this.getCommand("rp").setExecutor(new CommandResourcePack());
         this.getCommand("reward").setExecutor(new CommandReward());
         this.getCommand("safe-stop").setExecutor(new CommandSafeStop());

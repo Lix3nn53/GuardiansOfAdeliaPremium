@@ -1,8 +1,8 @@
 package io.github.lix3nn53.guardiansofadelia.items.RpgGears;
 
 import io.github.lix3nn53.guardiansofadelia.creatures.pets.PetData;
+import io.github.lix3nn53.guardiansofadelia.creatures.pets.PetDataManager;
 import io.github.lix3nn53.guardiansofadelia.creatures.pets.PetExperienceManager;
-import io.github.lix3nn53.guardiansofadelia.creatures.pets.PetSkillManager;
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.Skill;
 import io.github.lix3nn53.guardiansofadelia.text.ChatPalette;
 import io.github.lix3nn53.guardiansofadelia.utilities.PersistentDataContainerUtil;
@@ -34,7 +34,7 @@ public class Egg implements RPGGear {
         if (gearSetStr != null && !gearSetStr.equals("")) {
             name = tier.getTierColor() + gearSetStr + " " + name;
         }
-        PetData petData = PetSkillManager.getPetData(petKey);
+        PetData petData = PetDataManager.getPetData(petKey);
         int speed = petData.getSpeed();
 
         int petExp = 0;
