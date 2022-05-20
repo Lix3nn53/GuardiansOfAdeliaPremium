@@ -30,7 +30,7 @@ public class PetData {
     HashMap<Integer, Skill> skills = new HashMap<>();
 
     // Egg
-    private final GearLevel gearLevel;
+    private final List<GearLevel> gearLevels; // lowest gear level is for requirement, others for item generation/drop
     private final int customModelData;
     private final ItemTier itemTier;
 
@@ -52,7 +52,11 @@ public class PetData {
 
         this.speed = configurationSection.getInt("speed");
 
-        this.gearLevel = GearLevel.valueOf(configurationSection.getString("gearLevel"));
+        List<String> gearLevels = configurationSection.getStringList("gearLevels");
+        this.gearLevels = new ArrayList<>();
+        for (String gearLevel : gearLevels) {
+            this.gearLevels.add(GearLevel.valueOf(gearLevel));
+        }
         this.customModelData = configurationSection.getInt("customModelData");
         this.itemTier = ItemTier.valueOf(configurationSection.getString("itemTier"));
 
@@ -107,8 +111,8 @@ public class PetData {
         GuardiansOfAdelia.getInstance().getLogger().info(ChatPalette.RED + "Section: " + section);
     }
 
-    public GearLevel getGearLevel() {
-        return gearLevel;
+    public List<GearLevel> getGearLevels() {
+        return gearLevels;
     }
 
     public int getCustomModelData() {
@@ -121,7 +125,7 @@ public class PetData {
 
     public ItemStack getEgg(int petLevel) {
         Egg egg = new Egg(key, itemTier, EggSlot.EGG_MATERIAL, customModelData,
-                gearLevel.getMinLevel(), petLevel, "");
+                gearLevels.get(0).getMinLevel(), petLevel, "");
 
         return egg.getItemStack();
     }

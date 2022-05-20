@@ -56,13 +56,14 @@ public class ProjectileUtil {
 
         // Calculate directions
         float angleIncrement = angle / amount;
-        // System.out.println("angleIncrement: " + angleIncrement);
-        if (amount % 2 == 1) {
-            angle += angleIncrement;
-        }
-        for (int i = 0; i < amount; i++) {
+        int multiplier = 0;
+        for (int i = 1; i <= amount; i++) {
             // Initial calculations
-            float bonusAngle = angle / 2 - angleIncrement * i;
+            float bonusAngle = angleIncrement * multiplier;
+            if (i % 2 == 1) {
+                bonusAngle *= -1;
+                multiplier++;
+            }
             // System.out.println("bonusAngle: " + bonusAngle);
             float totalAngle = hAngle + bonusAngle;
             // System.out.println("totalAngle" + totalAngle);

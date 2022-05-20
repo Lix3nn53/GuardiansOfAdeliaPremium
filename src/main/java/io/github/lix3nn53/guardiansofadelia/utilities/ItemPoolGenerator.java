@@ -112,9 +112,9 @@ public class ItemPoolGenerator {
         for (String key : PetDataManager.getKeys()) {
             PetData petData = PetDataManager.getPetData(key);
 
-            GearLevel gearLevelPet = petData.getGearLevel();
+            List<GearLevel> gearLevelsPet = petData.getGearLevels();
 
-            if (gearLevelPet.equals(gearLevel)) {
+            if (gearLevelsPet.contains(gearLevel)) {
                 temp.add(petData.getEgg(petLevel));
             }
         }
