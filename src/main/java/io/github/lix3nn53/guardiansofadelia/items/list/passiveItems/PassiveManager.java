@@ -1,6 +1,5 @@
 package io.github.lix3nn53.guardiansofadelia.items.list.passiveItems;
 
-import io.github.lix3nn53.guardiansofadelia.GuardiansOfAdelia;
 import io.github.lix3nn53.guardiansofadelia.items.GearLevel;
 import io.github.lix3nn53.guardiansofadelia.items.RpgGears.GearPassive;
 import io.github.lix3nn53.guardiansofadelia.items.RpgGears.ItemTier;
@@ -17,6 +16,11 @@ public class PassiveManager {
 
     public static ItemStack get(GearLevel gearLevel, RPGSlotType rpgSlotType, ItemTier tier, boolean noStats, boolean gearSet, int setIndex) {
         List<PassiveSet> sets = gearLevelToPassives.get(gearLevel);
+        while (sets == null) {
+            int ordinal = gearLevel.ordinal();
+            gearLevel = GearLevel.values()[ordinal - 1];
+            sets = gearLevelToPassives.get(gearLevel);
+        }
         PassiveSet template = sets.get(setIndex);
 
         int minNumberOfAttr = noStats ? 0 : tier.getMinNumberOfAttributes(true);
@@ -38,6 +42,11 @@ public class PassiveManager {
 
     public static List<ItemStack> getAll(GearLevel gearLevel, RPGSlotType rpgSlotType, ItemTier tier, boolean noStats, boolean gearSet) {
         int count = countAt(gearLevel);
+        while (count == 0) {
+            int ordinal = gearLevel.ordinal();
+            gearLevel = GearLevel.values()[ordinal - 1];
+            count = countAt(gearLevel);
+        }
 
         List<ItemStack> list = new ArrayList<>();
         for (int i = 0; i < count; i++) {
@@ -50,14 +59,11 @@ public class PassiveManager {
     }
 
     public static int countAt(GearLevel gearLevel) {
-        List<PassiveSet> passiveSets = gearLevelToPassives.get(gearLevel);
-
-        if (passiveSets == null) {
-            GuardiansOfAdelia.getInstance().getLogger().info("PassiveSet not found for gear level " + gearLevel);
+        if (!gearLevelToPassives.containsKey(gearLevel)) {
             return 0;
         }
 
-        return passiveSets.size();
+        return gearLevelToPassives.get(gearLevel).size();
     }
 
     public static void add(PassiveSet passiveSet) {

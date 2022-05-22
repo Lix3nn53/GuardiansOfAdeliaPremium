@@ -91,9 +91,7 @@ public class ProjectileMechanic extends MechanicComponent implements ProjectileC
             disguiseCustomModelData = configurationSection.getInt("disguiseCustomModelData");
         }
 
-        this.base = new ProjectileMechanicBase(projectileType, spreadType, radius, height, speed, amountList,
-                amountValueKey, angle, upward, range, mustHitToWork, particleArrangement, isProjectileInvisible,
-                disguiseMaterial, disguiseCustomModelData, addCasterAsFirstTargetIfHitSuccess, addCasterAsSecondTargetIfHitFail);
+        this.base = new ProjectileMechanicBase(configurationSection);
     }
 
     @Override

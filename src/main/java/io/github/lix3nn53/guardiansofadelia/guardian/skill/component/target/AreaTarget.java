@@ -12,6 +12,7 @@ import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Applies child components to the closest all nearby entities around
@@ -27,12 +28,14 @@ public class AreaTarget extends TargetComponent {
     // PARTICLE
     protected final float particleHeight;
     protected final ArrangementSingle arrangementSingle;
+    protected final boolean showParticles;
 
     protected final String multiplyWithValue;
 
     public AreaTarget(boolean addLore, boolean allies, boolean enemy, boolean self, int max, boolean armorStand, boolean keepCurrent,
                       boolean addToBeginning, List<Float> radiusList, List<Integer> amountList, List<Float> offset_xList,
-                      List<Float> offset_yList, List<Float> offset_zList, float particleHeight, ArrangementSingle arrangementSingle, String multiplyWithValue) {
+                      List<Float> offset_yList, List<Float> offset_zList, float particleHeight,
+                      ArrangementSingle arrangementSingle, String multiplyWithValue, boolean showParticles) {
         super(addLore, allies, enemy, self, max, armorStand, keepCurrent, addToBeginning);
         this.radiusList = radiusList;
         this.amountList = amountList;
@@ -42,6 +45,7 @@ public class AreaTarget extends TargetComponent {
         this.particleHeight = particleHeight;
         this.arrangementSingle = arrangementSingle;
         this.multiplyWithValue = multiplyWithValue;
+        this.showParticles = showParticles;
     }
 
     public AreaTarget(ConfigurationSection configurationSection) {
@@ -59,20 +63,27 @@ public class AreaTarget extends TargetComponent {
         this.offset_zList = configurationSection.contains("offset_zList") ? configurationSection.getFloatList("offset_zList") : null;
 
         // PARTICLE
-        if (!configurationSection.contains("particle")) {
-            configLoadError("particle");
+        if (configurationSection.contains("particle")) {
+            ConfigurationSection particleSection = configurationSection.getConfigurationSection("particle");
+
+            this.arrangementSingle = new ArrangementSingle(particleSection);
+
+            this.particleHeight = particleSection.contains("height") ? (float) particleSection.getDouble("height") : 0;
+        } else {
+            this.arrangementSingle = null;
+            this.particleHeight = 0;
         }
-
-        ConfigurationSection particleSection = configurationSection.getConfigurationSection("particle");
-
-        this.arrangementSingle = new ArrangementSingle(particleSection);
-
-        this.particleHeight = particleSection.contains("height") ? (float) particleSection.getDouble("height") : 0;
 
         if (configurationSection.contains("multiplyWithValue")) {
             this.multiplyWithValue = configurationSection.getString("multiplyWithValue");
         } else {
             this.multiplyWithValue = null;
+        }
+
+        if (configurationSection.contains("showParticles")) {
+            this.showParticles = configurationSection.getBoolean("showParticles");
+        } else {
+            this.showParticles = true;
         }
     }
 
@@ -110,10 +121,16 @@ public class AreaTarget extends TargetComponent {
             Location location = target.getLocation();
             location.add(offset);
             List<LivingEntity> nearbyTarget = TargetHelper.getNearbySphere(location, radius);
+            List<LivingEntity> firstNElementsList = nearbyTarget;
+            if (this.getMax() > nearbyTarget.size()) {
+                firstNElementsList = nearbyTarget.stream().limit(this.getMax()).collect(Collectors.toList());
+            }
 
-            ParticleShapes.drawCylinder(location, arrangementSingle, radius, amount, particleHeight, false, 0, 0, new Vector());
+            if (arrangementSingle != null && showParticles) {
+                ParticleShapes.drawCylinder(location, arrangementSingle, radius, amount, particleHeight, false, 0, 0, new Vector());
+            }
 
-            nearby.addAll(nearbyTarget);
+            nearby.addAll(firstNElementsList);
         }
 
         if (nearby.isEmpty()) return true;

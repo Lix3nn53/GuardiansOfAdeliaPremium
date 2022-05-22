@@ -18,6 +18,11 @@ public class WeaponManager {
 
     public static ItemStack get(WeaponGearType gearType, GearLevel gearLevel, ItemTier tier, boolean noStats, boolean gearSet, int setIndex) {
         List<WeaponSet> sets = gearLevelToWeapons.get(gearLevel);
+        while (sets == null) {
+            int ordinal = gearLevel.ordinal();
+            gearLevel = GearLevel.values()[ordinal - 1];
+            sets = gearLevelToWeapons.get(gearLevel);
+        }
         WeaponSet template = sets.get(setIndex);
 
         int minNumberOfStats = noStats ? 0 : tier.getMinNumberOfElements(false);
@@ -40,6 +45,11 @@ public class WeaponManager {
 
     public static List<ItemStack> getAll(WeaponGearType gearType, GearLevel gearLevel, ItemTier tier, boolean noStats, boolean gearSet) {
         int count = countAt(gearLevel);
+        while (count == 0) {
+            int ordinal = gearLevel.ordinal();
+            gearLevel = GearLevel.values()[ordinal - 1];
+            count = countAt(gearLevel);
+        }
 
         List<ItemStack> list = new ArrayList<>();
         for (int i = 0; i < count; i++) {
@@ -52,6 +62,10 @@ public class WeaponManager {
     }
 
     public static int countAt(GearLevel gearLevel) {
+        if (!gearLevelToWeapons.containsKey(gearLevel)) {
+            return 0;
+        }
+
         return gearLevelToWeapons.get(gearLevel).size();
     }
 

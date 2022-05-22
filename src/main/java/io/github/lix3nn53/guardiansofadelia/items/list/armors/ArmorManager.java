@@ -18,13 +18,16 @@ public class ArmorManager {
     public static ItemStack get(ArmorSlot armorSlot, ArmorGearType gearType, GearLevel gearLevel, ItemTier tier,
                                 boolean noStats, boolean gearSet, int setIndex) {
         List<ArmorSet> sets = gearLevelToArmorSets.get(gearLevel);
+        while (sets == null) {
+            int ordinal = gearLevel.ordinal();
+            gearLevel = GearLevel.values()[ordinal - 1];
+            sets = gearLevelToArmorSets.get(gearLevel);
+        }
         ArmorSet template = sets.get(setIndex);
 
         int minNumberOfStats = noStats ? 0 : tier.getMinNumberOfElements(false);
         int minStatValue = noStats ? 0 : gearLevel.getMinStatValue(false, true);
         int maxStatValue = noStats ? 0 : gearLevel.getMaxStatValue(false, true);
-
-        ArrayList<ItemStack> itemStacks = new ArrayList<>();
 
         String name = template.getName(armorSlot);
         Material material = template.getMaterial(armorSlot, gearType);
@@ -42,6 +45,11 @@ public class ArmorManager {
     public static List<ItemStack> getAll(ArmorSlot armorSlot, ArmorGearType gearType, GearLevel gearLevel, ItemTier tier,
                                          boolean noStats, boolean gearSet) {
         int count = countAt(gearLevel);
+        while (count == 0) {
+            int ordinal = gearLevel.ordinal();
+            gearLevel = GearLevel.values()[ordinal - 1];
+            count = countAt(gearLevel);
+        }
 
         List<ItemStack> list = new ArrayList<>();
         for (int i = 0; i < count; i++) {
@@ -54,6 +62,10 @@ public class ArmorManager {
     }
 
     public static int countAt(GearLevel gearLevel) {
+        if (!gearLevelToArmorSets.containsKey(gearLevel)) {
+            return 0;
+        }
+
         return gearLevelToArmorSets.get(gearLevel).size();
     }
 

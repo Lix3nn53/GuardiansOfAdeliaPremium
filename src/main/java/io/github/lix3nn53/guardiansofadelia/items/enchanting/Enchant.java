@@ -140,6 +140,50 @@ public class Enchant {
         currentEnchantLevel--;
     }
 
+    private static StatPassive getOldPassiveStat(ItemStack item) {
+        HashMap<AttributeType, Integer> attributeTypeToValue = new HashMap<>();
+        for (AttributeType attributeType : AttributeType.values()) {
+            if (PersistentDataContainerUtil.hasInteger(item, "ench" + attributeType.name())) {
+                int value = PersistentDataContainerUtil.getInteger(item, "ench" + attributeType.name());
+                attributeTypeToValue.put(attributeType, value);
+            }
+        }
+
+        HashMap<ElementType, Integer> elementTypeToValue = new HashMap<>();
+        for (ElementType elementType : ElementType.values()) {
+            if (PersistentDataContainerUtil.hasInteger(item, "ench" + elementType.name())) {
+                int value = PersistentDataContainerUtil.getInteger(item, "ench" + elementType.name());
+                elementTypeToValue.put(elementType, value);
+            }
+        }
+
+        return new StatPassive(attributeTypeToValue, elementTypeToValue);
+    }
+
+    private void startGlowing(ItemMeta itemMeta) {
+        if (itemMeta.hasCustomModelData()) {
+            int customModelData = itemMeta.getCustomModelData();
+            customModelData++;
+            itemMeta.setCustomModelData(customModelData);
+            itemStack.setItemMeta(itemMeta);
+            if (CommandAdmin.DEBUG_MODE) {
+                player.sendMessage("new customModelData: " + customModelData);
+            }
+        }
+    }
+
+    private void extinguish(ItemMeta itemMeta) {
+        if (itemMeta.hasCustomModelData()) {
+            int customModelData = itemMeta.getCustomModelData();
+            customModelData--;
+            itemMeta.setCustomModelData(customModelData);
+            itemStack.setItemMeta(itemMeta);
+            if (CommandAdmin.DEBUG_MODE) {
+                player.sendMessage("new customModelData: " + customModelData);
+            }
+        }
+    }
+
     private void applyChange(boolean success) {
         List<String> lore = this.itemStack.getItemMeta().getLore();
 
@@ -219,6 +263,10 @@ public class Enchant {
             }
         } else if (type.equals(GearStatType.PASSIVE_GEAR)) {
             StatPassive stat = (StatPassive) StatUtils.getStat(itemStack);
+            StatPassive oldStat = null;
+            if (this.currentEnchantLevel > 0) {
+                oldStat = getOldPassiveStat(itemStack);
+            }
 
             if (CommandAdmin.DEBUG_MODE) {
                 player.sendMessage("SUCC:" + success);
@@ -264,25 +312,22 @@ public class Enchant {
                 }
                 currentBonus = currentBonus * signMultiplier;
 
+                int oldBonus = 0;
+                if (oldStat != null) {
+                    oldBonus = oldStat.getAttributeValue(attributeType);
+                }
+
                 int nextValue = baseValue + currentBonus;
                 if (attributeTypeToLineToChange.containsKey(attributeType)) {
                     Integer lineToChange = attributeTypeToLineToChange.get(attributeType);
-                    String line = lore.get(lineToChange);
-
                     String statString = attributeTypeToPrefix.get(attributeType);
+
                     if (this.currentEnchantLevel == 1 && !success) {
                         lore.set(lineToChange, statString + attributeType.getIncrementLore(nextValue));
+                        PersistentDataContainerUtil.removeTag(this.itemStack, "ench" + attributeType.name());
                     } else {
-                        String[] split = line.split("\\[\\+");
-                        int oldBonus = 0;
-                        int rootValue = baseValue;
-                        if (split.length == 2) {
-                            String oldBonusStr = split[1].substring(0, split[1].length() - 1);
-                            oldBonus = Integer.parseInt(oldBonusStr);
-
-                            String[] splitAgain = split[0].split("\\+");
-                            rootValue = Integer.parseInt(splitAgain[1]);
-                        }
+                        PersistentDataContainerUtil.putInteger("ench" + attributeType.name(), oldBonus + currentBonus, this.itemStack);
+                        int rootValue = baseValue - oldBonus;
                         lore.set(lineToChange, statString + attributeType.getIncrementLore(rootValue) + "[+" + attributeType.getIncrementLore(oldBonus + currentBonus) + "]");
                     }
 
@@ -322,7 +367,7 @@ public class Enchant {
             HashMap<ElementType, Integer> elementTypeToNextValues = new HashMap<>();
 
             for (ElementType elementType : ElementType.values()) {
-                int baseValue = stat.getElementValue(elementType);
+                final int baseValue = stat.getElementValue(elementType);
                 float decreaseOfAttribute = stat.getDecreaseOfElement(elementType);
 
                 int currentBonus = (int) (bonus * decreaseOfAttribute + 0.5);
@@ -331,25 +376,22 @@ public class Enchant {
                 }
                 currentBonus = currentBonus * signMultiplier;
 
+                int oldBonus = 0;
+                if (oldStat != null) {
+                    oldBonus = oldStat.getElementValue(elementType);
+                }
+
                 int nextValue = baseValue + currentBonus;
                 if (elementTypeToLineToChange.containsKey(elementType)) {
                     Integer lineToChange = elementTypeToLineToChange.get(elementType);
-                    String line = lore.get(lineToChange);
-
                     String statString = elementTypeToPrefix.get(elementType);
+
                     if (this.currentEnchantLevel == 1 && !success) {
                         lore.set(lineToChange, statString + nextValue);
+                        PersistentDataContainerUtil.removeTag(this.itemStack, "ench" + elementType.name());
                     } else {
-                        String[] split = line.split("\\[\\+");
-                        int oldBonus = 0;
-                        int rootValue = baseValue;
-                        if (split.length == 2) {
-                            String oldBonusStr = split[1].substring(0, split[1].length() - 1);
-                            oldBonus = Integer.parseInt(oldBonusStr);
-
-                            String[] splitAgain = split[0].split("\\+");
-                            rootValue = Integer.parseInt(splitAgain[1]);
-                        }
+                        PersistentDataContainerUtil.putInteger("ench" + elementType.name(), oldBonus + currentBonus, this.itemStack);
+                        int rootValue = baseValue - oldBonus;
                         lore.set(lineToChange, statString + rootValue + "[+" + (oldBonus + currentBonus) + "]");
                     }
 
@@ -366,30 +408,6 @@ public class Enchant {
                     int nextValue = elementTypeToNextValues.get(elementType);
                     PersistentDataContainerUtil.putInteger(elementType.name(), nextValue, this.itemStack);
                 }
-            }
-        }
-    }
-
-    private void startGlowing(ItemMeta itemMeta) {
-        if (itemMeta.hasCustomModelData()) {
-            int customModelData = itemMeta.getCustomModelData();
-            customModelData++;
-            itemMeta.setCustomModelData(customModelData);
-            itemStack.setItemMeta(itemMeta);
-            if (CommandAdmin.DEBUG_MODE) {
-                player.sendMessage("new customModelData: " + customModelData);
-            }
-        }
-    }
-
-    private void extinguish(ItemMeta itemMeta) {
-        if (itemMeta.hasCustomModelData()) {
-            int customModelData = itemMeta.getCustomModelData();
-            customModelData--;
-            itemMeta.setCustomModelData(customModelData);
-            itemStack.setItemMeta(itemMeta);
-            if (CommandAdmin.DEBUG_MODE) {
-                player.sendMessage("new customModelData: " + customModelData);
             }
         }
     }

@@ -481,6 +481,7 @@ public class MyEntityDamageByEntityEvent implements Listener {
                     }
 
                     player.setHealth(nextHealth);
+                    player.sendMessage("DEBUG: lifesteal healed for " + healAmount + " by damage " + finalDamage);
                 }
             }
         }

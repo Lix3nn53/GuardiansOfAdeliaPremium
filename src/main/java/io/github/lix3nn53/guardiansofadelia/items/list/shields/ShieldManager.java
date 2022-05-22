@@ -18,6 +18,11 @@ public class ShieldManager {
     public static ItemStack get(ShieldGearType gearType, GearLevel gearLevel, ItemTier tier, boolean noStats,
                                 boolean gearSet, int setIndex) {
         List<ShieldSet> sets = gearLevelToShields.get(gearLevel);
+        while (sets == null) {
+            int ordinal = gearLevel.ordinal();
+            gearLevel = GearLevel.values()[ordinal - 1];
+            sets = gearLevelToShields.get(gearLevel);
+        }
         ShieldSet template = sets.get(setIndex);
 
         int minNumberOfStats = noStats ? 0 : tier.getMinNumberOfElements(false);
@@ -42,6 +47,11 @@ public class ShieldManager {
     public static List<ItemStack> getAll(ShieldGearType gearType, GearLevel gearLevel, ItemTier tier, boolean noStats,
                                          boolean gearSet) {
         int count = countAt(gearLevel);
+        while (count == 0) {
+            int ordinal = gearLevel.ordinal();
+            gearLevel = GearLevel.values()[ordinal - 1];
+            count = countAt(gearLevel);
+        }
 
         List<ItemStack> list = new ArrayList<>();
         for (int i = 0; i < count; i++) {
@@ -54,6 +64,10 @@ public class ShieldManager {
     }
 
     public static int countAt(GearLevel gearLevel) {
+        if (!gearLevelToShields.containsKey(gearLevel)) {
+            return 0;
+        }
+
         return gearLevelToShields.get(gearLevel).size();
     }
 

@@ -89,6 +89,7 @@ public class MMMechanicProjectile extends SkillMechanic implements ITargetedEnti
         //custom options
         boolean addCasterAsFirstTargetIfHitSuccess = config.getBoolean(new String[]{"addCasterAsFirstTargetIfHitSuccess"}, false);
         boolean addCasterAsSecondTargetIfHitFail = config.getBoolean(new String[]{"addCasterAsSecondTargetIfHitFail"}, false);
+        boolean keepCurrentTargets = config.getBoolean(new String[]{"keepCurrentTargets"}, false);
 
         boolean isProjectileInvisible = config.getBoolean(new String[]{"isProjectileInvisible"}, false);
 
@@ -103,7 +104,8 @@ public class MMMechanicProjectile extends SkillMechanic implements ITargetedEnti
 
         this.base = new ProjectileMechanicBase(projectileType, spreadType, radius, height, speed, amountList,
                 amountValueKey, angle, upward, range, mustHitToWork, particleArrangement, isProjectileInvisible,
-                disguiseMaterial, disguiseCustomModelData, addCasterAsFirstTargetIfHitSuccess, addCasterAsSecondTargetIfHitFail);
+                disguiseMaterial, disguiseCustomModelData, addCasterAsFirstTargetIfHitSuccess,
+                addCasterAsSecondTargetIfHitFail, keepCurrentTargets);
     }
 
     @Override

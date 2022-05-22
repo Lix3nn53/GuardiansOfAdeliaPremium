@@ -21,10 +21,6 @@ public class AbsorptionHeartMechanic extends MechanicComponent {
             configLoadError("heartAmountList");
         }
 
-        if (!configurationSection.contains("maxHeartList")) {
-            configLoadError("maxHeartList");
-        }
-
         if (configurationSection.contains("heartAmountList")) {
             this.heartAmountList = configurationSection.getIntegerList("heartAmountList");
         } else {
@@ -49,7 +45,7 @@ public class AbsorptionHeartMechanic extends MechanicComponent {
 
             float currentHearts = (float) player.getAbsorptionAmount();
 
-            int maxHearts = 0;
+            int maxHearts = 99;
             if (!maxHeartList.isEmpty()) {
                 maxHearts = maxHeartList.get(skillLevel - 1);
             }

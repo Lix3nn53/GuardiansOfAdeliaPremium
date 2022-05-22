@@ -71,20 +71,20 @@ public class PetMovement {
                 dirOfTarget.setY(0);
                 Vector side = dirOfTarget.clone().crossProduct(new Vector(0, 1, 0));
                 Vector upward = dirOfTarget.clone().crossProduct(side);
-                target.subtract(upward.multiply(1.6));
+                target.subtract(upward.multiply(2.8));
 
                 Vector vectorBetweenPoints = target.toVector().subtract(start.toVector());
                 float distance = (float) vectorBetweenPoints.length();
-                if (distance < 1.4f) return; // Pet is close enough to player head
+                if (distance < 2.8f) return; // Pet is close enough to player head
 
-                target.add(dirOfTarget.multiply(-0.8)).add(side.multiply(1.6));
+                target.add(dirOfTarget.multiply(-0.8)).add(side.multiply(2.8));
                 // End - Calculate offset
 
                 vectorBetweenPoints = target.toVector().subtract(start.toVector());
                 distance = (float) vectorBetweenPoints.length();
 
-                if (distance < 0.4f) return; // Pet is close enough to target location
-                if (distance > 24) {
+                if (distance < 0.8f) return; // Pet is close enough to target location
+                if (distance > 42) {
                     pet.teleport(target);
                     return;
                 }

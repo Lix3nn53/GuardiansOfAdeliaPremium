@@ -55,14 +55,22 @@ public class ProjectileMechanicBase {
     private final boolean addCasterAsFirstTargetIfHitSuccess;
     private final boolean addCasterAsSecondTargetIfHitFail; // First target is empty entity at hit location
 
+    private final boolean keepCurrentTargets;
+
     //Piercing
     private LivingEntity caster;
     private int skillIndex;
 
+    // Save first targets for keepCurrentTargets
+    private List<LivingEntity> firstTargets;
+
     public ProjectileMechanicBase(Class<? extends Projectile> projectileType, SpreadType spreadType, float radius,
                                   float height, float speed, List<Integer> amountList, String amountValueKey,
                                   float angle, float upward, float range, boolean mustHitToWork,
-                                  ParticleArrangement particleArrangement, boolean isProjectileInvisible, Optional<Material> disguiseMaterial, int disguiseCustomModelData, boolean addCasterAsFirstTargetIfHitSuccess, boolean addCasterAsSecondTargetIfHitFail) {
+                                  ParticleArrangement particleArrangement, boolean isProjectileInvisible,
+                                  Optional<Material> disguiseMaterial, int disguiseCustomModelData,
+                                  boolean addCasterAsFirstTargetIfHitSuccess, boolean addCasterAsSecondTargetIfHitFail,
+                                  boolean keepCurrentTargets) {
         this.projectileType = projectileType;
         this.spreadType = spreadType;
         this.radius = radius;
@@ -80,26 +88,27 @@ public class ProjectileMechanicBase {
         this.disguiseCustomModelData = disguiseCustomModelData;
         this.addCasterAsFirstTargetIfHitSuccess = addCasterAsFirstTargetIfHitSuccess;
         this.addCasterAsSecondTargetIfHitFail = addCasterAsSecondTargetIfHitFail;
+        this.keepCurrentTargets = keepCurrentTargets;
     }
 
     public ProjectileMechanicBase(ConfigurationSection configurationSection) throws ClassNotFoundException {
         String projectileClass = configurationSection.getString("projectileClass");
         this.projectileType = (Class<? extends Projectile>) Class.forName("org.bukkit.entity." + projectileClass);
 
-        spreadType = SpreadType.valueOf(configurationSection.getString("spreadType"));
-        speed = (float) configurationSection.getDouble("speed");
-        amountList = configurationSection.getIntegerList("amountList");
-        amountValueKey = configurationSection.getString("amountValueKey");
-        angle = (float) configurationSection.getDouble("angle");
-        range = (float) configurationSection.getDouble("range");
-        mustHitToWork = configurationSection.getBoolean("mustHitToWork");
+        this.spreadType = SpreadType.valueOf(configurationSection.getString("spreadType"));
+        this.speed = (float) configurationSection.getDouble("speed");
+        this.amountList = configurationSection.getIntegerList("amountList");
+        this.amountValueKey = configurationSection.getString("amountValueKey");
+        this.angle = (float) configurationSection.getDouble("angle");
+        this.range = (float) configurationSection.getDouble("range");
+        this.mustHitToWork = configurationSection.getBoolean("mustHitToWork");
 
         if (spreadType.equals(SpreadType.RAIN)) {
-            radius = (float) configurationSection.getDouble("radius");
-            height = (float) configurationSection.getDouble("height");
+            this.radius = (float) configurationSection.getDouble("radius");
+            this.height = (float) configurationSection.getDouble("height");
         } else {
-            radius = 0;
-            height = 0;
+            this.radius = 0;
+            this.height = 0;
         }
 
         //Particle projectile
@@ -116,35 +125,30 @@ public class ProjectileMechanicBase {
             this.upward = 0;
         }
 
-        //custom options
-        if (configurationSection.contains("addCasterAsFirstTargetIfHitSuccess")) {
-            this.addCasterAsFirstTargetIfHitSuccess = configurationSection.getBoolean("addCasterAsFirstTargetIfHitSuccess");
-        } else {
-            this.addCasterAsFirstTargetIfHitSuccess = false;
-        }
-        if (configurationSection.contains("addCasterAsSecondTargetIfHitFail")) {
-            this.addCasterAsSecondTargetIfHitFail = configurationSection.getBoolean("addCasterAsSecondTargetIfHitFail");
-        } else {
-            this.addCasterAsSecondTargetIfHitFail = false;
-        }
-
         if (configurationSection.contains("isProjectileInvisible")) {
-            isProjectileInvisible = configurationSection.getBoolean("isProjectileInvisible");
+            this.isProjectileInvisible = configurationSection.getBoolean("isProjectileInvisible");
         } else {
-            isProjectileInvisible = false;
+            this.isProjectileInvisible = false;
         }
 
         // Disguise
         if (configurationSection.contains("disguiseMaterial")) {
-            disguiseMaterial = Optional.of(Material.valueOf(configurationSection.getString("disguiseMaterial")));
+            this.disguiseMaterial = Optional.of(Material.valueOf(configurationSection.getString("disguiseMaterial")));
         } else {
-            disguiseMaterial = Optional.empty();
+            this.disguiseMaterial = Optional.empty();
         }
+
         if (configurationSection.contains("disguiseCustomModelData")) {
-            disguiseCustomModelData = configurationSection.getInt("disguiseCustomModelData");
+            this.disguiseCustomModelData = configurationSection.getInt("disguiseCustomModelData");
         } else {
-            disguiseCustomModelData = 1;
+            this.disguiseCustomModelData = 1;
         }
+
+        this.addCasterAsFirstTargetIfHitSuccess = configurationSection.contains("addCasterAsFirstTargetIfHitSuccess") &&
+                configurationSection.getBoolean("addCasterAsFirstTargetIfHitSuccess");
+        this.addCasterAsSecondTargetIfHitFail = configurationSection.contains("addCasterAsSecondTargetIfHitFail") &&
+                configurationSection.getBoolean("addCasterAsSecondTargetIfHitFail");
+        this.keepCurrentTargets = configurationSection.contains("keepCurrentTargets") && configurationSection.getBoolean("keepCurrentTargets");
     }
 
     public boolean execute(LivingEntity caster, int skillLevel, List<LivingEntity> targets, int skillIndex, ProjectileCallback projectileCallback) {
@@ -153,6 +157,8 @@ public class ProjectileMechanicBase {
         this.skillIndex = skillIndex;
         this.caster = caster;
         UUID skillKey = UUID.randomUUID(); //skill key to put into projectile
+
+        this.firstTargets = targets;
 
         // Fire from each target
         ArrayList<Entity> projectiles = new ArrayList<>();
@@ -304,7 +310,7 @@ public class ProjectileMechanicBase {
         ArrayList<LivingEntity> targets = new ArrayList<>();
 
         boolean hitSuccess = false;
-        if (hit == null) {
+        if (hit == null) { // did not hit anything
             if (projectile.isValid()) projectile.remove();
             if (mustHitToWork) return targets;
 
@@ -314,6 +320,10 @@ public class ProjectileMechanicBase {
 
             hitSuccess = true;
             targets.add(caster);
+        }
+
+        if (keepCurrentTargets) {
+            targets.addAll(firstTargets);
         }
 
         //add hit to target list
@@ -442,14 +452,6 @@ public class ProjectileMechanicBase {
 
     public int getDisguiseCustomModelData() {
         return disguiseCustomModelData;
-    }
-
-    public boolean isAddCasterAsFirstTargetIfHitSuccess() {
-        return addCasterAsFirstTargetIfHitSuccess;
-    }
-
-    public boolean isAddCasterAsSecondTargetIfHitFail() {
-        return addCasterAsSecondTargetIfHitFail;
     }
 
     public int getSkillIndex() {

@@ -43,13 +43,11 @@ public class DatabaseManager {
             if (GuardianDataManager.hasGuardianData(player)) {
                 GuardianData guardianData = GuardianDataManager.getGuardianData(player);
                 writeGuardianDataWithCurrentCharacter(player, guardianData);
-                GuardiansOfAdelia.getInstance().getLogger().info("Player save on disable: " + player.getName());
             }
         }
         List<Guild> activeGuilds = GuildManager.getActiveGuilds();
         for (Guild guild : activeGuilds) {
             writeGuildData(guild);
-            GuardiansOfAdelia.getInstance().getLogger().info("Guild save on disable: " + guild.getName());
         }
         DatabaseQueries.onDisable();
     }
@@ -207,11 +205,14 @@ public class DatabaseManager {
         //return if it is not safe to save this character now
         if (AdeliaRegionManager.isCharacterSelectionRegion(player.getLocation())) {
             //if player is in character selection it is not safe to save
+            GuardiansOfAdelia.getInstance().getLogger().info("Player " + player.getName() + " is in character selection region, not saving");
             return;
         }
         if (player.getLocation().getWorld().getName().equals("tutorial")) { //tutorial
+            GuardiansOfAdelia.getInstance().getLogger().info("Player " + player.getName() + " is in tutorial, not saving");
             return;
         }
+        GuardiansOfAdelia.getInstance().getLogger().info("Saving guardian with current character for player " + player.getName());
 
         UUID uuid = player.getUniqueId();
 
@@ -264,6 +265,7 @@ public class DatabaseManager {
     }
 
     public static void writeGuildData(Guild guild) {
+        GuardiansOfAdelia.getInstance().getLogger().info("Saving guild " + guild.getName());
         try {
             DatabaseQueries.setGuild(guild);
         } catch (SQLException e) {

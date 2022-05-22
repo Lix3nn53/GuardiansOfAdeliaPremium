@@ -11,6 +11,7 @@ public class WarpTargetMechanic extends MechanicComponent {
 
     private final boolean toTarget;
     private final boolean toCaster;
+    private final boolean firstTargetToSecond;
 
     public WarpTargetMechanic(ConfigurationSection configurationSection) {
         super(!configurationSection.contains("addLore") || configurationSection.getBoolean("addLore"));
@@ -25,6 +26,7 @@ public class WarpTargetMechanic extends MechanicComponent {
 
         this.toTarget = configurationSection.getBoolean("toTarget");
         this.toCaster = configurationSection.getBoolean("toCaster");
+        this.firstTargetToSecond = configurationSection.contains("firstTargetToSecond") && configurationSection.getBoolean("firstTargetToSecond");
     }
 
     @Override
@@ -41,6 +43,12 @@ public class WarpTargetMechanic extends MechanicComponent {
         if (toCaster) {
             for (LivingEntity target : targets) {
                 target.teleport(casterStartLocation);
+            }
+        }
+
+        if (firstTargetToSecond) {
+            if (targets.size() >= 2) {
+                targets.get(0).teleport(targets.get(1));
             }
         }
 

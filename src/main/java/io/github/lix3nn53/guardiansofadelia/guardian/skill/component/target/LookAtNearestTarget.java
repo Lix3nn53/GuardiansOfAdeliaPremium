@@ -10,6 +10,7 @@ import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Applies child components to the closest all nearby entities around
@@ -73,7 +74,9 @@ public class LookAtNearestTarget extends AreaTarget {
             location.add(offset);
             List<LivingEntity> nearbyTarget = TargetHelper.getNearbySphere(location, radius);
 
-            ParticleShapes.drawCylinder(location, arrangementSingle, radius, amount, particleHeight, false, 0, 0, new Vector());
+            if (arrangementSingle != null && showParticles) {
+                ParticleShapes.drawCylinder(location, arrangementSingle, radius, amount, particleHeight, false, 0, 0, new Vector());
+            }
 
             nearbyTarget = determineTargets(caster, nearbyTarget);
 
@@ -86,23 +89,43 @@ public class LookAtNearestTarget extends AreaTarget {
                 }
             } else {
                 Location start = target.getLocation();
-                LivingEntity singleTarget = nearbyTarget.get(0);
+                List<LivingEntity> firstNElementsList = nearbyTarget;
+                if (this.getMax() > nearbyTarget.size()) {
+                    firstNElementsList = nearbyTarget.stream().limit(this.getMax()).collect(Collectors.toList());
+                }
+                // Draw line to each target
+                for (LivingEntity singleTarget : firstNElementsList) {
+                    float height = (float) (singleTarget.getHeight()) / 2f;
+                    Location targetLocation = singleTarget.getLocation().add(0, height, 0);
 
+                    if (drawLine) {
+                        ParticleShapes.drawLineBetween(start.getWorld(), start.toVector(), arrangementSingle, targetLocation.toVector(), drawLineGap);
+                    }
+                }
+
+                // Look at nearest target
+                LivingEntity singleTarget = nearbyTarget.get(0);
                 float height = (float) (singleTarget.getHeight()) / 2f;
                 Location targetLocation = singleTarget.getLocation().add(0, height, 0);
                 Vector vectorBetweenPoints = targetLocation.toVector().subtract(start.toVector());
                 start.setDirection(vectorBetweenPoints);
                 target.teleport(start);
 
-                if (drawLine) {
-                    ParticleShapes.drawLineBetween(start.getWorld(), start.toVector(), arrangementSingle, targetLocation.toVector(), drawLineGap);
-                }
-
                 if (selectTarget) {
-                    List<LivingEntity> newTargets = new ArrayList<>();
-                    newTargets.add(singleTarget);
+                    List<LivingEntity> targetsNew = new ArrayList<>();
+                    if (super.isKeepCurrent()) {
+                        if (super.isAddToBeginning()) {
+                            firstNElementsList.addAll(targets);
+                            targetsNew = firstNElementsList;
+                        } else {
+                            targetsNew.addAll(targets);
+                            targetsNew.addAll(firstNElementsList);
+                        }
+                    } else {
+                        targetsNew = firstNElementsList;
+                    }
 
-                    boolean b = executeChildren(caster, skillLevel, newTargets, castCounter, skillIndex);
+                    boolean b = executeChildren(caster, skillLevel, targetsNew, castCounter, skillIndex);
                     if (b) {
                         success = true;
                     }
