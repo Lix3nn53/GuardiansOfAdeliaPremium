@@ -8,13 +8,14 @@ import io.lumine.mythic.api.mobs.MobManager;
 import io.lumine.mythic.api.mobs.MythicMob;
 import io.lumine.mythic.bukkit.MythicBukkit;
 import net.md_5.bungee.api.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public final class TaskDealDamage implements Task {
+public final class TaskDealDamage extends TaskBase {
 
     private final int damageNeeded;
     private final String mobName;
@@ -23,7 +24,8 @@ public final class TaskDealDamage implements Task {
     private int progress = 0;
 
 
-    public TaskDealDamage(final String internalName, final int damageNeeded) {
+    public TaskDealDamage(final String internalName, final int damageNeeded, Location customCompassTarget) {
+        super(customCompassTarget);
         MobManager mobManager = MythicBukkit.inst().getMobManager();
         Optional<MythicMob> mythicMob = mobManager.getMythicMob(internalName);
 
@@ -37,7 +39,7 @@ public final class TaskDealDamage implements Task {
     }
 
     public TaskDealDamage freshCopy() {
-        TaskDealDamage taskCopy = new TaskDealDamage(this.internalName, this.damageNeeded);
+        TaskDealDamage taskCopy = new TaskDealDamage(this.internalName, this.damageNeeded, customCompassTarget);
         taskCopy.setOnCompleteActions(this.onCompleteActions);
         return taskCopy;
     }

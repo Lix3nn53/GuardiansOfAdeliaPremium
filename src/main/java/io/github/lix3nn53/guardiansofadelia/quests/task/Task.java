@@ -33,4 +33,6 @@ public interface Task {
     void addOnCompleteAction(Action action);
 
     Task freshCopy();
+
+    void setCompassTarget(Player player, String questName);
 }

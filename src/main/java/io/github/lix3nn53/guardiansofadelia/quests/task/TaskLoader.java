@@ -32,6 +32,17 @@ public class TaskLoader {
             return null;
         }
 
+        Location customCompassTarget = null;
+        if (configurationSection.isConfigurationSection("customCompassTarget")) {
+            World world = Bukkit.getWorld(configurationSection.getString("customCompassTarget.world"));
+
+            float x = (float) configurationSection.getDouble("customCompassTarget.x");
+            float y = (float) configurationSection.getDouble("customCompassTarget.y");
+            float z = (float) configurationSection.getDouble("customCompassTarget.z");
+
+            customCompassTarget = new Location(world, x, y, z);
+        }
+
         Task task = null;
         if (componentType.equals(TaskCollect.class.getSimpleName())) {
             List<String> keyOfMobsItemDropsFrom = configurationSection.getStringList("keyOfMobsItemDropsFrom");
@@ -59,14 +70,14 @@ public class TaskLoader {
             int amountNeeded = configurationSection.getInt("amountNeeded");
             boolean removeOnTurnIn = configurationSection.getBoolean("removeOnTurnIn");
 
-            task = new TaskCollect(nameOfMobsItemDropsFrom, chance, questItem, amountNeeded, removeOnTurnIn);
+            task = new TaskCollect(nameOfMobsItemDropsFrom, chance, questItem, amountNeeded, removeOnTurnIn, customCompassTarget);
         } else if (componentType.equals(TaskCrafting.class.getSimpleName())) {
             int amountNeeded = configurationSection.getInt("amountNeeded");
             CraftingType craftingType = CraftingType.valueOf(configurationSection.getString("craftingType"));
             int minCraftingLevel = configurationSection.getInt("minCraftingLevel");
             String itemNameContains = configurationSection.contains("itemNameContains") ? configurationSection.getString("itemNameContains") : null;
 
-            task = new TaskCrafting(craftingType, minCraftingLevel, itemNameContains, amountNeeded);
+            task = new TaskCrafting(craftingType, minCraftingLevel, itemNameContains, amountNeeded, customCompassTarget);
         } else if (componentType.equals(TaskDealDamage.class.getSimpleName())) {
             String internalName = configurationSection.getString("mobKey");
 
@@ -81,14 +92,14 @@ public class TaskLoader {
 
             int damageNeeded = configurationSection.getInt("damageNeeded");
 
-            task = new TaskDealDamage(internalName, damageNeeded);
+            task = new TaskDealDamage(internalName, damageNeeded, customCompassTarget);
         } else if (componentType.equals(TaskGathering.class.getSimpleName())) {
             int ingredientIndex = configurationSection.getInt("ingredientIndex");
             Ingredient ingredient = GatheringManager.getIngredient(ingredientIndex);
 
             int amountNeeded = configurationSection.getInt("amountNeeded");
 
-            task = new TaskGathering(ingredient, amountNeeded);
+            task = new TaskGathering(ingredient, amountNeeded, customCompassTarget);
         } else if (componentType.equals(TaskGift.class.getSimpleName())) {
             String internalName = configurationSection.getString("mobKey");
 
@@ -105,11 +116,11 @@ public class TaskLoader {
 
             int amountNeeded = configurationSection.getInt("amountNeeded");
 
-            task = new TaskGift(amountNeeded, itemStack, internalName);
+            task = new TaskGift(amountNeeded, itemStack, internalName, customCompassTarget);
         } else if (componentType.equals(TaskInteract.class.getSimpleName())) {
             int npcId = configurationSection.getInt("npcId");
 
-            task = new TaskInteract(npcId);
+            task = new TaskInteract(npcId, customCompassTarget);
         } else if (componentType.equals(TaskKill.class.getSimpleName())) {
             String internalName = configurationSection.getString("mobKey");
 
@@ -124,7 +135,7 @@ public class TaskLoader {
 
             int amountNeeded = configurationSection.getInt("amountNeeded");
 
-            task = new TaskKill(internalName, amountNeeded);
+            task = new TaskKill(internalName, amountNeeded, customCompassTarget);
         } else if (componentType.equals(TaskReach.class.getSimpleName())) {
             World world = Bukkit.getWorld(configurationSection.getString("world"));
 
@@ -136,20 +147,20 @@ public class TaskLoader {
 
             Material blockMaterial = Material.valueOf(configurationSection.getString("blockMaterial"));
 
-            task = new TaskReach(location, blockMaterial);
+            task = new TaskReach(location, blockMaterial, customCompassTarget);
         } else if (componentType.equals(TaskDungeon.class.getSimpleName())) {
             String dungeonTheme = configurationSection.getString("dungeonTheme");
             int minDarkness = configurationSection.getInt("minDarkness");
 
-            task = new TaskDungeon(dungeonTheme, minDarkness);
+            task = new TaskDungeon(dungeonTheme, minDarkness, customCompassTarget);
         } else if (componentType.equals(TaskChangeClass.class.getSimpleName())) {
-            task = new TaskChangeClass();
+            task = new TaskChangeClass(new ArrayList<>(), customCompassTarget);
         } else if (componentType.equals(TaskUpgradeSkill.class.getSimpleName())) {
-            task = new TaskUpgradeSkill();
+            task = new TaskUpgradeSkill(customCompassTarget);
         } else if (componentType.equals(TaskUpgradeStat.class.getSimpleName())) {
-            task = new TaskUpgradeStat();
+            task = new TaskUpgradeStat(customCompassTarget);
         } else if (componentType.equals(TaskEquipPassive.class.getSimpleName())) {
-            task = new TaskEquipPassive();
+            task = new TaskEquipPassive(customCompassTarget);
         }
 
         if (task == null) {

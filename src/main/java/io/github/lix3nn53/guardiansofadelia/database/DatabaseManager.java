@@ -2,9 +2,7 @@ package io.github.lix3nn53.guardiansofadelia.database;
 
 import io.github.lix3nn53.guardiansofadelia.GuardiansOfAdelia;
 import io.github.lix3nn53.guardiansofadelia.bossbar.HeaderBarManager;
-import io.github.lix3nn53.guardiansofadelia.chat.ChatManager;
-import io.github.lix3nn53.guardiansofadelia.chat.PremiumRank;
-import io.github.lix3nn53.guardiansofadelia.chat.StaffRank;
+import io.github.lix3nn53.guardiansofadelia.chat.*;
 import io.github.lix3nn53.guardiansofadelia.guardian.GuardianData;
 import io.github.lix3nn53.guardiansofadelia.guardian.GuardianDataManager;
 import io.github.lix3nn53.guardiansofadelia.guardian.character.*;
@@ -238,9 +236,16 @@ public class DatabaseManager {
         for (OfflinePlayer friend : friends) {
             friendUUIDs.append(friend.getUniqueId()).append(";");
         }
+        StringBuilder chatChannels = new StringBuilder();
+        ChatChannelData chatChannelData = guardianData.getChatChannelData();
+        for (ChatChannel chatChannel : ChatChannel.values()) {
+            if (chatChannelData.isListening(chatChannel)) {
+                chatChannels.append(chatChannel.name()).append(";");
+            }
+        }
         try {
             DatabaseQueries.setGuardianData(uuid, lastPrizeDate, staffRank, premiumRank, personalStorage, bazaarStorage,
-                    premiumStorage, language, friendUUIDs.toString());
+                    premiumStorage, language, friendUUIDs.toString(), chatChannels.toString());
         } catch (SQLException e) {
             e.printStackTrace();
         }

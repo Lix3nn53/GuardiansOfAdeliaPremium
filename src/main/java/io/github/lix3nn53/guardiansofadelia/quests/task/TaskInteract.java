@@ -5,27 +5,30 @@ import io.github.lix3nn53.guardiansofadelia.quests.actions.Action;
 import io.github.lix3nn53.guardiansofadelia.text.ChatPalette;
 import io.github.lix3nn53.guardiansofadelia.text.locale.Translation;
 import io.github.lix3nn53.guardiansofadelia.utilities.centermessage.MessageUtils;
+import io.github.lix3nn53.guardiansofadelia.utilities.managers.CompassManager;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPCRegistry;
 import net.md_5.bungee.api.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public final class TaskInteract implements Task {
+public final class TaskInteract extends TaskBase {
 
     private final int npcId;
     private List<Action> onCompleteActions = new ArrayList<>();
     private int completed = 0;
 
-    public TaskInteract(final int npcId) {
+    public TaskInteract(final int npcId, Location customCompassTarget) {
+        super(customCompassTarget);
         this.npcId = npcId;
     }
 
     public TaskInteract freshCopy() {
-        TaskInteract taskCopy = new TaskInteract(this.npcId);
+        TaskInteract taskCopy = new TaskInteract(this.npcId, customCompassTarget);
         taskCopy.setOnCompleteActions(this.onCompleteActions);
         return taskCopy;
     }
@@ -131,5 +134,15 @@ public final class TaskInteract implements Task {
 
     public int getNpcId() {
         return npcId;
+    }
+
+    @Override
+    public void setCompassTarget(Player player, String questName) {
+        if (customCompassTarget != null) {
+            super.setCompassTarget(player, questName);
+            return;
+        }
+
+        CompassManager.setCompassItemNPC(player, npcId);
     }
 }

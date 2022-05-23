@@ -1,9 +1,7 @@
 package io.github.lix3nn53.guardiansofadelia.database;
 
 import io.github.lix3nn53.guardiansofadelia.GuardiansOfAdelia;
-import io.github.lix3nn53.guardiansofadelia.chat.ChatTag;
-import io.github.lix3nn53.guardiansofadelia.chat.PremiumRank;
-import io.github.lix3nn53.guardiansofadelia.chat.StaffRank;
+import io.github.lix3nn53.guardiansofadelia.chat.*;
 import io.github.lix3nn53.guardiansofadelia.creatures.pets.PetManager;
 import io.github.lix3nn53.guardiansofadelia.guardian.GuardianData;
 import io.github.lix3nn53.guardiansofadelia.guardian.attribute.AttributeType;
@@ -53,6 +51,7 @@ public class DatabaseQueries {
                     "     `storage_premium` mediumtext NULL,\n" +
                     "     `lang` varchar(20) NOT NULL,\n" +
                     "     `friend_uuids` text,\n" +
+                    "     `chat_channels` text,\n" +
                     "     PRIMARY KEY (`uuid`)\n" +
                     ");");
             statement.addBatch("CREATE TABLE IF NOT EXISTS `goa_player_character` (\n" +
@@ -246,6 +245,17 @@ public class DatabaseQueries {
                     }
 
                     guardianData.setFriends(friends);
+                }
+
+                String chatChannels = resultSet.getString("chat_channels");
+                if (!resultSet.wasNull()) {
+                    ChatChannelData chatChannelData = guardianData.getChatChannelData();
+
+                    String[] split = chatChannels.split(";");
+                    for (String s : split) {
+                        ChatChannel chatChannel = ChatChannel.valueOf(s);
+                        chatChannelData.addListening(chatChannel);
+                    }
                 }
             }
             resultSet.close();
@@ -708,15 +718,17 @@ public class DatabaseQueries {
 
     public static int setGuardianData(UUID uuid, LocalDate lastPrizeDate, StaffRank staffRank, PremiumRank premiumRank,
                                       ItemStack[] personalStorage, ItemStack[] bazaarStorage,
-                                      ItemStack[] premiumStorage, String language, String friendUUIDS) throws SQLException {
+                                      ItemStack[] premiumStorage, String language, String friendUUIDS,
+                                      String chatChannels) throws SQLException {
         if (friendUUIDS.equals("")) {
             friendUUIDS = null;
         }
 
         String SQL_QUERY = "INSERT INTO goa_player \n" +
-                "\t(uuid, daily_last_date, staff_rank, premium_rank, storage_personal, storage_bazaar, storage_premium, lang, friend_uuids) \n" +
+                "\t(uuid, daily_last_date, staff_rank, premium_rank, storage_personal, storage_bazaar, storage_premium, " +
+                "lang, friend_uuids, chat_channels) \n" +
                 "VALUES \n" +
-                "\t(?, ?, ?, ?, ?, ?, ?, ?, ?)\n" +
+                "\t(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)\n" +
                 "ON DUPLICATE KEY UPDATE\n" +
                 "\tuuid = VALUES(uuid),\n" +
                 "\tdaily_last_date = VALUES(daily_last_date),\n" +
@@ -726,7 +738,8 @@ public class DatabaseQueries {
                 "\tstorage_bazaar = VALUES(storage_bazaar),\n" +
                 "\tstorage_premium = VALUES(storage_premium),\n" +
                 "\tlang = VALUES(lang),\n" +
-                "\tfriend_uuids = VALUES(friend_uuids);";
+                "\tfriend_uuids = VALUES(friend_uuids),\n" +
+                "\tchat_channels = VALUES(chat_channels);";
         try (Connection con = ConnectionPool.getConnection()) {
             PreparedStatement pst = con.prepareStatement(SQL_QUERY);
 
@@ -742,6 +755,7 @@ public class DatabaseQueries {
             pst.setString(7, premiumStorageString);
             pst.setString(8, language);
             pst.setString(9, friendUUIDS);
+            pst.setString(10, chatChannels);
 
             //2 = replaced, 1 = new row added
             int returnValue = pst.executeUpdate();

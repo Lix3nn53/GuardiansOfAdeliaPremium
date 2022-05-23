@@ -8,13 +8,14 @@ import io.lumine.mythic.api.mobs.MobManager;
 import io.lumine.mythic.api.mobs.MythicMob;
 import io.lumine.mythic.bukkit.MythicBukkit;
 import net.md_5.bungee.api.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public final class TaskKill implements Task {
+public final class TaskKill extends TaskBase {
 
     private final int amountNeeded;
 
@@ -23,7 +24,9 @@ public final class TaskKill implements Task {
     private List<Action> onCompleteActions = new ArrayList<>();
     private int progress;
 
-    public TaskKill(final String internalName, final int amountNeeded) {
+    public TaskKill(final String internalName, final int amountNeeded, Location customCompassTarget) {
+        super(customCompassTarget);
+
         MobManager mobManager = MythicBukkit.inst().getMobManager();
         Optional<MythicMob> mythicMob = mobManager.getMythicMob(internalName);
 
@@ -40,7 +43,7 @@ public final class TaskKill implements Task {
     }
 
     public TaskKill freshCopy() {
-        TaskKill taskCopy = new TaskKill(this.internalName, this.amountNeeded);
+        TaskKill taskCopy = new TaskKill(this.internalName, this.amountNeeded, customCompassTarget);
         taskCopy.setOnCompleteActions(this.onCompleteActions);
         return taskCopy;
     }
@@ -59,7 +62,7 @@ public final class TaskKill implements Task {
         } else {
             color = ChatPalette.YELLOW;
         }
-        return color + Translation.t(guardianData, "quest.task.kill.l2") + amountNeeded + " " + ChatColor.stripColor(mobName);
+        return color + Translation.t(guardianData, "quest.task.kill.l1") + amountNeeded + " " + ChatColor.stripColor(mobName);
     }
 
     @Override

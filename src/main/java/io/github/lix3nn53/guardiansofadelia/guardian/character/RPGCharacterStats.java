@@ -438,29 +438,27 @@ public class RPGCharacterStats {
             if (fixDisplay) {
                 onMaxHealthChange(rpgClassStats);
 
-                if (PersistentDataContainerUtil.hasString(itemStack, "gearSet")) {
-                    new BukkitRunnable() {
-                        @Override
-                        public void run() {
-                            PlayerInventory inventory = player.getInventory();
+                new BukkitRunnable() {
+                    @Override
+                    public void run() {
+                        PlayerInventory inventory = player.getInventory();
 
-                            ItemStack inventoryHelmet = inventory.getHelmet();
-                            ItemStack inventoryChestplate = inventory.getChestplate();
-                            ItemStack inventoryLeggings = inventory.getLeggings();
-                            ItemStack inventoryBoots = inventory.getBoots();
-                            ItemStack itemInMainHand = inventory.getItemInMainHand();
-                            ItemStack itemInOffHand = inventory.getItemInOffHand();
+                        ItemStack inventoryHelmet = inventory.getHelmet();
+                        ItemStack inventoryChestplate = inventory.getChestplate();
+                        ItemStack inventoryLeggings = inventory.getLeggings();
+                        ItemStack inventoryBoots = inventory.getBoots();
+                        ItemStack itemInMainHand = inventory.getItemInMainHand();
+                        ItemStack itemInOffHand = inventory.getItemInOffHand();
 
-                            ArmorGearType helmetType = inventoryHelmet == null ? null : ArmorGearType.fromMaterial(inventoryHelmet.getType());
-                            ArmorGearType chestplateType = inventoryChestplate == null ? null : ArmorGearType.fromMaterial(inventoryChestplate.getType());
-                            ArmorGearType leggingsType = inventoryLeggings == null ? null : ArmorGearType.fromMaterial(inventoryLeggings.getType());
-                            ArmorGearType bootsType = inventoryBoots == null ? null : ArmorGearType.fromMaterial(inventoryBoots.getType());
+                        ArmorGearType helmetType = inventoryHelmet == null ? null : ArmorGearType.fromMaterial(inventoryHelmet.getType());
+                        ArmorGearType chestplateType = inventoryChestplate == null ? null : ArmorGearType.fromMaterial(inventoryChestplate.getType());
+                        ArmorGearType leggingsType = inventoryLeggings == null ? null : ArmorGearType.fromMaterial(inventoryLeggings.getType());
+                        ArmorGearType bootsType = inventoryBoots == null ? null : ArmorGearType.fromMaterial(inventoryBoots.getType());
 
-                            recalculateGearSetEffects(inventoryHelmet, inventoryChestplate, inventoryLeggings, inventoryBoots, itemInMainHand, itemInOffHand,
-                                    helmetType, chestplateType, leggingsType, bootsType);
-                        }
-                    }.runTaskLater(GuardiansOfAdelia.getInstance(), 1L);
-                }
+                        recalculateGearSetEffects(inventoryHelmet, inventoryChestplate, inventoryLeggings, inventoryBoots, itemInMainHand, itemInOffHand,
+                                helmetType, chestplateType, leggingsType, bootsType);
+                    }
+                }.runTaskLater(GuardiansOfAdelia.getInstance(), 1L);
             }
         }
     }

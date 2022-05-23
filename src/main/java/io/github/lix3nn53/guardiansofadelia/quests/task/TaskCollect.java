@@ -5,6 +5,7 @@ import io.github.lix3nn53.guardiansofadelia.quests.actions.Action;
 import io.github.lix3nn53.guardiansofadelia.text.ChatPalette;
 import io.github.lix3nn53.guardiansofadelia.text.locale.Translation;
 import net.md_5.bungee.api.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -12,7 +13,7 @@ import org.bukkit.inventory.ItemStack;
 import java.util.ArrayList;
 import java.util.List;
 
-public final class TaskCollect implements Task {
+public final class TaskCollect extends TaskBase {
 
     public final static Material DROP_MATERIAL = Material.PINK_DYE;
 
@@ -24,7 +25,9 @@ public final class TaskCollect implements Task {
     private List<Action> onCompleteActions = new ArrayList<>();
     private int progress;
 
-    public TaskCollect(final List<String> keyOfMobsItemDropsFrom, final float chance, final ItemStack itemStack, final int amountNeeded, boolean removeOnTurnIn) {
+    public TaskCollect(final List<String> keyOfMobsItemDropsFrom, final float chance, final ItemStack itemStack,
+                       final int amountNeeded, boolean removeOnTurnIn, Location customCompassTarget) {
+        super(customCompassTarget);
         this.keyOfMobsItemDropsFrom = keyOfMobsItemDropsFrom;
         this.chance = chance;
         this.itemStack = itemStack.clone();
@@ -35,7 +38,8 @@ public final class TaskCollect implements Task {
     }
 
     public TaskCollect freshCopy() {
-        TaskCollect taskCopy = new TaskCollect(this.keyOfMobsItemDropsFrom, this.chance, this.itemStack, this.amountNeeded, removeOnTurnIn);
+        TaskCollect taskCopy = new TaskCollect(this.keyOfMobsItemDropsFrom, this.chance, this.itemStack,
+                this.amountNeeded, removeOnTurnIn, customCompassTarget);
         taskCopy.setOnCompleteActions(this.onCompleteActions);
         return taskCopy;
     }

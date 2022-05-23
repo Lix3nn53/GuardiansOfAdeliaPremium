@@ -5,12 +5,13 @@ import io.github.lix3nn53.guardiansofadelia.jobs.crafting.CraftingType;
 import io.github.lix3nn53.guardiansofadelia.quests.actions.Action;
 import io.github.lix3nn53.guardiansofadelia.text.ChatPalette;
 import io.github.lix3nn53.guardiansofadelia.text.locale.Translation;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public final class TaskCrafting implements Task {
+public final class TaskCrafting extends TaskBase {
 
     private final int amountNeeded;
     private final CraftingType craftingType;
@@ -19,7 +20,9 @@ public final class TaskCrafting implements Task {
     private List<Action> onCompleteActions = new ArrayList<>();
     private int progress = 0;
 
-    public TaskCrafting(final CraftingType craftingType, final int minCraftingLevel, final String itemNameContains, final int amountNeeded) {
+    public TaskCrafting(final CraftingType craftingType, final int minCraftingLevel, final String itemNameContains,
+                        final int amountNeeded, Location customCompassTarget) {
+        super(customCompassTarget);
         this.craftingType = craftingType;
         this.minCraftingLevel = minCraftingLevel;
         this.itemNameContains = itemNameContains;
@@ -27,7 +30,8 @@ public final class TaskCrafting implements Task {
     }
 
     public TaskCrafting freshCopy() {
-        TaskCrafting taskCopy = new TaskCrafting(this.craftingType, this.minCraftingLevel, this.itemNameContains, this.amountNeeded);
+        TaskCrafting taskCopy = new TaskCrafting(this.craftingType, this.minCraftingLevel, this.itemNameContains,
+                this.amountNeeded, customCompassTarget);
         taskCopy.setOnCompleteActions(this.onCompleteActions);
         return taskCopy;
     }

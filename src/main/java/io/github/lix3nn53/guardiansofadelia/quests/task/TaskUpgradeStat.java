@@ -5,18 +5,23 @@ import io.github.lix3nn53.guardiansofadelia.guardian.attribute.Attribute;
 import io.github.lix3nn53.guardiansofadelia.quests.actions.Action;
 import io.github.lix3nn53.guardiansofadelia.text.ChatPalette;
 import io.github.lix3nn53.guardiansofadelia.text.locale.Translation;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public final class TaskUpgradeStat implements Task {
+public final class TaskUpgradeStat extends TaskBase {
 
     private List<Action> onCompleteActions = new ArrayList<>();
     private int completed = 0;
 
+    public TaskUpgradeStat(Location customCompassTarget) {
+        super(customCompassTarget);
+    }
+
     public TaskUpgradeStat freshCopy() {
-        TaskUpgradeStat taskCopy = new TaskUpgradeStat();
+        TaskUpgradeStat taskCopy = new TaskUpgradeStat(customCompassTarget);
         taskCopy.setOnCompleteActions(this.onCompleteActions);
         return taskCopy;
     }

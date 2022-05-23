@@ -6,6 +6,7 @@ import io.github.lix3nn53.guardiansofadelia.quests.actions.Action;
 import io.github.lix3nn53.guardiansofadelia.text.ChatPalette;
 import io.github.lix3nn53.guardiansofadelia.text.locale.Translation;
 import io.github.lix3nn53.guardiansofadelia.utilities.centermessage.MessageUtils;
+import io.github.lix3nn53.guardiansofadelia.utilities.managers.CompassManager;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -13,20 +14,22 @@ import org.bukkit.entity.Player;
 import java.util.ArrayList;
 import java.util.List;
 
-public final class TaskReach implements Task {
+public final class TaskReach extends TaskBase {
 
     private final Location blockLoc;
     private final Material blockMat;
     private List<Action> onCompleteActions = new ArrayList<>();
     private int completed = 0;
 
-    public TaskReach(final Location blockLoc, final Material blockMat) {
+    public TaskReach(final Location blockLoc, final Material blockMat, Location customCompassTarget) {
+        super(customCompassTarget);
+
         this.blockLoc = blockLoc;
         this.blockMat = blockMat;
     }
 
     public TaskReach freshCopy() {
-        TaskReach taskCopy = new TaskReach(this.blockLoc, this.blockMat);
+        TaskReach taskCopy = new TaskReach(this.blockLoc, this.blockMat, customCompassTarget);
         taskCopy.setOnCompleteActions(this.onCompleteActions);
         return taskCopy;
     }
@@ -136,5 +139,16 @@ public final class TaskReach implements Task {
 
     public Location getBlockLoc() {
         return blockLoc;
+    }
+
+    @Override
+    public void setCompassTarget(Player player, String questName) {
+        if (customCompassTarget != null) {
+            super.setCompassTarget(player, questName);
+            return;
+        }
+
+        Location blockLoc = this.getBlockLoc();
+        CompassManager.setCompassItemLocation(player, questName + "-Reach", blockLoc);
     }
 }

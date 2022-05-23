@@ -4,6 +4,7 @@ import io.github.lix3nn53.guardiansofadelia.guardian.skill.component.MechanicCom
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Monster;
 import org.bukkit.util.Vector;
 
 import java.util.List;
@@ -30,6 +31,10 @@ public class HeadRotationMechanic extends MechanicComponent {
         Vector subtract = target.subtract(center);
         Location location = centerLoc.setDirection(subtract);
         centerEntity.teleport(location);
+
+        if (centerEntity instanceof Monster) {
+            ((Monster) centerEntity).setTarget(targetEntity);
+        }
 
         return true;
     }

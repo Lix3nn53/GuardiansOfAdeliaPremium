@@ -6,26 +6,28 @@ import io.github.lix3nn53.guardiansofadelia.quests.actions.Action;
 import io.github.lix3nn53.guardiansofadelia.text.ChatPalette;
 import io.github.lix3nn53.guardiansofadelia.text.locale.Translation;
 import net.md_5.bungee.api.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public final class TaskGathering implements Task {
+public final class TaskGathering extends TaskBase {
 
     private final int amountNeeded;
     private final Ingredient ingredient;
     private List<Action> onCompleteActions = new ArrayList<>();
     private int progress;
 
-    public TaskGathering(final Ingredient ingredient, final int amountNeeded) {
+    public TaskGathering(final Ingredient ingredient, final int amountNeeded, Location customCompassTarget) {
+        super(customCompassTarget);
         this.ingredient = ingredient;
         this.amountNeeded = amountNeeded;
         progress = 0;
     }
 
     public TaskGathering freshCopy() {
-        TaskGathering taskCopy = new TaskGathering(this.ingredient, this.amountNeeded);
+        TaskGathering taskCopy = new TaskGathering(this.ingredient, this.amountNeeded, customCompassTarget);
         taskCopy.setOnCompleteActions(this.onCompleteActions);
         return taskCopy;
     }

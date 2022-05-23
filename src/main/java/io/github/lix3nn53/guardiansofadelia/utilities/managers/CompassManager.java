@@ -3,14 +3,9 @@ package io.github.lix3nn53.guardiansofadelia.utilities.managers;
 import io.github.lix3nn53.guardiansofadelia.guardian.GuardianData;
 import io.github.lix3nn53.guardiansofadelia.guardian.GuardianDataManager;
 import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGCharacter;
-import io.github.lix3nn53.guardiansofadelia.minigames.MiniGameManager;
-import io.github.lix3nn53.guardiansofadelia.minigames.dungeon.DungeonTheme;
 import io.github.lix3nn53.guardiansofadelia.npc.QuestNPCManager;
 import io.github.lix3nn53.guardiansofadelia.quests.Quest;
 import io.github.lix3nn53.guardiansofadelia.quests.task.Task;
-import io.github.lix3nn53.guardiansofadelia.quests.task.TaskDungeon;
-import io.github.lix3nn53.guardiansofadelia.quests.task.TaskInteract;
-import io.github.lix3nn53.guardiansofadelia.quests.task.TaskReach;
 import io.github.lix3nn53.guardiansofadelia.text.ChatPalette;
 import io.github.lix3nn53.guardiansofadelia.text.font.CustomCharacter;
 import io.github.lix3nn53.guardiansofadelia.text.font.CustomCharacterCompass;
@@ -179,27 +174,8 @@ public class CompassManager {
                     List<Task> tasks = quest.getTasks();
                     for (Task task : tasks) {
                         if (!task.isCompleted()) {
-                            if (task instanceof TaskDungeon) {
-                                TaskDungeon taskDungeon = (TaskDungeon) task;
-                                DungeonTheme dungeonTheme = taskDungeon.getDungeonTheme();
-                                Location portalLocationOfDungeonTheme = MiniGameManager.getPortalLocationOfDungeonTheme(dungeonTheme.getCode());
-
-                                CompassManager.setCompassItemLocation(player, quest.getName() + "-TaskDungeon", portalLocationOfDungeonTheme);
-
-                                return;
-                            } else if (task instanceof TaskInteract) {
-                                TaskInteract taskInteract = (TaskInteract) task;
-                                int npc = taskInteract.getNpcId();
-                                CompassManager.setCompassItemNPC(player, npc);
-
-                                return;
-                            } else if (task instanceof TaskReach) {
-                                TaskReach taskReach = (TaskReach) task;
-                                Location blockLoc = taskReach.getBlockLoc();
-
-                                CompassManager.setCompassItemLocation(player, quest.getName() + "-TaskReact", blockLoc);
-                                return;
-                            }
+                            task.setCompassTarget(player, quest.getName());
+                            return;
                         }
                     }
                 }

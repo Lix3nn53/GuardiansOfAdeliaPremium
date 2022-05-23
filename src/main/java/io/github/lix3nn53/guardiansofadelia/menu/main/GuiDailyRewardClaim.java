@@ -157,7 +157,9 @@ public class GuiDailyRewardClaim extends GuiGeneric {
                 GuiMain gui = new GuiMain(guardianData);
                 gui.openInventory(player);
             } else {
-                Material currentType = event.getCurrentItem().getType();
+                ItemStack currentItem = event.getCurrentItem();
+                if (currentItem == null) return;
+                Material currentType = currentItem.getType();
 
                 if (currentType.equals(Material.LIME_WOOL)) {
                     DailyRewardHandler.giveReward(player);

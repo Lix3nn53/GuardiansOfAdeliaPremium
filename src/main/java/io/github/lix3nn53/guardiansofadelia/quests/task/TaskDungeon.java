@@ -7,14 +7,16 @@ import io.github.lix3nn53.guardiansofadelia.minigames.dungeon.DungeonTheme;
 import io.github.lix3nn53.guardiansofadelia.quests.actions.Action;
 import io.github.lix3nn53.guardiansofadelia.text.ChatPalette;
 import io.github.lix3nn53.guardiansofadelia.text.locale.Translation;
+import io.github.lix3nn53.guardiansofadelia.utilities.managers.CompassManager;
 import net.md_5.bungee.api.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public final class TaskDungeon implements Task {
+public final class TaskDungeon extends TaskBase {
 
     private final int minDarkness;
 
@@ -22,7 +24,8 @@ public final class TaskDungeon implements Task {
     private List<Action> onCompleteActions = new ArrayList<>();
     private int progress;
 
-    public TaskDungeon(final String dungeonTheme, final int minDarkness) {
+    public TaskDungeon(final String dungeonTheme, final int minDarkness, Location customCompassTarget) {
+        super(customCompassTarget);
         HashMap<String, DungeonTheme> dungeonThemes = MiniGameManager.getDungeonThemes();
         if (!dungeonThemes.containsKey(dungeonTheme)) {
             GuardiansOfAdelia.getInstance().getLogger().warning("TaskDungeon: WRONG THEME");
@@ -35,7 +38,7 @@ public final class TaskDungeon implements Task {
     }
 
     public TaskDungeon freshCopy() {
-        TaskDungeon taskCopy = new TaskDungeon(this.dungeonTheme.getCode(), this.minDarkness);
+        TaskDungeon taskCopy = new TaskDungeon(this.dungeonTheme.getCode(), this.minDarkness, customCompassTarget);
         taskCopy.setOnCompleteActions(this.onCompleteActions);
         return taskCopy;
     }
@@ -138,5 +141,18 @@ public final class TaskDungeon implements Task {
 
     public DungeonTheme getDungeonTheme() {
         return dungeonTheme;
+    }
+
+    @Override
+    public void setCompassTarget(Player player, String questName) {
+        if (customCompassTarget != null) {
+            super.setCompassTarget(player, questName);
+            return;
+        }
+
+        DungeonTheme dungeonTheme = this.getDungeonTheme();
+        Location portalLocationOfDungeonTheme = MiniGameManager.getPortalLocationOfDungeonTheme(dungeonTheme.getCode());
+
+        CompassManager.setCompassItemLocation(player, questName + "-DungeonPortal", portalLocationOfDungeonTheme);
     }
 }

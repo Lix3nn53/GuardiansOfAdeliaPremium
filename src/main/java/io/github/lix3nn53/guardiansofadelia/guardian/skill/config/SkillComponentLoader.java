@@ -97,6 +97,8 @@ public class SkillComponentLoader {
             return new SavedCompanionsTarget(configurationSection);
         } else if (componentType.equals(HologramMechanic.class.getSimpleName())) {
             return new HologramMechanic(configurationSection);
+        } else if (componentType.equals(HologramMythicMobMechanic.class.getSimpleName())) {
+            return new HologramMythicMobMechanic(configurationSection);
         } else if (componentType.equals(CompanionsOfCasterTargetMechanic.class.getSimpleName())) {
             return new CompanionsOfCasterTargetMechanic(configurationSection);
         } else if (componentType.equals(RepeatMechanic.class.getSimpleName())) {

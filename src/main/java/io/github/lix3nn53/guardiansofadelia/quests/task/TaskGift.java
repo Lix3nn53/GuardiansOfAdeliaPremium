@@ -5,13 +5,14 @@ import io.github.lix3nn53.guardiansofadelia.quests.actions.Action;
 import io.github.lix3nn53.guardiansofadelia.text.ChatPalette;
 import io.github.lix3nn53.guardiansofadelia.text.locale.Translation;
 import net.md_5.bungee.api.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public final class TaskGift implements Task {
+public final class TaskGift extends TaskBase {
 
     private final int amountNeeded;
     private final ItemStack item;
@@ -19,14 +20,15 @@ public final class TaskGift implements Task {
     private List<Action> onCompleteActions = new ArrayList<>();
     private int progress = 0;
 
-    public TaskGift(final int amountNeeded, final ItemStack item, final String entityName) {
+    public TaskGift(final int amountNeeded, final ItemStack item, final String entityName, Location customCompassTarget) {
+        super(customCompassTarget);
         this.amountNeeded = amountNeeded;
         this.item = item;
         this.entityName = entityName;
     }
 
     public TaskGift freshCopy() {
-        TaskGift taskCopy = new TaskGift(this.amountNeeded, this.item, this.entityName);
+        TaskGift taskCopy = new TaskGift(this.amountNeeded, this.item, this.entityName, customCompassTarget);
         taskCopy.setOnCompleteActions(this.onCompleteActions);
         return taskCopy;
     }

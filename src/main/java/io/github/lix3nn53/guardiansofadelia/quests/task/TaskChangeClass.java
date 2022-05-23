@@ -4,20 +4,23 @@ import io.github.lix3nn53.guardiansofadelia.guardian.GuardianData;
 import io.github.lix3nn53.guardiansofadelia.quests.actions.Action;
 import io.github.lix3nn53.guardiansofadelia.text.ChatPalette;
 import io.github.lix3nn53.guardiansofadelia.text.locale.Translation;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
 import java.util.List;
 
-public final class TaskChangeClass implements Task {
+public final class TaskChangeClass extends TaskBase {
 
-    private List<Action> onCompleteActions = new ArrayList<>();
+    private final List<Action> onCompleteActions;
     private int completed = 0;
 
+    public TaskChangeClass(List<Action> onCompleteActions, Location customCompassTarget) {
+        super(customCompassTarget);
+        this.onCompleteActions = onCompleteActions;
+    }
+
     public TaskChangeClass freshCopy() {
-        TaskChangeClass taskCopy = new TaskChangeClass();
-        taskCopy.setOnCompleteActions(this.onCompleteActions);
-        return taskCopy;
+        return new TaskChangeClass(onCompleteActions, customCompassTarget);
     }
 
     public String getTablistInfoString(String language) {
@@ -95,10 +98,6 @@ public final class TaskChangeClass implements Task {
     @Override
     public void addOnCompleteAction(Action action) {
         onCompleteActions.add(action);
-    }
-
-    public void setOnCompleteActions(List<Action> onCompleteActions) {
-        this.onCompleteActions = onCompleteActions;
     }
 
     @Override
