@@ -203,7 +203,7 @@ public class GuildWar extends Minigame {
                 int teamNo = guilds.indexOf(guild) + 1;
                 if (PartyManager.inParty(player)) {
                     Party party = PartyManager.getParty(player);
-                    party.leave(player);
+                    party.leave(player, true);
                 }
                 Party party = getTeams().get(teamNo);
                 if (party.getMembers().size() < getTeamSize()) {

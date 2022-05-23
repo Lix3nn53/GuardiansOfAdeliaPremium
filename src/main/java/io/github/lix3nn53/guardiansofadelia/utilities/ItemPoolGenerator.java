@@ -35,7 +35,7 @@ public class ItemPoolGenerator {
         return temp;
     }
 
-    public static List<ItemStack> generatePassives(ItemTier tier, GearLevel gearLevel, boolean noStats, boolean gearSet) {
+    public static List<ItemStack> generatePassives(ItemTier tier, GearLevel gearLevel, boolean noStats) {
         List<ItemStack> temp = new ArrayList<>();
 
         for (RPGSlotType rpgSlotType : RPGSlotType.values()) {
@@ -45,7 +45,7 @@ public class ItemPoolGenerator {
                     || rpgSlotType.equals(RPGSlotType.RING))) {
                 continue;
             }
-            List<ItemStack> itemStack = PassiveManager.getAll(gearLevel, rpgSlotType, tier, noStats, gearSet);
+            List<ItemStack> itemStack = PassiveManager.getAll(gearLevel, rpgSlotType, tier, noStats);
 
             temp.addAll(itemStack);
         }

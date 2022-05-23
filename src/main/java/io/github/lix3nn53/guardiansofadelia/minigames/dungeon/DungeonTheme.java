@@ -155,8 +155,8 @@ public class DungeonTheme {
                 chestItems.addAll(ItemPoolGenerator.generateArmors(ItemTier.LEGENDARY, gearLevel, false, false, true));
                 break;
             case JEWELRY:
-                chestItems.addAll(ItemPoolGenerator.generatePassives(ItemTier.MYSTIC, gearLevel, false, true));
-                chestItems.addAll(ItemPoolGenerator.generatePassives(ItemTier.LEGENDARY, gearLevel, false, true));
+                chestItems.addAll(ItemPoolGenerator.generatePassives(ItemTier.MYSTIC, gearLevel, false));
+                chestItems.addAll(ItemPoolGenerator.generatePassives(ItemTier.LEGENDARY, gearLevel, false));
                 break;
             case PET:
                 chestItems.addAll(ItemPoolGenerator.generateEggs(gearLevel, 1));

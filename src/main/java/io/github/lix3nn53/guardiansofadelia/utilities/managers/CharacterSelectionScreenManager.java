@@ -1,7 +1,6 @@
 package io.github.lix3nn53.guardiansofadelia.utilities.managers;
 
 import io.github.lix3nn53.guardiansofadelia.GuardiansOfAdelia;
-import io.github.lix3nn53.guardiansofadelia.chat.ChatManager;
 import io.github.lix3nn53.guardiansofadelia.database.DatabaseManager;
 import io.github.lix3nn53.guardiansofadelia.guardian.GuardianData;
 import io.github.lix3nn53.guardiansofadelia.guardian.GuardianDataManager;
@@ -115,10 +114,6 @@ public class CharacterSelectionScreenManager {
         player.sendMessage(ChatPalette.YELLOW + "Loading character-" + charNo);
         DatabaseManager.loadCharacter(player, charNo, location);
         clear(player);
-
-        Bukkit.getScheduler().runTaskLater(GuardiansOfAdelia.getInstance(), () -> {
-            ChatManager.updatePlayerName(player);
-        }, 40L);
     }
 
     public static void clear(Player player) {

@@ -30,8 +30,13 @@ import java.util.List;
 
 public class GuiCraftingBook extends GuiBookGeneric {
 
+    private final CraftingType craftingType;
+    private final int craftingLevel;
+
     public GuiCraftingBook(CraftingType craftingType, int craftingLevel) {
         super(craftingType.toString() + " Crafting Level " + craftingLevel, 0);
+        this.craftingType = craftingType;
+        this.craftingLevel = craftingLevel;
 
         List<GuiPage> guiPageList = new ArrayList<>();
         guiPageList.add(new GuiPage());
@@ -103,27 +108,21 @@ public class GuiCraftingBook extends GuiBookGeneric {
                                 ItemStack current = event.getCurrentItem();
                                 ItemStack clone = current.clone();
 
-                                String title = event.getView().getTitle();
-                                String[] split = title.split(" Crafting Level ");
-
-                                String levelStrWithPage = split[1];
-
-                                String[] split2 = levelStrWithPage.split(" Page");
-
-                                String levelStr = split2[0];
-                                int craftingLevel = Integer.parseInt(levelStr);
                                 jobExpToGive = jobExpToGive * craftingLevel;
                                 GearLevel gearLevel = GearLevel.values()[craftingLevel];
 
-                                StatUtils.addRandomPassiveStats(clone, gearLevel, ItemTier.MYSTIC);
-                                GearSetManager.addRandomGearEffect(current);
+                                if (craftingType.equals(CraftingType.ARMOR_HEAVY) || craftingType.equals(CraftingType.ARMOR_LIGHT)
+                                        || craftingType.equals(CraftingType.WEAPON_MELEE) || craftingType.equals(CraftingType.WEAPON_RANGED)) {
+                                    StatUtils.addRandomPassiveStats(clone, gearLevel, ItemTier.MYSTIC);
+                                    GearSetManager.addRandomGearEffect(current);
+                                } else if (craftingType.equals(CraftingType.JEWEL)) {
+                                    StatUtils.addRandomPassiveStats(clone, gearLevel, ItemTier.MYSTIC);
+                                }
 
                                 for (ItemStack ingredient : ingredients) {
                                     InventoryUtils.removeItemFromInventory(player.getInventory(), ingredient, ingredient.getAmount());
                                 }
                                 InventoryUtils.giveItemToPlayer(player, clone);
-
-                                CraftingType craftingType = CraftingType.valueOf(split[0]);
 
                                 rpgCharacter.getCraftingStats().addExperience(player, craftingType, jobExpToGive);
 

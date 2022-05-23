@@ -229,7 +229,7 @@ public abstract class Minigame {
                             member.teleport(backLocation);
                             if (PartyManager.inParty(member)) {
                                 Party party = PartyManager.getParty(member);
-                                party.leave(member);
+                                party.leave(member, true);
                             }
                         }
 
@@ -287,7 +287,7 @@ public abstract class Minigame {
     public boolean addPlayerNoCheck(Player player) {
         if (PartyManager.inParty(player)) {
             Party party = PartyManager.getParty(player);
-            party.leave(player);
+            party.leave(player, true);
         }
         for (Integer team : teams.keySet()) {
             Party party = teams.get(team);
@@ -304,7 +304,7 @@ public abstract class Minigame {
         for (Integer team : teams.keySet()) {
             Party party = teams.get(team);
             if (party.getMembers().contains(player)) {
-                party.leave(player);
+                party.leave(player, true);
                 teams.put(team, party);
                 break;
             }

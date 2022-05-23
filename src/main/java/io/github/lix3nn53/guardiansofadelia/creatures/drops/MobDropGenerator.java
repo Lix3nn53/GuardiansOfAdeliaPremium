@@ -104,7 +104,7 @@ public class MobDropGenerator {
                 int passiveType = GuardiansOfAdelia.RANDOM.nextInt(4);
                 RPGSlotType rpgSlotType = RPGSlotType.values()[passiveType + 1]; // +1 to ignore parrot
 
-                List<ItemStack> pool = PassiveManager.getAll(gearLevel, rpgSlotType, tier, false, true);
+                List<ItemStack> pool = PassiveManager.getAll(gearLevel, rpgSlotType, tier, false);
 
                 int i = GuardiansOfAdelia.RANDOM.nextInt(pool.size());
                 ItemStack droppedItem = pool.get(i);

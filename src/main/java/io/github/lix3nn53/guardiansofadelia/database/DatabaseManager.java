@@ -13,11 +13,13 @@ import io.github.lix3nn53.guardiansofadelia.guardian.skill.tree.SkillTree;
 import io.github.lix3nn53.guardiansofadelia.guild.Guild;
 import io.github.lix3nn53.guardiansofadelia.guild.GuildManager;
 import io.github.lix3nn53.guardiansofadelia.guild.PlayerRankInGuild;
+import io.github.lix3nn53.guardiansofadelia.quests.Quest;
 import io.github.lix3nn53.guardiansofadelia.text.ChatPalette;
 import io.github.lix3nn53.guardiansofadelia.text.locale.Translation;
 import io.github.lix3nn53.guardiansofadelia.utilities.TablistUtils;
 import io.github.lix3nn53.guardiansofadelia.utilities.managers.AdeliaRegionManager;
 import io.github.lix3nn53.guardiansofadelia.utilities.managers.CharacterSelectionScreenManager;
+import io.github.lix3nn53.guardiansofadelia.utilities.managers.CompassManager;
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.disguisetypes.MobDisguise;
@@ -77,6 +79,13 @@ public class DatabaseManager {
 
                     int totalMaxMana = rpgCharacter.getRpgCharacterStats().getTotalMaxMana(rpgClassStats);
                     rpgCharacter.getRpgCharacterStats().setCurrentMana(totalMaxMana, rpgClassStats);
+                    ChatManager.updatePlayerName(player);
+
+                    List<Quest> questList = rpgCharacter.getQuestList();
+                    if (!questList.isEmpty()) {
+                        Quest quest = questList.get(0);
+                        CompassManager.startAutoTrackQuest(player, quest.getQuestID());
+                    }
                 }
             } catch (SQLException e) {
                 e.printStackTrace();

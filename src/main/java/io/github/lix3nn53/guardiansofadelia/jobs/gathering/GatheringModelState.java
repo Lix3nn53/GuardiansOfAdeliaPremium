@@ -26,7 +26,7 @@ public class GatheringModelState {
     private Location baseLocation;
     private EulerAngle rotation;
     private ArmorStand armorStand;
-    private boolean onCooldown = false;
+    private int cooldown = 0;
     private boolean beingGathered = false;
 
     public GatheringModelState(int id, Location baseLocation, EulerAngle rotation) {
@@ -56,7 +56,7 @@ public class GatheringModelState {
         if (material != null) {
             ItemStack itemStack = new ItemStack(material);
             ItemMeta itemMeta = itemStack.getItemMeta();
-            if (onCooldown) {
+            if (cooldown > 0) {
                 itemMeta.setCustomModelData(cooldownCustomModelData);
             } else {
                 itemMeta.setCustomModelData(customModelData);
@@ -76,8 +76,8 @@ public class GatheringModelState {
             }
         }
 
-        if (onCooldown) {
-            armorStand.setCustomName(title + ChatPalette.GRAY + " (On Cooldown)");
+        if (cooldown > 0) {
+            armorStand.setCustomName(title + ChatPalette.GRAY + " (" + cooldown + ")");
         } else {
             armorStand.setCustomName(title);
         }
@@ -97,9 +97,9 @@ public class GatheringModelState {
     public void onLoot(GatheringModelData gatheringModelData) {
         String title = gatheringModelData.getTitle();
 
-        onCooldown = true;
+        cooldown = 30; // TODO make a premium server buff for faster cooldown?
         setBeingGathered(false);
-        armorStand.setCustomName(title + ChatPalette.GRAY + " (On Cooldown)");
+        armorStand.setCustomName(title + ChatPalette.GRAY + " (" + cooldown + ")");
 
         EntityEquipment equipment = armorStand.getEquipment();
         ItemStack helmet = equipment.getHelmet();
@@ -122,33 +122,39 @@ public class GatheringModelState {
         }
 
         new BukkitRunnable() {
+
             @Override
             public void run() {
-                onCooldown = false;
-                if (baseLocation.getChunk().isLoaded()) {
-                    armorStand.setCustomName(title);
+                if (cooldown == 0) {
+                    cancel();
+                    if (baseLocation.getChunk().isLoaded()) {
+                        armorStand.setCustomName(title);
 
-                    if (helmet != null) {
-                        int customModelData = gatheringModelData.getCustomModelData();
+                        if (helmet != null) {
+                            int customModelData = gatheringModelData.getCustomModelData();
 
-                        EntityEquipment equipment = armorStand.getEquipment();
-                        ItemMeta itemMeta = helmet.getItemMeta();
-                        itemMeta.setCustomModelData(customModelData);
-                        helmet.setItemMeta(itemMeta);
-                        equipment.setHelmet(helmet);
+                            EntityEquipment equipment = armorStand.getEquipment();
+                            ItemMeta itemMeta = helmet.getItemMeta();
+                            itemMeta.setCustomModelData(customModelData);
+                            helmet.setItemMeta(itemMeta);
+                            equipment.setHelmet(helmet);
 
-                        boolean isDisguise = gatheringModelData.isDisguise();
-                        if (isDisguise) {
-                            MiscDisguise disguise = new MiscDisguise(DisguiseType.DROPPED_ITEM);
-                            DroppedItemWatcher watcher = (DroppedItemWatcher) disguise.getWatcher();
-                            watcher.setItemStack(helmet);
+                            boolean isDisguise = gatheringModelData.isDisguise();
+                            if (isDisguise) {
+                                MiscDisguise disguise = new MiscDisguise(DisguiseType.DROPPED_ITEM);
+                                DroppedItemWatcher watcher = (DroppedItemWatcher) disguise.getWatcher();
+                                watcher.setItemStack(helmet);
 
-                            DisguiseAPI.disguiseToAll(armorStand, disguise);
+                                DisguiseAPI.disguiseToAll(armorStand, disguise);
+                            }
                         }
                     }
+                } else {
+                    cooldown--;
+                    armorStand.setCustomName(title + ChatPalette.GRAY + " (" + cooldown + ")");
                 }
             }
-        }.runTaskLater(GuardiansOfAdelia.getInstance(), 20 * 20L); // TODO make a premium server buff for faster cooldown?
+        }.runTaskTimer(GuardiansOfAdelia.getInstance(), 20, 20);
     }
 
     public void resetName(GatheringModelData gatheringModelData) {
@@ -164,7 +170,7 @@ public class GatheringModelState {
     }
 
     public boolean isOnCooldown() {
-        return onCooldown;
+        return cooldown > 0;
     }
 
     public int getId() {

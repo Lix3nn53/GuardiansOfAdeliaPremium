@@ -40,7 +40,7 @@ public class PassiveManager {
         return passive.getItemStack();
     }
 
-    public static List<ItemStack> getAll(GearLevel gearLevel, RPGSlotType rpgSlotType, ItemTier tier, boolean noStats, boolean gearSet) {
+    public static List<ItemStack> getAll(GearLevel gearLevel, RPGSlotType rpgSlotType, ItemTier tier, boolean noStats) {
         int count = countAt(gearLevel);
         while (count == 0) {
             int ordinal = gearLevel.ordinal();
@@ -50,7 +50,7 @@ public class PassiveManager {
 
         List<ItemStack> list = new ArrayList<>();
         for (int i = 0; i < count; i++) {
-            ItemStack itemStack = get(gearLevel, rpgSlotType, tier, noStats, gearSet, i);
+            ItemStack itemStack = get(gearLevel, rpgSlotType, tier, noStats, false, i);
 
             list.add(itemStack);
         }

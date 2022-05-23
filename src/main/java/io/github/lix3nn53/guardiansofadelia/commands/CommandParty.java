@@ -49,7 +49,7 @@ public class CommandParty implements CommandExecutor {
             } else if (args[0].equalsIgnoreCase("leave")) {
                 if (PartyManager.inParty(player)) {
                     Party party = PartyManager.getParty(player);
-                    party.leave(player);
+                    party.leave(player, false);
                 }
             } else if (args[0].equalsIgnoreCase("kick")) {
                 if (args.length == 2) {

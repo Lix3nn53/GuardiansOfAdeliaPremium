@@ -40,7 +40,6 @@ public enum CraftingType {
 
     public List<ItemStack> getItemsToCraft(GearLevel gearLevel) {
         ItemTier tier = ItemTier.MYSTIC;
-        String gearSet = "Craftsman's";
         List<ItemStack> itemStackList = new ArrayList<>();
 
         switch (this) {
@@ -63,7 +62,7 @@ public enum CraftingType {
                 itemStackList = ItemPoolGenerator.generateFoods(gearLevel);
                 break;
             case JEWEL:
-                itemStackList = ItemPoolGenerator.generatePassives(tier, gearLevel, true, false);
+                itemStackList = ItemPoolGenerator.generatePassives(tier, gearLevel, false);
                 break;
         }
         return itemStackList;

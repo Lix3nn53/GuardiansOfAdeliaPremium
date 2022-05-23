@@ -2,6 +2,7 @@ package io.github.lix3nn53.guardiansofadelia.guardian.character;
 
 import io.github.lix3nn53.guardiansofadelia.chat.ChatManager;
 import io.github.lix3nn53.guardiansofadelia.chat.ChatTag;
+import io.github.lix3nn53.guardiansofadelia.creatures.pets.PetManager;
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.SkillBar;
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.SkillDataManager;
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.player.SkillRPGClassData;
@@ -119,6 +120,8 @@ public final class RPGCharacter {
         this.rpgCharacterStats.setRpgClassStr(newClassUpper);
         this.rpgCharacterStats.recalculateEquipment(rpgClassStr, rpgClassStats);
         player.sendMessage(ChatPalette.YELLOW + "Changed class to " + rpgClass.getClassString() + ChatPalette.YELLOW + "!");
+
+        PetManager.respawnPet(player);
 
         return true;
     }

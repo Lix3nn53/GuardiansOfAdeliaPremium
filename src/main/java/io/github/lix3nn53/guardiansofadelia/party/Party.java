@@ -60,13 +60,15 @@ public final class Party {
         return false;
     }
 
-    public void leave(Player playerLeft) {
+    public void leave(Player playerLeft, boolean silent) {
         members.remove(playerLeft);
 
-        playerLeft.sendMessage(ChatPalette.RED + "You left the party");
+        if (!silent) {
+            playerLeft.sendMessage(ChatPalette.RED + "You left the party");
 
-        for (Player member : members) {
-            member.sendMessage(playerLeft.getName() + ChatPalette.RED + " left your party");
+            for (Player member : members) {
+                member.sendMessage(playerLeft.getName() + ChatPalette.RED + " left your party");
+            }
         }
 
         onMemberRemove(playerLeft);

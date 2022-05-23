@@ -67,7 +67,7 @@ public class ItemReferenceLoader {
             }
             ItemTier itemTier = ItemTier.valueOf(configurationSection.getString("itemTier"));
 
-            return PassiveManager.get(gearLevel, rpgSlotType, itemTier, false, true, itemIndex);
+            return PassiveManager.get(gearLevel, rpgSlotType, itemTier, false, false, itemIndex);
         } else if (itemType.equals("Weapon")) {
             WeaponGearType gearType = WeaponGearType.valueOf(configurationSection.getString("weaponGearType"));
             GearLevel gearLevel = GearLevel.values()[configurationSection.getInt("gearLevel")];

@@ -176,8 +176,12 @@ public class ChatManager {
                     ChatChannelData chatChannelDataTo = guardianData.getChatChannelData();
                     boolean listening = chatChannelDataTo.isListening(ChatChannel.PRIVATE);
                     if (listening) {
-                        privateChatTo.sendMessage(messageWithPrefix);
-                        player.sendMessage(messageWithPrefix);
+                        String from = chatPalette + "[" + prefix + "] from" + ChatColor.RESET + displayName + getChatSuffix() + message;
+                        privateChatTo.sendMessage(from);
+
+                        String displayNameTo = privateChatTo.getDisplayName();
+                        String to = chatPalette + "[" + prefix + "] to" + ChatColor.RESET + displayNameTo + getChatSuffix() + message;
+                        player.sendMessage(to);
                     } else {
                         player.sendMessage(ChatColor.RED + "That player is not listening to private chat.");
                     }

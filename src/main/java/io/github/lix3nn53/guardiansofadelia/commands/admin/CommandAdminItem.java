@@ -177,7 +177,7 @@ public class CommandAdminItem implements CommandExecutor {
                         itemTier = ItemTier.valueOf(args[3].toUpperCase());
                     }
 
-                    ItemStack passive = PassiveManager.get(gearLevel, rpgSlotType, itemTier, false, true, 0);
+                    ItemStack passive = PassiveManager.get(gearLevel, rpgSlotType, itemTier, false, false, 0);
                     InventoryUtils.giveItemToPlayer(player, passive);
                 }
             } else if (args[0].equals("helmet")) {

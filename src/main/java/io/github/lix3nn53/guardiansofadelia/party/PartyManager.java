@@ -126,7 +126,7 @@ public class PartyManager {
     public static void onPlayerQuit(Player player) {
         if (inParty(player)) {
             Party party = getParty(player);
-            party.leave(player);
+            party.leave(player, false);
         }
     }
 }
