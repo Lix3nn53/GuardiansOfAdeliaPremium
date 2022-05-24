@@ -14,11 +14,9 @@ public class AddPiercingToArrowShootFromCrossbowTrigger extends TriggerComponent
 
     private final List<Integer> piercingLevel;
 
-    LivingEntity caster;
-    int skillLevel;
-
     public AddPiercingToArrowShootFromCrossbowTrigger(ConfigurationSection configurationSection) {
-        super(!configurationSection.contains("addLore") || configurationSection.getBoolean("addLore"), AddPiercingToArrowShootFromCrossbowTrigger.class.getName());
+        super(!configurationSection.contains("addLore") || configurationSection.getBoolean("addLore"),
+                AddPiercingToArrowShootFromCrossbowTrigger.class.getName(), configurationSection);
 
         if (!configurationSection.contains("piercingLevels")) {
             configLoadError("piercingLevels");
@@ -32,8 +30,6 @@ public class AddPiercingToArrowShootFromCrossbowTrigger extends TriggerComponent
         if (targets.isEmpty()) return false;
 
         this.skillId = skillId;
-        this.caster = caster;
-        this.skillLevel = skillLevel;
 
         AddPiercingToArrowShootFromCrossbowTrigger crossbowTrigger = this;
 
@@ -64,7 +60,7 @@ public class AddPiercingToArrowShootFromCrossbowTrigger extends TriggerComponent
     /**
      * The callback when player lands that applies child components
      */
-    public void callback(Arrow arrow) {
+    public void callback(Arrow arrow, int skillLevel) {
         arrow.setPierceLevel(piercingLevel.get(skillLevel - 1));
     }
 }

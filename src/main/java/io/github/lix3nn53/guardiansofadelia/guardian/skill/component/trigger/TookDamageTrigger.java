@@ -11,19 +11,9 @@ import java.util.List;
 
 public class TookDamageTrigger extends TriggerComponent {
 
-    private final List<Integer> cooldowns;
-    LivingEntity caster;
-    int skillLevel;
-    int castCounter;
-
     public TookDamageTrigger(ConfigurationSection configurationSection) {
-        super(!configurationSection.contains("addLore") || configurationSection.getBoolean("addLore"), TookDamageTrigger.class.getName());
-
-        if (configurationSection.contains("cooldowns")) {
-            this.cooldowns = configurationSection.getIntegerList("cooldowns");
-        } else {
-            this.cooldowns = new ArrayList<>();
-        }
+        super(!configurationSection.contains("addLore") ||
+                configurationSection.getBoolean("addLore"), TookDamageTrigger.class.getName(), configurationSection);
     }
 
     @Override
@@ -32,9 +22,6 @@ public class TookDamageTrigger extends TriggerComponent {
         super.execute(caster, skillLevel, targets, castCounter, skillId);
 
         this.skillId = skillId;
-        this.caster = caster;
-        this.skillLevel = skillLevel;
-        this.castCounter = castCounter;
 
         this.saveTargets = targets;
 
@@ -55,18 +42,10 @@ public class TookDamageTrigger extends TriggerComponent {
     /**
      * The callback when player lands that applies child components
      */
-    public boolean callback(Player player, LivingEntity attacker) {
+    public boolean callback(Player player, LivingEntity attacker, int skillLevel, int castCounter) {
         ArrayList<LivingEntity> targets = new ArrayList<>();
         targets.add(attacker);
 
-        return executeChildren(caster, skillLevel, targets, castCounter, skillId);
-    }
-
-    public int getSkillLevel() {
-        return skillLevel;
-    }
-
-    public List<Integer> getCooldowns() {
-        return cooldowns;
+        return executeChildren(player, skillLevel, targets, castCounter, skillId);
     }
 }

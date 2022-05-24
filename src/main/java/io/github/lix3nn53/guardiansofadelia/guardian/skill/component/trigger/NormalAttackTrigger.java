@@ -12,28 +12,15 @@ import java.util.List;
 
 public class NormalAttackTrigger extends TriggerComponent {
 
-    private final List<Integer> cooldowns;
     private final boolean melee;
     private final boolean projectile;
-    LivingEntity caster;
-    int skillLevel;
-    int castCounter;
 
     public NormalAttackTrigger(ConfigurationSection configurationSection) {
-        super(!configurationSection.contains("addLore") || configurationSection.getBoolean("addLore"), NormalAttackTrigger.class.getName());
-
-        if (configurationSection.contains("cooldowns")) {
-            this.cooldowns = configurationSection.getIntegerList("cooldowns");
-        } else {
-            this.cooldowns = new ArrayList<>();
-        }
+        super(!configurationSection.contains("addLore") || configurationSection.getBoolean("addLore"),
+                NormalAttackTrigger.class.getName(), configurationSection);
 
         this.melee = configurationSection.contains("melee") && configurationSection.getBoolean("melee");
         this.projectile = configurationSection.contains("projectile") && configurationSection.getBoolean("projectile");
-    }
-
-    public LivingEntity getCaster() {
-        return caster;
     }
 
     @Override
@@ -41,9 +28,6 @@ public class NormalAttackTrigger extends TriggerComponent {
         if (targets.isEmpty()) return false;
 
         this.skillId = skillId;
-        this.caster = caster;
-        this.skillLevel = skillLevel;
-        this.castCounter = castCounter;
 
         NormalAttackTrigger normalAttackTrigger = this;
 
@@ -64,7 +48,7 @@ public class NormalAttackTrigger extends TriggerComponent {
     /**
      * The callback when player lands that applies child components
      */
-    public boolean callback(Player attacker, LivingEntity target, boolean isProjectile) {
+    public boolean callback(Player attacker, LivingEntity target, boolean isProjectile, int skillLevel, int castCounter) {
         if (CommandAdmin.DEBUG_MODE) attacker.sendMessage("NormalAttackTrigger callback, skillIndex: " + skillId);
         if (!(this.melee && this.projectile)) {
             if (this.melee && isProjectile) {
@@ -77,14 +61,6 @@ public class NormalAttackTrigger extends TriggerComponent {
         ArrayList<LivingEntity> targets = new ArrayList<>();
         targets.add(target);
 
-        return executeChildren(caster, skillLevel, targets, castCounter, skillId);
-    }
-
-    public int getSkillLevel() {
-        return skillLevel;
-    }
-
-    public List<Integer> getCooldowns() {
-        return cooldowns;
+        return executeChildren(attacker, skillLevel, targets, castCounter, skillId);
     }
 }

@@ -19,7 +19,8 @@ import java.util.List;
 
 public class LootChest {
 
-    private static final long COOLDOWN_IN_MINUTES = 1;
+    private static final long COOLDOWN_IN_MINUTES_MIN = 4;
+    private static final long COOLDOWN_IN_MINUTES_MAX = 12;
 
     private final Location location;
     private final LootChestTier lootChestTier;
@@ -58,6 +59,8 @@ public class LootChest {
         isOnCooldown = true;
         stopPlayingParticles();
 
+        long cooldownInMinutes = (long) (COOLDOWN_IN_MINUTES_MIN + (Math.random() * (COOLDOWN_IN_MINUTES_MAX - COOLDOWN_IN_MINUTES_MIN)));
+
         new BukkitRunnable() {
             @Override
             public void run() {
@@ -66,7 +69,7 @@ public class LootChest {
                     startPlayingParticles();
                 }
             }
-        }.runTaskLaterAsynchronously(GuardiansOfAdelia.getInstance(), 20 * 60 * COOLDOWN_IN_MINUTES);
+        }.runTaskLaterAsynchronously(GuardiansOfAdelia.getInstance(), 20 * 60 * cooldownInMinutes);
     }
 
     public Location getLocation() {

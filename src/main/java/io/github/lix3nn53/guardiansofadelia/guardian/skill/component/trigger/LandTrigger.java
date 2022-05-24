@@ -13,12 +13,9 @@ import java.util.List;
 
 public class LandTrigger extends TriggerComponent {
 
-    LivingEntity caster;
-    int skillLevel;
-    int castCounter;
-
     public LandTrigger(ConfigurationSection configurationSection) {
-        super(!configurationSection.contains("addLore") || configurationSection.getBoolean("addLore"), LandTrigger.class.getName());
+        super(!configurationSection.contains("addLore") ||
+                configurationSection.getBoolean("addLore"), LandTrigger.class.getName(), configurationSection);
 
     }
 
@@ -27,9 +24,6 @@ public class LandTrigger extends TriggerComponent {
         if (targets.isEmpty()) return false;
 
         this.skillId = skillId;
-        this.caster = caster;
-        this.skillLevel = skillLevel;
-        this.castCounter = castCounter;
 
         LandTrigger landTrigger = this;
 
@@ -55,9 +49,9 @@ public class LandTrigger extends TriggerComponent {
     /**
      * The callback when player lands that applies child components
      */
-    public boolean callback(Player player) {
+    public boolean callback(Player caster, int skillLevel, int castCounter) {
         ArrayList<LivingEntity> targets = new ArrayList<>();
-        targets.add(player);
+        targets.add(caster);
 
         return executeChildren(caster, skillLevel, targets, castCounter, skillId);
     }

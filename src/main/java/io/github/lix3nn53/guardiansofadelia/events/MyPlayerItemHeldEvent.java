@@ -1,5 +1,6 @@
 package io.github.lix3nn53.guardiansofadelia.events;
 
+import io.github.lix3nn53.guardiansofadelia.GuardiansOfAdelia;
 import io.github.lix3nn53.guardiansofadelia.guardian.GuardianData;
 import io.github.lix3nn53.guardiansofadelia.guardian.GuardianDataManager;
 import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGCharacter;
@@ -51,6 +52,7 @@ public class MyPlayerItemHeldEvent implements Listener {
                     SkillTree skillTree = rpgClass.getSkillTree();
                     RPGClassStats rpgClassStats = activeCharacter.getRPGClassStats();
                     SkillRPGClassData skillRPGClassData = rpgClassStats.getSkillRPGClassData();
+                    GuardiansOfAdelia.getInstance().getLogger().info("guardian data owner: " + player.getName());
                     boolean success = activeCharacter.getSkillBar().castSkill(guardianData, newSlot, skillTree, skillRPGClassData);
                     if (!success) {
                         //play sound special to player on cast fail

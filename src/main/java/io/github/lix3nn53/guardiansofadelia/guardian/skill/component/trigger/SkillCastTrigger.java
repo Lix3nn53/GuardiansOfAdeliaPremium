@@ -1,5 +1,6 @@
 package io.github.lix3nn53.guardiansofadelia.guardian.skill.component.trigger;
 
+import io.github.lix3nn53.guardiansofadelia.GuardiansOfAdelia;
 import io.github.lix3nn53.guardiansofadelia.commands.admin.CommandAdmin;
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.component.TriggerComponent;
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.managers.TriggerListener;
@@ -12,19 +13,9 @@ import java.util.List;
 
 public class SkillCastTrigger extends TriggerComponent {
 
-    private final List<Integer> cooldowns;
-    LivingEntity caster;
-    int skillLevel;
-    int castCounter;
-
     public SkillCastTrigger(ConfigurationSection configurationSection) {
-        super(!configurationSection.contains("addLore") || configurationSection.getBoolean("addLore"), SkillCastTrigger.class.getName());
-
-        if (configurationSection.contains("cooldowns")) {
-            this.cooldowns = configurationSection.getIntegerList("cooldowns");
-        } else {
-            this.cooldowns = new ArrayList<>();
-        }
+        super(!configurationSection.contains("addLore") ||
+                configurationSection.getBoolean("addLore"), SkillCastTrigger.class.getName(), configurationSection);
     }
 
     @Override
@@ -32,15 +23,14 @@ public class SkillCastTrigger extends TriggerComponent {
         if (targets.isEmpty()) return false;
 
         this.skillId = skillId;
-        this.caster = caster;
-        this.skillLevel = skillLevel;
-        this.castCounter = castCounter;
+        GuardiansOfAdelia.getInstance().getLogger().info("SkillCastTrigger execute caster: " + caster);
 
         SkillCastTrigger skillCastTrigger = this;
 
         for (LivingEntity target : targets) {
-            if (target instanceof Player) {
-                TriggerListener.add((Player) target, skillCastTrigger, skillId);
+            if (target instanceof Player playerTarget) {
+                GuardiansOfAdelia.getInstance().getLogger().info("SkillCastTrigger target: " + playerTarget);
+                TriggerListener.add(playerTarget, skillCastTrigger, skillId);
             }
         }
 
@@ -55,19 +45,15 @@ public class SkillCastTrigger extends TriggerComponent {
     /**
      * The callback when player lands that applies child components
      */
-    public boolean callback(Player attacker) {
+    public boolean callback(Player caster, int skillLevel, int castCounter) {
         ArrayList<LivingEntity> targets = new ArrayList<>();
-        targets.add(attacker);
-        if (CommandAdmin.DEBUG_MODE) attacker.sendMessage("skillCast callback");
+        targets.add(caster);
+        if (CommandAdmin.DEBUG_MODE) caster.sendMessage("skillCast callback");
+
+        GuardiansOfAdelia.getInstance().getLogger().info("skillCast callback");
+        GuardiansOfAdelia.getInstance().getLogger().info("skillCast callback, skillId: " + skillId);
+        GuardiansOfAdelia.getInstance().getLogger().info("skillCast callback, caster: " + caster);
 
         return executeChildren(caster, skillLevel, targets, castCounter, skillId);
-    }
-
-    public int getSkillLevel() {
-        return skillLevel;
-    }
-
-    public List<Integer> getCooldowns() {
-        return cooldowns;
     }
 }

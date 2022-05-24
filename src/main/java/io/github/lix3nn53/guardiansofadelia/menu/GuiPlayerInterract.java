@@ -37,7 +37,7 @@ public class GuiPlayerInterract extends GuiGeneric {
         }
 
         ItemStack infoItem = new CharacterInfoSlot(rightClicked).getItem(viewerData);
-        this.setItem(10, infoItem);
+        this.setItem(9, infoItem);
 
         ItemStack party = new ItemStack(Material.LIGHT_BLUE_WOOL);
         ItemMeta itemMeta = party.getItemMeta();
@@ -47,7 +47,7 @@ public class GuiPlayerInterract extends GuiGeneric {
         lore.add(ChatPalette.GRAY + "Click to invite to party!");
         itemMeta.setLore(lore);
         party.setItemMeta(itemMeta);
-        this.setItem(12, party);
+        this.setItem(15, party);
 
         ItemStack guild = new ItemStack(Material.PURPLE_WOOL);
         itemMeta.setDisplayName(ChatPalette.PURPLE + "Guild Invite");
@@ -56,7 +56,7 @@ public class GuiPlayerInterract extends GuiGeneric {
         lore.add(ChatPalette.GRAY + "Click to invite to guild!");
         itemMeta.setLore(lore);
         guild.setItemMeta(itemMeta);
-        this.setItem(14, guild);
+        this.setItem(13, guild);
 
         ItemStack trade = new ItemStack(Material.YELLOW_WOOL);
         itemMeta.setDisplayName(ChatPalette.YELLOW + "Trade Invite");
@@ -65,7 +65,16 @@ public class GuiPlayerInterract extends GuiGeneric {
         lore.add(ChatPalette.GRAY + "Click to invite to trade!");
         itemMeta.setLore(lore);
         trade.setItemMeta(itemMeta);
-        this.setItem(16, trade);
+        this.setItem(17, trade);
+
+        ItemStack friend = new ItemStack(Material.LIME_WOOL);
+        itemMeta.setDisplayName(ChatPalette.GREEN_LIGHT + "Friend Invite");
+        lore = new ArrayList<>();
+        lore.add("");
+        lore.add(ChatPalette.GRAY + "Click to send friend invitation!");
+        itemMeta.setLore(lore);
+        friend.setItemMeta(itemMeta);
+        this.setItem(11, friend);
     }
 
     @Override

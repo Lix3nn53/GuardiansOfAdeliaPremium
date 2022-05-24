@@ -104,6 +104,10 @@ commands:
     description: Language command
     permission: guardian.player
     permission-message: You do not have permission!
+  interact:
+    description: Interact command
+    permission: guardian.player
+    permission-message: You do not have permission!
   safe-stop:
     description: Safely shuts down the server
     permission: guardian.admin

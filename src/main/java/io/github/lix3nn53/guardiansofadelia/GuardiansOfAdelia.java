@@ -196,6 +196,7 @@ public class GuardiansOfAdelia extends JavaPlugin {
         this.getCommand("chat").setExecutor(new CommandChat());
         this.getCommand("destroyitem").setExecutor(new CommandDestroyItem());
         this.getCommand("guild").setExecutor(new CommandGuild());
+        this.getCommand("interact").setExecutor(new CommandInteract());
         this.getCommand("invite").setExecutor(new CommandInvite());
         this.getCommand("language").setExecutor(new CommandLanguage());
         this.getCommand("trade").setExecutor(new CommandTrade());

@@ -6,7 +6,6 @@ import io.github.lix3nn53.guardiansofadelia.guardian.GuardianDataManager;
 import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGCharacter;
 import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGCharacterStats;
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.component.target.TargetHelper;
-import io.github.lix3nn53.guardiansofadelia.guardian.skill.managers.TriggerListener;
 import io.github.lix3nn53.guardiansofadelia.rpginventory.slots.EggSlot;
 import io.github.lix3nn53.guardiansofadelia.utilities.EntityUtils;
 import io.github.lix3nn53.guardiansofadelia.utilities.LocationUtils;
@@ -383,7 +382,7 @@ public class PetManager {
         companions.add(pet);
         ownerToCompanions.put(player, companions);
 
-        TriggerListener.onPlayerCompanionSpawn(player, pet);
+        // TriggerListener.onPlayerCompanionSpawn(player, pet); // removed cuz there is already saved spawn trigger
 
         if (!companionLogicRunnerActive.contains(player)) {
             new BukkitRunnable() {

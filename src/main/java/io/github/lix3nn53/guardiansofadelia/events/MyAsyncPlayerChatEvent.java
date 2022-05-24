@@ -11,14 +11,9 @@ public class MyAsyncPlayerChatEvent implements Listener {
 
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onEvent(AsyncPlayerChatEvent event) {
-        Player player = event.getPlayer();
+        event.setCancelled(true);
 
-        boolean allowOnNormalChat = ChatManager.onChat(player, event.getMessage());
-        if (allowOnNormalChat) {
-            String format = ChatManager.getFormat(player);
-            event.setFormat(format);
-        } else {
-            event.setCancelled(true);
-        }
+        Player player = event.getPlayer();
+        ChatManager.onChat(player, event.getMessage());
     }
 }

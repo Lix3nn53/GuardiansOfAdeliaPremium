@@ -13,6 +13,10 @@ import io.github.lix3nn53.guardiansofadelia.text.font.CustomCharacter;
 import io.github.lix3nn53.guardiansofadelia.text.font.CustomCharacterGuild;
 import io.github.lix3nn53.guardiansofadelia.text.font.NegativeSpace;
 import io.github.lix3nn53.guardiansofadelia.utilities.hologram.Hologram;
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.HoverEvent;
+import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.api.chat.hover.content.Text;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -125,9 +129,8 @@ public class ChatManager {
      *
      * @param player
      * @param message
-     * @return allow message to normal chat
      */
-    public static boolean onChat(Player player, String message) {
+    public static void onChat(Player player, String message) {
         ChatChannel chatChannel = null;
         ChatChannelData chatChannelData = null;
 
@@ -137,15 +140,29 @@ public class ChatManager {
             chatChannel = chatChannelData.getTextingTo();
         }
 
+        String displayNameForInteract = player.getDisplayName();
+        TextComponent displayNameInteract = new TextComponent(displayNameForInteract);
+        displayNameInteract.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/interact " + player.getName()));
+        displayNameInteract.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(ChatColor.GRAY +
+                "Click to interact with " + displayNameForInteract)));
+
+        TextComponent suffixText = new TextComponent(getChatSuffix() + message);
+
+        GuardiansOfAdelia.getInstance().getLogger().info(chatChannel + "-" + player.getName() + ": " + message);
+
         if (chatChannel == null) { //send message to normal chat
             chatHologram(player, message);
-            return true;
+
+            for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
+                onlinePlayer.spigot().sendMessage(displayNameInteract, suffixText);
+            }
+
+            return;
         }
 
         String prefix = chatChannel.getPrefix();
         ChatPalette chatPalette = chatChannel.getPalette();
-        String displayName = player.getDisplayName();
-        String messageWithPrefix = chatPalette + "[" + prefix + "]" + ChatColor.RESET + displayName + getChatSuffix() + message;
+        TextComponent prefixText = new TextComponent(chatPalette + "[" + prefix + "]" + ChatColor.RESET);
 
         if (chatChannel.equals(ChatChannel.GUILD)) {
             Guild guild = GuildManager.getGuild(player);
@@ -153,7 +170,7 @@ public class ChatManager {
                 guild.getMembers().forEach(memberUUID -> {
                     Player member = Bukkit.getPlayer(memberUUID);
                     if (member != null) {
-                        member.sendMessage(messageWithPrefix);
+                        member.spigot().sendMessage(prefixText, displayNameInteract, suffixText);
                     }
                 });
             } else {
@@ -163,7 +180,7 @@ public class ChatManager {
             Party party = PartyManager.getParty(player);
             if (party != null) {
                 party.getMembers().forEach(member -> {
-                    member.sendMessage(messageWithPrefix);
+                    member.spigot().sendMessage(prefixText, displayNameInteract, suffixText);
                 });
             } else {
                 player.sendMessage(ChatPalette.RED + "You are not in a party.");
@@ -176,12 +193,12 @@ public class ChatManager {
                     ChatChannelData chatChannelDataTo = guardianData.getChatChannelData();
                     boolean listening = chatChannelDataTo.isListening(ChatChannel.PRIVATE);
                     if (listening) {
-                        String from = chatPalette + "[" + prefix + "] from" + ChatColor.RESET + displayName + getChatSuffix() + message;
-                        privateChatTo.sendMessage(from);
+                        TextComponent prefixTextFrom = new TextComponent(chatPalette + "[" + prefix + "] from" + ChatColor.RESET);
+                        privateChatTo.spigot().sendMessage(prefixTextFrom, displayNameInteract, suffixText);
 
                         String displayNameTo = privateChatTo.getDisplayName();
-                        String to = chatPalette + "[" + prefix + "] to" + ChatColor.RESET + displayNameTo + getChatSuffix() + message;
-                        player.sendMessage(to);
+                        TextComponent prefixTextTo = new TextComponent(chatPalette + "[" + prefix + "] to " + displayNameTo + ChatColor.RESET);
+                        privateChatTo.spigot().sendMessage(prefixTextTo, displayNameInteract, suffixText);
                     } else {
                         player.sendMessage(ChatColor.RED + "That player is not listening to private chat.");
                     }
@@ -195,13 +212,11 @@ public class ChatManager {
                     GuardianData guardianData = GuardianDataManager.getGuardianData(onlinePlayer);
                     ChatChannelData chatChannelData1 = guardianData.getChatChannelData();
                     if (chatChannelData1.isListening(chatChannel)) {
-                        onlinePlayer.sendMessage(messageWithPrefix);
+                        onlinePlayer.spigot().sendMessage(prefixText, displayNameInteract, suffixText);
                     }
                 }
             }
         }
-
-        return false;
     }
 
     public static String getFormat(Player player) {
@@ -252,11 +267,11 @@ public class ChatManager {
                 prefix += customCharacter;
             }
         }
-        return prefix + ChatPalette.WHITE + NegativeSpace.POSITIVE_2;
+        return prefix + ChatColor.WHITE + NegativeSpace.POSITIVE_2;
     }
 
     public static String getChatSuffix() {
-        return ChatPalette.YELLOW + " > " + ChatPalette.GRAY;
+        return ChatColor.YELLOW + " > " + ChatColor.GRAY;
     }
 
     public static void updatePlayerName(Player player) {
