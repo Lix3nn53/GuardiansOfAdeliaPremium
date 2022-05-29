@@ -11,6 +11,7 @@ import io.github.lix3nn53.guardiansofadelia.menu.start.GuiCharacterSelect;
 import io.github.lix3nn53.guardiansofadelia.menu.start.GuiTutorialSkip;
 import io.github.lix3nn53.guardiansofadelia.npc.merchant.MerchantManager;
 import io.github.lix3nn53.guardiansofadelia.npc.merchant.MerchantMenu;
+import io.github.lix3nn53.guardiansofadelia.npc.speech.NPCSpeechManager;
 import io.github.lix3nn53.guardiansofadelia.quests.Quest;
 import io.github.lix3nn53.guardiansofadelia.text.ChatPalette;
 import net.citizensnpcs.api.event.NPCRightClickEvent;
@@ -67,6 +68,12 @@ public class MyNPCRightClickEvent implements Listener {
                 }
             });
         } else {
+            boolean playerViewingSpecial = NPCSpeechManager.isPlayerViewingSpecial(player);
+            if (playerViewingSpecial) {
+                player.sendMessage(ChatPalette.RED + "Be patient, an NPC is talking to you.");
+                return;
+            }
+
             if (GuardianDataManager.hasGuardianData(player)) {
                 GuardianData guardianData = GuardianDataManager.getGuardianData(player);
                 if (guardianData.hasActiveCharacter()) {

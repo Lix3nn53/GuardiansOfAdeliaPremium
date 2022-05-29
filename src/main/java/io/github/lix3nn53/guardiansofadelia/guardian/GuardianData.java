@@ -195,6 +195,10 @@ public class GuardianData {
         this.friends = friends;
     }
 
+    public void addFriend(OfflinePlayer friend) {
+        this.friends.add(friend);
+    }
+
     public StaffRank getStaffRank() {
         return staffRank;
     }

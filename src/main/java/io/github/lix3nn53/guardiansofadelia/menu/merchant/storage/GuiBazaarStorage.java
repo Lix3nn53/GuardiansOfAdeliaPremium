@@ -38,6 +38,10 @@ public class GuiBazaarStorage extends GuiGeneric {
         if (clickedInventory.getType().equals(InventoryType.CHEST)) {
             ItemStack current = event.getCurrentItem();
 
+            if (current == null || current.getType() == Material.AIR) {
+                return;
+            }
+
             if (guardianData != null) {
                 if (guardianData.hasBazaar()) {
                     Bazaar bazaar = guardianData.getBazaar();

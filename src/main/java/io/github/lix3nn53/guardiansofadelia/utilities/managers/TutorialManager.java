@@ -61,7 +61,7 @@ public class TutorialManager {
             MessageUtils.sendCenteredMessage(player, ChatPalette.PURPLE + "---- " + ChatPalette.GRAY + "Fall of the Adelia" + ChatPalette.PURPLE + " ----");
 
             Quest tutorialStartQuest = QuestNPCManager.getQuestCopyById(1);
-            rpgCharacter.acceptQuest(tutorialStartQuest, player);
+            rpgCharacter.acceptQuest(tutorialStartQuest, player, -1);
 
             rpgCharacter.getRpgCharacterStats().recalculateEquipment(rpgCharacter.getRpgClassStr(), rpgClassStats);
             rpgCharacter.getRpgCharacterStats().recalculateRPGInventory(rpgCharacter.getRpgInventory(), rpgClassStats);

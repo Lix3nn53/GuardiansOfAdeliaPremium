@@ -1,6 +1,6 @@
 package io.github.lix3nn53.guardiansofadelia.guardian.skill.component.mechanic;
 
-import io.github.lix3nn53.guardiansofadelia.chat.ChatManager;
+import io.github.lix3nn53.guardiansofadelia.chat.SpeechBubble;
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.component.MechanicComponent;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.LivingEntity;
@@ -36,7 +36,7 @@ public class HoloMessageMechanic extends MechanicComponent {
         if (targets.isEmpty()) return false;
 
         for (LivingEntity target : targets) {
-            ChatManager.chatHologramEntity(target, message, durationTicks, 0);
+            SpeechBubble.entity(target, message, durationTicks, 0);
         }
 
         return true;

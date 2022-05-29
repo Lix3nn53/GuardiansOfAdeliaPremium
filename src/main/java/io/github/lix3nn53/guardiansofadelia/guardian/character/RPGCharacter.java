@@ -126,18 +126,18 @@ public final class RPGCharacter {
         return true;
     }
 
-    public boolean acceptQuest(Quest quest, Player player) {
+    public boolean acceptQuest(Quest quest, Player player, int npcNo) {
         if (!hasQuest(quest.getQuestID())) {
             if (this.questList.size() < 5) {
                 this.questList.add(quest);
-                quest.onAccept(player);
+                quest.onAccept(player, npcNo);
                 return true;
             }
         }
         return false;
     }
 
-    public boolean turnInQuest(int questID, Player player, boolean ignoreCompilation) {
+    public boolean turnInQuest(int questID, Player player, boolean ignoreCompilation, int npcNo) {
         Optional<Quest> questOptional = this.questList.stream()
                 .filter(characterQuest -> characterQuest.getQuestID() == questID)
                 .findAny();
@@ -146,12 +146,12 @@ public final class RPGCharacter {
             if (ignoreCompilation) {
                 this.questList.remove(quest);
                 this.turnedInQuests.add(questID);
-                quest.onTurnIn(player);
+                quest.onTurnIn(player, npcNo);
                 return true;
             } else if (quest.isCompleted()) {
                 this.questList.remove(quest);
                 this.turnedInQuests.add(questID);
-                quest.onTurnIn(player);
+                quest.onTurnIn(player, npcNo);
                 return true;
             }
         }

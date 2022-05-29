@@ -12,117 +12,15 @@ import io.github.lix3nn53.guardiansofadelia.text.ChatPalette;
 import io.github.lix3nn53.guardiansofadelia.text.font.CustomCharacter;
 import io.github.lix3nn53.guardiansofadelia.text.font.CustomCharacterGuild;
 import io.github.lix3nn53.guardiansofadelia.text.font.NegativeSpace;
-import io.github.lix3nn53.guardiansofadelia.utilities.hologram.Hologram;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.chat.hover.content.Text;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.entity.ArmorStand;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
-
-import java.util.HashMap;
 
 public class ChatManager {
-
-    private static final HashMap<Player, ArmorStand> chatHolograms = new HashMap<>();
-
-    public static void chatHologram(Player player, String message) {
-        float height = (float) player.getHeight();
-        Location location = player.getLocation().clone().add(0, height + 0.4, 0);
-
-        final int period = 2;
-        final int ticksLimit = 100;
-
-        new BukkitRunnable() {
-
-            ArmorStand armorStand;
-            int ticksPass = 0;
-
-            @Override
-            public void run() {
-                if (ticksPass == ticksLimit) {
-                    cancel();
-                    armorStand.remove();
-                    chatHolograms.remove(player);
-                } else {
-                    if (ticksPass == 0) {
-                        ArmorStand old = chatHolograms.get(player);
-                        if (old != null) {
-                            old.remove();
-                        }
-                        this.armorStand = new Hologram(location, ChatPalette.YELLOW + "< " + ChatPalette.GRAY + message + ChatPalette.YELLOW + " >").getArmorStand();
-                        chatHolograms.put(player, this.armorStand);
-                    } else if (armorStand.isDead()) {
-                        cancel();
-                        return;
-                    }
-
-                    Location location = player.getLocation().clone().add(0, height + 0.4, 0);
-                    armorStand.teleport(location);
-                    ticksPass += period;
-                }
-            }
-        }.runTaskTimer(GuardiansOfAdelia.getInstance(), 0L, period);
-    }
-
-    public static void chatHologramEntity(Entity entity, String message, int durationTicks, float offsetY) {
-        float height = (float) entity.getHeight();
-        Location location = entity.getLocation().clone().add(0, height + 0.4 + offsetY, 0);
-
-        new BukkitRunnable() {
-
-            ArmorStand armorStand;
-            int ticksPass = 0;
-
-            @Override
-            public void run() {
-                if (ticksPass == durationTicks) {
-                    cancel();
-                    armorStand.remove();
-                } else {
-                    if (ticksPass == 0) {
-                        armorStand = new Hologram(location, ChatPalette.YELLOW + "< " + ChatPalette.GRAY + message + ChatPalette.YELLOW + " >").getArmorStand();
-                    }
-                    Location location = entity.getLocation().clone().add(0, height + 0.4 + offsetY, 0);
-                    armorStand.teleport(location);
-                    ticksPass += 2;
-                }
-            }
-        }.runTaskTimer(GuardiansOfAdelia.getInstance(), 0L, 2L);
-    }
-
-    public static void chatHologramEntityWithCountDown(Entity entity, String message, int durationTicks, float offsetY) {
-        float height = (float) entity.getHeight();
-        Location location = entity.getLocation().clone().add(0, height + 0.4 + offsetY, 0);
-
-        new BukkitRunnable() {
-
-            ArmorStand armorStand;
-            int ticksPass = 0;
-
-            @Override
-            public void run() {
-                if (ticksPass == durationTicks) {
-                    cancel();
-                    armorStand.remove();
-                } else {
-                    if (ticksPass == 0) {
-                        armorStand = new Hologram(location, message + ChatPalette.YELLOW + " in " + durationTicks).getArmorStand();
-                    } else {
-                        armorStand.setCustomName(message + ChatPalette.YELLOW + " in " + (durationTicks - ticksPass));
-                    }
-                    Location location = entity.getLocation().clone().add(0, height + 0.4 + offsetY, 0);
-                    armorStand.teleport(location);
-                    ticksPass += 2;
-                }
-            }
-        }.runTaskTimer(GuardiansOfAdelia.getInstance(), 0L, 2L);
-    }
 
     /**
      * Create chat hologram and return boolean to allow on normal chat
@@ -146,12 +44,13 @@ public class ChatManager {
         displayNameInteract.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(ChatColor.GRAY +
                 "Click to interact with " + displayNameForInteract)));
 
+        message = EmojiManager.replaceEmojisInMessage(message, ChatColor.GRAY);
         TextComponent suffixText = new TextComponent(getChatSuffix() + message);
 
         GuardiansOfAdelia.getInstance().getLogger().info(chatChannel + "-" + player.getName() + ": " + message);
 
         if (chatChannel == null) { //send message to normal chat
-            chatHologram(player, message);
+            SpeechBubble.player(player, message);
 
             for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
                 onlinePlayer.spigot().sendMessage(displayNameInteract, suffixText);

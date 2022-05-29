@@ -151,7 +151,7 @@ public class RPGCharacterStats {
 
                 player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(message));
             }
-        }.runTaskTimerAsynchronously(GuardiansOfAdelia.getInstance(), 5L, 10L);
+        }.runTaskTimerAsynchronously(GuardiansOfAdelia.getInstance(), 5L, 5L);
     }
 
     public void setRpgClassStr(String rpgClassStr) {

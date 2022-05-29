@@ -20,6 +20,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -41,7 +42,7 @@ public class TriggerPlayerData {
         if (map.containsKey(skillId)) {
             triggerComponents = map.get(skillId);
         }
-        triggerComponents.put(triggerComponent.getClass().getName(), triggerComponent);
+        triggerComponents.put(triggerComponent.getClass().getSimpleName(), triggerComponent);
         map.put(skillId, triggerComponents);
         if (CommandAdmin.DEBUG_MODE) player.sendMessage("ADD trigger, new size: " + map.size());
     }
@@ -50,12 +51,33 @@ public class TriggerPlayerData {
         if (map.containsKey(skillId)) {
             HashMap<String, TriggerComponent> triggers = map.get(skillId);
             triggers.remove(triggerType);
+            /*if (triggers.isEmpty()) {
+                map.remove(skillId);
+            }*/
             if (CommandAdmin.DEBUG_MODE) player.sendMessage("REMOVE trigger, new size: " + map.size());
             return map.isEmpty();
         }
 
         if (CommandAdmin.DEBUG_MODE) player.sendMessage("REMOVE trigger, does not contain skillid: " + skillId);
         return false;
+    }
+
+    public boolean removeAll(String triggerType) {
+        List<Integer> skillsToRemove = new ArrayList<>();
+
+        for (int skillId : map.keySet()) {
+            HashMap<String, TriggerComponent> triggers = map.get(skillId);
+            triggers.remove(triggerType);
+            if (triggers.isEmpty()) {
+                skillsToRemove.add(skillId);
+            }
+        }
+
+        for (int skillId : skillsToRemove) {
+            map.remove(skillId);
+        }
+
+        return map.isEmpty();
     }
 
     public boolean stopAndRemoveTrigger(int skillId) {
@@ -143,8 +165,6 @@ public class TriggerPlayerData {
                 int skillLevel = skill.getCurrentSkillLevel(invested);
 
                 trigger.callback(player, skillLevel, castCounter);
-
-                startCooldown(player, skillId, trigger, skillLevel);
                 skillBar.increaseCastCounter();
             }
         }

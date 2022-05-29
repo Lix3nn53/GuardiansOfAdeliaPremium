@@ -17,6 +17,8 @@ public class QuestHologram {
     private final Hologram holo;
 
     public QuestHologram(Location loc) {
+        loc.add(0, 0.2, 0);
+
         ArmorStand rider = new Hologram(loc).getArmorStand();
 
         holo = new Hologram(loc, rider);

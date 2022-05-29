@@ -10,6 +10,8 @@ import io.github.lix3nn53.guardiansofadelia.items.config.ArmorReferenceData;
 import io.github.lix3nn53.guardiansofadelia.items.config.WeaponReferenceData;
 import io.github.lix3nn53.guardiansofadelia.items.stats.GearStatType;
 import io.github.lix3nn53.guardiansofadelia.items.stats.StatUtils;
+import io.github.lix3nn53.guardiansofadelia.npc.QuestNPCManager;
+import io.github.lix3nn53.guardiansofadelia.quests.Quest;
 import io.github.lix3nn53.guardiansofadelia.text.ChatPalette;
 import io.github.lix3nn53.guardiansofadelia.text.font.CustomCharacter;
 import io.github.lix3nn53.guardiansofadelia.text.locale.Translation;
@@ -29,6 +31,7 @@ import java.util.List;
 public class GuiQuestPrizeSelect extends GuiGeneric {
 
     private final int questNo;
+    private final int resourceNPC;
 
     public GuiQuestPrizeSelect(int guiSize, CustomCharacter customCharacter, int questNo, int resourceNPC, List<ItemStack> itemPrizesSelectOneOf,
                                WeaponReferenceData weaponPrizesSelectOneOf, ArmorReferenceData armorPrizesSelectOneOf,
@@ -36,6 +39,7 @@ public class GuiQuestPrizeSelect extends GuiGeneric {
         super(guiSize, customCharacter.toString() + ChatPalette.BLACK +
                 Translation.t(guardianData, "quest.prize.selection") + " #" + questNo, resourceNPC);
         this.questNo = questNo;
+        this.resourceNPC = resourceNPC;
 
         // ITEM SLOTS
         List<Integer> slotsToUse = new ArrayList<>();
@@ -120,12 +124,18 @@ public class GuiQuestPrizeSelect extends GuiGeneric {
         InventoryUtils.giveItemToPlayer(player, current);
 
         //turnin quest
-        boolean didTurnIn = rpgCharacter.turnInQuest(questNo, player, false);
+        boolean didTurnIn = rpgCharacter.turnInQuest(questNo, player, false, resourceNPC);
+        player.closeInventory();
         if (didTurnIn) {
-            NPCRegistry npcRegistry = CitizensAPI.getNPCRegistry();
-            NPC byId = npcRegistry.getById(this.getResourceNPC());
-            GuiQuestList questGui = new GuiQuestList(byId, player, guardianData);
-            questGui.openInventory(player);
+            Quest questCopyById = QuestNPCManager.getQuestCopyById(questNo);
+            List<String> turnInDialogue = questCopyById.getTurnInDialogue();
+
+            if (turnInDialogue == null || turnInDialogue.isEmpty()) {
+                NPCRegistry npcRegistry = CitizensAPI.getNPCRegistry();
+                NPC byId = npcRegistry.getById(this.getResourceNPC());
+                GuiQuestList questGui = new GuiQuestList(byId, player, guardianData);
+                questGui.openInventory(player);
+            }
         } else {
             player.sendMessage(ChatPalette.RED + "Couldn't turn in the quest ERROR report pls");
         }

@@ -17,13 +17,13 @@ public class MyPlayerJoinEvent implements Listener {
 
         player.setGameMode(GameMode.ADVENTURE);
 
-        new BukkitRunnable() {
+        /*new BukkitRunnable() {
             @Override
             public void run() {
                 player.setResourcePack(GuardiansOfAdelia.ResourcePackURL);
                 // CustomSoundtrack.addPlayer(player);
             }
-        }.runTaskLater(GuardiansOfAdelia.getInstance(), 40L);
+        }.runTaskLater(GuardiansOfAdelia.getInstance(), 40L);*/
     }
 
     public static void onPlayerBackToCharacterSelection(Player player, boolean isJoin) {

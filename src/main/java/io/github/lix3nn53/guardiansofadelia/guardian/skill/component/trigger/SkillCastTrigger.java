@@ -1,6 +1,5 @@
 package io.github.lix3nn53.guardiansofadelia.guardian.skill.component.trigger;
 
-import io.github.lix3nn53.guardiansofadelia.GuardiansOfAdelia;
 import io.github.lix3nn53.guardiansofadelia.commands.admin.CommandAdmin;
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.component.TriggerComponent;
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.managers.TriggerListener;
@@ -23,13 +22,11 @@ public class SkillCastTrigger extends TriggerComponent {
         if (targets.isEmpty()) return false;
 
         this.skillId = skillId;
-        GuardiansOfAdelia.getInstance().getLogger().info("SkillCastTrigger execute caster: " + caster);
 
         SkillCastTrigger skillCastTrigger = this;
 
         for (LivingEntity target : targets) {
             if (target instanceof Player playerTarget) {
-                GuardiansOfAdelia.getInstance().getLogger().info("SkillCastTrigger target: " + playerTarget);
                 TriggerListener.add(playerTarget, skillCastTrigger, skillId);
             }
         }
@@ -49,10 +46,6 @@ public class SkillCastTrigger extends TriggerComponent {
         ArrayList<LivingEntity> targets = new ArrayList<>();
         targets.add(caster);
         if (CommandAdmin.DEBUG_MODE) caster.sendMessage("skillCast callback");
-
-        GuardiansOfAdelia.getInstance().getLogger().info("skillCast callback");
-        GuardiansOfAdelia.getInstance().getLogger().info("skillCast callback, skillId: " + skillId);
-        GuardiansOfAdelia.getInstance().getLogger().info("skillCast callback, caster: " + caster);
 
         return executeChildren(caster, skillLevel, targets, castCounter, skillId);
     }

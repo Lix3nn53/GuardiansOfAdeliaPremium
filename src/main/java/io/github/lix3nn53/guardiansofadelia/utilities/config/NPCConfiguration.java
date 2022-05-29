@@ -1,6 +1,7 @@
 package io.github.lix3nn53.guardiansofadelia.utilities.config;
 
 import io.github.lix3nn53.guardiansofadelia.npc.NPCAvatar;
+import io.github.lix3nn53.guardiansofadelia.npc.speech.NPCSpeechManager;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 
@@ -25,11 +26,24 @@ public class NPCConfiguration {
 
         for (int i = 1; i <= count; i++) {
             ConfigurationSection section = merchantConfig.getConfigurationSection("npc" + i);
-            int npcId = section.getInt("id");
-            int customModelData = section.getInt("customModelData");
-            List<String> description = section.getStringList("description");
 
-            NPCAvatar.setAvatar(npcId, customModelData, description);
+            int npcId = section.getInt("id");
+
+            if (section.contains("dialogues")) {
+                ConfigurationSection avatar = section.getConfigurationSection("avatar");
+
+                int customModelData = avatar.getInt("customModelData");
+                List<String> description = avatar.getStringList("description");
+
+                NPCAvatar.setAvatar(npcId, customModelData, description);
+            }
+
+            if (section.contains("dialogues")) {
+                List<String> dialogueList = section.getStringList("dialogues");
+                NPCSpeechManager.setNpcDialogues(npcId, dialogueList);
+            }
         }
+
+        NPCSpeechManager.startRunnable();
     }
 }

@@ -27,7 +27,7 @@ public class FinishQuestAction implements Action {
                     GuardianData guardianData = GuardianDataManager.getGuardianData(player);
                     if (guardianData.hasActiveCharacter()) {
                         RPGCharacter activeCharacter = guardianData.getActiveCharacter();
-                        boolean didComplete = activeCharacter.turnInQuest(questId, player, ignoreCompilation);
+                        boolean didComplete = activeCharacter.turnInQuest(questId, player, ignoreCompilation, -1);
                     }
                 }
             }

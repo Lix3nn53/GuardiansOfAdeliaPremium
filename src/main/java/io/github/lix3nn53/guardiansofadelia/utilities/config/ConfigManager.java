@@ -63,6 +63,7 @@ public class ConfigManager {
         NPCConfiguration.createConfigs();
         ItemSkillConfigurations.createConfigs();
         GlobalMessageConfigurations.createConfig();
+        EmojiConfiguration.createConfigs();
     }
 
     public static void loadConfigALL() {
@@ -93,6 +94,7 @@ public class ConfigManager {
         ItemSkillConfigurations.loadConfigs();
         GlobalMessageConfigurations.loadConfig();
         loadHologramsConfig();
+        EmojiConfiguration.loadConfigs();
     }
 
     public static void writeConfigALL() {

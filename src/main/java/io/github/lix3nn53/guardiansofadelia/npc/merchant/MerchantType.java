@@ -10,7 +10,7 @@ public enum MerchantType {
     MAGIC_SHOP,
     TOOL_SHOP;
 
-    public String getName() {
+    public String getDisplayName() {
         switch (this) {
             case WEAPONSMITH:
                 return ChatPalette.RED + "Weaponsmith";

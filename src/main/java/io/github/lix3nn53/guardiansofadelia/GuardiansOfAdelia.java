@@ -55,6 +55,7 @@ public class GuardiansOfAdelia extends JavaPlugin {
     }
 
     public static final Random RANDOM = new Random();
+    private static int ENTITY_ID = 123123;
 
     @Override
     public void onDisable() {
@@ -127,6 +128,10 @@ public class GuardiansOfAdelia extends JavaPlugin {
         }
     }
 
+    public static int getEntityId() {
+        return ENTITY_ID++;
+    }
+
     @Override
     public void onEnable() {
         instance = this;
@@ -195,6 +200,7 @@ public class GuardiansOfAdelia extends JavaPlugin {
         this.getCommand("character").setExecutor(new CommandCharacter());
         this.getCommand("chat").setExecutor(new CommandChat());
         this.getCommand("destroyitem").setExecutor(new CommandDestroyItem());
+        this.getCommand("emojis").setExecutor(new CommandEmoji());
         this.getCommand("guild").setExecutor(new CommandGuild());
         this.getCommand("interact").setExecutor(new CommandInteract());
         this.getCommand("invite").setExecutor(new CommandInvite());
@@ -273,6 +279,7 @@ public class GuardiansOfAdelia extends JavaPlugin {
         new BukkitRunnable() {
             @Override
             public void run() {
+                getLogger().info("Saving current data to database...");
                 Collection<? extends Player> onlinePlayers = Bukkit.getOnlinePlayers();
                 for (Player player : onlinePlayers) {
                     if (GuardianDataManager.hasGuardianData(player)) {
@@ -284,7 +291,6 @@ public class GuardiansOfAdelia extends JavaPlugin {
                 for (Guild guild : activeGuilds) {
                     DatabaseManager.writeGuildData(guild);
                 }
-                getLogger().info("Write current data to database");
             }
         }.runTaskTimerAsynchronously(GuardiansOfAdelia.getInstance(), 20 * 60 * 5L, 20 * 60 * 5L);
 

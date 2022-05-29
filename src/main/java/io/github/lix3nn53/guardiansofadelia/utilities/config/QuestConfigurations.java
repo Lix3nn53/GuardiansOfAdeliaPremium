@@ -201,10 +201,13 @@ public class QuestConfigurations {
                     armorForPlayer.add(data);
                 }
 
+                List<String> startDialogue = section.getStringList("startDialogue");
+                List<String> turnInDialogue = section.getStringList("turnInDialogue");
+
                 Quest quest = new Quest(questID, name, storyLineCount,
-                        startMsgCode, objectiveTextKey,
+                        startMsgCode, startDialogue, objectiveTextKey,
                         turnInMsg,
-                        tasks, itemPrizes, moneyPrize, expPrize, requiredLevel, requiredQuests, advancementMaterial, onAcceptActions,
+                        tasks, turnInDialogue, itemPrizes, moneyPrize, expPrize, requiredLevel, requiredQuests, advancementMaterial, onAcceptActions,
                         onCompleteActions, onTurnInActions, itemPrizesSelectOneOf, weaponPrizesSelectOneOf, armorPrizesSelectOneOf,
                         weaponForPlayer, armorForPlayer);
 

@@ -42,7 +42,7 @@ public class CommandAdminQuest implements CommandExecutor {
 
                         for (Quest quest : questList) {
                             activeCharacter.getTurnedInQuests().add(quest.getQuestID());
-                            quest.onTurnIn(player);
+                            quest.onTurnIn(player, -1);
                         }
 
                         questList.clear();
@@ -55,9 +55,10 @@ public class CommandAdminQuest implements CommandExecutor {
                     if (guardianData.hasActiveCharacter()) {
                         RPGCharacter activeCharacter = guardianData.getActiveCharacter();
 
-                        Quest questCopyById = QuestNPCManager.getQuestCopyById(Integer.parseInt(args[1]));
+                        int questNo = Integer.parseInt(args[1]);
+                        Quest questCopyById = QuestNPCManager.getQuestCopyById(questNo);
 
-                        boolean questListIsNotFull = activeCharacter.acceptQuest(questCopyById, player);
+                        boolean questListIsNotFull = activeCharacter.acceptQuest(questCopyById, player, -1);
                         if (!questListIsNotFull) {
                             player.sendMessage(ChatPalette.RED + "Your quest list is full");
                         }

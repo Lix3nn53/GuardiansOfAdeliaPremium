@@ -177,7 +177,6 @@ public class SkillBar {
         }
 
         castCounter++;
-        GuardiansOfAdelia.getInstance().getLogger().info("SkillBar owner: " + player.getName());
         TriggerListener.onPlayerSkillCast(player);
 
         // mana cost

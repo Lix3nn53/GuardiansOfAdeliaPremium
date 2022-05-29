@@ -1,8 +1,7 @@
 package io.github.lix3nn53.guardiansofadelia.commands.admin;
 
-import io.github.lix3nn53.guardiansofadelia.guardian.skill.component.mechanic.statuseffect.StatusEffectManager;
-import io.github.lix3nn53.guardiansofadelia.guardian.skill.component.mechanic.statuseffect.StatusEffectType;
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.onground.SkillOnGround;
+import io.github.lix3nn53.guardiansofadelia.items.PrizeChestType;
 import io.github.lix3nn53.guardiansofadelia.sounds.CustomSound;
 import io.github.lix3nn53.guardiansofadelia.sounds.GoaSound;
 import io.github.lix3nn53.guardiansofadelia.text.ChatPalette;
@@ -44,20 +43,16 @@ public class CommandTest implements CommandExecutor {
                 player.sendMessage(ChatPalette.BLUE + "/test damage <amount> - damage self");
                 player.sendMessage(ChatPalette.BLUE + "/test custom <custom> [sBefore] [sAfter] <negative> <positive> - test custom char");
             } else if (args[0].equals("test")) {
-                /*CustomCharacter menuContent = CustomCharacterGui.MENU_54;
-                CustomCharacter logo = CustomCharacterGui.LOGO;
-                logo.setNegativeSpacesBefore(Integer.parseInt(args[1]));
-                logo.setNegativeSpacesAfter(Integer.parseInt(args[2]));
-                logo.setNegativeSpace(NegativeSpace.valueOf(args[3]));
-                logo.setPositiveSpace(NegativeSpace.valueOf(args[4]));
+                Location location = player.getLocation();
+                ArmorStand armorStand = (ArmorStand) location.getWorld().spawnEntity(location, EntityType.ARMOR_STAND);
 
-                String s1 = menuContent.toString();
-                String s2 = logo.toString();
+                ItemStack chestIconItem = PrizeChestType.PET.getChestIconItem();
+                EntityEquipment equipment = armorStand.getEquipment();
+                equipment.setHelmet(chestIconItem);
+                equipment.setItemInMainHand(PrizeChestType.WEAPON_MELEE.getChestIconItem());
+                armorStand.setInvisible(true);
 
-                GuiGeneric guiGeneric = new GuiGeneric(54, s1 + s2 + args[3], 0);
-                guiGeneric.openInventory(player);*/
-
-                StatusEffectManager.addStatus(player, StatusEffectType.ROOT, 100);
+                player.addPassenger(armorStand);
             } else if (args[0].equals("custom")) {
                 CustomCharacter chara = CustomCharacter.valueOf(args[1]);
                 chara.setNegativeSpacesBefore(Integer.parseInt(args[2]));

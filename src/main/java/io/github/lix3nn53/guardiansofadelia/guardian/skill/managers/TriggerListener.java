@@ -1,8 +1,8 @@
 package io.github.lix3nn53.guardiansofadelia.guardian.skill.managers;
 
-import io.github.lix3nn53.guardiansofadelia.GuardiansOfAdelia;
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.component.TriggerComponent;
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.component.trigger.InitializeTrigger;
+import io.github.lix3nn53.guardiansofadelia.guardian.skill.component.trigger.LandTrigger;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -28,7 +28,6 @@ public class TriggerListener {
     }
 
     public static void add(Player player, TriggerComponent triggerComponent, int skillId) {
-        GuardiansOfAdelia.getInstance().getLogger().info("ADD trigger, skillid: " + skillId + ", player: " + player.getName() + ", type: " + triggerComponent.getClass().getName());
         TriggerPlayerData triggerPlayerData = new TriggerPlayerData();
         if (playerToData.containsKey(player)) {
             triggerPlayerData = playerToData.get(player);
@@ -53,6 +52,10 @@ public class TriggerListener {
             TriggerPlayerData triggerPlayerData = playerToData.get(player);
 
             triggerPlayerData.onPlayerLandGround(player);
+            boolean b = triggerPlayerData.removeAll(LandTrigger.class.getSimpleName());
+            if (b) {
+                playerToData.remove(player);
+            }
         }
     }
 
@@ -81,8 +84,6 @@ public class TriggerListener {
     }
 
     public static void onPlayerSkillCast(Player player) {
-        GuardiansOfAdelia.getInstance().getLogger().info("onPlayerSkillCast for player: " + player.getName());
-
         if (playerToData.containsKey(player)) {
             TriggerPlayerData triggerPlayerData = playerToData.get(player);
 

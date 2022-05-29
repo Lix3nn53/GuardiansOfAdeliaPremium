@@ -20,6 +20,7 @@ import io.github.lix3nn53.guardiansofadelia.items.stats.StatUtils;
 import io.github.lix3nn53.guardiansofadelia.jobs.crafting.CraftingType;
 import io.github.lix3nn53.guardiansofadelia.jobs.gathering.Ingredient;
 import io.github.lix3nn53.guardiansofadelia.npc.QuestNPCManager;
+import io.github.lix3nn53.guardiansofadelia.npc.speech.NPCSpeechManager;
 import io.github.lix3nn53.guardiansofadelia.quests.actions.Action;
 import io.github.lix3nn53.guardiansofadelia.quests.task.*;
 import io.github.lix3nn53.guardiansofadelia.text.ChatPalette;
@@ -49,8 +50,10 @@ public final class Quest {
     private final int storyLineCount;
 
     private final String startMsg;
+    private final List<String> startDialogue;
     private final String objectiveText;
     private final String turnInMsg;
+    private final List<String> turnInDialogue;
     private final int moneyPrize;
     private final int expPrize;
     private final int requiredLevel;
@@ -69,8 +72,8 @@ public final class Quest {
     private final List<ArmorReferenceData> armorPrizeForPlayer;
 
     public Quest(
-            final int questID, final String name, final int storyLineCount, final String startMsg, final String objectiveText, final String turnInMsg,
-            final List<Task> tasks, final List<ItemStack> itemPrizes, final int moneyPrize, final int expPrize,
+            final int questID, final String name, final int storyLineCount, final String startMsg, List<String> startDialogue, final String objectiveText, final String turnInMsg,
+            final List<Task> tasks, List<String> turnInDialogue, final List<ItemStack> itemPrizes, final int moneyPrize, final int expPrize,
             final int requiredLevel, final List<Integer> requiredQuests, Material advancementMaterial, List<Action> onAcceptActions,
             List<Action> onCompleteActions, List<Action> onTurnInActions, List<ItemStack> itemPrizesSelectOneOf,
             WeaponReferenceData weaponPrizesSelectOneOf, ArmorReferenceData armorPrizesSelectOneOf,
@@ -79,8 +82,10 @@ public final class Quest {
         this.name = name;
         this.storyLineCount = storyLineCount;
         this.startMsg = startMsg;
+        this.startDialogue = startDialogue;
         this.objectiveText = objectiveText;
         this.turnInMsg = turnInMsg;
+        this.turnInDialogue = turnInDialogue;
         this.itemPrizes = itemPrizes;
         this.moneyPrize = moneyPrize;
         this.expPrize = expPrize;
@@ -107,8 +112,9 @@ public final class Quest {
      * Copy constructor.
      */
     public Quest(@NotNull Quest questToCopy) {
-        this(questToCopy.getQuestID(), questToCopy.getName(), questToCopy.getStoryLineCount(), questToCopy.getStartMsg(), questToCopy.getObjectiveText(), questToCopy.getTurnInMsg(),
-                questToCopy.getTasks(), questToCopy.getItemPrizes(), questToCopy.getMoneyPrize(), questToCopy.getExpPrize(),
+        this(questToCopy.getQuestID(), questToCopy.getName(), questToCopy.getStoryLineCount(), questToCopy.getStartMsg(),
+                questToCopy.getStartDialogue(), questToCopy.getObjectiveText(), questToCopy.getTurnInMsg(),
+                questToCopy.getTasks(), questToCopy.getTurnInDialogue(), questToCopy.getItemPrizes(), questToCopy.getMoneyPrize(), questToCopy.getExpPrize(),
                 questToCopy.getRequiredLevel(), questToCopy.getRequiredQuests(), questToCopy.getAdvancementMaterial(), questToCopy.getOnAcceptActions(),
                 questToCopy.getOnCompleteActions(), questToCopy.getOnTurnInActions(), questToCopy.getItemPrizesSelectOneOf(),
                 questToCopy.getWeaponPrizesSelectOneOf(), questToCopy.getArmorPrizesSelectOneOf(),
@@ -383,7 +389,7 @@ public final class Quest {
         return true;
     }
 
-    public void onTurnIn(Player player) {
+    public void onTurnIn(Player player, int npcNo) {
         // MessageUtils.sendCenteredMessage(player, ChatPalette.PURPLE + "Quest Turn In");
         // MessageUtils.sendCenteredMessage(player, ChatPalette.PURPLE_LIGHT + getName());
 
@@ -393,6 +399,9 @@ public final class Quest {
             String lang = guardianData.getLanguage();
             String message = Translation.t(lang, "quest", turnInMsg);
             MessageUtils.sendCenteredMessage(player, ChatPalette.PURPLE_LIGHT + message);
+        }
+        if (npcNo > 0 && turnInDialogue != null && !turnInDialogue.isEmpty()) {
+            NPCSpeechManager.startQuestDialogue(player, npcNo, turnInDialogue);
         }
 
         ToastNotification toastNotification = QuestAdvancements.getOnTurnInAdvancement(getQuestID(), this.getName(), getAdvancementMaterial());
@@ -499,7 +508,7 @@ public final class Quest {
         CompassManager.onQuestProgress(player, this.questID);
     }
 
-    public void onAccept(Player player) {
+    public void onAccept(Player player, int npcNo) {
         // MessageUtils.sendCenteredMessage(player, ChatPalette.PURPLE + "Quest Accept");
         // MessageUtils.sendCenteredMessage(player, ChatPalette.PURPLE_LIGHT + getName());
         String startMsg = getStartMsg();
@@ -508,6 +517,9 @@ public final class Quest {
             String lang = guardianData.getLanguage();
             String message = Translation.t(lang, "quest", startMsg);
             MessageUtils.sendCenteredMessage(player, ChatPalette.PURPLE_LIGHT + message);
+        }
+        if (npcNo > 0 && startDialogue != null && !startDialogue.isEmpty()) {
+            NPCSpeechManager.startQuestDialogue(player, npcNo, startDialogue);
         }
 
         ToastNotification toastNotification = QuestAdvancements.getOnAcceptAdvancement(getQuestID(), this.getName(), getAdvancementMaterial());
@@ -914,5 +926,13 @@ public final class Quest {
         }
 
         return true;
+    }
+
+    public List<String> getStartDialogue() {
+        return startDialogue;
+    }
+
+    public List<String> getTurnInDialogue() {
+        return turnInDialogue;
     }
 }

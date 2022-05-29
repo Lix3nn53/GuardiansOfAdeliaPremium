@@ -30,7 +30,7 @@ public class MerchantMenu extends GuiGeneric {
     private String currentLang = Translation.DEFAULT_LANG;
 
     public MerchantMenu(MerchantType merchantType, int merchantLevel, int npcNo) {
-        super(27, CustomCharacterGui.MENU_27_FLAT + merchantType.getName() + " #" + merchantLevel, npcNo);
+        super(27, CustomCharacterGui.MENU_27_FLAT + merchantType.getDisplayName() + " #" + merchantLevel, npcNo);
         this.merchantType = merchantType;
         this.merchantLevel = merchantLevel;
 

@@ -29,7 +29,7 @@ public class StartQuestAction implements Action {
                     if (guardianData.hasActiveCharacter()) {
                         RPGCharacter activeCharacter = guardianData.getActiveCharacter();
                         Quest questCopyById = QuestNPCManager.getQuestCopyById(questId);
-                        boolean questListIsNotFull = activeCharacter.acceptQuest(questCopyById, player);
+                        boolean questListIsNotFull = activeCharacter.acceptQuest(questCopyById, player, -1);
                         if (questListIsNotFull) {
 
                         } else {

@@ -11,6 +11,7 @@ import io.github.lix3nn53.guardiansofadelia.party.PartyInvite;
 import io.github.lix3nn53.guardiansofadelia.rpginventory.slots.CharacterInfoSlot;
 import io.github.lix3nn53.guardiansofadelia.text.ChatPalette;
 import io.github.lix3nn53.guardiansofadelia.utilities.gui.GuiGeneric;
+import io.github.lix3nn53.guardiansofadelia.utilities.invite.FriendInvite;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -71,7 +72,7 @@ public class GuiPlayerInterract extends GuiGeneric {
         itemMeta.setDisplayName(ChatPalette.GREEN_LIGHT + "Friend Invite");
         lore = new ArrayList<>();
         lore.add("");
-        lore.add(ChatPalette.GRAY + "Click to send friend invitation!");
+        lore.add(ChatPalette.GRAY + "Click to send friend request!");
         itemMeta.setLore(lore);
         friend.setItemMeta(itemMeta);
         this.setItem(11, friend);
@@ -88,21 +89,21 @@ public class GuiPlayerInterract extends GuiGeneric {
 
             if (rightClicked.isOnline()) {
                 int slot = event.getSlot();
-                if (slot == 12) {
-                    String senderTitle = ChatPalette.BLUE_LIGHT + "Sent party invitation";
+                if (slot == 15) {
+                    String senderTitle = ChatPalette.BLUE_LIGHT + "Sent party request";
                     String receiverMessage = ChatPalette.BLUE_LIGHT + player.getName() + " invites you to party"; //sender = player
-                    String receiverTitle = ChatPalette.BLUE_LIGHT + "Received party invitation";
+                    String receiverTitle = ChatPalette.BLUE_LIGHT + "Received party invite";
                     PartyInvite partyInvite = new PartyInvite(player, rightClicked, senderTitle, receiverMessage, receiverTitle); //receiver = rightClicked
                     partyInvite.send();
                     player.closeInventory();
-                } else if (slot == 14) {
+                } else if (slot == 13) {
                     if (GuildManager.inGuild(player)) {
                         Guild guild = GuildManager.getGuild(player);
                         PlayerRankInGuild rank = guild.getRankInGuild(player.getUniqueId());
                         if (rank.equals(PlayerRankInGuild.LEADER) || rank.equals(PlayerRankInGuild.COMMANDER)) {
                             String receiverMessage = ChatPalette.PURPLE + player.getName() + " invites you to " + guild.getName() + " guild"; //sender = player
-                            String receiverTitle = ChatPalette.PURPLE + "Received guild invitation";
-                            String senderTitle = ChatPalette.PURPLE + "Sent guild invitation";
+                            String receiverTitle = ChatPalette.PURPLE + "Received guild invite";
+                            String senderTitle = ChatPalette.PURPLE + "Sent guild request";
                             GuildInvite invite = new GuildInvite(player, rightClicked, senderTitle, receiverMessage, receiverTitle); //receiver = rightClicked
                             invite.send();
                         } else {
@@ -110,12 +111,19 @@ public class GuiPlayerInterract extends GuiGeneric {
                         }
                     }
                     player.closeInventory();
-                } else if (slot == 16) {
-                    String senderTitle = ChatPalette.GOLD + "Sent trade invitation";
+                } else if (slot == 17) {
+                    String senderTitle = ChatPalette.GOLD + "Sent trade request";
                     String receiverMessage = ChatPalette.GOLD + player.getName() + " invites you to trade"; //sender = player
-                    String receiverTitle = ChatPalette.GOLD + "Received trade invitation";
+                    String receiverTitle = ChatPalette.GOLD + "Received trade request";
                     TradeInvite tradeInvite = new TradeInvite(player, rightClicked, senderTitle, receiverMessage, receiverTitle); //receiver = rightClicked
                     tradeInvite.send();
+                    player.closeInventory();
+                } else if (slot == 11) {
+                    String senderTitle = ChatPalette.GREEN_LIGHT + "Sent friend request";
+                    String receiverMessage = ChatPalette.GREEN_LIGHT + player.getName() + " sent you a friend request"; //sender = player
+                    String receiverTitle = ChatPalette.GREEN_LIGHT + "Received friend request";
+                    FriendInvite friendInvite = new FriendInvite(player, rightClicked, senderTitle, receiverMessage, receiverTitle); //receiver = rightClicked
+                    friendInvite.send();
                     player.closeInventory();
                 }
             }

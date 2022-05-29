@@ -169,7 +169,7 @@ public class CharacterSelectionScreenManager {
         // last quest of tutorial
         Quest questCopyById = QuestNPCManager.getQuestCopyById(8);
 
-        boolean accept = rpgCharacter.acceptQuest(questCopyById, player);
+        boolean accept = rpgCharacter.acceptQuest(questCopyById, player, -1);
         questCopyById.onComplete(player);
 
         RPGClassStats rpgClassStats = rpgCharacter.getRPGClassStats();

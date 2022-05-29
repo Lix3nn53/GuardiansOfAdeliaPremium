@@ -1,7 +1,7 @@
 package io.github.lix3nn53.guardiansofadelia.guardian.skill.component.mechanic;
 
 import io.github.lix3nn53.guardiansofadelia.GuardiansOfAdelia;
-import io.github.lix3nn53.guardiansofadelia.chat.ChatManager;
+import io.github.lix3nn53.guardiansofadelia.chat.SpeechBubble;
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.component.MechanicComponent;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.configuration.ConfigurationSection;
@@ -44,7 +44,7 @@ public class DelayWithHoloMessageMechanic extends MechanicComponent {
 
         for (LivingEntity target : targets) {
             String a = ChatColor.translateAlternateColorCodes('&', message);
-            ChatManager.chatHologramEntityWithCountDown(target, a, (int) ticks, offsetY);
+            SpeechBubble.countdown(target, a, (int) ticks, offsetY);
         }
 
         new BukkitRunnable() {

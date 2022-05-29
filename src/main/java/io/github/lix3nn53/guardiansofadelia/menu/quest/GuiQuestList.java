@@ -91,6 +91,9 @@ public class GuiQuestList extends GuiGeneric {
         }
 
         ItemStack item = this.getItem(event.getSlot());
+        if (item == null) {
+            return;
+        }
         Material type = item.getType();
         ItemMeta itemMeta = item.getItemMeta();
         String currentName = itemMeta.getDisplayName();
@@ -117,10 +120,16 @@ public class GuiQuestList extends GuiGeneric {
                             weaponPrizesSelectOneOf == null &&
                             armorPrizesSelectOneOf == null) {
                         //turnin quest
-                        boolean didTurnIn = rpgCharacter.turnInQuest(questNo, player, false);
+                        boolean didTurnIn = rpgCharacter.turnInQuest(questNo, player, false, whoCanCompleteThisQuest);
+                        player.closeInventory();
                         if (didTurnIn) {
-                            GuiQuestList questGui = new GuiQuestList(this.npc, player, guardianData);
-                            questGui.openInventory(player);
+                            Quest questCopyById = QuestNPCManager.getQuestCopyById(questNo);
+                            List<String> turnInDialogue = questCopyById.getTurnInDialogue();
+
+                            if (turnInDialogue == null || turnInDialogue.isEmpty()) {
+                                GuiQuestList questGui = new GuiQuestList(this.npc, player, guardianData);
+                                questGui.openInventory(player);
+                            }
                         } else {
                             player.sendMessage(ChatPalette.RED + "Couldn't turn in the quest ERROR report pls");
                         }
@@ -171,10 +180,15 @@ public class GuiQuestList extends GuiGeneric {
                     //give quest
                     Quest questCopyById = QuestNPCManager.getQuestCopyById(questNo);
 
-                    boolean questListIsNotFull = rpgCharacter.acceptQuest(questCopyById, player);
+                    boolean questListIsNotFull = rpgCharacter.acceptQuest(questCopyById, player, whoCanGiveThisQuest);
+                    player.closeInventory();
                     if (questListIsNotFull) {
-                        GuiQuestList questGui = new GuiQuestList(this.npc, player, guardianData);
-                        questGui.openInventory(player);
+                        List<String> startDialogue = questCopyById.getStartDialogue();
+
+                        if (startDialogue == null || startDialogue.isEmpty()) {
+                            GuiQuestList questGui = new GuiQuestList(this.npc, player, guardianData);
+                            questGui.openInventory(player);
+                        }
                     } else {
                         player.sendMessage(ChatPalette.RED + Translation.t(guardianData, "quest.error.full"));
                     }

@@ -11,8 +11,6 @@ import java.util.Collection;
 
 public class DamageIndicator {
 
-    private static int ENTITY_ID = 123123;
-
 //    public static void spawnNonPacket(String text, Location baseLocation, long duration) {
 //        Location indicatorLocation = LocationUtils.randomPointNoY(baseLocation, 1.2f);
 //
@@ -29,8 +27,8 @@ public class DamageIndicator {
 //    }
 
     public static void showPlayer(Player player, String text, Location location, long duration) {
-        FakeHologram fakeHologram = new FakeHologram(ENTITY_ID, location, text);
-        ENTITY_ID++;
+        int entityId = GuardiansOfAdelia.getEntityId();
+        FakeHologram fakeHologram = new FakeHologram(entityId, location, text);
         fakeHologram.show(player);
 
         new BukkitRunnable() {
@@ -38,20 +36,17 @@ public class DamageIndicator {
             @Override
             public void run() {
                 fakeHologram.hide(player);
-                cancel();
             }
         }.runTaskLaterAsynchronously(GuardiansOfAdelia.getInstance(), duration);
     }
 
     public static void showPlayerNearby(String text, Location location, long duration, float radius) {
-        FakeHologram fakeHologram = new FakeHologram(ENTITY_ID, location, text);
-        ENTITY_ID++;
+        int entityId = GuardiansOfAdelia.getEntityId();
+        FakeHologram fakeHologram = new FakeHologram(entityId, location, text);
 
         Collection<Entity> nearbyEntities = location.getWorld().getNearbyEntities(location, radius, radius, radius);
         for (Entity e : nearbyEntities) {
-            if (e instanceof Player) {
-                Player p = (Player) e;
-
+            if (e instanceof Player p) {
                 fakeHologram.show(p);
 
                 new BukkitRunnable() {
