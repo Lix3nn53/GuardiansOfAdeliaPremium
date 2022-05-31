@@ -1,19 +1,14 @@
 package io.github.lix3nn53.guardiansofadelia.events;
 
-import io.github.lix3nn53.guardiansofadelia.creatures.pets.PetManager;
 import io.github.lix3nn53.guardiansofadelia.guardian.GuardianData;
 import io.github.lix3nn53.guardiansofadelia.guardian.GuardianDataManager;
 import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGCharacter;
 import io.github.lix3nn53.guardiansofadelia.menu.GuiPlayerInterract;
 import io.github.lix3nn53.guardiansofadelia.quests.Quest;
-import io.github.lix3nn53.guardiansofadelia.rpginventory.slots.EggSlot;
-import io.github.lix3nn53.guardiansofadelia.utilities.PersistentDataContainerUtil;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPCRegistry;
 import org.bukkit.GameMode;
-import org.bukkit.Material;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -42,44 +37,7 @@ public class MyPlayerInteractEntityEvent implements Listener {
         if (itemInMainHand.hasItemMeta()) {
             ItemMeta itemMeta = itemInMainHand.getItemMeta();
             if (itemMeta.hasDisplayName()) {
-                if (itemInMainHand.getType().equals(Material.BLACK_DYE)) { //right click with premium item
-                    LivingEntity pet = (LivingEntity) rightClicked;
-                    if (PetManager.isCompanionAlsoPet(pet)) {
-                        if (!PersistentDataContainerUtil.hasString(itemInMainHand, "petSkinCode")) return;
-
-                        Player owner = PetManager.getOwner(pet);
-                        if (!player.equals(owner)) return;
-
-                        if (GuardianDataManager.hasGuardianData(player)) {
-                            GuardianData guardianData = GuardianDataManager.getGuardianData(player);
-                            if (guardianData.hasActiveCharacter()) {
-                                RPGCharacter activeCharacter = guardianData.getActiveCharacter();
-
-                                EggSlot eggSlot = activeCharacter.getRpgInventory().getEggSlot();
-
-                                if (eggSlot.isEmpty()) return;
-
-                                ItemStack itemOnSlot = eggSlot.getItemOnSlot();
-
-                                String petSkinCode = PersistentDataContainerUtil.getString(itemInMainHand, "petSkinCode");
-                                PersistentDataContainerUtil.putString("petCode", petSkinCode, itemOnSlot);
-
-                                //change values of itemOnSlot
-                                ItemMeta onSlotItemMeta = itemOnSlot.getItemMeta();
-                                String name = PetManager.getName(petSkinCode);
-                                onSlotItemMeta.setDisplayName(name);
-                                if (itemMeta.hasCustomModelData())
-                                    onSlotItemMeta.setCustomModelData(itemMeta.getCustomModelData());
-                                itemOnSlot.setItemMeta(onSlotItemMeta);
-
-                                PetManager.respawnPet(owner);
-
-                                int amount = itemInMainHand.getAmount();
-                                itemInMainHand.setAmount(amount - 1);
-                            }
-                        }
-                    }
-                } else if (rightClicked.isCustomNameVisible()) {
+                if (rightClicked.isCustomNameVisible()) {
                     if (GuardianDataManager.hasGuardianData(player)) {
                         GuardianData guardianData = GuardianDataManager.getGuardianData(player);
                         if (guardianData.hasActiveCharacter()) {

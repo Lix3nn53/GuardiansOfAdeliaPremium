@@ -103,7 +103,7 @@ public class EnchantGui extends GuiGeneric {
     }
 
     public boolean setItemToEnchant(ItemStack itemStack) {
-        if (StatUtils.hasStatType(itemStack.getType())) {
+        if (StatUtils.hasStatType(itemStack)) {
             setItem(10, itemStack);
             return true;
         }
@@ -238,7 +238,7 @@ public class EnchantGui extends GuiGeneric {
         } else if (clickedInventory.getType().equals(InventoryType.PLAYER)) {
             if (PersistentDataContainerUtil.hasInteger(current, "ench_stone")) {
                 this.setEnchantStone(current);
-            } else if (StatUtils.hasStatType(currentType)) {
+            } else if (StatUtils.hasStatType(current)) {
                 this.setItemToEnchant(current);
             }
         }

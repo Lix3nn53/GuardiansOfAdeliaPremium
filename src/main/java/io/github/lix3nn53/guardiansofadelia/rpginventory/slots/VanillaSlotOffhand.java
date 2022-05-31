@@ -1,7 +1,5 @@
 package io.github.lix3nn53.guardiansofadelia.rpginventory.slots;
 
-import io.github.lix3nn53.guardiansofadelia.items.RpgGears.ShieldGearType;
-import io.github.lix3nn53.guardiansofadelia.items.RpgGears.WeaponGearType;
 import io.github.lix3nn53.guardiansofadelia.text.ChatPalette;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -15,7 +13,8 @@ public class VanillaSlotOffhand implements VanillaSlot {
 
     @Override
     public boolean doesFit(ItemStack itemStack) {
-        Material mat = itemStack.getType();
+        return false;
+        /*Material mat = itemStack.getType();
         ShieldGearType shieldGearType = ShieldGearType.fromMaterial(mat);
         if (shieldGearType != null) {
             return true;
@@ -26,7 +25,7 @@ public class VanillaSlotOffhand implements VanillaSlot {
             return weaponGearType.canEquipToOffHand();
         }
 
-        return false;
+        return false;*/
     }
 
     @Override

@@ -1,6 +1,6 @@
 package io.github.lix3nn53.guardiansofadelia.items.stats;
 
-import io.github.lix3nn53.guardiansofadelia.bungeelistener.products.HelmetSkin;
+import io.github.lix3nn53.guardiansofadelia.cosmetic.CosmeticManager;
 import io.github.lix3nn53.guardiansofadelia.guardian.GuardianData;
 import io.github.lix3nn53.guardiansofadelia.guardian.GuardianDataManager;
 import io.github.lix3nn53.guardiansofadelia.guardian.attribute.AttributeType;
@@ -39,8 +39,7 @@ public class StatUtils {
     private static final float HALF_REDUCTION_DEFENSE = 2000f;
 
     public static Stat getStat(ItemStack item) {
-        Material mat = item.getType();
-        GearStatType type = getStatType(mat);
+        GearStatType type = getStatType(item);
 
         if (type.equals(GearStatType.ARMOR_GEAR)) {
             if (PersistentDataContainerUtil.hasInteger(item, "health")) {
@@ -75,34 +74,47 @@ public class StatUtils {
         return new StatOneType(0);
     }
 
-    public static GearStatType getStatType(Material mat) {
+    public static GearStatType getStatType(ItemStack itemStack) {
+        Material mat = itemStack.getType();
         GearStatType type = null;
         if (WeaponGearType.fromMaterial(mat) != null) {
             type = GearStatType.WEAPON_GEAR;
         } else if (ArmorGearType.fromMaterial(mat) != null ||
-                mat.equals(HelmetSkin.getHelmetMaterial()) || // Helmet skin premium
                 ShieldGearType.fromMaterial(mat) != null
         ) {
             type = GearStatType.ARMOR_GEAR;
         } else if (mat.equals(Material.SHEARS)) {
             type = GearStatType.PASSIVE_GEAR;
+        } else if (mat.equals(CosmeticManager.COSMETIC_MATERIAL)) {
+            if (CosmeticManager.isAppliedHelmetSkin(itemStack)) {
+                return GearStatType.ARMOR_GEAR;
+            }
         }
         return type;
     }
 
-    public static boolean hasStatType(Material mat) {
-        if (mat == null) return false;
+    public static boolean hasStatType(ItemStack itemStack) {
+        if (itemStack == null) return false;
+
+        Material mat = itemStack.getType();
+
+        if (mat.equals(CosmeticManager.COSMETIC_MATERIAL)) {
+            if (CosmeticManager.isAppliedHelmetSkin(itemStack)) {
+                return true;
+            }
+        }
 
         return WeaponGearType.fromMaterial(mat) != null ||
                 ArmorGearType.fromMaterial(mat) != null ||
                 ShieldGearType.fromMaterial(mat) != null ||
-                mat.equals(HelmetSkin.getHelmetMaterial()) ||
                 mat.equals(Material.SHEARS);
     }
 
     public static void addRandomPassiveStats(ItemStack itemStack, GearLevel gearLevel, ItemTier itemTier) {
-        Material type = itemStack.getType();
-        if (hasStatType(type)) {
+
+        if (hasStatType(itemStack)) {
+            Material type = itemStack.getType();
+
             int minNumberOfElements = itemTier.getMinNumberOfElements(false);
             int minNumberOfAttributes = itemTier.getMinNumberOfAttributes(false);
             int minAttrValue = gearLevel.getMinStatValue(false, false);
@@ -191,7 +203,8 @@ public class StatUtils {
 
             if (weaponGearType.isTwoHanded()) {
                 ItemStack itemInOffHand = player.getInventory().getItemInOffHand();
-                if (StatUtils.hasStatType(itemInOffHand.getType())) {
+
+                if (StatUtils.hasStatType(itemInOffHand)) {
                     player.sendMessage(ChatPalette.RED + "You can't dual wield " + weaponGearType);
                     return false;
                 }

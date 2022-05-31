@@ -14,7 +14,6 @@ import io.github.lix3nn53.guardiansofadelia.text.locale.Translation;
 import io.github.lix3nn53.guardiansofadelia.utilities.InventoryUtils;
 import io.github.lix3nn53.guardiansofadelia.utilities.centermessage.MessageUtils;
 import io.github.lix3nn53.guardiansofadelia.utilities.gui.GuiGeneric;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
@@ -84,10 +83,9 @@ public class GuiQuestTaskPrizeSelect extends GuiGeneric {
         }
 
         ItemStack current = this.getItem(event.getSlot());
-        Material currentType = current.getType();
 
         //give item
-        GearStatType gearStatType = StatUtils.getStatType(currentType);
+        GearStatType gearStatType = StatUtils.getStatType(current);
         if (gearStatType != null) {
             GearLevel gearLevel = GearLevel.getGearLevel(current);
             ItemTier itemTier = ItemTier.getItemTierOfItemStack(current);

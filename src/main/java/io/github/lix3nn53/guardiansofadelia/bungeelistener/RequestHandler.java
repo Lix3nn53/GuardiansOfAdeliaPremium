@@ -1,7 +1,7 @@
 package io.github.lix3nn53.guardiansofadelia.bungeelistener;
 
 import io.github.lix3nn53.guardiansofadelia.GuardiansOfAdelia;
-import io.github.lix3nn53.guardiansofadelia.bungeelistener.products.*;
+import io.github.lix3nn53.guardiansofadelia.bungeelistener.products.BoostPremium;
 import io.github.lix3nn53.guardiansofadelia.bungeelistener.web.WebProduct;
 import io.github.lix3nn53.guardiansofadelia.bungeelistener.web.WebProductType;
 import io.github.lix3nn53.guardiansofadelia.bungeelistener.web.WebPurchase;
@@ -28,46 +28,6 @@ public class RequestHandler {
         productIdToWebProduct.put(1, new WebProduct(ChatPalette.GREEN_DARK + "Hero Rank", WebProductType.RANK, 200, null, PremiumRank.HERO));
         productIdToWebProduct.put(2, new WebProduct(ChatPalette.GOLD + "Legend Rank", WebProductType.RANK, 400, null, PremiumRank.LEGEND));
         productIdToWebProduct.put(3, new WebProduct(ChatPalette.PURPLE_LIGHT + "Titan Rank", WebProductType.RANK, 600, null, PremiumRank.TITAN));
-
-        //List of items
-        ItemStack itemSkinScroll1 = WeaponOrShieldSkinScroll.getItemStack(1);
-        ItemStack itemSkinScroll2 = WeaponOrShieldSkinScroll.getItemStack(2);
-        ItemStack itemSkinScroll5 = WeaponOrShieldSkinScroll.getItemStack(5);
-        productIdToWebProduct.put(4, new WebProduct(ChatPalette.PURPLE_LIGHT + "Weapon/Shield Skin Scroll x1", WebProductType.ITEM, 50, itemSkinScroll1));
-        productIdToWebProduct.put(5, new WebProduct(ChatPalette.PURPLE_LIGHT + "Weapon/Shield Skin Scroll x2", WebProductType.ITEM, 100, itemSkinScroll2));
-        productIdToWebProduct.put(6, new WebProduct(ChatPalette.PURPLE_LIGHT + "Weapon/Shield Skin Scroll x5", WebProductType.ITEM, 200, itemSkinScroll5));
-
-        ItemStack helmetSkin1 = HelmetSkin.WINGS_ANGEL.getItemStack();
-        ItemStack helmetSkin2 = HelmetSkin.WINGS_DEMON.getItemStack();
-        ItemStack helmetSkin3 = HelmetSkin.WINGS_DRAGON_DARK.getItemStack();
-        ItemStack helmetSkin4 = HelmetSkin.WINGS_DRAGON_WHITE.getItemStack();
-        ItemStack helmetSkin5 = HelmetSkin.CROWN.getItemStack();
-        productIdToWebProduct.put(7, new WebProduct(ChatPalette.YELLOW + "Angel Wings(Helmet Skin)", WebProductType.ITEM, 100, helmetSkin1));
-        productIdToWebProduct.put(8, new WebProduct(ChatPalette.PURPLE + "Demon Wings(Helmet Skin)", WebProductType.ITEM, 100, helmetSkin2));
-        productIdToWebProduct.put(9, new WebProduct(ChatPalette.PURPLE_LIGHT + "Dark Dragon Wings(Helmet Skin)", WebProductType.ITEM, 100, helmetSkin3));
-        productIdToWebProduct.put(10, new WebProduct(ChatPalette.BLUE_LIGHT + "White Dragon Wings(Helmet Skin)", WebProductType.ITEM, 100, helmetSkin4));
-        productIdToWebProduct.put(11, new WebProduct(ChatPalette.GOLD + "Golden Crown(Helmet Skin)", WebProductType.ITEM, 50, helmetSkin5));
-
-        ItemStack petSkin1 = PetSkin.BEE.getItemStack();
-        ItemStack petSkin2 = PetSkin.FOX_RED.getItemStack();
-        ItemStack petSkin3 = PetSkin.FOX_SNOW.getItemStack();
-        ItemStack petSkin4 = PetSkin.ICE_CREAM.getItemStack();
-        ItemStack petSkin5 = PetSkin.VEX.getItemStack();
-        ItemStack petSkin6 = PetSkin.MINI_DRAGON.getItemStack();
-
-        productIdToWebProduct.put(12, new WebProduct(ChatPalette.YELLOW + "Bee(Pet Skin)", WebProductType.ITEM, 100, petSkin1));
-        productIdToWebProduct.put(13, new WebProduct(ChatPalette.GOLD + "Red Fox(Pet Skin)", WebProductType.ITEM, 100, petSkin2));
-        productIdToWebProduct.put(14, new WebProduct(ChatPalette.BLUE_LIGHT + "Snow Fox(Pet Skin)", WebProductType.ITEM, 100, petSkin3));
-        productIdToWebProduct.put(15, new WebProduct(ChatPalette.PURPLE_LIGHT + "Ice Cream(Pet Skin)", WebProductType.ITEM, 100, petSkin4));
-        productIdToWebProduct.put(16, new WebProduct(ChatPalette.BLUE_DARK + "Vex(Pet Skin)", WebProductType.ITEM, 100, petSkin5));
-        productIdToWebProduct.put(17, new WebProduct(ChatPalette.RED + "Baby Dragon(Pet Skin)", WebProductType.ITEM, 100, petSkin6));
-
-        ItemStack skinChest1 = new SkinChest().getItemStack(1);
-        ItemStack skinChest2 = new SkinChest().getItemStack(2);
-        ItemStack skinChest5 = new SkinChest().getItemStack(5);
-        productIdToWebProduct.put(18, new WebProduct(ChatPalette.GOLD + "Skin Chest x1", WebProductType.ITEM, 100, skinChest1));
-        productIdToWebProduct.put(19, new WebProduct(ChatPalette.GOLD + "Skin Chest x2", WebProductType.ITEM, 200, skinChest2));
-        productIdToWebProduct.put(20, new WebProduct(ChatPalette.GOLD + "Skin Chest x5", WebProductType.ITEM, 400, skinChest5));
 
         ItemStack boostExp1 = BoostPremium.EXPERIENCE.getItemStack(1);
         ItemStack boostExp2 = BoostPremium.EXPERIENCE.getItemStack(2);

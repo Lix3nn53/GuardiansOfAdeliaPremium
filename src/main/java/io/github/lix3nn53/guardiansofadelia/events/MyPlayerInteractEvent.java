@@ -1,11 +1,8 @@
 package io.github.lix3nn53.guardiansofadelia.events;
 
 import io.github.lix3nn53.guardiansofadelia.bungeelistener.BoostPremiumManager;
-import io.github.lix3nn53.guardiansofadelia.bungeelistener.gui.HelmetSkinApplyGui;
-import io.github.lix3nn53.guardiansofadelia.bungeelistener.gui.WeaponOrShieldSkinApplyGui;
 import io.github.lix3nn53.guardiansofadelia.bungeelistener.products.BoostPremium;
-import io.github.lix3nn53.guardiansofadelia.bungeelistener.products.HelmetSkin;
-import io.github.lix3nn53.guardiansofadelia.bungeelistener.products.SkinChest;
+import io.github.lix3nn53.guardiansofadelia.cosmetic.CosmeticManager;
 import io.github.lix3nn53.guardiansofadelia.guardian.GuardianData;
 import io.github.lix3nn53.guardiansofadelia.guardian.GuardianDataManager;
 import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGCharacter;
@@ -36,7 +33,6 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.HashMap;
 import java.util.List;
@@ -56,7 +52,7 @@ public class MyPlayerInteractEvent implements Listener {
             ItemStack itemInMainHand = player.getInventory().getItemInMainHand();
             Material itemInMainHandType = itemInMainHand.getType();
 
-            ArmorSlot armorSlot = ArmorSlot.getArmorSlot(itemInMainHandType);
+            ArmorSlot armorSlot = ArmorSlot.getArmorSlot(itemInMainHand);
 
             if (armorSlot != null) {
                 if (GuardianDataManager.hasGuardianData(player)) {
@@ -71,7 +67,7 @@ public class MyPlayerInteractEvent implements Listener {
 
                             activeCharacter.getRpgCharacterStats().onArmorEquip(itemInMainHand, rpgClassStats, true);
 
-                            if (itemInMainHandType.equals(HelmetSkin.getHelmetMaterial())) {
+                            if (itemInMainHandType.equals(CosmeticManager.COSMETIC_MATERIAL)) {
                                 EntityEquipment equipment = player.getEquipment();
                                 equipment.setHelmet(itemInMainHand);
                                 equipment.setItemInMainHand(null);
@@ -110,31 +106,9 @@ public class MyPlayerInteractEvent implements Listener {
                     prizeChest.play(player, itemStacks);
                     player.getInventory().setItemInMainHand(null);
                 }
-            } else if (itemInMainHandType.equals(Material.BLACK_DYE)) {
+            } else if (itemInMainHandType.equals(CosmeticManager.PREMIUM_CONSUMABLE_MATERIAL)) {
                 event.setCancelled(true);
-                if (!itemInMainHand.hasItemMeta()) return;
-                if (!itemInMainHand.getItemMeta().hasDisplayName()) return;
-
-                ItemMeta itemMeta = itemInMainHand.getItemMeta();
-                String displayName = itemMeta.getDisplayName();
-
-                if (displayName.equals(ChatPalette.GOLD + "Weapon/Shield Skin Scroll")) {
-
-                    new WeaponOrShieldSkinApplyGui().openInventory(player);
-                } else if (PersistentDataContainerUtil.hasString(itemInMainHand, "helmetSkinCode")) {
-                    String helmetSkinCode = PersistentDataContainerUtil.getString(itemInMainHand, "helmetSkinCode");
-
-                    HelmetSkin helmetSkin = HelmetSkin.valueOf(helmetSkinCode);
-
-                    new HelmetSkinApplyGui(helmetSkin).openInventory(player);
-                } else if (PersistentDataContainerUtil.hasInteger(itemInMainHand, "skinChest")) {
-
-                    SkinChest skinChest = new SkinChest();
-
-                    skinChest.play(player);
-                    int amount = itemInMainHand.getAmount();
-                    itemInMainHand.setAmount(amount - 1);
-                } else if (PersistentDataContainerUtil.hasString(itemInMainHand, "boostCode")) {
+                if (PersistentDataContainerUtil.hasString(itemInMainHand, "boostCode")) {
                     String boostCode = PersistentDataContainerUtil.getString(itemInMainHand, "boostCode");
 
                     BoostPremium boostPremium = BoostPremium.valueOf(boostCode);

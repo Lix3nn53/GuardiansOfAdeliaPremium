@@ -1,8 +1,8 @@
 package io.github.lix3nn53.guardiansofadelia.bungeelistener.products;
 
+import io.github.lix3nn53.guardiansofadelia.cosmetic.CosmeticManager;
 import io.github.lix3nn53.guardiansofadelia.text.ChatPalette;
 import io.github.lix3nn53.guardiansofadelia.utilities.PersistentDataContainerUtil;
-import org.bukkit.Material;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -27,7 +27,7 @@ public enum BoostPremium {
         lore.add(ChatPalette.GOLD + "Usage: ");
         lore.add(ChatPalette.YELLOW + "1 - Right click while you are holding this item.");
 
-        ItemStack itemStack = new ItemStack(Material.BLACK_DYE);
+        ItemStack itemStack = new ItemStack(CosmeticManager.PREMIUM_CONSUMABLE_MATERIAL);
         PersistentDataContainerUtil.putString("boostCode", this.name(), itemStack);
 
         ItemMeta itemMeta = itemStack.getItemMeta();

@@ -1,5 +1,8 @@
 package io.github.lix3nn53.guardiansofadelia.events;
 
+import io.github.lix3nn53.guardiansofadelia.cosmetic.CosmeticRoom;
+import io.github.lix3nn53.guardiansofadelia.cosmetic.gui.CosmeticRoomGui;
+import io.github.lix3nn53.guardiansofadelia.cosmetic.inner.CosmeticType;
 import io.github.lix3nn53.guardiansofadelia.economy.bazaar.Bazaar;
 import io.github.lix3nn53.guardiansofadelia.economy.bazaar.BazaarManager;
 import io.github.lix3nn53.guardiansofadelia.guardian.GuardianData;
@@ -67,6 +70,17 @@ public class MyPlayerAnimationEvent implements Listener {
                     }
                 }
             }
+            return;
+        }
+
+        if (CosmeticRoom.isPlayerInRoom(player)) {
+            GuardianData guardianData;
+            if (GuardianDataManager.hasGuardianData(player)) {
+                guardianData = GuardianDataManager.getGuardianData(player);
+
+                new CosmeticRoomGui(guardianData, CosmeticType.WEAPON_SKIN_BATTLE_AXE, 0).openInventory(player);
+            }
+
             return;
         }
 

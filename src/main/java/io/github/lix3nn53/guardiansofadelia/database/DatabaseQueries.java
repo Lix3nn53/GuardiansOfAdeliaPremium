@@ -52,6 +52,7 @@ public class DatabaseQueries {
                     "     `lang` varchar(20) NOT NULL,\n" +
                     "     `friend_uuids` text,\n" +
                     "     `chat_channels` text,\n" +
+                    "     `cosmetics` text,\n" +
                     "     PRIMARY KEY (`uuid`)\n" +
                     ");");
             statement.addBatch("CREATE TABLE IF NOT EXISTS `goa_player_character` (\n" +
@@ -256,6 +257,23 @@ public class DatabaseQueries {
                         ChatChannel chatChannel = ChatChannel.valueOf(s);
                         chatChannelData.addListening(chatChannel);
                     }
+                }
+
+                String cosmeticsStr = resultSet.getString("cosmetics");
+                if (!resultSet.wasNull()) {
+                    List<Integer> cosmetics = new ArrayList<>();
+
+                    String[] split = cosmeticsStr.split(";");
+                    for (String s : split) {
+                        if (s.equals("")) {
+                            continue;
+                        }
+
+                        int cosmeticId = Integer.parseInt(s);
+                        cosmetics.add(cosmeticId);
+                    }
+
+                    guardianData.setUnlockedCosmetics(cosmetics);
                 }
             }
             resultSet.close();
@@ -719,16 +737,16 @@ public class DatabaseQueries {
     public static int setGuardianData(UUID uuid, LocalDate lastPrizeDate, StaffRank staffRank, PremiumRank premiumRank,
                                       ItemStack[] personalStorage, ItemStack[] bazaarStorage,
                                       ItemStack[] premiumStorage, String language, String friendUUIDS,
-                                      String chatChannels) throws SQLException {
+                                      String chatChannels, String cosmetics) throws SQLException {
         if (friendUUIDS.equals("")) {
             friendUUIDS = null;
         }
 
         String SQL_QUERY = "INSERT INTO goa_player \n" +
                 "\t(uuid, daily_last_date, staff_rank, premium_rank, storage_personal, storage_bazaar, storage_premium, " +
-                "lang, friend_uuids, chat_channels) \n" +
+                "lang, friend_uuids, chat_channels, cosmetics) \n" +
                 "VALUES \n" +
-                "\t(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)\n" +
+                "\t(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)\n" +
                 "ON DUPLICATE KEY UPDATE\n" +
                 "\tuuid = VALUES(uuid),\n" +
                 "\tdaily_last_date = VALUES(daily_last_date),\n" +
@@ -739,7 +757,8 @@ public class DatabaseQueries {
                 "\tstorage_premium = VALUES(storage_premium),\n" +
                 "\tlang = VALUES(lang),\n" +
                 "\tfriend_uuids = VALUES(friend_uuids),\n" +
-                "\tchat_channels = VALUES(chat_channels);";
+                "\tchat_channels = VALUES(chat_channels),\n" +
+                "\tcosmetics = VALUES(cosmetics);";
         try (Connection con = ConnectionPool.getConnection()) {
             PreparedStatement pst = con.prepareStatement(SQL_QUERY);
 
@@ -756,6 +775,7 @@ public class DatabaseQueries {
             pst.setString(8, language);
             pst.setString(9, friendUUIDS);
             pst.setString(10, chatChannels);
+            pst.setString(11, cosmetics);
 
             //2 = replaced, 1 = new row added
             int returnValue = pst.executeUpdate();

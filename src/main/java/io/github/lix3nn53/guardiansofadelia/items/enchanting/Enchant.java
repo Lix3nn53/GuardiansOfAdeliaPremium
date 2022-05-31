@@ -187,7 +187,7 @@ public class Enchant {
     private void applyChange(boolean success) {
         List<String> lore = this.itemStack.getItemMeta().getLore();
 
-        GearStatType type = StatUtils.getStatType(itemStack.getType());
+        GearStatType type = StatUtils.getStatType(itemStack);
 
         int enchantLevel = currentEnchantLevel;
         if (success) enchantLevel = currentEnchantLevel + 1;
@@ -210,7 +210,7 @@ public class Enchant {
                 baseValue = stat.getValue();
 
                 ArmorGearType armorGearType = ArmorGearType.fromMaterial(itemStack.getType());
-                ArmorSlot armorSlot = ArmorSlot.getArmorSlot(itemStack.getType());
+                ArmorSlot armorSlot = ArmorSlot.getArmorSlot(itemStack);
                 bonus = EnchantManager.getBonusArmor(armorGearType, armorSlot, gearLevel, enchantLevel);
             }
 

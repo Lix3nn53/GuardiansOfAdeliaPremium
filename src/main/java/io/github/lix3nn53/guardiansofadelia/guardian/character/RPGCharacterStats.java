@@ -35,6 +35,7 @@ import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
@@ -207,42 +208,47 @@ public class RPGCharacterStats {
 
     private void playLevelUpAnimation() {
         Location location = player.getLocation().add(0, 2.4, 0);
+        World world = location.getWorld();
         CustomSound customSound = GoaSound.LEVEL_UP.getCustomSound();
         customSound.play(location);
 
+        final ArmorStand rider = new Hologram(location).getArmorStand();
+        final ArmorStand armorStand = new Hologram(location, rider).getArmorStand();
+
+        ItemStack holoItem = new ItemStack(Material.STONE_PICKAXE);
+        ItemMeta im = holoItem.getItemMeta();
+        im.setCustomModelData(7);
+        holoItem.setItemMeta(im);
+
+        MiscDisguise disguise = new MiscDisguise(DisguiseType.DROPPED_ITEM);
+        DroppedItemWatcher watcher = (DroppedItemWatcher) disguise.getWatcher();
+        watcher.setItemStack(holoItem);
+
+        DisguiseAPI.disguiseToAll(rider, disguise);
+
+        final int ticksLimit = 100;
+
         new BukkitRunnable() {
 
-            ArmorStand armorStand;
-            ArmorStand rider;
             int ticksPass = 0;
-            final int ticksLimit = 100;
 
             @Override
             public void run() {
-                if (ticksPass == ticksLimit) {
-                    cancel();
+                if (ticksPass >= ticksLimit) {
                     armorStand.remove();
                     rider.remove();
-                } else if (ticksPass == 0) {
-                    rider = new Hologram(location).getArmorStand();
-                    armorStand = new Hologram(location, rider).getArmorStand();
-
-                    ItemStack holoItem = new ItemStack(Material.STONE_PICKAXE);
-                    ItemMeta im = holoItem.getItemMeta();
-                    im.setCustomModelData(7);
-                    holoItem.setItemMeta(im);
-
-                    MiscDisguise disguise = new MiscDisguise(DisguiseType.DROPPED_ITEM);
-                    DroppedItemWatcher watcher = (DroppedItemWatcher) disguise.getWatcher();
-                    watcher.setItemStack(holoItem);
-
-                    DisguiseAPI.disguiseToAll(rider, disguise);
+                    cancel();
+                } else {
+                    Location newLocation = player.getLocation().add(0, 2.4, 0);
+                    World newWorld = newLocation.getWorld();
+                    armorStand.eject();
+                    armorStand.teleport(newLocation);
+                    if (!newWorld.equals(world)) {
+                        rider.teleport(newLocation);
+                    }
+                    armorStand.addPassenger(rider);
+                    ticksPass++;
                 }
-                Location location = player.getLocation().add(0, 2.4, 0);
-                armorStand.eject();
-                armorStand.teleport(location);
-                armorStand.addPassenger(rider);
-                ticksPass++;
             }
         }.runTaskTimer(GuardiansOfAdelia.getInstance(), 0L, 2L);
     }
@@ -360,7 +366,7 @@ public class RPGCharacterStats {
         if (weaponGearType != null) {
             if (!StatUtils.doesCharacterMeetRequirements(itemInMainHand, player, rpgClass)) return bonus;
 
-            GearStatType gearStatType = StatUtils.getStatType(type);
+            GearStatType gearStatType = StatUtils.getStatType(itemInMainHand);
 
             if (gearStatType == GearStatType.WEAPON_GEAR) {
                 StatOneType stat = (StatOneType) StatUtils.getStat(itemInMainHand);
@@ -403,8 +409,7 @@ public class RPGCharacterStats {
     }
 
     public void onArmorEquip(ItemStack itemStack, RPGClassStats rpgClassStats, boolean fixDisplay) {
-        Material material = itemStack.getType();
-        ArmorSlot armorSlot = ArmorSlot.getArmorSlot(material);
+        ArmorSlot armorSlot = ArmorSlot.getArmorSlot(itemStack);
         if (armorSlot != null) {
             int health = 0;
             if (PersistentDataContainerUtil.hasInteger(itemStack, "health")) {

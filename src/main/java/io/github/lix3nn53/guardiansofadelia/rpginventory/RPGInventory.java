@@ -585,7 +585,7 @@ public class RPGInventory extends GuiGeneric {
     }
 
     public void removeBonusStats(Player player, ItemStack itemStack) {
-        GearStatType gearStatType = StatUtils.getStatType(itemStack.getType());
+        GearStatType gearStatType = StatUtils.getStatType(itemStack);
         if (gearStatType.equals(GearStatType.PASSIVE_GEAR)) {
             StatPassive statPassive = (StatPassive) StatUtils.getStat(itemStack);
 
@@ -611,7 +611,7 @@ public class RPGInventory extends GuiGeneric {
     }
 
     public void addBonusStats(Player player, ItemStack itemStack) {
-        GearStatType gearStatType = StatUtils.getStatType(itemStack.getType());
+        GearStatType gearStatType = StatUtils.getStatType(itemStack);
         if (gearStatType.equals(GearStatType.PASSIVE_GEAR)) {
             StatPassive statPassive = (StatPassive) StatUtils.getStat(itemStack);
 

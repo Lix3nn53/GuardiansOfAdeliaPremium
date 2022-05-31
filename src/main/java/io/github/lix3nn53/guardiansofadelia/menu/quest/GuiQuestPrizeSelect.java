@@ -20,7 +20,6 @@ import io.github.lix3nn53.guardiansofadelia.utilities.gui.GuiGeneric;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPCRegistry;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
@@ -84,7 +83,7 @@ public class GuiQuestPrizeSelect extends GuiGeneric {
         }
 
         if (armorPrizesSelectOneOf != null) {
-            List<ItemStack> items = armorPrizesSelectOneOf.getItems(rpgCharacter.getRpgClassStr());
+            List<ItemStack> items = armorPrizesSelectOneOf.getItems();
             for (ItemStack itemStack : items) {
                 Integer slotNo = slotsToUse.get(index);
                 this.setItem(slotNo, itemStack);
@@ -111,10 +110,9 @@ public class GuiQuestPrizeSelect extends GuiGeneric {
         }
 
         ItemStack current = this.getItem(event.getSlot());
-        Material currentType = current.getType();
 
         //give item
-        GearStatType gearStatType = StatUtils.getStatType(currentType);
+        GearStatType gearStatType = StatUtils.getStatType(current);
         if (gearStatType != null) {
             GearLevel gearLevel = GearLevel.getGearLevel(current);
             ItemTier itemTier = ItemTier.getItemTierOfItemStack(current);

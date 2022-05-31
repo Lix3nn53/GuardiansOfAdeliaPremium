@@ -6,6 +6,7 @@ import io.github.lix3nn53.guardiansofadelia.guardian.character.*;
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.player.SkillRPGClassData;
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.tree.SkillTreeOffset;
 import io.github.lix3nn53.guardiansofadelia.menu.GuiHelper;
+import io.github.lix3nn53.guardiansofadelia.menu.bazaar.GuiBazaar;
 import io.github.lix3nn53.guardiansofadelia.menu.main.character.*;
 import io.github.lix3nn53.guardiansofadelia.text.ChatPalette;
 import io.github.lix3nn53.guardiansofadelia.text.font.CustomCharacterGui;
@@ -80,7 +81,16 @@ public class GuiCharacter extends GuiGeneric {
         itemMeta.setLore(lore);
         chat.setItemMeta(itemMeta);
 
-        GuiHelper.form54Big(this, new ItemStack[]{classItem, skills, statpoints, job, chat}, "Main Menu");
+        ItemStack bazaar = new ItemStack(Material.WOODEN_PICKAXE);
+        itemMeta.setCustomModelData(3);
+        itemMeta.setDisplayName(ChatPalette.GOLD + Translation.t(guardianData, "menu.bazaar.name"));
+        lore = new ArrayList<>();
+        lore.add("");
+        lore.add(ChatPalette.GRAY + Translation.t(guardianData, "menu.bazaar.l1"));
+        itemMeta.setLore(lore);
+        bazaar.setItemMeta(itemMeta);
+
+        GuiHelper.form54Big(this, new ItemStack[]{classItem, skills, statpoints, job, chat, bazaar}, "Main Menu");
     }
 
     @Override
@@ -129,6 +139,9 @@ public class GuiCharacter extends GuiGeneric {
             gui.openInventory(player);
         } else if (GuiHelper.get54BigButtonIndexes(4).contains(slot)) {
             GuiCharacterChatTag gui = new GuiCharacterChatTag(player);
+            gui.openInventory(player);
+        } else if (GuiHelper.get54BigButtonIndexes(5).contains(slot)) {
+            GuiBazaar gui = new GuiBazaar(guardianData);
             gui.openInventory(player);
         }
     }

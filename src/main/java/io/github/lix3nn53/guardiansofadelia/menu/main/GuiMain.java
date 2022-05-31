@@ -5,16 +5,10 @@ import io.github.lix3nn53.guardiansofadelia.guardian.GuardianDataManager;
 import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGCharacter;
 import io.github.lix3nn53.guardiansofadelia.guild.GuildManager;
 import io.github.lix3nn53.guardiansofadelia.menu.GuiHelper;
-import io.github.lix3nn53.guardiansofadelia.menu.bazaar.GuiBazaar;
-import io.github.lix3nn53.guardiansofadelia.menu.main.settings.GuiChatChannels;
 import io.github.lix3nn53.guardiansofadelia.text.ChatPalette;
 import io.github.lix3nn53.guardiansofadelia.text.font.CustomCharacterGui;
 import io.github.lix3nn53.guardiansofadelia.text.locale.Translation;
 import io.github.lix3nn53.guardiansofadelia.utilities.gui.GuiGeneric;
-import net.md_5.bungee.api.chat.ClickEvent;
-import net.md_5.bungee.api.chat.HoverEvent;
-import net.md_5.bungee.api.chat.TextComponent;
-import net.md_5.bungee.api.chat.hover.content.Text;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -99,29 +93,18 @@ public class GuiMain extends GuiGeneric {
 
         ItemStack donation = new ItemStack(Material.WOODEN_PICKAXE);
         itemMeta.setCustomModelData(10);
-        itemMeta.setDisplayName(ChatPalette.PURPLE_LIGHT + Translation.t(guardianData, "menu.store.name"));
+        itemMeta.setDisplayName(ChatPalette.PURPLE_LIGHT + Translation.t(guardianData, "menu.premium.name"));
         lore = new ArrayList<>();
         lore.add("");
-        lore.add(ChatPalette.GRAY + Translation.t(guardianData, "menu.store.l1"));
+        lore.add(ChatPalette.GRAY + Translation.t(guardianData, "menu.premium.l1"));
         lore.add(ChatPalette.GRAY + "");
-        lore.add(ChatPalette.GRAY + Translation.t(guardianData, "menu.store.l2"));
-        lore.add(ChatPalette.GRAY + Translation.t(guardianData, "menu.store.l3"));
+        lore.add(ChatPalette.GRAY + Translation.t(guardianData, "menu.premium.l2"));
+        lore.add(ChatPalette.GRAY + Translation.t(guardianData, "menu.premium.l3"));
         lore.add(ChatPalette.GRAY + "");
-        lore.add(ChatPalette.GRAY + Translation.t(guardianData, "menu.store.l4"));
-        lore.add(ChatPalette.GRAY + Translation.t(guardianData, "menu.store.l5"));
+        lore.add(ChatPalette.GRAY + Translation.t(guardianData, "menu.premium.l4"));
+        lore.add(ChatPalette.GRAY + Translation.t(guardianData, "menu.premium.l5"));
         itemMeta.setLore(lore);
         donation.setItemMeta(itemMeta);
-
-        ItemStack daily = new ItemStack(Material.WOODEN_PICKAXE);
-        itemMeta.setCustomModelData(38);
-        itemMeta.setDisplayName(ChatPalette.GOLD + Translation.t(guardianData, "menu.daily.name"));
-        lore = new ArrayList<>();
-        lore.add("");
-        lore.add(ChatPalette.GRAY + Translation.t(guardianData, "menu.daily.l1"));
-        itemMeta.setLore(lore);
-        daily.setItemMeta(itemMeta);
-
-        GuiHelper.form54Big(this, new ItemStack[]{character, compass, guild, minigames, activeBoosts, donation, daily, teleport}, null);
 
         ItemStack settings = new ItemStack(Material.WOODEN_PICKAXE);
         itemMeta.setCustomModelData(39);
@@ -132,29 +115,16 @@ public class GuiMain extends GuiGeneric {
         itemMeta.setLore(lore);
         settings.setItemMeta(itemMeta);
 
-        this.setItem(30, settings);
-
-        ItemStack bazaar = new ItemStack(Material.WOODEN_PICKAXE);
-        itemMeta.setCustomModelData(3);
-        itemMeta.setDisplayName(ChatPalette.GOLD + Translation.t(guardianData, "menu.bazaar.name"));
+        ItemStack daily = new ItemStack(Material.WOODEN_PICKAXE);
+        itemMeta.setCustomModelData(38);
+        itemMeta.setDisplayName(ChatPalette.GOLD + Translation.t(guardianData, "menu.daily.name"));
         lore = new ArrayList<>();
         lore.add("");
-        lore.add(ChatPalette.GRAY + Translation.t(guardianData, "menu.bazaar.l1"));
+        lore.add(ChatPalette.GRAY + Translation.t(guardianData, "menu.daily.l1"));
         itemMeta.setLore(lore);
-        bazaar.setItemMeta(itemMeta);
+        daily.setItemMeta(itemMeta);
 
-        this.setItem(32, bazaar);
-
-        ItemStack chatChannels = new ItemStack(Material.WOODEN_PICKAXE);
-        itemMeta.setCustomModelData(50);
-        itemMeta.setDisplayName(ChatPalette.GOLD + Translation.t(guardianData, "menu.chatChannels.name"));
-        lore = new ArrayList<>();
-        lore.add("");
-        lore.add(ChatPalette.GRAY + Translation.t(guardianData, "menu.chatChannels.l1"));
-        itemMeta.setLore(lore);
-        chatChannels.setItemMeta(itemMeta);
-
-        this.setItem(29, chatChannels);
+        GuiHelper.form54Big(this, new ItemStack[]{character, compass, guild, minigames, donation, daily, teleport, settings}, null);
     }
 
     @Override
@@ -194,30 +164,15 @@ public class GuiMain extends GuiGeneric {
             GuiMinigames gui = new GuiMinigames(guardianData);
             gui.openInventory(player);
         } else if (GuiHelper.get54BigButtonIndexes(4).contains(slot)) {
-            GuiServerBoost gui = new GuiServerBoost();
-            gui.openInventory(player);
+            new GuiPremium(guardianData).openInventory(player);
         } else if (GuiHelper.get54BigButtonIndexes(5).contains(slot)) {
-            player.closeInventory();
-            TextComponent message = new TextComponent(" Website ♥ ! (Click Me)");
-            message.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://www.guardiansofadelia.com/store/ranks"));
-            message.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(ChatPalette.PURPLE_LIGHT + "Click to open website")));
-            message.setColor(ChatPalette.PURPLE_LIGHT.toChatColor());
-            message.setBold(true);
-            player.spigot().sendMessage(message);
+            new GuiDailyRewardClaim(player).openInventory(player);
         } else if (GuiHelper.get54BigButtonIndexes(6).contains(slot)) {
-            GuiDailyRewardClaim gui = new GuiDailyRewardClaim(player);
-            gui.openInventory(player);
-        } else if (GuiHelper.get54BigButtonIndexes(7).contains(slot)) {
             GuiTeleportation gui = new GuiTeleportation(guardianData, player.getLevel());
             gui.openInventory(player);
-        } else if (slot == 30) {
+        } else if (GuiHelper.get54BigButtonIndexes(7).contains(slot)) {
             GuiSettings gui = new GuiSettings(guardianData);
             gui.openInventory(player);
-        } else if (slot == 32) {
-            GuiBazaar gui = new GuiBazaar(guardianData);
-            gui.openInventory(player);
-        } else if (slot == 29) {
-            new GuiChatChannels(guardianData).openInventory(player);
         }
     }
 }

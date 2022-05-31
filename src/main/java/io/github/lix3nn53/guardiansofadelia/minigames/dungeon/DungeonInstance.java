@@ -509,6 +509,7 @@ public class DungeonInstance extends Minigame {
     public void addDarkness(int add) {
         this.darkness += add;
         if (this.darkness < 0) this.darkness = 0;
+        if (this.darkness > 100) this.darkness = 100;
     }
 
     private void resetAll() {

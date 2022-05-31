@@ -14,12 +14,13 @@ public class VanillaSlotLeggings implements VanillaSlot {
 
     @Override
     public boolean doesFit(ItemStack itemStack) {
-        Material mat = itemStack.getType();
+        return false;
+        /*Material mat = itemStack.getType();
         if (!(mat.equals(Material.NETHERITE_LEGGINGS) || mat.equals(Material.CHAINMAIL_LEGGINGS) || mat.equals(Material.DIAMOND_LEGGINGS) || mat.equals(Material.GOLDEN_LEGGINGS)
                 || mat.equals(Material.IRON_LEGGINGS) || mat.equals(Material.LEATHER_LEGGINGS))) {
             return false;
         }
-        return false;
+        return false;*/
     }
 
     @Override

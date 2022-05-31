@@ -1,6 +1,6 @@
 package io.github.lix3nn53.guardiansofadelia.events;
 
-import io.github.lix3nn53.guardiansofadelia.bungeelistener.products.HelmetSkin;
+import io.github.lix3nn53.guardiansofadelia.cosmetic.CosmeticManager;
 import io.github.lix3nn53.guardiansofadelia.guardian.GuardianData;
 import io.github.lix3nn53.guardiansofadelia.guardian.GuardianDataManager;
 import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGCharacter;
@@ -127,7 +127,7 @@ public class MyInventoryClickEvent implements Listener {
             event.setCancelled(true);
         } else if (title.equals("Crafting")) { // player inventory click listeners for helmet skins
             if (event.isShiftClick()) {
-                if (currentType.equals(HelmetSkin.getHelmetMaterial())) {
+                if (currentType.equals(CosmeticManager.COSMETIC_MATERIAL) && CosmeticManager.isAppliedHelmetSkin(current)) {
                     InventoryType.SlotType slotType = event.getSlotType();
                     if (slotType.equals(InventoryType.SlotType.CONTAINER) || slotType.equals(InventoryType.SlotType.QUICKBAR)) {
                         EntityEquipment equipment = player.getEquipment();
@@ -135,7 +135,6 @@ public class MyInventoryClickEvent implements Listener {
                         equipment.setHelmet(current);
                         clickedInventory.setItem(slot, helmet);
                         event.setCancelled(true);
-                        return;
                     } else if (event.getRawSlot() == ArmorSlot.HELMET.getSlot()) {
                         PlayerInventory playerInventory = player.getInventory();
                         if (playerInventory.firstEmpty() != -1) { //has empty slot
@@ -144,18 +143,16 @@ public class MyInventoryClickEvent implements Listener {
                             equipment.setHelmet(null);
                             InventoryUtils.giveItemToPlayer(player, helmet);
                             event.setCancelled(true);
-                            return;
                         }
                     }
                 }
             } else if (event.getRawSlot() == ArmorSlot.HELMET.getSlot()) {
-                if (cursorType.equals(HelmetSkin.getHelmetMaterial())) {
+                if (cursorType.equals(CosmeticManager.COSMETIC_MATERIAL) && CosmeticManager.isAppliedHelmetSkin(cursor)) {
                     EntityEquipment equipment = player.getEquipment();
                     ItemStack helmet = equipment.getHelmet();
                     equipment.setHelmet(cursor);
                     player.setItemOnCursor(helmet);
                     event.setCancelled(true);
-                    return;
                 }
             }
         }

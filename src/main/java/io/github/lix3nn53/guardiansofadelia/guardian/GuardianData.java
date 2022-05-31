@@ -51,6 +51,9 @@ public class GuardianData {
 
     private final ChatChannelData chatChannelData = new ChatChannelData();
 
+    // Premium
+    private List<Integer> unlockedCosmetics = new ArrayList<>();
+
     public RPGCharacter getActiveCharacter() {
         return activeCharacter;
     }
@@ -252,5 +255,13 @@ public class GuardianData {
 
     public ChatChannelData getChatChannelData() {
         return chatChannelData;
+    }
+
+    public List<Integer> getUnlockedCosmetics() {
+        return unlockedCosmetics;
+    }
+
+    public void setUnlockedCosmetics(List<Integer> unlockedCosmetics) {
+        this.unlockedCosmetics = unlockedCosmetics;
     }
 }

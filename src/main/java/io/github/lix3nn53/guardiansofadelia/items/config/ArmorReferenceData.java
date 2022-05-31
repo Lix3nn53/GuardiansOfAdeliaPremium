@@ -34,12 +34,9 @@ public class ArmorReferenceData {
         this.itemTier = ItemTier.valueOf(configurationSection.getString("itemTier"));
     }
 
-    public List<ItemStack> getItems(String rpgClassStr) {
-        RPGClass rpgClass = RPGClassManager.getClass(rpgClassStr);
-        List<ArmorGearType> weaponGearTypes = rpgClass.getArmorGearTypes();
-
+    public List<ItemStack> getItems() {
         ArrayList<ItemStack> items = new ArrayList<>();
-        for (ArmorGearType type : weaponGearTypes) {
+        for (ArmorGearType type : ArmorGearType.values()) {
             items.add(ArmorManager.get(armorSlot, type, gearLevel, itemTier, true, false, itemIndex));
         }
 

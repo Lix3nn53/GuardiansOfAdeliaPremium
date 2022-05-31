@@ -1,22 +1,22 @@
 package io.github.lix3nn53.guardiansofadelia.menu.main;
 
 import io.github.lix3nn53.guardiansofadelia.GuardiansOfAdelia;
-import io.github.lix3nn53.guardiansofadelia.events.MyPlayerJoinEvent;
-import io.github.lix3nn53.guardiansofadelia.events.MyPlayerQuitEvent;
+import io.github.lix3nn53.guardiansofadelia.cosmetic.CosmeticRoom;
 import io.github.lix3nn53.guardiansofadelia.guardian.GuardianData;
 import io.github.lix3nn53.guardiansofadelia.guardian.GuardianDataManager;
 import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGCharacter;
 import io.github.lix3nn53.guardiansofadelia.menu.GuiHelper;
-import io.github.lix3nn53.guardiansofadelia.menu.main.settings.GuiChatChannels;
-import io.github.lix3nn53.guardiansofadelia.menu.main.settings.GuiLanguage;
-import io.github.lix3nn53.guardiansofadelia.sounds.CustomSoundtrack;
 import io.github.lix3nn53.guardiansofadelia.text.ChatPalette;
 import io.github.lix3nn53.guardiansofadelia.text.font.CustomCharacterGui;
 import io.github.lix3nn53.guardiansofadelia.text.locale.Translation;
 import io.github.lix3nn53.guardiansofadelia.transportation.TeleportationUtils;
 import io.github.lix3nn53.guardiansofadelia.utilities.gui.GuiGeneric;
 import io.github.lix3nn53.guardiansofadelia.utilities.hologram.Hologram;
-import io.github.lix3nn53.guardiansofadelia.utilities.managers.CharacterSelectionScreenManager;
+import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.HoverEvent;
+import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.api.chat.hover.content.Text;
 import org.bukkit.Material;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
@@ -28,55 +28,56 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
 
-public class GuiSettings extends GuiGeneric {
+public class GuiPremium extends GuiGeneric {
 
-    public GuiSettings(GuardianData guardianData) {
-        super(27, CustomCharacterGui.MENU_27_FLAT.toString() + ChatPalette.BLACK + Translation.t(guardianData, "menu.settings.name"), 0);
+    public GuiPremium(GuardianData guardianData) {
+        super(54, CustomCharacterGui.MENU_54.toString() + ChatPalette.BLACK + Translation.t(guardianData, "menu.premium.name"), 0);
 
-        ItemStack soundtrack = new ItemStack(Material.NOTE_BLOCK);
-        ItemMeta itemMeta = soundtrack.getItemMeta();
-        itemMeta.setDisplayName(ChatPalette.YELLOW + "Turn on/off soundtrack");
+        ItemStack activeBoosts = new ItemStack(Material.WOODEN_PICKAXE);
+        ItemMeta itemMeta = activeBoosts.getItemMeta();
+        itemMeta.setCustomModelData(28);
+        itemMeta.setDisplayName(ChatPalette.GOLD + Translation.t(guardianData, "menu.boost.name"));
         ArrayList<String> lore = new ArrayList<>();
-        lore.add("Click to turn on/off soundtrack");
         lore.add("");
-        lore.add("Current song: ");
-        lore.add(CustomSoundtrack.getCurrentSongName());
+        lore.add(ChatPalette.GRAY + Translation.t(guardianData, "menu.boost.l1"));
         itemMeta.setLore(lore);
         itemMeta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_UNBREAKABLE);
-        soundtrack.setItemMeta(itemMeta);
+        activeBoosts.setItemMeta(itemMeta);
 
-        ItemStack chatChannels = new ItemStack(Material.WOODEN_PICKAXE);
-        itemMeta.setCustomModelData(50);
-        itemMeta.setDisplayName(ChatPalette.GOLD + Translation.t(guardianData, "menu.chatChannels.name"));
+        ItemStack donation = new ItemStack(Material.WOODEN_PICKAXE);
+        itemMeta.setCustomModelData(10);
+        itemMeta.setDisplayName(ChatPalette.GOLD + Translation.t(guardianData, "menu.store.name"));
         lore = new ArrayList<>();
         lore.add("");
-        lore.add(ChatPalette.GRAY + Translation.t(guardianData, "menu.chatChannels.l1"));
+        lore.add(ChatPalette.GRAY + Translation.t(guardianData, "menu.store.l1"));
+        lore.add(ChatPalette.GRAY + "");
+        lore.add(ChatPalette.GRAY + Translation.t(guardianData, "menu.store.l2"));
+        lore.add(ChatPalette.GRAY + Translation.t(guardianData, "menu.store.l3"));
+        lore.add(ChatPalette.GRAY + "");
+        lore.add(ChatPalette.GRAY + Translation.t(guardianData, "menu.store.l4"));
+        lore.add(ChatPalette.GRAY + Translation.t(guardianData, "menu.store.l5"));
         itemMeta.setLore(lore);
-        chatChannels.setItemMeta(itemMeta);
+        donation.setItemMeta(itemMeta);
 
-        ItemStack language = new ItemStack(Material.LIGHT_BLUE_WOOL);
-        itemMeta = language.getItemMeta();
-        itemMeta.setDisplayName(ChatPalette.BLUE_LIGHT + "Change Language");
+        ItemStack rank = new ItemStack(Material.WOODEN_PICKAXE);
+        itemMeta.setCustomModelData(2);
+        itemMeta.setDisplayName(ChatPalette.GREEN_DARK + Translation.t(guardianData, "menu.rank.name"));
         lore = new ArrayList<>();
         lore.add("");
-        lore.add("Click to select server language.");
+        lore.add(ChatPalette.GRAY + Translation.t(guardianData, "menu.rank.l1"));
         itemMeta.setLore(lore);
-        language.setItemMeta(itemMeta);
+        rank.setItemMeta(itemMeta);
 
-        ItemStack characterSelect = new ItemStack(Material.BARRIER);
-        itemMeta = characterSelect.getItemMeta();
-        itemMeta.setDisplayName(ChatPalette.RED + "Back to character selection");
+        ItemStack cosmeticColor = new ItemStack(Material.WOODEN_PICKAXE);
+        itemMeta.setCustomModelData(2);
+        itemMeta.setDisplayName(ChatPalette.GREEN_DARK + Translation.t(guardianData, "menu.cosmetic.name"));
         lore = new ArrayList<>();
         lore.add("");
-        lore.add("Go back to character selection.");
-        lore.add("");
-        lore.add("Caution!");
-        lore.add("- Your bazaar will be destroyed");
-        lore.add("- You will leave your party");
+        lore.add(ChatPalette.GRAY + Translation.t(guardianData, "menu.cosmetic.l1"));
         itemMeta.setLore(lore);
-        characterSelect.setItemMeta(itemMeta);
+        cosmeticColor.setItemMeta(itemMeta);
 
-        GuiHelper.form27Small(this, new ItemStack[]{chatChannels, soundtrack, language, characterSelect}, "Main Menu");
+        GuiHelper.form54Big(this, new ItemStack[]{donation, rank, activeBoosts, cosmeticColor}, "Main Menu");
     }
 
     @Override
@@ -96,22 +97,29 @@ public class GuiSettings extends GuiGeneric {
             return;
         }
 
+
         int slot = event.getSlot();
         if (slot == 0) {
             GuiMain gui = new GuiMain(guardianData);
             gui.openInventory(player);
-        } else if (GuiHelper.get27SmallButtonIndex(0) == slot) {
-            new GuiChatChannels(guardianData).openInventory(player);
-        } else if (GuiHelper.get27SmallButtonIndex(1) == slot) {
-            CustomSoundtrack.togglePlayer(player);
-        } else if (GuiHelper.get27SmallButtonIndex(2) == slot) {
-            GuiLanguage gui = new GuiLanguage(guardianData);
+        } else if (GuiHelper.get54BigButtonIndexes(0).contains(slot)) {
+            player.closeInventory();
+            TextComponent message = new TextComponent("Open Webstore! ♥ (Click Me)");
+            message.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://www.guardiansofadelia.com/store"));
+            message.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(ChatPalette.GOLD + "Click to open website")));
+            message.setColor(ChatColor.GOLD);
+            message.setBold(true);
+            player.spigot().sendMessage(message);
+        } else if (GuiHelper.get54BigButtonIndexes(1).contains(slot)) {
+            // TODO RANK
+        } else if (GuiHelper.get54BigButtonIndexes(2).contains(slot)) {
+            GuiServerBoost gui = new GuiServerBoost();
             gui.openInventory(player);
-        } else if (GuiHelper.get27SmallButtonIndex(3) == slot) {
+        } else if (GuiHelper.get54BigButtonIndexes(3).contains(slot)) {
             if (guardianData.isFreeToAct()) {
                 player.closeInventory();
 
-                String destination = "Character selection";
+                String destination = "Cosmetic Room";
                 int stepCount = 5;
                 guardianData.setTeleporting(true);
                 final float startPosX = (float) player.getLocation().getX();
@@ -151,18 +159,9 @@ public class GuiSettings extends GuiGeneric {
                                 if (TeleportationUtils.isTeleportCanceled(differenceX, differenceY, differenceZ)) {
                                     TeleportationUtils.cancelTeleportation(this, guardianData, hologramTop, hologramBottom, player);
                                 } else {
-                                    boolean didGoToCharSelect = MyPlayerQuitEvent.onPlayerBackToCharacterSelection(player);
-                                    if (didGoToCharSelect) {
-                                        MyPlayerJoinEvent.onPlayerBackToCharacterSelection(player, false);
-
-                                        TeleportationUtils.finishTeleportation(this, guardianData, hologramTop, hologramBottom,
-                                                player, CharacterSelectionScreenManager.characterSelectionCenter, destination, null, 0);
-                                    } else {
-                                        this.cancel();
-                                        guardianData.setTeleporting(false);
-                                        hologramTop.remove();
-                                        hologramBottom.remove();
-                                    }
+                                    TeleportationUtils.finishTeleportation(this, guardianData, hologramTop, hologramBottom,
+                                            player, CosmeticRoom.getTpLocation(), destination, null, 0);
+                                    CosmeticRoom.start(player);
                                 }
                             }
                         }

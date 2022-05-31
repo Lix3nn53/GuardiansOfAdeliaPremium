@@ -11,11 +11,14 @@ import io.github.lix3nn53.guardiansofadelia.guardian.skill.tree.SkillTree;
 import io.github.lix3nn53.guardiansofadelia.guild.Guild;
 import io.github.lix3nn53.guardiansofadelia.guild.GuildManager;
 import io.github.lix3nn53.guardiansofadelia.guild.PlayerRankInGuild;
+import io.github.lix3nn53.guardiansofadelia.minigames.MiniGameManager;
+import io.github.lix3nn53.guardiansofadelia.minigames.Minigame;
+import io.github.lix3nn53.guardiansofadelia.minigames.dungeon.DungeonInstance;
+import io.github.lix3nn53.guardiansofadelia.minigames.dungeon.DungeonTheme;
 import io.github.lix3nn53.guardiansofadelia.quests.Quest;
 import io.github.lix3nn53.guardiansofadelia.text.ChatPalette;
 import io.github.lix3nn53.guardiansofadelia.text.locale.Translation;
 import io.github.lix3nn53.guardiansofadelia.utilities.TablistUtils;
-import io.github.lix3nn53.guardiansofadelia.utilities.managers.AdeliaRegionManager;
 import io.github.lix3nn53.guardiansofadelia.utilities.managers.CharacterSelectionScreenManager;
 import io.github.lix3nn53.guardiansofadelia.utilities.managers.CompassManager;
 import me.libraryaddict.disguise.DisguiseAPI;
@@ -210,12 +213,14 @@ public class DatabaseManager {
 
     public static void writeGuardianDataWithCurrentCharacter(Player player, GuardianData guardianData) {
         //return if it is not safe to save this character now
-        if (AdeliaRegionManager.isCharacterSelectionRegion(player.getLocation())) {
+        Location location = player.getLocation();
+        String worldName = location.getWorld().getName();
+        if (CharacterSelectionScreenManager.isPlayerInCharSelection(player)) {
             //if player is in character selection it is not safe to save
             GuardiansOfAdelia.getInstance().getLogger().info("Player " + player.getName() + " is in character selection region, not saving");
             return;
         }
-        if (player.getLocation().getWorld().getName().equals("tutorial")) { //tutorial
+        if (worldName.equals("tutorial")) { //tutorial
             GuardiansOfAdelia.getInstance().getLogger().info("Player " + player.getName() + " is in tutorial, not saving");
             return;
         }
@@ -243,11 +248,30 @@ public class DatabaseManager {
                 chatChannels.append(chatChannel.name()).append(";");
             }
         }
+
+
+        StringBuilder cosmetics = new StringBuilder();
+        List<Integer> unlockedCosmetics = guardianData.getUnlockedCosmetics();
+        for (int cosmetic : unlockedCosmetics) {
+            cosmetics.append(cosmetic).append(";");
+        }
         try {
             DatabaseQueries.setGuardianData(uuid, lastPrizeDate, staffRank, premiumRank, personalStorage, bazaarStorage,
-                    premiumStorage, language, friendUUIDs.toString(), chatChannels.toString());
+                    premiumStorage, language, friendUUIDs.toString(), chatChannels.toString(), cosmetics.toString());
         } catch (SQLException e) {
             e.printStackTrace();
+        }
+
+        // Save to portal location if in dungeon
+        if (worldName.equals("dungeons")) {
+            boolean inMinigame = MiniGameManager.isInMinigame(player);
+            if (inMinigame) {
+                Minigame minigame = MiniGameManager.playerToMinigame(player);
+                if (minigame instanceof DungeonInstance dungeon) {
+                    DungeonTheme theme = dungeon.getTheme();
+                    location = MiniGameManager.getPortalLocationOfDungeonTheme(theme.getCode());
+                }
+            }
         }
 
         //character
@@ -260,7 +284,7 @@ public class DatabaseManager {
             }
             try {
                 DatabaseQueries.setCharacter(player.getUniqueId(), activeCharacterNo, activeCharacter, player.getInventory().getContents(),
-                        player.getLocation(), player.getInventory().getArmorContents(), offHand);
+                        location, player.getInventory().getArmorContents(), offHand);
             } catch (SQLException e) {
                 e.printStackTrace();
             }

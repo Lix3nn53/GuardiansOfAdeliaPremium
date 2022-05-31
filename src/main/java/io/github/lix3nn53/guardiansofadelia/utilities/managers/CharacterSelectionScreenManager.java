@@ -119,6 +119,7 @@ public class CharacterSelectionScreenManager {
     public static void clear(Player player) {
         removeDisguisesFromPlayer(player);
         players.remove(player);
+        player.sendMessage("DEBUG CHARSELECT REMOVE");
         charLocationsForSelection.remove(player.getUniqueId());
         charLevelsForSelection.remove(player.getUniqueId());
         if (players.isEmpty()) {

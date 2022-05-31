@@ -1,6 +1,6 @@
 package io.github.lix3nn53.guardiansofadelia.items.list.armors;
 
-import io.github.lix3nn53.guardiansofadelia.bungeelistener.products.HelmetSkin;
+import io.github.lix3nn53.guardiansofadelia.cosmetic.CosmeticManager;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -12,27 +12,21 @@ public enum ArmorSlot {
     LEGGINGS,
     BOOTS;
 
-    public static ArmorSlot getArmorSlot(Material material) {
+    public static ArmorSlot getArmorSlot(ItemStack itemStack) {
+        Material material = itemStack.getType();
+
         if (material.equals(Material.AIR)) return null;
         String type = material.name();
-        if (type.endsWith("_HELMET") || type.endsWith("_SKULL") || material.equals(HelmetSkin.getHelmetMaterial()))
+        if (type.endsWith("_HELMET") || type.endsWith("_SKULL"))
             return HELMET;
         else if (type.endsWith("_CHESTPLATE")) return CHESTPLATE;
         else if (type.endsWith("_LEGGINGS")) return LEGGINGS;
         else if (type.endsWith("_BOOTS")) return BOOTS;
-        return null;
-    }
-
-    public static ArmorSlot getArmorSlot(ItemStack itemStack) {
-        if (itemStack == null) return null;
-        Material mat = itemStack.getType();
-        if (mat.equals(Material.AIR)) return null;
-        String type = mat.name();
-        if (type.endsWith("_HELMET") || type.endsWith("_SKULL") || mat.equals(HelmetSkin.getHelmetMaterial()))
-            return HELMET;
-        else if (type.endsWith("_CHESTPLATE")) return CHESTPLATE;
-        else if (type.endsWith("_LEGGINGS")) return LEGGINGS;
-        else if (type.endsWith("_BOOTS")) return BOOTS;
+        else if (material.equals(CosmeticManager.COSMETIC_MATERIAL)) {
+            if (CosmeticManager.isAppliedHelmetSkin(itemStack)) {
+                return HELMET;
+            }
+        }
         return null;
     }
 

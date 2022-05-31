@@ -26,7 +26,7 @@ public class MyItemSpawnEvent implements Listener {
             itemDrop.setCustomName(itemMeta.getDisplayName());
             itemDrop.setCustomNameVisible(true);
 
-            boolean hasStatType = StatUtils.hasStatType(itemStack.getType());
+            boolean hasStatType = StatUtils.hasStatType(itemStack);
             if (hasStatType) {
                 ItemTier itemTierOfItemStack = ItemTier.getItemTierOfItemStack(itemStack);
 

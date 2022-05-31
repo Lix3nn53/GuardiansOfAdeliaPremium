@@ -24,7 +24,7 @@ public class GuiTeleportation extends GuiBookGeneric {
     public GuiTeleportation(GuardianData guardianData, int playerLevel) {
         super(CustomCharacterGui.MENU_54_FLAT.toString() + ChatPalette.BLACK + "Instant Teleportation", 0);
 
-        ItemStack backButton = OtherItems.getBackButton("Compass Menu");
+        ItemStack backButton = OtherItems.getBackButton("Main Menu");
         this.addToFirstAvailableWord(backButton);
         this.disableLine(0, 0);
 
@@ -51,7 +51,7 @@ public class GuiTeleportation extends GuiBookGeneric {
                     return;
                 }
 
-                GuiCompass gui = new GuiCompass(guardianData);
+                GuiMain gui = new GuiMain(guardianData);
                 gui.openInventory(player);
                 return;
             }
