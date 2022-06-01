@@ -58,31 +58,20 @@ public enum BoostPremium {
     }
 
     public int getCustomModelData() {
-        switch (this) {
-            case EXPERIENCE:
-                return 5;
-            case LOOT:
-                return 6;
-            case ENCHANT:
-                return 7;
-            case GATHER:
-                return 8;
-        }
-
-        return 0;
+        return switch (this) {
+            case EXPERIENCE -> 1;
+            case LOOT -> 2;
+            case ENCHANT -> 3;
+            case GATHER -> 4;
+        };
     }
 
     public float applyTo(float value) {
-        switch (this) {
-            case EXPERIENCE:
-            case LOOT:
-                return (float) (value * 1.2); // +20% bonus value
-            case ENCHANT:
-                return (float) (value + 0.15); // +15% bonus chance
-            case GATHER:
-                return value / 2; // +50 faster gathering
-        }
+        return switch (this) {
+            case EXPERIENCE, LOOT -> (float) (value * 1.2); // x20% bonus value
+            case ENCHANT -> (float) (value + 0.15); // +15% bonus chance
+            case GATHER -> value / 2; // %2 cooldown reduction
+        };
 
-        return value;
     }
 }

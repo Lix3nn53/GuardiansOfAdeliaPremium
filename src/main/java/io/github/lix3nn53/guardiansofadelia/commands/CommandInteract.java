@@ -3,7 +3,6 @@ package io.github.lix3nn53.guardiansofadelia.commands;
 import io.github.lix3nn53.guardiansofadelia.menu.GuiPlayerInterract;
 import io.github.lix3nn53.guardiansofadelia.text.ChatPalette;
 import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -23,10 +22,8 @@ public class CommandInteract implements CommandExecutor {
             } else if (args.length == 1) {
                 Player receiver = Bukkit.getPlayer(args[0]);
                 if (receiver != null && receiver != sender) {
-                    if (!player.getGameMode().equals(GameMode.SPECTATOR) && !player.getGameMode().equals(GameMode.SPECTATOR)) {
-                        GuiPlayerInterract gui = new GuiPlayerInterract(player, receiver);
-                        gui.openInventory(player);
-                    }
+                    GuiPlayerInterract gui = new GuiPlayerInterract(player, receiver);
+                    gui.openInventory(player);
                 } else {
                     player.sendMessage(ChatPalette.RED + "You can't interact with yourself!");
                 }

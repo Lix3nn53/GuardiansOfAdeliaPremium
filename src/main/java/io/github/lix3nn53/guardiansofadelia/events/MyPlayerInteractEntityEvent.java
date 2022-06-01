@@ -26,7 +26,10 @@ public class MyPlayerInteractEntityEvent implements Listener {
     public void onEvent(PlayerInteractEntityEvent event) {
         event.setCancelled(true);
 
-        if (!event.getHand().equals(EquipmentSlot.HAND)) {
+        if (event.getPlayer().getGameMode().equals(GameMode.SPECTATOR)) {
+            event.setCancelled(true);
+            return;
+        } else if (!event.getHand().equals(EquipmentSlot.HAND)) {
             return;
         }
 
@@ -59,10 +62,8 @@ public class MyPlayerInteractEntityEvent implements Listener {
                 NPCRegistry npcRegistry = CitizensAPI.getNPCRegistry();
                 if (npcRegistry.isNPC(rightClickedPlayer)) return;
 
-                if (!player.getGameMode().equals(GameMode.SPECTATOR) && !player.getGameMode().equals(GameMode.SPECTATOR)) {
-                    GuiPlayerInterract gui = new GuiPlayerInterract(player, rightClickedPlayer);
-                    gui.openInventory(player);
-                }
+                GuiPlayerInterract gui = new GuiPlayerInterract(player, rightClickedPlayer);
+                gui.openInventory(player);
             }
         }
     }

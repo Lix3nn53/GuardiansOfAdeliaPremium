@@ -84,17 +84,17 @@ public class CosmeticRoom {
             armorStand.setVisible(true);
             armorStand.setGravity(false);
             armorStand.setInvulnerable(true);
-
-            if (armorStandTop == null || !armorStandTop.isValid()) {
-                armorStandTop = location.getWorld().spawn(location, ArmorStand.class);
-                armorStandTop.setVisible(false);
-                armorStandTop.setGravity(false);
-                armorStandTop.setInvulnerable(true);
-            }
-
-            armorStand.addPassenger(armorStandTop);
-            rotate();
         }
+
+        if (armorStandTop == null || !armorStandTop.isValid()) {
+            armorStandTop = location.getWorld().spawn(location, ArmorStand.class);
+            armorStandTop.setVisible(false);
+            armorStandTop.setGravity(false);
+            armorStandTop.setInvulnerable(true);
+        }
+
+        armorStand.addPassenger(armorStandTop);
+        rotate();
 
         PlayerDisguise disguise = new PlayerDisguise(player);
 

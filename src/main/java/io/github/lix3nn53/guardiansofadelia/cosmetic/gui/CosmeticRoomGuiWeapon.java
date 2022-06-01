@@ -37,6 +37,7 @@ public class CosmeticRoomGuiWeapon extends GuiGeneric {
             Material material = weaponGearType.getMaterial();
             ItemStack itemStack = new ItemStack(material);
             ItemMeta itemMeta = itemStack.getItemMeta();
+            itemMeta.setCustomModelData(1);
             itemMeta.setDisplayName(ChatPalette.YELLOW + weaponGearType.getDisplayName());
             itemMeta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
             itemStack.setItemMeta(itemMeta);
@@ -46,6 +47,7 @@ public class CosmeticRoomGuiWeapon extends GuiGeneric {
         Material material = ShieldGearType.SHIELD.getMaterial();
         ItemStack itemStack = new ItemStack(material);
         ItemMeta itemMeta = itemStack.getItemMeta();
+        itemMeta.setCustomModelData(1);
         itemMeta.setDisplayName(ChatPalette.YELLOW + ShieldGearType.SHIELD.getDisplayName());
         itemMeta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
         itemStack.setItemMeta(itemMeta);
