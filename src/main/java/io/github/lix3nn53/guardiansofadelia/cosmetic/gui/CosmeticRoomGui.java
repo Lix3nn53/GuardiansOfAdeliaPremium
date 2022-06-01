@@ -40,7 +40,7 @@ public class CosmeticRoomGui extends GuiGeneric {
         itemMeta.setUnbreakable(true);
         itemMeta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_UNBREAKABLE);
         itemMeta.setCustomModelData(57);
-        itemMeta.setDisplayName(ChatPalette.BLUE + Translation.t(guardianData, "cosmetic.weapon"));
+        itemMeta.setDisplayName(ChatPalette.BLUE + Translation.t(guardianData, "cosmetic.weapon.name"));
         ArrayList<String> lore = new ArrayList<>();
         lore.add("");
         lore.add(ChatPalette.GRAY + Translation.t(guardianData, "cosmetic.weapon.l1"));
@@ -51,7 +51,7 @@ public class CosmeticRoomGui extends GuiGeneric {
 
         ItemStack helmet = new ItemStack(Material.WOODEN_PICKAXE);
         itemMeta.setCustomModelData(56);
-        itemMeta.setDisplayName(ChatPalette.BLUE + Translation.t(guardianData, "cosmetic.helmet"));
+        itemMeta.setDisplayName(ChatPalette.BLUE + Translation.t(guardianData, "cosmetic.helmet.name"));
         lore = new ArrayList<>();
         lore.add("");
         lore.add(ChatPalette.GRAY + Translation.t(guardianData, "cosmetic.helmet.l1"));
@@ -62,7 +62,7 @@ public class CosmeticRoomGui extends GuiGeneric {
 
         ItemStack back = new ItemStack(Material.WOODEN_PICKAXE);
         itemMeta.setCustomModelData(55);
-        itemMeta.setDisplayName(ChatPalette.BLUE + Translation.t(guardianData, "cosmetic.back"));
+        itemMeta.setDisplayName(ChatPalette.BLUE + Translation.t(guardianData, "cosmetic.back.name"));
         lore = new ArrayList<>();
         lore.add("");
         lore.add(ChatPalette.GRAY + Translation.t(guardianData, "cosmetic.back.l1"));
