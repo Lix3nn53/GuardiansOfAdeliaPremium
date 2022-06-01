@@ -44,7 +44,7 @@ public enum CosmeticType {
         return new Cosmetic(this, name, customModelData);
     }
 
-    public EquipmentSlot getEquimentSlot() {
+    public EquipmentSlot getEquipmentSlot() {
         switch (this) {
             case HELMET_SKIN, COSMETIC_BACK -> {
                 return EquipmentSlot.HEAD;

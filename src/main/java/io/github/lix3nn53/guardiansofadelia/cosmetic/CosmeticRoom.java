@@ -6,7 +6,10 @@ import io.github.lix3nn53.guardiansofadelia.cosmetic.inner.CosmeticColor;
 import io.github.lix3nn53.guardiansofadelia.cosmetic.inner.CosmeticType;
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
+import me.libraryaddict.disguise.disguisetypes.DisguiseType;
+import me.libraryaddict.disguise.disguisetypes.MobDisguise;
 import me.libraryaddict.disguise.disguisetypes.PlayerDisguise;
+import me.libraryaddict.disguise.disguisetypes.watchers.LivingWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.PlayerWatcher;
 import org.bukkit.Location;
 import org.bukkit.entity.ArmorStand;
@@ -39,29 +42,38 @@ public class CosmeticRoom {
     }
 
     public static void setCosmeticToShowcase(Player player, Cosmetic cosmetic, CosmeticColor color, int tintIndex) {
-        PlayerDisguise disguise;
-        if (DisguiseAPI.isDisguised(player, armorStand)) {
-            disguise = (PlayerDisguise) DisguiseAPI.getDisguise(player, armorStand);
-        } else {
-            disguise = new PlayerDisguise(player);
-        }
-
-        PlayerWatcher watcher = disguise.getWatcher();
-        watcher.setNoGravity(true);
-        watcher.setCustomNameVisible(false);
-
         CosmeticType cosmeticType = cosmetic.getType();
-        EquipmentSlot equimentSlot = cosmeticType.getEquimentSlot();
+        EquipmentSlot equipmentSlot = cosmeticType.getEquipmentSlot();
         boolean onPlayer = cosmeticType.isOnPlayer();
-
         ItemStack showcase = cosmetic.getShowcase(color, tintIndex);
-        if (onPlayer) {
-            watcher.setItemStack(equimentSlot, showcase);
-        } else {
-            armorStandTop.getEquipment().setItem(equimentSlot, showcase);
-        }
 
-        DisguiseAPI.disguiseToPlayers(armorStand, disguise, player);
+        if (onPlayer) {
+            PlayerDisguise disguise;
+            if (DisguiseAPI.isDisguised(player, armorStand)) {
+                disguise = (PlayerDisguise) DisguiseAPI.getDisguise(player, armorStand);
+            } else {
+                disguise = new PlayerDisguise(player);
+            }
+
+            PlayerWatcher watcher = disguise.getWatcher();
+            watcher.setNoGravity(true);
+            watcher.setItemStack(equipmentSlot, showcase);
+
+            DisguiseAPI.disguiseToPlayers(armorStand, disguise, player);
+        } else {
+            MobDisguise disguise;
+            if (DisguiseAPI.isDisguised(player, armorStandTop)) {
+                disguise = (MobDisguise) DisguiseAPI.getDisguise(player, armorStandTop);
+            } else {
+                disguise = new MobDisguise(DisguiseType.ARMOR_STAND);
+            }
+
+            LivingWatcher watcher = disguise.getWatcher();
+            watcher.setNoGravity(true);
+            watcher.setItemStack(equipmentSlot, showcase);
+
+            DisguiseAPI.disguiseToPlayers(armorStandTop, disguise, player);
+        }
     }
 
     public static void start(Player player) {
@@ -75,7 +87,7 @@ public class CosmeticRoom {
 
             if (armorStandTop == null || !armorStandTop.isValid()) {
                 armorStandTop = location.getWorld().spawn(location, ArmorStand.class);
-                armorStandTop.setVisible(true);
+                armorStandTop.setVisible(false);
                 armorStandTop.setGravity(false);
                 armorStandTop.setInvulnerable(true);
             }
@@ -88,7 +100,6 @@ public class CosmeticRoom {
 
         PlayerWatcher watcher = disguise.getWatcher();
         watcher.setNoGravity(true);
-        watcher.setCustomNameVisible(false);
 
         DisguiseAPI.disguiseToPlayers(armorStand, disguise, player);
     }

@@ -133,15 +133,19 @@ public class ChatManager {
         if (GuardianDataManager.hasGuardianData(player)) {
             GuardianData guardianData = GuardianDataManager.getGuardianData(player);
             StaffRank staffRank = guardianData.getStaffRank();
-            if (!staffRank.equals(StaffRank.NONE)) {
+            if (staffRank != null) {
                 CustomCharacter customCharacter = staffRank.getCustomCharacter();
                 prefix += customCharacter;
-            }
-            PremiumRank premiumRank = guardianData.getPremiumRank();
-            if (!premiumRank.equals(PremiumRank.NONE)) {
-                CustomCharacter customCharacter = premiumRank.getCustomCharacter();
+            } else if (guardianData.getPremiumRank() != null) {
+                CustomCharacter customCharacter = guardianData.getPremiumRank().getCustomCharacter();
+                prefix += customCharacter;
+            } else if (guardianData.hasActiveCharacter()) {
+                RPGCharacter activeCharacter = guardianData.getActiveCharacter();
+                ChatTag chatTag = activeCharacter.getChatTag();
+                CustomCharacter customCharacter = chatTag.getCustomCharacter();
                 prefix += customCharacter;
             }
+
             if (GuildManager.inGuild(player)) {
                 Guild guild = GuildManager.getGuild(player);
                 String tag = guild.getTag();
@@ -158,12 +162,6 @@ public class ChatManager {
                 }
 
                 prefix += customCharacter + tag + NegativeSpace.POSITIVE_2;
-            }
-            if (guardianData.hasActiveCharacter()) {
-                RPGCharacter activeCharacter = guardianData.getActiveCharacter();
-                ChatTag chatTag = activeCharacter.getChatTag();
-                CustomCharacter customCharacter = chatTag.getCustomCharacter();
-                prefix += customCharacter;
             }
         }
         return prefix + ChatColor.WHITE + NegativeSpace.POSITIVE_2;

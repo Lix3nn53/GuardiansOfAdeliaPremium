@@ -36,7 +36,7 @@ public class GuiPremium extends GuiGeneric {
         ItemStack activeBoosts = new ItemStack(Material.WOODEN_PICKAXE);
         ItemMeta itemMeta = activeBoosts.getItemMeta();
         itemMeta.setCustomModelData(28);
-        itemMeta.setDisplayName(ChatPalette.GOLD + Translation.t(guardianData, "menu.boost.name"));
+        itemMeta.setDisplayName(ChatPalette.GREEN + Translation.t(guardianData, "menu.boost.name"));
         ArrayList<String> lore = new ArrayList<>();
         lore.add("");
         lore.add(ChatPalette.GRAY + Translation.t(guardianData, "menu.boost.l1"));
@@ -45,23 +45,23 @@ public class GuiPremium extends GuiGeneric {
         activeBoosts.setItemMeta(itemMeta);
 
         ItemStack donation = new ItemStack(Material.WOODEN_PICKAXE);
-        itemMeta.setCustomModelData(10);
-        itemMeta.setDisplayName(ChatPalette.GOLD + Translation.t(guardianData, "menu.store.name"));
+        itemMeta.setCustomModelData(54);
+        itemMeta.setDisplayName(ChatPalette.RED + Translation.t(guardianData, "menu.store.name"));
         lore = new ArrayList<>();
         lore.add("");
         lore.add(ChatPalette.GRAY + Translation.t(guardianData, "menu.store.l1"));
         lore.add(ChatPalette.GRAY + "");
         lore.add(ChatPalette.GRAY + Translation.t(guardianData, "menu.store.l2"));
         lore.add(ChatPalette.GRAY + Translation.t(guardianData, "menu.store.l3"));
-        lore.add(ChatPalette.GRAY + "");
         lore.add(ChatPalette.GRAY + Translation.t(guardianData, "menu.store.l4"));
+        lore.add(ChatPalette.GRAY + "");
         lore.add(ChatPalette.GRAY + Translation.t(guardianData, "menu.store.l5"));
         itemMeta.setLore(lore);
         donation.setItemMeta(itemMeta);
 
         ItemStack rank = new ItemStack(Material.WOODEN_PICKAXE);
-        itemMeta.setCustomModelData(2);
-        itemMeta.setDisplayName(ChatPalette.GREEN_DARK + Translation.t(guardianData, "menu.rank.name"));
+        itemMeta.setCustomModelData(51);
+        itemMeta.setDisplayName(ChatPalette.GOLD + Translation.t(guardianData, "menu.rank.name"));
         lore = new ArrayList<>();
         lore.add("");
         lore.add(ChatPalette.GRAY + Translation.t(guardianData, "menu.rank.l1"));
@@ -69,8 +69,8 @@ public class GuiPremium extends GuiGeneric {
         rank.setItemMeta(itemMeta);
 
         ItemStack cosmeticColor = new ItemStack(Material.WOODEN_PICKAXE);
-        itemMeta.setCustomModelData(2);
-        itemMeta.setDisplayName(ChatPalette.GREEN_DARK + Translation.t(guardianData, "menu.cosmetic.name"));
+        itemMeta.setCustomModelData(52);
+        itemMeta.setDisplayName(ChatPalette.PURPLE_LIGHT + Translation.t(guardianData, "menu.cosmetic.name"));
         lore = new ArrayList<>();
         lore.add("");
         lore.add(ChatPalette.GRAY + Translation.t(guardianData, "menu.cosmetic.l1"));

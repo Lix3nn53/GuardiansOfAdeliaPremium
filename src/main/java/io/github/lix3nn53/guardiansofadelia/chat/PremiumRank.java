@@ -6,7 +6,6 @@ import io.github.lix3nn53.guardiansofadelia.text.font.CustomCharacter;
 import io.github.lix3nn53.guardiansofadelia.text.font.CustomCharacterChatTag;
 
 public enum PremiumRank {
-    NONE,
     HERO,
     LEGEND,
     TITAN;

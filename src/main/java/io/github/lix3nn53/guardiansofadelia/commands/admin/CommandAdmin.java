@@ -2,7 +2,6 @@ package io.github.lix3nn53.guardiansofadelia.commands.admin;
 
 import io.github.lix3nn53.guardiansofadelia.chat.StaffRank;
 import io.github.lix3nn53.guardiansofadelia.creatures.pets.PetExperienceManager;
-import io.github.lix3nn53.guardiansofadelia.events.MyBlockEvents;
 import io.github.lix3nn53.guardiansofadelia.guardian.GuardianData;
 import io.github.lix3nn53.guardiansofadelia.guardian.GuardianDataManager;
 import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGCharacter;
@@ -159,14 +158,6 @@ public class CommandAdmin implements CommandExecutor {
                     PetConfigurations.loadConfigs();
 
                     player.sendMessage(ChatPalette.GREEN_DARK + "Reloaded pets!");
-                }
-            } else if (args[0].equals("build")) {
-                if (MyBlockEvents.allow.contains(player)) {
-                    MyBlockEvents.allow.remove(player);
-                    player.sendMessage(ChatPalette.RED + "You can not build anymore");
-                } else {
-                    MyBlockEvents.allow.add(player);
-                    player.sendMessage(ChatPalette.GREEN_DARK + "You are allowed to build");
                 }
             }
 

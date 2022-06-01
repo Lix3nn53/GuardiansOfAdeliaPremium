@@ -22,7 +22,7 @@ public class GuiServerBoost extends GuiGeneric {
     public GuiServerBoost() {
         super(27, CustomCharacterGui.MENU_27_FLAT.toString() + ChatPalette.BLACK + "Server Boosts", 0);
 
-        ItemStack backButton = OtherItems.getBackButton("Main Menu");
+        ItemStack backButton = OtherItems.getBackButton("Premium Features");
         this.setItem(0, backButton);
 
         ItemStack boostExperience = new ItemStack(Material.RED_WOOL);
@@ -72,7 +72,7 @@ public class GuiServerBoost extends GuiGeneric {
         itemMeta.setDisplayName(ChatPalette.GREEN_DARK + "Gather Boost");
         lore = new ArrayList<>();
         lore.add("");
-        lore.add(ChatPalette.GRAY + "2x gathering speed ");
+        lore.add(ChatPalette.GRAY + "2x gathering resource replenish faster");
         if (BoostPremiumManager.isBoostActive(BoostPremium.GATHER)) {
             boostGather.setType(Material.LIME_WOOL);
             lore.add("");
@@ -96,8 +96,7 @@ public class GuiServerBoost extends GuiGeneric {
                 return;
             }
 
-            GuiMain gui = new GuiMain(guardianData);
-            gui.openInventory(player);
+            new GuiPremium(guardianData).openInventory(player);
         }
     }
 }

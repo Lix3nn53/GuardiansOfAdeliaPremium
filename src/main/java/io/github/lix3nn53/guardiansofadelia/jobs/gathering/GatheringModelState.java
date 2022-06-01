@@ -1,6 +1,8 @@
 package io.github.lix3nn53.guardiansofadelia.jobs.gathering;
 
 import io.github.lix3nn53.guardiansofadelia.GuardiansOfAdelia;
+import io.github.lix3nn53.guardiansofadelia.bungeelistener.BoostPremiumManager;
+import io.github.lix3nn53.guardiansofadelia.bungeelistener.products.BoostPremium;
 import io.github.lix3nn53.guardiansofadelia.text.ChatPalette;
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
@@ -97,7 +99,10 @@ public class GatheringModelState {
     public void onLoot(GatheringModelData gatheringModelData) {
         String title = gatheringModelData.getTitle();
 
-        cooldown = 30; // TODO make a premium server buff for faster cooldown?
+        cooldown = 30;
+        if (BoostPremiumManager.isBoostActive(BoostPremium.GATHER)) {
+            cooldown = (int) (BoostPremium.GATHER.applyTo(cooldown) + 0.5);
+        }
         setBeingGathered(false);
         armorStand.setCustomName(title + ChatPalette.GRAY + " (" + cooldown + ")");
 

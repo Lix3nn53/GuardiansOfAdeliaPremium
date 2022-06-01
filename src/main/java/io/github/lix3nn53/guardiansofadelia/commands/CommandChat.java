@@ -1,6 +1,5 @@
 package io.github.lix3nn53.guardiansofadelia.commands;
 
-import io.github.lix3nn53.guardiansofadelia.chat.PremiumRank;
 import io.github.lix3nn53.guardiansofadelia.guardian.GuardianData;
 import io.github.lix3nn53.guardiansofadelia.guardian.GuardianDataManager;
 import io.github.lix3nn53.guardiansofadelia.menu.GuiChatItem;
@@ -25,8 +24,6 @@ public class CommandChat implements CommandExecutor {
                 if (!GuardianDataManager.hasGuardianData(player)) return false;
 
                 GuardianData guardianData = GuardianDataManager.getGuardianData(player);
-
-                PremiumRank premiumRank = guardianData.getPremiumRank();
 
                 GuiChatItem gui = new GuiChatItem(player, guardianData);
 

@@ -100,7 +100,7 @@ public class CosmeticRoomGui extends GuiGeneric {
             return;
         } else if (slot == 3) {
             selectedType = CosmeticType.HELMET_SKIN;
-        } else if (slot == 7) {
+        } else if (slot == 5) {
             selectedType = CosmeticType.COSMETIC_BACK;
         } else if (slot == 46) {
             if (pageIndex > 0) {

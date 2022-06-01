@@ -764,8 +764,8 @@ public class DatabaseQueries {
 
             pst.setString(1, uuid.toString());
             pst.setObject(2, lastPrizeDate);
-            pst.setString(3, staffRank.name());
-            pst.setString(4, premiumRank.name());
+            pst.setString(3, staffRank != null ? staffRank.name() : null);
+            pst.setString(4, premiumRank != null ? premiumRank.name() : null);
             String personalStorageString = ItemSerializer.itemStackArrayToBase64(personalStorage);
             pst.setString(5, personalStorageString);
             String bazaarStorageString = ItemSerializer.itemStackArrayToBase64(bazaarStorage);

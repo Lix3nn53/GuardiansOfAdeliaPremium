@@ -16,7 +16,7 @@ public class WebProduct {
         this.type = type;
         this.cost = cost;
         this.itemStack = itemStack;
-        this.premiumRank = PremiumRank.NONE;
+        this.premiumRank = null;
     }
 
     public WebProduct(String productName, WebProductType type, int cost, ItemStack itemStack, PremiumRank premiumRank) {

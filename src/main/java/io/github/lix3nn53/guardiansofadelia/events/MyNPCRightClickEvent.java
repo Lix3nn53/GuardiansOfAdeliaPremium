@@ -35,20 +35,15 @@ public class MyNPCRightClickEvent implements Listener {
 
         if (id > 0 && id < 9) {
             //1-2-3-4-5-6-7-8 character selection npc
-            PremiumRank requiredRank = PremiumRank.NONE;
+            PremiumRank requiredRank = null;
             if (id > 6) requiredRank = PremiumRank.TITAN;
             else if (id > 4) requiredRank = PremiumRank.LEGEND;
             else if (id > 2) requiredRank = PremiumRank.HERO;
 
             GuardianData guardianData = GuardianDataManager.getGuardianData(player);
-            if (!requiredRank.equals(PremiumRank.NONE)) {
-                int requiredOrdinal = requiredRank.ordinal();
-
-                PremiumRank premiumRank = guardianData.getPremiumRank();
-
-                int playerOrdinal = premiumRank.ordinal();
-
-                if (requiredOrdinal > playerOrdinal) {
+            if (requiredRank != null) {
+                PremiumRank playerRank = guardianData.getPremiumRank();
+                if (playerRank == null || requiredRank.ordinal() > playerRank.ordinal()) {
                     player.sendMessage(ChatPalette.RED + "Required rank for this character slot is " + requiredRank);
                     return;
                 }

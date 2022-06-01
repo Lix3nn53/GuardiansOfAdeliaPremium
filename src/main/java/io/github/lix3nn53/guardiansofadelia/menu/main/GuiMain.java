@@ -75,7 +75,7 @@ public class GuiMain extends GuiGeneric {
 
         ItemStack teleport = new ItemStack(Material.WOODEN_SHOVEL);
         itemMeta.setCustomModelData(6);
-        itemMeta.setDisplayName(ChatPalette.GOLD + Translation.t(guardianData, "menu.teleportation.name"));
+        itemMeta.setDisplayName(ChatPalette.PURPLE_LIGHT + Translation.t(guardianData, "menu.teleportation.name"));
         lore = new ArrayList<>();
         lore.add("");
         lore.add(ChatPalette.GRAY + Translation.t(guardianData, "menu.teleportation.l1"));
@@ -92,23 +92,19 @@ public class GuiMain extends GuiGeneric {
         activeBoosts.setItemMeta(itemMeta);
 
         ItemStack donation = new ItemStack(Material.WOODEN_PICKAXE);
-        itemMeta.setCustomModelData(10);
-        itemMeta.setDisplayName(ChatPalette.PURPLE_LIGHT + Translation.t(guardianData, "menu.premium.name"));
+        itemMeta.setCustomModelData(53);
+        itemMeta.setDisplayName(ChatPalette.GOLD + Translation.t(guardianData, "menu.premium.name"));
         lore = new ArrayList<>();
         lore.add("");
         lore.add(ChatPalette.GRAY + Translation.t(guardianData, "menu.premium.l1"));
-        lore.add(ChatPalette.GRAY + "");
+        lore.add("");
         lore.add(ChatPalette.GRAY + Translation.t(guardianData, "menu.premium.l2"));
-        lore.add(ChatPalette.GRAY + Translation.t(guardianData, "menu.premium.l3"));
-        lore.add(ChatPalette.GRAY + "");
-        lore.add(ChatPalette.GRAY + Translation.t(guardianData, "menu.premium.l4"));
-        lore.add(ChatPalette.GRAY + Translation.t(guardianData, "menu.premium.l5"));
         itemMeta.setLore(lore);
         donation.setItemMeta(itemMeta);
 
         ItemStack settings = new ItemStack(Material.WOODEN_PICKAXE);
         itemMeta.setCustomModelData(39);
-        itemMeta.setDisplayName(ChatPalette.GOLD + Translation.t(guardianData, "menu.settings.name"));
+        itemMeta.setDisplayName(ChatPalette.GRAY + Translation.t(guardianData, "menu.settings.name"));
         lore = new ArrayList<>();
         lore.add("");
         lore.add(ChatPalette.GRAY + Translation.t(guardianData, "menu.settings.l1"));
@@ -117,7 +113,7 @@ public class GuiMain extends GuiGeneric {
 
         ItemStack daily = new ItemStack(Material.WOODEN_PICKAXE);
         itemMeta.setCustomModelData(38);
-        itemMeta.setDisplayName(ChatPalette.GOLD + Translation.t(guardianData, "menu.daily.name"));
+        itemMeta.setDisplayName(ChatPalette.YELLOW + Translation.t(guardianData, "menu.daily.name"));
         lore = new ArrayList<>();
         lore.add("");
         lore.add(ChatPalette.GRAY + Translation.t(guardianData, "menu.daily.l1"));

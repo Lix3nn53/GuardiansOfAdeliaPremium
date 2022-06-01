@@ -1,8 +1,6 @@
 package io.github.lix3nn53.guardiansofadelia.jobs.gathering;
 
 import io.github.lix3nn53.guardiansofadelia.GuardiansOfAdelia;
-import io.github.lix3nn53.guardiansofadelia.bungeelistener.BoostPremiumManager;
-import io.github.lix3nn53.guardiansofadelia.bungeelistener.products.BoostPremium;
 import io.github.lix3nn53.guardiansofadelia.guardian.GuardianData;
 import io.github.lix3nn53.guardiansofadelia.guardian.GuardianDataManager;
 import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGCharacter;
@@ -275,9 +273,6 @@ public class GatheringManager {
                 final float startPosZ = (float) player.getLocation().getZ();
 
                 int period = 16; // ticks to wait between each step
-                if (BoostPremiumManager.isBoostActive(BoostPremium.GATHER)) {
-                    period = (int) (BoostPremium.GATHER.applyTo(period) + 0.5);
-                }
 
                 int id = gatheringModelState.getId();
                 GatheringModelData gatheringModelData = modelIdToModelData.get(id);

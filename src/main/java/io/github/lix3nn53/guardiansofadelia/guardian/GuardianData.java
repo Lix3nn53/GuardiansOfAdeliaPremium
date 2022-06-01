@@ -35,8 +35,8 @@ public class GuardianData {
     private Invite pendingInvite;
     private BukkitTask inviteTimeoutTask;
 
-    private StaffRank staffRank = StaffRank.NONE;
-    private PremiumRank premiumRank = PremiumRank.NONE;
+    private StaffRank staffRank = null;
+    private PremiumRank premiumRank = null;
 
     private List<OfflinePlayer> friends = new ArrayList<>();
 

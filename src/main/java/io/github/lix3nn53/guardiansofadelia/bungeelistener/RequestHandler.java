@@ -138,7 +138,7 @@ public class RequestHandler {
                 if (GuardianDataManager.hasGuardianData(player)) {
                     guardianData = GuardianDataManager.getGuardianData(player);
                     currentRank = guardianData.getPremiumRank();
-                    if (currentRank.equals(PremiumRank.NONE)) {
+                    if (currentRank != null) {
                         if (currentRank.ordinal() >= premiumRank.ordinal()) {
                             return new WebResponse(false, "You already have a rank that is higher or equal to this rank.", minecraftUuidString, minecraftUsername, productId);
                         }
@@ -168,7 +168,7 @@ public class RequestHandler {
 
                 try {
                     PremiumRank currentRank = DatabaseQueries.getPremiumRank(uuid);
-                    if (currentRank.equals(PremiumRank.NONE)) {
+                    if (currentRank != null) {
                         if (currentRank.ordinal() >= premiumRank.ordinal()) {
                             return new WebResponse(false, "You already have a rank that is higher or equal to this rank.", minecraftUuidString, minecraftUsername, productId);
                         }

@@ -6,7 +6,6 @@ import io.github.lix3nn53.guardiansofadelia.text.font.CustomCharacter;
 import io.github.lix3nn53.guardiansofadelia.text.font.CustomCharacterChatTag;
 
 public enum StaffRank {
-    NONE,
     OWNER,
     ADMIN,
     DEVELOPER,
@@ -38,21 +37,31 @@ public enum StaffRank {
     public CustomCharacter getCustomCharacter() {
         switch (this) {
             case OWNER:
-                return CustomCharacterChatTag.NOVICE;
+                return CustomCharacterChatTag.ADMIN;
             case ADMIN:
                 return CustomCharacterChatTag.ADMIN;
             case DEVELOPER:
-                return CustomCharacterChatTag.NOVICE;
+                return CustomCharacterChatTag.ADMIN;
             case BUILDER:
-                return CustomCharacterChatTag.NOVICE;
+                return CustomCharacterChatTag.ADMIN;
             case SUPPORT:
-                return CustomCharacterChatTag.NOVICE;
+                return CustomCharacterChatTag.ADMIN;
             case YOUTUBER:
-                return CustomCharacterChatTag.NOVICE;
+                return CustomCharacterChatTag.ADMIN;
             case TRAINEE:
-                return CustomCharacterChatTag.NOVICE;
+                return CustomCharacterChatTag.ADMIN;
         }
 
         return null;
+    }
+
+    public boolean canBuild() {
+        switch (this) {
+            case OWNER, BUILDER, ADMIN -> {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
