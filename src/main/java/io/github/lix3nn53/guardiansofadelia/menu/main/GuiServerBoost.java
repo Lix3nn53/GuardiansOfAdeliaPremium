@@ -72,7 +72,7 @@ public class GuiServerBoost extends GuiGeneric {
         itemMeta.setDisplayName(ChatPalette.GREEN_DARK + "Gather Boost");
         lore = new ArrayList<>();
         lore.add("");
-        lore.add(ChatPalette.GRAY + "2x gathering resource replenish faster");
+        lore.add(ChatPalette.GRAY + "2x replenish speed for gathering resources\n");
         if (BoostPremiumManager.isBoostActive(BoostPremium.GATHER)) {
             boostGather.setType(Material.LIME_WOOL);
             lore.add("");

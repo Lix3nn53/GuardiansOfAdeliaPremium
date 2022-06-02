@@ -9,6 +9,7 @@ import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.disguisetypes.MobDisguise;
 import me.libraryaddict.disguise.disguisetypes.PlayerDisguise;
+import me.libraryaddict.disguise.disguisetypes.watchers.ArmorStandWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.LivingWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.PlayerWatcher;
 import org.bukkit.Location;
@@ -18,12 +19,11 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
 
 public class CosmeticRoom {
 
-    private static final List<Player> players = new ArrayList<>();
+    private static final HashMap<Player, Location> players = new HashMap<>();
     private static ArmorStand armorStand;
     private static ArmorStand armorStandTop;
     private static Location location;
@@ -76,8 +76,8 @@ public class CosmeticRoom {
         }
     }
 
-    public static void start(Player player) {
-        players.add(player);
+    public static void start(Player player, Location backLocation) {
+        players.put(player, backLocation);
 
         if (armorStand == null || !armorStand.isValid()) {
             armorStand = location.getWorld().spawn(location, ArmorStand.class);
@@ -102,19 +102,33 @@ public class CosmeticRoom {
         watcher.setNoGravity(true);
 
         DisguiseAPI.disguiseToPlayers(armorStand, disguise, player);
+
+        MobDisguise forPlayer = new MobDisguise(DisguiseType.ARMOR_STAND);
+        ArmorStandWatcher watcherForPlayer = (ArmorStandWatcher) forPlayer.getWatcher();
+        watcherForPlayer.setInvisible(false);
+        watcherForPlayer.setMarker(true);
+        DisguiseAPI.disguiseToAll(player, forPlayer);
     }
 
-    public static void end(Player player) {
-        players.remove(player);
+    public static void onQuit(Player player) {
+        Location backLocation = players.remove(player);
 
         if (DisguiseAPI.isDisguised(player, armorStand)) {
             Disguise disguise = DisguiseAPI.getDisguise(player, armorStand);
             disguise.removeDisguise();
         }
+
+        if (DisguiseAPI.isDisguised(player)) {
+            DisguiseAPI.getDisguise(player).removeDisguise();
+        }
+
+        if (player.isOnline() && backLocation != null) {
+            player.teleport(backLocation);
+        }
     }
 
     public static boolean isPlayerInRoom(Player player) {
-        return players.contains(player);
+        return players.containsKey(player);
     }
 
     private static void rotate() {
@@ -141,5 +155,9 @@ public class CosmeticRoom {
                 armorStand.addPassenger(armorStandTop);
             }
         }.runTaskTimer(GuardiansOfAdelia.getInstance(), 40L, 2L);
+    }
+
+    public static Location getPlayerBackLocation(Player player) {
+        return players.get(player);
     }
 }

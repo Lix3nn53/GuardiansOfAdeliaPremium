@@ -3,6 +3,7 @@ package io.github.lix3nn53.guardiansofadelia.database;
 import io.github.lix3nn53.guardiansofadelia.GuardiansOfAdelia;
 import io.github.lix3nn53.guardiansofadelia.bossbar.HeaderBarManager;
 import io.github.lix3nn53.guardiansofadelia.chat.*;
+import io.github.lix3nn53.guardiansofadelia.cosmetic.CosmeticRoom;
 import io.github.lix3nn53.guardiansofadelia.guardian.GuardianData;
 import io.github.lix3nn53.guardiansofadelia.guardian.GuardianDataManager;
 import io.github.lix3nn53.guardiansofadelia.guardian.character.*;
@@ -272,6 +273,8 @@ public class DatabaseManager {
                     location = MiniGameManager.getPortalLocationOfDungeonTheme(theme.getCode());
                 }
             }
+        } else if (CosmeticRoom.isPlayerInRoom(player)) { // Save player back location if in cosmetic room
+            location = CosmeticRoom.getPlayerBackLocation(player);
         }
 
         //character

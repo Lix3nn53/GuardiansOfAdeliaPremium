@@ -24,7 +24,7 @@ public final class ChatPalette {
     public static final ChatPalette BLUE_DARK = new ChatPalette("#067edb", "BLUE_DARK", ChatColor.DARK_BLUE);
     public static final ChatPalette BLUE_DARKER = new ChatPalette("#092caa", "BLUE_DARKER", ChatColor.DARK_BLUE);
     public static final ChatPalette PURPLE = new ChatPalette("#7e00cc", "PURPLE", ChatColor.DARK_PURPLE);
-    public static final ChatPalette PURPLE_LIGHT = new ChatPalette("#c61aff", "PURPLE_LIGHT", ChatColor.DARK_PURPLE);
+    public static final ChatPalette PURPLE_LIGHT = new ChatPalette("#c247eb", "PURPLE_LIGHT", ChatColor.DARK_PURPLE);
     public static final ChatPalette PINK = new ChatPalette("#fa3893", "PINK", ChatColor.LIGHT_PURPLE);
     public static final ChatPalette PINK_LIGHT = new ChatPalette("#f76eae", "PINK_LIGHT", ChatColor.LIGHT_PURPLE);
     public static final ChatPalette YELLOW = new ChatPalette("#ffff33", "YELLOW", ChatColor.YELLOW);
