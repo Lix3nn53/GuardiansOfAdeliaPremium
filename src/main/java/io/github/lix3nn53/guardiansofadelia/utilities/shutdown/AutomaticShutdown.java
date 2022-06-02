@@ -16,7 +16,7 @@ public class AutomaticShutdown {
     }
 
     private static Date getNextRestartTime() {
-        Calendar night = getNightTime();
+        /*Calendar night = getNightTime();
         Calendar noon = getNoonTime();
 
         Calendar currentTime = Calendar.getInstance();
@@ -25,14 +25,18 @@ public class AutomaticShutdown {
             return noon.getTime();
         } else {
             return night.getTime();
-        }
+        }*/
+
+        Calendar night = getNightTime();
+
+        return night.getTime();
     }
 
     private static Calendar getNightTime() {
         Calendar midnight = Calendar.getInstance();
 
         midnight.add(Calendar.DATE, 1); //tomorrow
-        midnight.set(Calendar.HOUR_OF_DAY, 1); //one hour before + 59 minutes
+        midnight.set(Calendar.HOUR_OF_DAY, 1); //one hour before + 50 minutes
         midnight.set(Calendar.MINUTE, 50); //because delay of restart is 10 minutes
         midnight.set(Calendar.SECOND, 0);
 
@@ -42,8 +46,8 @@ public class AutomaticShutdown {
     private static Calendar getNoonTime() {
         Calendar noon = Calendar.getInstance();
 
-        noon.set(Calendar.HOUR_OF_DAY, 13); //one hour before + 59 minutes
-        noon.set(Calendar.MINUTE, 59); //because delay of restart is 1 minute
+        noon.set(Calendar.HOUR_OF_DAY, 13); //one hour before + 50 minutes
+        noon.set(Calendar.MINUTE, 50); //because delay of restart is 1 minute
         noon.set(Calendar.SECOND, 0);
 
         return noon;

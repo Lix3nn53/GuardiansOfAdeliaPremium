@@ -8,6 +8,7 @@ import io.github.lix3nn53.guardiansofadelia.cosmetic.inner.CosmeticType;
 import io.github.lix3nn53.guardiansofadelia.guardian.GuardianData;
 import io.github.lix3nn53.guardiansofadelia.guardian.GuardianDataManager;
 import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGCharacter;
+import io.github.lix3nn53.guardiansofadelia.items.list.OtherItems;
 import io.github.lix3nn53.guardiansofadelia.text.ChatPalette;
 import io.github.lix3nn53.guardiansofadelia.text.font.CustomCharacterGui;
 import io.github.lix3nn53.guardiansofadelia.text.locale.Translation;
@@ -24,7 +25,7 @@ import java.util.HashMap;
 
 public class CosmeticRoomGui extends GuiGeneric {
 
-    private static final int[] ITEM_SLOTS = {20, 21, 22, 24, 24, 29, 30, 31, 32, 33, 38, 39, 40, 41, 42};
+    private static final int[] ITEM_SLOTS = {20, 21, 22, 23, 24, 29, 30, 31, 32, 33, 38, 39, 40, 41, 42};
     private final HashMap<Integer, Cosmetic> slotToCosmetic = new HashMap<>();
     private CosmeticType selectedType;
     private int pageIndex;
@@ -70,6 +71,50 @@ public class CosmeticRoomGui extends GuiGeneric {
         itemMeta.setLore(lore);
         back.setItemMeta(itemMeta);
         this.setItem(5, back);
+
+        ItemStack reset = new ItemStack(Material.RED_WOOL);
+        itemMeta.setCustomModelData(55);
+        itemMeta.setDisplayName(ChatPalette.RED + Translation.t(guardianData, "cosmetic.reset.name"));
+        lore = new ArrayList<>();
+        lore.add("");
+        lore.add(ChatPalette.GRAY + Translation.t(guardianData, "cosmetic.reset.l1"));
+        lore.add(ChatPalette.GRAY + Translation.t(guardianData, "cosmetic.reset.l2"));
+        itemMeta.setLore(lore);
+        reset.setItemMeta(itemMeta);
+        this.setItem(27, reset);
+
+        ItemStack apply = new ItemStack(Material.LIME_WOOL);
+        itemMeta.setCustomModelData(55);
+        itemMeta.setDisplayName(ChatPalette.GREEN + Translation.t(guardianData, "cosmetic.apply.name"));
+        lore = new ArrayList<>();
+        lore.add("");
+        lore.add(ChatPalette.GRAY + Translation.t(guardianData, "cosmetic.apply.l1"));
+        lore.add(ChatPalette.GRAY + Translation.t(guardianData, "cosmetic.apply.l2"));
+        itemMeta.setLore(lore);
+        apply.setItemMeta(itemMeta);
+        this.setItem(35, apply);
+
+        ItemStack prev = OtherItems.getArrowLeft();
+        itemMeta.setCustomModelData(55);
+        itemMeta.setDisplayName(ChatPalette.YELLOW + Translation.t(guardianData, "cosmetic.prev.name"));
+        lore = new ArrayList<>();
+        lore.add("");
+        lore.add(ChatPalette.GRAY + Translation.t(guardianData, "cosmetic.prev.l1"));
+        lore.add(ChatPalette.GRAY + Translation.t(guardianData, "cosmetic.prev.l2"));
+        itemMeta.setLore(lore);
+        prev.setItemMeta(itemMeta);
+        this.setItem(47, prev);
+
+        ItemStack next = OtherItems.getArrowRight();
+        itemMeta.setCustomModelData(55);
+        itemMeta.setDisplayName(ChatPalette.YELLOW + Translation.t(guardianData, "cosmetic.next.name"));
+        lore = new ArrayList<>();
+        lore.add("");
+        lore.add(ChatPalette.GRAY + Translation.t(guardianData, "cosmetic.next.l1"));
+        lore.add(ChatPalette.GRAY + Translation.t(guardianData, "cosmetic.next.l2"));
+        itemMeta.setLore(lore);
+        next.setItemMeta(itemMeta);
+        this.setItem(51, next);
 
         setCosmetics(selectedType, pageIndex);
     }
@@ -129,7 +174,7 @@ public class CosmeticRoomGui extends GuiGeneric {
         start = start + cosmeticType.getIdOffset();
 
         slotToCosmetic.clear();
-        for (int i = 0; i < ITEM_SLOTS.length; i++) {
+        for (int i = 1; i < ITEM_SLOTS.length; i++) {
             int slot = ITEM_SLOTS[i];
 
             Cosmetic cosmetic = CosmeticManager.get(start + i);

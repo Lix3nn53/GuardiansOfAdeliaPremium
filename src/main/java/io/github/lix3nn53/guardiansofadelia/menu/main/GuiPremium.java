@@ -159,9 +159,9 @@ public class GuiPremium extends GuiGeneric {
                                 if (TeleportationUtils.isTeleportCanceled(differenceX, differenceY, differenceZ)) {
                                     TeleportationUtils.cancelTeleportation(this, guardianData, hologramTop, hologramBottom, player);
                                 } else {
+                                    CosmeticRoom.start(player, player.getLocation());
                                     TeleportationUtils.finishTeleportation(this, guardianData, hologramTop, hologramBottom,
                                             player, CosmeticRoom.getTpLocation(), destination, null, 0);
-                                    CosmeticRoom.start(player);
                                 }
                             }
                         }

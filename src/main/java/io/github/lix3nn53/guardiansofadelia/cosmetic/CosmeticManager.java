@@ -31,6 +31,8 @@ public class CosmeticManager {
             return;
         }
 
+        GuardiansOfAdelia.getInstance().getLogger().info("Added cosmetic " + cosmetic.getName() + " with id " + id);
+
         globalCosmeticMap.put(id, cosmetic);
     }
 

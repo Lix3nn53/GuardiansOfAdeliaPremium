@@ -107,6 +107,11 @@ public class CosmeticRoom {
         ArmorStandWatcher watcherForPlayer = (ArmorStandWatcher) forPlayer.getWatcher();
         watcherForPlayer.setInvisible(false);
         watcherForPlayer.setMarker(true);
+        watcherForPlayer.setInvisible(true);
+        watcherForPlayer.setArmor(null);
+        watcherForPlayer.setItemInMainHand(null);
+        watcherForPlayer.setItemInOffHand(null);
+        forPlayer.setHearSelfDisguise(false);
         DisguiseAPI.disguiseToAll(player, forPlayer);
     }
 
@@ -115,6 +120,11 @@ public class CosmeticRoom {
 
         if (DisguiseAPI.isDisguised(player, armorStand)) {
             Disguise disguise = DisguiseAPI.getDisguise(player, armorStand);
+            disguise.removeDisguise();
+        }
+
+        if (DisguiseAPI.isDisguised(player, armorStandTop)) {
+            Disguise disguise = DisguiseAPI.getDisguise(player, armorStandTop);
             disguise.removeDisguise();
         }
 
