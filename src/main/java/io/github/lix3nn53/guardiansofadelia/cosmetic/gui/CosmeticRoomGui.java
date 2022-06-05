@@ -26,7 +26,7 @@ import java.util.HashMap;
 public class CosmeticRoomGui extends GuiGeneric {
 
     private static final int[] ITEM_SLOTS = {20, 21, 22, 23, 24, 29, 30, 31, 32, 33, 38, 39, 40, 41, 42};
-    private final HashMap<Integer, Cosmetic> slotToCosmetic = new HashMap<>();
+    private final HashMap<Integer, Integer> slotToCosmetic = new HashMap<>();
     private CosmeticType selectedType;
     private int pageIndex;
 
@@ -48,7 +48,7 @@ public class CosmeticRoomGui extends GuiGeneric {
         lore.add(ChatPalette.GRAY + Translation.t(guardianData, "cosmetic.weapon.l2"));
         itemMeta.setLore(lore);
         weapons.setItemMeta(itemMeta);
-        this.setItem(1, weapons);
+        this.setItem(2, weapons);
 
         ItemStack helmet = new ItemStack(Material.WOODEN_PICKAXE);
         itemMeta.setCustomModelData(56);
@@ -59,7 +59,7 @@ public class CosmeticRoomGui extends GuiGeneric {
         lore.add(ChatPalette.GRAY + Translation.t(guardianData, "cosmetic.helmet.l2"));
         itemMeta.setLore(lore);
         helmet.setItemMeta(itemMeta);
-        this.setItem(3, helmet);
+        this.setItem(4, helmet);
 
         ItemStack back = new ItemStack(Material.WOODEN_PICKAXE);
         itemMeta.setCustomModelData(55);
@@ -70,7 +70,7 @@ public class CosmeticRoomGui extends GuiGeneric {
         lore.add(ChatPalette.GRAY + Translation.t(guardianData, "cosmetic.back.l2"));
         itemMeta.setLore(lore);
         back.setItemMeta(itemMeta);
-        this.setItem(5, back);
+        this.setItem(6, back);
 
         ItemStack reset = new ItemStack(Material.RED_WOOL);
         itemMeta.setCustomModelData(55);
@@ -95,7 +95,7 @@ public class CosmeticRoomGui extends GuiGeneric {
         this.setItem(35, apply);
 
         ItemStack prev = OtherItems.getArrowLeft();
-        itemMeta.setCustomModelData(55);
+        itemMeta = prev.getItemMeta();
         itemMeta.setDisplayName(ChatPalette.YELLOW + Translation.t(guardianData, "cosmetic.prev.name"));
         lore = new ArrayList<>();
         lore.add("");
@@ -106,7 +106,7 @@ public class CosmeticRoomGui extends GuiGeneric {
         this.setItem(47, prev);
 
         ItemStack next = OtherItems.getArrowRight();
-        itemMeta.setCustomModelData(55);
+        itemMeta = next.getItemMeta();
         itemMeta.setDisplayName(ChatPalette.YELLOW + Translation.t(guardianData, "cosmetic.next.name"));
         lore = new ArrayList<>();
         lore.add("");
@@ -140,13 +140,18 @@ public class CosmeticRoomGui extends GuiGeneric {
         if (currentItem == null) return;
 
         int slot = event.getSlot();
-        if (slot == 1) {
+        if (slot == 2) {
             new CosmeticRoomGuiWeapon(guardianData, selectedType, pageIndex).openInventory(player);
             return;
-        } else if (slot == 3) {
+        } else if (slot == 4) {
             selectedType = CosmeticType.HELMET_SKIN;
-        } else if (slot == 5) {
+        } else if (slot == 6) {
             selectedType = CosmeticType.COSMETIC_BACK;
+        } else if (slot == 27) {
+            // todo reset
+        } else if (slot == 35) {
+            CosmeticRoom.apply(player);
+            player.sendMessage(ChatPalette.GREEN + Translation.t(guardianData, "cosmetic.apply.success"));
         } else if (slot == 46) {
             if (pageIndex > 0) {
                 pageIndex--;
@@ -155,11 +160,11 @@ public class CosmeticRoomGui extends GuiGeneric {
             pageIndex++;
         } else if (slotToCosmetic.containsKey(slot)) {
             // click on cosmetic
-            Cosmetic cosmetic = slotToCosmetic.get(slot);
+            int cosmeticId = slotToCosmetic.get(slot);
             if (selectedType.canChangeColor()) {
-                new CosmeticRoomGuiColor(guardianData, cosmetic).openInventory(player);
+                new CosmeticRoomGuiColor(guardianData, cosmeticId).openInventory(player);
             } else {
-                CosmeticRoom.setCosmeticToShowcase(player, cosmetic, null, 0);
+                CosmeticRoom.setCosmetic(player, cosmeticId, null, 0);
                 player.closeInventory();
             }
             return;
@@ -174,14 +179,15 @@ public class CosmeticRoomGui extends GuiGeneric {
         start = start + cosmeticType.getIdOffset();
 
         slotToCosmetic.clear();
-        for (int i = 1; i < ITEM_SLOTS.length; i++) {
+        for (int i = 0; i < ITEM_SLOTS.length; i++) {
             int slot = ITEM_SLOTS[i];
 
-            Cosmetic cosmetic = CosmeticManager.get(start + i);
+            int cosmeticId = start + i;
+            Cosmetic cosmetic = CosmeticManager.get(cosmeticId);
 
             if (cosmetic != null) {
                 this.setItem(slot, cosmetic.getShowcase(CosmeticColor.RED, 2));
-                slotToCosmetic.put(slot, cosmetic);
+                slotToCosmetic.put(slot, cosmeticId);
             } else {
                 this.setItem(slot, new ItemStack(Material.AIR));
             }

@@ -65,7 +65,7 @@ public class CosmeticsConfiguration {
 
                 Cosmetic load = cosmeticType.load(section);
 
-                CosmeticManager.add(i, load);
+                CosmeticManager.add(i - 1, load); // start at 0
             }
         }
     }

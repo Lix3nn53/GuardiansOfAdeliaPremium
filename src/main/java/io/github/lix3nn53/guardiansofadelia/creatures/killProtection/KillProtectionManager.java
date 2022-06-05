@@ -97,10 +97,6 @@ public class KillProtectionManager {
                             rpgCharacterStats.giveExp(expToGive, rpgClassStats);
                         }
 
-                        // class exp
-                        RPGClassStats rpgClassStats = activeCharacter.getRPGClassStats();
-                        rpgClassStats.giveExp(player, expToGive);
-
                         //quest, progress kill tasks
                         List<Quest> questList = activeCharacter.getQuestList();
                         for (Quest quest : questList) {

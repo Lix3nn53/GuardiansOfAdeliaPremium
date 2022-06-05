@@ -182,6 +182,8 @@ public class StatUtils {
     }
 
     public static boolean doesCharacterMeetRequirements(ItemStack itemStack, Player player, String rpgClassStr) {
+        if (itemStack == null) return false;
+
         if (PersistentDataContainerUtil.hasInteger(itemStack, "reqLevel")) {
             int reqLevel = PersistentDataContainerUtil.getInteger(itemStack, "reqLevel");
             if (player.getLevel() < reqLevel) {

@@ -107,6 +107,10 @@ public class TriggerPlayerData {
         }
     }
 
+    public void startCooldown(TriggerPlayerCooldownRecord record) {
+        startCooldown(record.player(), record.skillId(), record.trigger(), record.skillLevel());
+    }
+
     public SkillBar getSkillBar(Player player) {
         if (GuardianDataManager.hasGuardianData(player)) {
             GuardianData guardianData = GuardianDataManager.getGuardianData(player);
@@ -178,6 +182,8 @@ public class TriggerPlayerData {
         SkillTree skillTree = getSkillTree(player);
         if (skillTree == null) return;
 
+        List<TriggerPlayerCooldownRecord> toCooldown = new ArrayList<>();
+
         for (int skillId : map.keySet()) {
             HashMap<String, TriggerComponent> triggerComponents = map.get(skillId);
             for (TriggerComponent triggerComponent : triggerComponents.values()) {
@@ -197,10 +203,14 @@ public class TriggerPlayerData {
                 boolean callback = trigger.callback(player, attacker, skillLevel, castCounter);
 
                 if (callback) {
-                    startCooldown(player, skillId, trigger, skillLevel);
+                    toCooldown.add(new TriggerPlayerCooldownRecord(player, skillId, trigger, skillLevel));
                     skillBar.increaseCastCounter();
                 }
             }
+        }
+
+        for (TriggerPlayerCooldownRecord record : toCooldown) {
+            startCooldown(record);
         }
     }
 
@@ -211,6 +221,8 @@ public class TriggerPlayerData {
         if (skillRPGClassData == null) return;
         SkillTree skillTree = getSkillTree(player);
         if (skillTree == null) return;
+
+        List<TriggerPlayerCooldownRecord> toCooldown = new ArrayList<>();
 
         for (int skillId : map.keySet()) {
             HashMap<String, TriggerComponent> triggerComponents = map.get(skillId);
@@ -231,10 +243,14 @@ public class TriggerPlayerData {
                 boolean callback = trigger.callback(player, target, isProjectile, skillLevel, castCounter);
 
                 if (callback) {
-                    startCooldown(player, skillId, trigger, skillLevel);
+                    toCooldown.add(new TriggerPlayerCooldownRecord(player, skillId, trigger, skillLevel));
                     skillBar.increaseCastCounter();
                 }
             }
+        }
+
+        for (TriggerPlayerCooldownRecord record : toCooldown) {
+            startCooldown(record);
         }
     }
 
@@ -245,6 +261,8 @@ public class TriggerPlayerData {
         if (skillRPGClassData == null) return;
         SkillTree skillTree = getSkillTree(player);
         if (skillTree == null) return;
+
+        List<TriggerPlayerCooldownRecord> toCooldown = new ArrayList<>();
 
         for (int skillId : map.keySet()) {
             HashMap<String, TriggerComponent> triggerComponents = map.get(skillId);
@@ -265,10 +283,14 @@ public class TriggerPlayerData {
                 boolean callback = trigger.callback(player, target, skillLevel, castCounter);
 
                 if (callback) {
-                    startCooldown(player, skillId, trigger, skillLevel);
+                    toCooldown.add(new TriggerPlayerCooldownRecord(player, skillId, trigger, skillLevel));
                     skillBar.increaseCastCounter();
                 }
             }
+        }
+
+        for (TriggerPlayerCooldownRecord record : toCooldown) {
+            startCooldown(record);
         }
     }
 
@@ -279,6 +301,8 @@ public class TriggerPlayerData {
         if (skillRPGClassData == null) return;
         SkillTree skillTree = getSkillTree(player);
         if (skillTree == null) return;
+
+        List<TriggerPlayerCooldownRecord> toCooldown = new ArrayList<>();
 
         for (int skillId : map.keySet()) {
             HashMap<String, TriggerComponent> triggerComponents = map.get(skillId);
@@ -299,10 +323,14 @@ public class TriggerPlayerData {
                 boolean callback = trigger.callback(player, skillLevel, castCounter);
 
                 if (callback) {
-                    startCooldown(player, skillId, trigger, skillLevel);
+                    toCooldown.add(new TriggerPlayerCooldownRecord(player, skillId, trigger, skillLevel));
                     skillBar.increaseCastCounter();
                 }
             }
+        }
+
+        for (TriggerPlayerCooldownRecord record : toCooldown) {
+            startCooldown(record);
         }
     }
 
@@ -341,6 +369,8 @@ public class TriggerPlayerData {
         SkillTree skillTree = getSkillTree(player);
         if (skillTree == null) return;
 
+        List<TriggerPlayerCooldownRecord> toCooldown = new ArrayList<>();
+
         for (int skillId : map.keySet()) {
             HashMap<String, TriggerComponent> triggerComponents = map.get(skillId);
             for (TriggerComponent triggerComponent : triggerComponents.values()) {
@@ -360,10 +390,14 @@ public class TriggerPlayerData {
                 boolean callback = trigger.callback(player, created, skillLevel, castCounter);
 
                 if (callback) {
-                    startCooldown(player, skillId, trigger, skillLevel);
+                    toCooldown.add(new TriggerPlayerCooldownRecord(player, skillId, trigger, skillLevel));
                     skillBar.increaseCastCounter();
                 }
             }
+        }
+
+        for (TriggerPlayerCooldownRecord record : toCooldown) {
+            startCooldown(record);
         }
     }
 }

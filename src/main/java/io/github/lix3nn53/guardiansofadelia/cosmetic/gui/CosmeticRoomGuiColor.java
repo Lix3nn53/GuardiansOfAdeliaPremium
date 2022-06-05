@@ -1,5 +1,6 @@
 package io.github.lix3nn53.guardiansofadelia.cosmetic.gui;
 
+import io.github.lix3nn53.guardiansofadelia.cosmetic.CosmeticManager;
 import io.github.lix3nn53.guardiansofadelia.cosmetic.CosmeticRoom;
 import io.github.lix3nn53.guardiansofadelia.cosmetic.inner.Cosmetic;
 import io.github.lix3nn53.guardiansofadelia.cosmetic.inner.CosmeticColor;
@@ -17,14 +18,14 @@ import java.util.List;
 
 public class CosmeticRoomGuiColor extends GuiGeneric {
 
-    private final Cosmetic cosmetic;
+    private final int cosmeticId;
     private CosmeticColor selectedColor = CosmeticColor.RED;
     private int selectedTint = 2;
 
-    public CosmeticRoomGuiColor(GuardianData guardianData, Cosmetic cosmetic) {
+    public CosmeticRoomGuiColor(GuardianData guardianData, int cosmeticId) {
         super(54, CustomCharacterGui.MENU_54_FLAT.toString() + ChatPalette.BLACK + "Cosmetic Color", 0);
 
-        this.cosmetic = cosmetic;
+        this.cosmeticId = cosmeticId;
 
         List<Integer> guiIndex = CosmeticColor.getGuiIndex();
         for (CosmeticColor color : CosmeticColor.values()) {
@@ -39,6 +40,7 @@ public class CosmeticRoomGuiColor extends GuiGeneric {
             this.setItem(index + i, item);
         }
 
+        Cosmetic cosmetic = CosmeticManager.get(cosmeticId);
         ItemStack showcase = cosmetic.getShowcase(selectedColor, selectedTint);
         this.setItem(25, showcase);
     }
@@ -74,15 +76,17 @@ public class CosmeticRoomGuiColor extends GuiGeneric {
                 this.setItem(index + i, item);
             }
 
+            Cosmetic cosmetic = CosmeticManager.get(cosmeticId);
             ItemStack showcase = cosmetic.getShowcase(selectedColor, selectedTint);
             this.setItem(25, showcase);
         } else if (slot >= 37 && slot < 44) {
             selectedTint = slot - 37;
 
+            Cosmetic cosmetic = CosmeticManager.get(cosmeticId);
             ItemStack showcase = cosmetic.getShowcase(selectedColor, selectedTint);
             this.setItem(25, showcase);
         } else if (slot == 25) {
-            CosmeticRoom.setCosmeticToShowcase(player, cosmetic, selectedColor, selectedTint);
+            CosmeticRoom.setCosmetic(player, cosmeticId, selectedColor, selectedTint);
             player.closeInventory();
         }
     }

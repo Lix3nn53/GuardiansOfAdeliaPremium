@@ -1,5 +1,7 @@
 package io.github.lix3nn53.guardiansofadelia.cosmetic.inner;
 
+import io.github.lix3nn53.guardiansofadelia.text.ChatPalette;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
@@ -51,12 +53,13 @@ public class Cosmetic {
         itemMeta.setDisplayName(name);
 
         List<String> lore = new ArrayList<>();
+        lore.add(ChatPalette.GRAY + "Type: " + type);
         lore.add("");
-        lore.add("Type: " + type);
 
         if (type.canChangeColor() && color != null) {
             LeatherArmorMeta leatherArmorMeta = (LeatherArmorMeta) itemMeta;
             leatherArmorMeta.setColor(color.getTint(tintIndex));
+            leatherArmorMeta.addItemFlags(ItemFlag.HIDE_DYE);
         }
 
         itemMeta.setLore(lore);

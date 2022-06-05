@@ -148,6 +148,7 @@ public class EnchantManager {
 
         HashMap<ArmorSlot, HashMap<ArmorGearType, List<Integer>>> gearLevelMap = armorFullMap.get(gearLevel);
         HashMap<ArmorGearType, List<Integer>> armorSlotMap = gearLevelMap.get(armorSlot);
+
         List<Integer> values = armorSlotMap.get(gearType);
 
         return values.get(enchantLevel - 1);

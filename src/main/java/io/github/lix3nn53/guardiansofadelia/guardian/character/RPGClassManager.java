@@ -18,7 +18,6 @@ import java.util.Set;
 public class RPGClassManager {
 
     private static final HashMap<String, RPGClass> rpgClassMap = new HashMap<>();
-    private static String startingClass;
 
     public static void setClass(String className, RPGClass rpgClass) {
         rpgClassMap.put(className.toUpperCase(), rpgClass);
@@ -36,19 +35,11 @@ public class RPGClassManager {
         rpgClassMap.clear();
     }
 
-    public static String getStartingClass() {
-        return startingClass;
-    }
-
-    public static void setStartingClass(String startingClass) {
-        RPGClassManager.startingClass = startingClass;
-    }
-
     public static Set<String> getClasses() {
         return rpgClassMap.keySet();
     }
 
-    public static ItemStack getPersonalIcon(RPGClass rpgClass, RPGCharacter rpgCharacter) {
+    public static ItemStack getClassIcon(RPGClass rpgClass) {
         ItemStack itemStack = new ItemStack(Material.WOODEN_PICKAXE);
         ItemMeta itemMeta = itemStack.getItemMeta();
         itemMeta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
@@ -88,24 +79,6 @@ public class RPGClassManager {
                 lore.add("  - " + type.getDisplayName());
             }
         }
-
-        lore.add("");
-
-        String valueStr = rpgClass.getClassStringNoColor();
-        String rpgClassStr = rpgCharacter.getRpgClassStr();
-        if (valueStr.equalsIgnoreCase(rpgClassStr)) {
-            lore.add(ChatPalette.PURPLE_LIGHT + "This is your current class");
-        } else {
-            lore.add(ChatPalette.GREEN_DARK + "Click to change to this class!");
-        }
-
-        RPGClassStats rpgClassStats = rpgCharacter.getRPGClassStats(valueStr);
-        int totalExperience = rpgClassStats.getTotalExperience();
-        int level = RPGClassExperienceManager.getLevel(totalExperience);
-        lore.add(ChatPalette.GOLD + "Class Level: " + ChatPalette.WHITE + level);
-        int exp = RPGClassExperienceManager.getCurrentExperience(totalExperience, level);
-        int expReq = RPGClassExperienceManager.getRequiredExperience(level);
-        lore.add(ChatPalette.YELLOW + "Class Experience: " + ChatPalette.GRAY + exp + "/" + expReq);
 
         itemMeta.setLore(lore);
         itemStack.setItemMeta(itemMeta);

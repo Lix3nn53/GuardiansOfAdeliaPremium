@@ -6,7 +6,6 @@ import io.github.lix3nn53.guardiansofadelia.guardian.GuardianData;
 import io.github.lix3nn53.guardiansofadelia.guardian.GuardianDataManager;
 import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGCharacter;
 import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGCharacterStats;
-import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGClassManager;
 import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGClassStats;
 import io.github.lix3nn53.guardiansofadelia.npc.QuestNPCManager;
 import io.github.lix3nn53.guardiansofadelia.quests.Quest;
@@ -142,7 +141,7 @@ public class CharacterSelectionScreenManager {
         CharacterSelectionScreenManager.tutorialStart = tutorialStart;
     }
 
-    public static void createCharacter(Player player, int charNo) {
+    public static void createCharacter(Player player, int charNo, String rpgClassStr) {
         if (playersInLoading.contains(player)) return;
         playersInLoading.add(player);
         Bukkit.getScheduler().runTaskLater(GuardiansOfAdelia.getInstance(), () -> playersInLoading.remove(player), 200L);
@@ -150,10 +149,10 @@ public class CharacterSelectionScreenManager {
         player.sendMessage(ChatPalette.YELLOW + "Creating character-" + charNo);
         clear(player);
         //start tutorial
-        TutorialManager.startTutorial(player, charNo, tutorialStart);
+        TutorialManager.startTutorial(player, charNo, tutorialStart, rpgClassStr);
     }
 
-    public static void createCharacterWithoutTutorial(Player player, int charNo) {
+    public static void createCharacterWithoutTutorial(Player player, int charNo, String rpgClassStr) {
         if (playersInLoading.contains(player)) return;
         playersInLoading.add(player);
         Bukkit.getScheduler().runTaskLater(GuardiansOfAdelia.getInstance(), () -> playersInLoading.remove(player), 200L);
@@ -162,12 +161,12 @@ public class CharacterSelectionScreenManager {
         clear(player);
         //start character at first world quest
         GuardianData guardianData = GuardianDataManager.getGuardianData(player);
-        String startingClass = RPGClassManager.getStartingClass();
-        RPGCharacter rpgCharacter = new RPGCharacter(startingClass, player);
+
+        RPGCharacter rpgCharacter = new RPGCharacter(rpgClassStr, player);
         guardianData.setActiveCharacter(rpgCharacter, charNo);
 
         // last quest of tutorial
-        Quest questCopyById = QuestNPCManager.getQuestCopyById(8);
+        Quest questCopyById = QuestNPCManager.getQuestCopyById(7);
 
         boolean accept = rpgCharacter.acceptQuest(questCopyById, player, -1);
         questCopyById.onComplete(player);

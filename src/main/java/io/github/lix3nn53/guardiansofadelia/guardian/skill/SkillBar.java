@@ -1,6 +1,7 @@
 package io.github.lix3nn53.guardiansofadelia.guardian.skill;
 
 import io.github.lix3nn53.guardiansofadelia.GuardiansOfAdelia;
+import io.github.lix3nn53.guardiansofadelia.cosmetic.CosmeticRoom;
 import io.github.lix3nn53.guardiansofadelia.guardian.GuardianData;
 import io.github.lix3nn53.guardiansofadelia.guardian.GuardianDataManager;
 import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGCharacter;
@@ -135,6 +136,10 @@ public class SkillBar {
 
     public boolean castSkill(GuardianData guardianData, int slot, SkillTree skillTree, SkillRPGClassData skillRPGClassData) {
         if (StatusEffectManager.isSilenced(player)) {
+            return false;
+        }
+
+        if (CosmeticRoom.isPlayerInRoom(player)) {
             return false;
         }
 

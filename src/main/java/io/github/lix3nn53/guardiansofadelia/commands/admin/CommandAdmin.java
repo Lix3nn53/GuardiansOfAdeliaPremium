@@ -47,7 +47,6 @@ public class CommandAdmin implements CommandExecutor {
                 player.sendMessage(ChatPalette.PURPLE_LIGHT + "/admin tp town <num>");
                 player.sendMessage(ChatPalette.BLUE_DARK + "---- RPG ----");
                 player.sendMessage(ChatPalette.BLUE_DARK + "/admin exp <player> <amount>");
-                player.sendMessage(ChatPalette.BLUE_DARK + "/admin cexp <player> <amount> - class exp");
                 player.sendMessage(ChatPalette.BLUE_DARK + "/admin pexp <player> <amount> - pet exp");
             } else if (args[0].equals("debug")) {
                 DEBUG_MODE = !DEBUG_MODE;
@@ -73,21 +72,6 @@ public class CommandAdmin implements CommandExecutor {
                                 RPGClassStats rpgClassStats = activeCharacter.getRPGClassStats();
 
                                 activeCharacter.getRpgCharacterStats().giveExp(expToGive, rpgClassStats);
-                            }
-                        }
-                    }
-                }
-            } else if (args[0].equals("cexp")) {
-                if (args.length == 3) {
-                    int expToGive = Integer.parseInt(args[2]);
-                    Player target = Bukkit.getPlayer(args[1]);
-                    if (target != null) {
-                        if (GuardianDataManager.hasGuardianData(target)) {
-                            GuardianData guardianData = GuardianDataManager.getGuardianData(target);
-                            if (guardianData.hasActiveCharacter()) {
-                                RPGCharacter activeCharacter = guardianData.getActiveCharacter();
-                                RPGClassStats currentRPGClassStats = activeCharacter.getRPGClassStats();
-                                currentRPGClassStats.giveExp(target, expToGive);
                             }
                         }
                     }

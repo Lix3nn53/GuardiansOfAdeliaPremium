@@ -17,6 +17,7 @@ import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.chat.hover.content.Text;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
@@ -159,9 +160,10 @@ public class GuiPremium extends GuiGeneric {
                                 if (TeleportationUtils.isTeleportCanceled(differenceX, differenceY, differenceZ)) {
                                     TeleportationUtils.cancelTeleportation(this, guardianData, hologramTop, hologramBottom, player);
                                 } else {
-                                    CosmeticRoom.start(player, player.getLocation());
+                                    Location backLocation = player.getLocation();
                                     TeleportationUtils.finishTeleportation(this, guardianData, hologramTop, hologramBottom,
                                             player, CosmeticRoom.getTpLocation(), destination, null, 0);
+                                    CosmeticRoom.start(player, backLocation);
                                 }
                             }
                         }

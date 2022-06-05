@@ -87,7 +87,6 @@ public class DatabaseQueries {
                     "     `uuid` varchar(40) NOT NULL,\n" +
                     "     `character_no` smallint NOT NULL,\n" +
                     "     `skill_points` mediumtext,\n" +
-                    "     `totalexp` int NOT NULL,\n" +
                     "     `attribute_points` mediumtext,\n" +
                     "     `skill_bar` mediumtext,\n" +
                     "     UNIQUE KEY `Index_228` (`class_name`, `uuid`, `character_no`),\n" +
@@ -325,7 +324,7 @@ public class DatabaseQueries {
 
                 HashMap<String, RPGClassStats> rpgClassStatsMap = loadRPGClassStats(uuid, characterNo);
 
-                rpgCharacter = new RPGCharacter(rpgClassStr, player, rpgClassStatsMap);
+                rpgCharacter = new RPGCharacter(rpgClassStr, player, rpgClassStatsMap.get(rpgClassStr));
                 RPGInventory rpgInventory = rpgCharacter.getRpgInventory();
 
                 RPGCharacterStats rpgCharacterStats = rpgCharacter.getRpgCharacterStats();
@@ -556,8 +555,6 @@ public class DatabaseQueries {
             while (resultSet.next()) {
                 String className = resultSet.getString("class_name");
                 String skillPointsTotal = resultSet.getString("skill_points");
-                String totalexpStr = resultSet.getString("totalexp");
-                int totalexp = Integer.parseInt(totalexpStr);
                 String attributePoints = resultSet.getString("attribute_points");
                 String skillBar = resultSet.getString("skill_bar");
 
@@ -609,7 +606,7 @@ public class DatabaseQueries {
                 SkillBarData skillBarData = new SkillBarData(barOne, barTwo, barThree, barFour);
                 SkillRPGClassData skillRPGClassData = new SkillRPGClassData(skillTreeData, skillBarData);
 
-                result.put(className, new RPGClassStats(skillRPGClassData, investedAttributePoints, totalexp));
+                result.put(className, new RPGClassStats(skillRPGClassData, investedAttributePoints));
             }
             resultSet.close();
             pst.close();
@@ -1124,18 +1121,15 @@ public class DatabaseQueries {
         SkillTreeData skillTreeData = skillRPGClassData.getSkillTreeData();
         SkillBarData skillBarData = skillRPGClassData.getSkillBarData();
 
-        int totalExperience = rpgClassStats.getTotalExperience();
-
         String SQL_QUERY = "INSERT INTO goa_player_character_class \n" +
-                "\t(class_name, uuid, character_no, skill_points, totalexp, attribute_points, skill_bar) \n" +
+                "\t(class_name, uuid, character_no, skill_points, attribute_points, skill_bar) \n" +
                 "VALUES \n" +
-                "\t(?, ?, ?, ?, ?, ?, ?)\n" +
+                "\t(?, ?, ?, ?, ?, ?)\n" +
                 "ON DUPLICATE KEY UPDATE\n" +
                 "\tclass_name = VALUES(class_name),\n" +
                 "\tuuid = VALUES(uuid),\n" +
                 "\tcharacter_no = VALUES(character_no),\n" +
                 "\tskill_points = VALUES(skill_points),\n" +
-                "\ttotalexp = VALUES(totalexp),\n" +
                 "\tattribute_points = VALUES(attribute_points),\n" +
                 "\tskill_bar = VALUES(skill_bar);";
         try (Connection con = ConnectionPool.getConnection()) {
@@ -1157,21 +1151,19 @@ public class DatabaseQueries {
                 pst.setString(4, skill_points.toString());
             }
 
-            pst.setInt(5, totalExperience);
-
             StringBuilder attribute_points = new StringBuilder();
             for (AttributeType attributeType : AttributeType.values()) {
                 int invested = rpgClassStats.getInvested(attributeType);
                 attribute_points.append(attributeType.name()).append(",").append(invested).append(";");
             }
-            pst.setString(6, attribute_points.toString());
+            pst.setString(5, attribute_points.toString());
 
             StringBuilder skill_bar = new StringBuilder();
             for (int i = 0; i < 4; i++) {
                 int skillId = skillBarData.getSkillId(i);
                 skill_bar.append(skillId).append(";");
             }
-            pst.setString(7, skill_bar.toString());
+            pst.setString(6, skill_bar.toString());
 
             //2 = replaced, 1 = new row added
             int returnValue = pst.executeUpdate();

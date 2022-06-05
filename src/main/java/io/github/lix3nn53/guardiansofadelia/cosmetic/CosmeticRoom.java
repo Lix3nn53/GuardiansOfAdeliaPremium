@@ -3,7 +3,13 @@ package io.github.lix3nn53.guardiansofadelia.cosmetic;
 import io.github.lix3nn53.guardiansofadelia.GuardiansOfAdelia;
 import io.github.lix3nn53.guardiansofadelia.cosmetic.inner.Cosmetic;
 import io.github.lix3nn53.guardiansofadelia.cosmetic.inner.CosmeticColor;
+import io.github.lix3nn53.guardiansofadelia.cosmetic.inner.CosmeticSlot;
 import io.github.lix3nn53.guardiansofadelia.cosmetic.inner.CosmeticType;
+import io.github.lix3nn53.guardiansofadelia.creatures.pets.PetManager;
+import io.github.lix3nn53.guardiansofadelia.guardian.GuardianData;
+import io.github.lix3nn53.guardiansofadelia.guardian.GuardianDataManager;
+import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGCharacter;
+import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGCharacterStats;
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
@@ -14,16 +20,20 @@ import me.libraryaddict.disguise.disguisetypes.watchers.LivingWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.PlayerWatcher;
 import org.bukkit.Location;
 import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.HashMap;
+import java.util.List;
 
 public class CosmeticRoom {
 
-    private static final HashMap<Player, Location> players = new HashMap<>();
+    private static final HashMap<Player, CosmeticRoomData> players = new HashMap<>();
     private static ArmorStand armorStand;
     private static ArmorStand armorStandTop;
     private static Location location;
@@ -41,7 +51,8 @@ public class CosmeticRoom {
         CosmeticRoom.location = location;
     }
 
-    public static void setCosmeticToShowcase(Player player, Cosmetic cosmetic, CosmeticColor color, int tintIndex) {
+    public static void setCosmetic(Player player, int cosmeticId, CosmeticColor color, int tintIndex) {
+        Cosmetic cosmetic = CosmeticManager.get(cosmeticId);
         CosmeticType cosmeticType = cosmetic.getType();
         EquipmentSlot equipmentSlot = cosmeticType.getEquipmentSlot();
         boolean onPlayer = cosmeticType.isOnPlayer();
@@ -74,16 +85,21 @@ public class CosmeticRoom {
 
             DisguiseAPI.disguiseToPlayers(armorStandTop, disguise, player);
         }
+
+        CosmeticRoomData cosmeticRoomData = players.get(player);
+        cosmeticRoomData.setCosmetic(cosmeticType.getCosmeticSlot(), cosmeticId, color, tintIndex);
     }
 
     public static void start(Player player, Location backLocation) {
-        players.put(player, backLocation);
+        CosmeticRoomData cosmeticRoomData = new CosmeticRoomData(backLocation);
+        players.put(player, cosmeticRoomData);
 
         if (armorStand == null || !armorStand.isValid()) {
             armorStand = location.getWorld().spawn(location, ArmorStand.class);
             armorStand.setVisible(true);
             armorStand.setGravity(false);
             armorStand.setInvulnerable(true);
+            rotate();
         }
 
         if (armorStandTop == null || !armorStandTop.isValid()) {
@@ -94,7 +110,6 @@ public class CosmeticRoom {
         }
 
         armorStand.addPassenger(armorStandTop);
-        rotate();
 
         PlayerDisguise disguise = new PlayerDisguise(player);
 
@@ -108,15 +123,31 @@ public class CosmeticRoom {
         watcherForPlayer.setInvisible(false);
         watcherForPlayer.setMarker(true);
         watcherForPlayer.setInvisible(true);
-        watcherForPlayer.setArmor(null);
+        watcherForPlayer.setArmor(new ItemStack[]{null, null, null, null});
         watcherForPlayer.setItemInMainHand(null);
         watcherForPlayer.setItemInOffHand(null);
-        forPlayer.setHearSelfDisguise(false);
+        forPlayer.setViewSelfDisguise(false);
         DisguiseAPI.disguiseToAll(player, forPlayer);
+
+        if (PetManager.hasPet(player)) {
+            player.removePotionEffect(PotionEffectType.SPEED);
+            PetManager.despawnPet(player);
+        }
     }
 
-    public static void onQuit(Player player) {
-        Location backLocation = players.remove(player);
+    public static void onPlayerQuit(Player player) {
+        leaveRoom(player);
+
+        List<Entity> passengers = player.getPassengers();
+        for (Entity passenger : passengers) {
+            passenger.remove();
+        }
+    }
+
+    public static void leaveRoom(Player player) {
+        if (!players.containsKey(player)) return;
+
+        CosmeticRoomData cosmeticRoomData = players.remove(player);
 
         if (DisguiseAPI.isDisguised(player, armorStand)) {
             Disguise disguise = DisguiseAPI.getDisguise(player, armorStand);
@@ -132,9 +163,18 @@ public class CosmeticRoom {
             DisguiseAPI.getDisguise(player).removeDisguise();
         }
 
+        Location backLocation = cosmeticRoomData.getBackLocation();
         if (player.isOnline() && backLocation != null) {
             player.teleport(backLocation);
         }
+
+        new BukkitRunnable() {
+
+            @Override
+            public void run() {
+                PetManager.respawnPet(player);
+            }
+        }.runTaskLater(GuardiansOfAdelia.getInstance(), 40L);
     }
 
     public static boolean isPlayerInRoom(Player player) {
@@ -168,6 +208,77 @@ public class CosmeticRoom {
     }
 
     public static Location getPlayerBackLocation(Player player) {
-        return players.get(player);
+        if (players.containsKey(player)) {
+            return players.get(player).getBackLocation();
+        }
+
+        return null;
+    }
+
+    public static void apply(Player player) {
+        CosmeticRoomData cosmeticRoomData = players.get(player);
+
+        if (cosmeticRoomData == null) {
+            return;
+        }
+
+        HashMap<CosmeticSlot, CosmeticRecord> cosmetics = cosmeticRoomData.getCosmetics();
+
+        GuardianData guardianData = GuardianDataManager.getGuardianData(player);
+        if (guardianData == null) {
+            return;
+        }
+        RPGCharacter activeCharacter = guardianData.getActiveCharacter();
+        if (activeCharacter == null) {
+            return;
+        }
+        RPGCharacterStats rpgCharacterStats = activeCharacter.getRpgCharacterStats();
+
+        for (CosmeticSlot cosmeticSlot : CosmeticSlot.values()) {
+            if (cosmeticSlot.isSkin()) {
+                continue;
+            }
+
+            if (cosmetics.containsKey(cosmeticSlot)) {
+                CosmeticRecord record = cosmetics.get(cosmeticSlot);
+
+                rpgCharacterStats.setCosmetic(cosmeticSlot, record);
+            } else {
+                rpgCharacterStats.removeCosmetic(cosmeticSlot);
+            }
+        }
+
+        for (CosmeticSlot cosmeticSlot : CosmeticSlot.values()) {
+            if (!cosmeticSlot.isSkin()) {
+                continue;
+            }
+
+            if (cosmetics.containsKey(cosmeticSlot)) {
+                CosmeticRecord record = cosmetics.get(cosmeticSlot);
+
+                applyToItem(player, record);
+            }
+        }
+    }
+
+    private static void applyToItem(Player player, CosmeticRecord record) {
+        int cosmeticId = record.cosmeticId();
+        Cosmetic cosmetic = CosmeticManager.get(cosmeticId);
+
+        CosmeticType type = cosmetic.getType();
+
+        EquipmentSlot equipmentSlot = type.getEquipmentSlot();
+
+        ItemStack itemStack = player.getEquipment().getItem(equipmentSlot);
+
+        if (!type.getMaterial().equals(itemStack.getType())) {
+            return;
+        }
+
+        int customModelData = cosmetic.getCustomModelData();
+
+        ItemMeta itemMeta = itemStack.getItemMeta();
+        itemMeta.setCustomModelData(customModelData);
+        itemStack.setItemMeta(itemMeta);
     }
 }

@@ -13,8 +13,6 @@ import net.citizensnpcs.api.npc.NPCRegistry;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
@@ -50,8 +48,8 @@ public class QuestSpeech {
         String message = CustomCharacterMisc.SPEECH_BUBBLE.toString() + ChatPalette.GRAY + messages.get(index);
 
         long duration = getDuration(message);
-        SpeechBubble.entityNoFollowPacket(npc, message, duration, 0, player);
-        player.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, (int) (duration + 10), 0));
+        SpeechBubble.entityNoFollow(npc, message, duration, 0, player);
+        // player.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, (int) (duration + 10), 0));
 
         new BukkitRunnable() {
             @Override

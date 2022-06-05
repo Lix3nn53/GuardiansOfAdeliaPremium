@@ -135,7 +135,7 @@ public class GuiCharacterStatInvest extends GuiGeneric {
 
             if (attr != null) {
                 if (event.isLeftClick()) {
-                    int pointsLeftToSpend = rpgClassStats.getAttributePointsLeftToSpend();
+                    int pointsLeftToSpend = rpgClassStats.getAttributePointsLeftToSpend(rpgCharacterStats);
                     if (pointsLeftToSpend > 0) {
                         int amount = 1;
                         if (event.isShiftClick()) {
@@ -147,7 +147,7 @@ public class GuiCharacterStatInvest extends GuiGeneric {
                         }
 
                         rpgClassStats.investPoint(attr, amount, rpgCharacterStats, true);
-                        int pointsLeft = rpgClassStats.getAttributePointsLeftToSpend();
+                        int pointsLeft = rpgClassStats.getAttributePointsLeftToSpend(rpgCharacterStats);
                         GuiCharacterStatInvest gui = new GuiCharacterStatInvest(pointsLeft, guardianData, rpgCharacterStats);
                         gui.openInventory(player);
 
@@ -169,7 +169,7 @@ public class GuiCharacterStatInvest extends GuiGeneric {
                         }
 
                         rpgClassStats.downgradePoint(attr, amount, rpgCharacterStats, true);
-                        int pointsLeft = rpgClassStats.getAttributePointsLeftToSpend();
+                        int pointsLeft = rpgClassStats.getAttributePointsLeftToSpend(rpgCharacterStats);
                         GuiCharacterStatInvest gui = new GuiCharacterStatInvest(pointsLeft, guardianData, rpgCharacterStats);
                         gui.openInventory(player);
                     }

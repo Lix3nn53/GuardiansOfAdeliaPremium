@@ -110,4 +110,25 @@ public enum CosmeticType {
 
         return CosmeticManager.COSMETIC_MATERIAL;
     }
+
+    public CosmeticSlot getCosmeticSlot() {
+        switch (this) {
+            case WEAPON_SKIN_SWORD, WEAPON_SKIN_WAND, WEAPON_SKIN_STAFF, WEAPON_SKIN_CROSSBOW,
+                    WEAPON_SKIN_BOW, WEAPON_SKIN_SPEAR, WEAPON_SKIN_GREAT_SWORD, WEAPON_SKIN_BATTLE_AXE,
+                    WEAPON_SKIN_DAGGER, WEAPON_SKIN_WAR_HAMMER -> {
+                return CosmeticSlot.HAND;
+            }
+            case SHIELD_SKIN -> {
+                return CosmeticSlot.OFFHAND;
+            }
+            case HELMET_SKIN -> {
+                return CosmeticSlot.HEAD;
+            }
+            case COSMETIC_BACK -> {
+                return CosmeticSlot.BACK;
+            }
+        }
+
+        return null;
+    }
 }

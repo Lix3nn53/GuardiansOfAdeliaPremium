@@ -1,6 +1,11 @@
 package io.github.lix3nn53.guardiansofadelia.guardian.character;
 
 import io.github.lix3nn53.guardiansofadelia.GuardiansOfAdelia;
+import io.github.lix3nn53.guardiansofadelia.cosmetic.CosmeticManager;
+import io.github.lix3nn53.guardiansofadelia.cosmetic.CosmeticRecord;
+import io.github.lix3nn53.guardiansofadelia.cosmetic.inner.Cosmetic;
+import io.github.lix3nn53.guardiansofadelia.cosmetic.inner.CosmeticColor;
+import io.github.lix3nn53.guardiansofadelia.cosmetic.inner.CosmeticSlot;
 import io.github.lix3nn53.guardiansofadelia.guardian.attribute.Attribute;
 import io.github.lix3nn53.guardiansofadelia.guardian.attribute.AttributeType;
 import io.github.lix3nn53.guardiansofadelia.guardian.element.Element;
@@ -26,6 +31,7 @@ import io.github.lix3nn53.guardiansofadelia.text.ChatPalette;
 import io.github.lix3nn53.guardiansofadelia.utilities.InventoryUtils;
 import io.github.lix3nn53.guardiansofadelia.utilities.PersistentDataContainerUtil;
 import io.github.lix3nn53.guardiansofadelia.utilities.centermessage.MessageUtils;
+import io.github.lix3nn53.guardiansofadelia.utilities.hologram.CosmeticHologram;
 import io.github.lix3nn53.guardiansofadelia.utilities.hologram.Hologram;
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
@@ -85,6 +91,9 @@ public class RPGCharacterStats {
     private List<GearSet> gearSets = new ArrayList<>();
 
     private final BukkitTask actionBarTask;
+
+    private final HashMap<CosmeticSlot, CosmeticRecord> cosmetics = new HashMap<>();
+    private CosmeticHologram cosmeticHologram = null;
 
     public RPGCharacterStats(Player player, String startClass, RPGClassStats rpgClassStats) {
         this.player = player;
@@ -1045,5 +1054,70 @@ public class RPGCharacterStats {
 
     public void onQuit() {
         actionBarTask.cancel();
+    }
+
+    public void setCosmetic(CosmeticSlot cosmeticSlot, CosmeticRecord record) {
+        if (cosmeticSlot.isSkin()) {
+            return;
+        }
+
+        this.cosmetics.put(cosmeticSlot, record);
+
+        int cosmeticId = record.cosmeticId();
+        Cosmetic cosmetic = CosmeticManager.get(cosmeticId);
+        CosmeticColor color = record.cosmeticColor();
+        int tint = record.cosmeticTint();
+
+        if (cosmeticHologram == null) {
+            int entityId = GuardiansOfAdelia.getEntityId();
+            Location location = player.getLocation();
+            cosmeticHologram = new CosmeticHologram(entityId, location, "");
+        }
+
+        cosmeticHologram.start(player, cosmetic.getShowcase(color, tint));
+    }
+
+    public void removeCosmetic(CosmeticSlot cosmeticSlot) {
+        if (cosmeticSlot.isSkin()) {
+            return;
+        }
+
+        this.cosmetics.remove(cosmeticSlot);
+
+        if (this.cosmetics.isEmpty()) {
+            cosmeticHologram.destroy();
+            cosmeticHologram = null;
+        } else {
+            cosmeticHologram.setHelmet(player, null);
+        }
+    }
+
+    public void reattachCosmeticHologram() {
+        CosmeticRecord record = cosmetics.get(CosmeticSlot.BACK);
+
+        if (record == null) return;
+
+        player.sendMessage("debug: reattachCosmeticHologram");
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                player.sendMessage("debug: reattachCosmeticHologram run");
+                if (cosmeticHologram != null) {
+                    cosmeticHologram.destroy();
+                    player.sendMessage("debug: reattachCosmeticHologram run cosmeticHologram != null");
+                }
+
+                int entityId = GuardiansOfAdelia.getEntityId();
+                Location location = player.getLocation();
+
+                cosmeticHologram = new CosmeticHologram(entityId, location, "");
+
+                Cosmetic cosmetic = CosmeticManager.get(record.cosmeticId());
+                CosmeticColor color = record.cosmeticColor();
+                int tint = record.cosmeticTint();
+
+                cosmeticHologram.start(player, cosmetic.getShowcase(color, tint));
+            }
+        }.runTaskLater(GuardiansOfAdelia.getInstance(), 40L);
     }
 }

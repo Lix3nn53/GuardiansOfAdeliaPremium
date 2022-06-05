@@ -7,7 +7,10 @@ import io.github.lix3nn53.guardiansofadelia.guardian.skill.player.SkillRPGClassD
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.tree.SkillTreeOffset;
 import io.github.lix3nn53.guardiansofadelia.menu.GuiHelper;
 import io.github.lix3nn53.guardiansofadelia.menu.bazaar.GuiBazaar;
-import io.github.lix3nn53.guardiansofadelia.menu.main.character.*;
+import io.github.lix3nn53.guardiansofadelia.menu.main.character.GuiCharacterChatTag;
+import io.github.lix3nn53.guardiansofadelia.menu.main.character.GuiCharacterCrafting;
+import io.github.lix3nn53.guardiansofadelia.menu.main.character.GuiCharacterSkillTree;
+import io.github.lix3nn53.guardiansofadelia.menu.main.character.GuiCharacterStatInvest;
 import io.github.lix3nn53.guardiansofadelia.text.ChatPalette;
 import io.github.lix3nn53.guardiansofadelia.text.font.CustomCharacterGui;
 import io.github.lix3nn53.guardiansofadelia.text.locale.Translation;
@@ -20,35 +23,24 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class GuiCharacter extends GuiGeneric {
 
     public GuiCharacter(GuardianData guardianData) {
         super(54, CustomCharacterGui.MENU_54.toString() + ChatPalette.BLACK + Translation.t(guardianData, "character.name"), 0);
 
-        ItemStack classItem = new ItemStack(Material.WOODEN_PICKAXE);
         String rpgClassStr = guardianData.getActiveCharacter().getRpgClassStr();
         RPGClass rpgClass = RPGClassManager.getClass(rpgClassStr);
-        int classIconCustomModelData = rpgClass.getClassIconCustomModelData();
-        ItemMeta itemMeta = classItem.getItemMeta();
-        itemMeta.setCustomModelData(classIconCustomModelData);
-        itemMeta.setUnbreakable(true);
-        itemMeta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_UNBREAKABLE);
-        itemMeta.setDisplayName(ChatPalette.YELLOW + Translation.t(guardianData, "character.class.name"));
-        ArrayList<String> lore = new ArrayList<>();
-        lore.add("");
-        lore.add(ChatPalette.GRAY + Translation.t(guardianData, "character.class.l1"));
-        lore.add("");
-        lore.add(Translation.t(guardianData, "character.class.name") + ": " + rpgClass.getClassString());
-        itemMeta.setLore(lore);
-        classItem.setItemMeta(itemMeta);
+        ItemStack classItem = RPGClassManager.getClassIcon(rpgClass);
 
         ItemStack skills = new ItemStack(Material.WOODEN_PICKAXE);
+        ItemMeta itemMeta = skills.getItemMeta();
         itemMeta.setCustomModelData(29);
         itemMeta.setUnbreakable(true);
         itemMeta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_UNBREAKABLE);
         itemMeta.setDisplayName(ChatPalette.PURPLE_LIGHT + Translation.t(guardianData, "character.skill.name"));
-        lore = new ArrayList<>();
+        List<String> lore = new ArrayList<>();
         lore.add("");
         lore.add(ChatPalette.GRAY + Translation.t(guardianData, "character.skill.l1"));
         itemMeta.setLore(lore);
@@ -115,9 +107,6 @@ public class GuiCharacter extends GuiGeneric {
         if (slot == 0) {
             GuiMain gui = new GuiMain(guardianData);
             gui.openInventory(player);
-        } else if (GuiHelper.get54BigButtonIndexes(0).contains(slot)) {
-            GuiCharacterClassManager gui = new GuiCharacterClassManager(guardianData);
-            gui.openInventory(player);
         } else if (GuiHelper.get54BigButtonIndexes(1).contains(slot)) {
             RPGClassStats rpgClassStats = rpgCharacter.getRPGClassStats();
             SkillRPGClassData skillRPGClassData = rpgClassStats.getSkillRPGClassData();
@@ -130,7 +119,7 @@ public class GuiCharacter extends GuiGeneric {
             RPGCharacterStats rpgCharacterStats = rpgCharacter.getRpgCharacterStats();
             RPGClassStats rpgClassStats = rpgCharacter.getRPGClassStats();
 
-            int pointsLeft = rpgClassStats.getAttributePointsLeftToSpend();
+            int pointsLeft = rpgClassStats.getAttributePointsLeftToSpend(rpgCharacterStats);
 
             GuiCharacterStatInvest gui = new GuiCharacterStatInvest(pointsLeft, guardianData, rpgCharacterStats);
             gui.openInventory(player);

@@ -1,7 +1,6 @@
 package io.github.lix3nn53.guardiansofadelia.commands.admin;
 
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.onground.SkillOnGround;
-import io.github.lix3nn53.guardiansofadelia.items.PrizeChestType;
 import io.github.lix3nn53.guardiansofadelia.sounds.CustomSound;
 import io.github.lix3nn53.guardiansofadelia.sounds.GoaSound;
 import io.github.lix3nn53.guardiansofadelia.text.ChatPalette;
@@ -43,16 +42,39 @@ public class CommandTest implements CommandExecutor {
                 player.sendMessage(ChatPalette.BLUE + "/test damage <amount> - damage self");
                 player.sendMessage(ChatPalette.BLUE + "/test custom <custom> [sBefore] [sAfter] <negative> <positive> - test custom char");
             } else if (args[0].equals("test")) {
+                /*int entityId = GuardiansOfAdelia.getEntityId();
                 Location location = player.getLocation();
-                ArmorStand armorStand = (ArmorStand) location.getWorld().spawnEntity(location, EntityType.ARMOR_STAND);
+                CosmeticHologram cosmeticHologram = new CosmeticHologram(entityId, location, "TEST");
 
-                ItemStack chestIconItem = PrizeChestType.PET.getChestIconItem();
-                EntityEquipment equipment = armorStand.getEquipment();
-                equipment.setHelmet(chestIconItem);
-                equipment.setItemInMainHand(PrizeChestType.WEAPON_MELEE.getChestIconItem());
-                armorStand.setInvisible(true);
+                cosmeticHologram.show(player);
+                cosmeticHologram.mount(player, player);
+                Cosmetic cosmetic = CosmeticManager.get(CosmeticType.COSMETIC_BACK.getIdOffset() + 1);
+                cosmeticHologram.helmet(player, cosmetic.getShowcase(CosmeticColor.RED, 1));
 
-                player.addPassenger(armorStand);
+                new BukkitRunnable() {
+
+                    @Override
+                    public void run() {
+                        cosmeticHologram.look(player, player.getLocation());
+                        cosmeticHologram.rotateHead(player, player.getLocation());
+                    }
+                }.runTaskTimer(GuardiansOfAdelia.getInstance(), 2L, 10L);*/
+
+                /*Location location = player.getLocation();
+                ArmorStand cosmeticStand = location.getWorld().spawn(location, ArmorStand.class);
+                cosmeticStand.setMarker(true);
+                player.addPassenger(cosmeticStand);
+                Cosmetic cosmetic = CosmeticManager.get(CosmeticType.COSMETIC_BACK.getIdOffset() + 1);
+                cosmeticStand.getEquipment().setHelmet(cosmetic.getShowcase(CosmeticColor.RED, 1));
+
+                new BukkitRunnable() {
+
+                    @Override
+                    public void run() {
+                        Location newLoc = player.getLocation();
+                        cosmeticStand.setRotation(newLoc.getYaw(), newLoc.getPitch());
+                    }
+                }.runTaskTimer(GuardiansOfAdelia.getInstance(), 2L, 2L);*/
             } else if (args[0].equals("custom")) {
                 CustomCharacter chara = CustomCharacter.valueOf(args[1]);
                 chara.setNegativeSpacesBefore(Integer.parseInt(args[2]));

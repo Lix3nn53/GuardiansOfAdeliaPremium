@@ -23,7 +23,6 @@ public class MyEntityPortalEnterEvent implements Listener {
         Entity entity = event.getEntity();
 
         if (entity instanceof Player player) {
-
             if (CosmeticRoom.isPlayerInRoom(player)) {
                 boolean add = playersExitingCosmeticRoom.add(player);
 
@@ -35,7 +34,7 @@ public class MyEntityPortalEnterEvent implements Listener {
                         @Override
                         public void run() {
                             if (playersExitingCosmeticRoom.contains(player)) {
-                                CosmeticRoom.onQuit(player);
+                                CosmeticRoom.leaveRoom(player);
                                 playersExitingCosmeticRoom.remove(player);
                             }
                         }

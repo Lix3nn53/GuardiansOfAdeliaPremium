@@ -2,11 +2,10 @@ package io.github.lix3nn53.guardiansofadelia.npc.speech;
 
 import io.github.lix3nn53.guardiansofadelia.GuardiansOfAdelia;
 import io.github.lix3nn53.guardiansofadelia.chat.SpeechBubble;
-import io.github.lix3nn53.guardiansofadelia.utilities.hologram.packets.EntityDestroyPacket;
+import io.github.lix3nn53.guardiansofadelia.utilities.hologram.FakeHologram;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPCRegistry;
-import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -22,7 +21,7 @@ public class NPCSpeechManager {
     private static final int MAX_ORDER = 11; // included
     // Normal speech bubbles visible to everyone
     private final static HashMap<Integer, HashMap<Integer, List<String>>> orderToNpcNoToDialogue = new HashMap<>();
-    private final static HashMap<Integer, ArmorStand> npcNoToActiveSpeech = new HashMap<>();
+    private final static HashMap<Integer, FakeHologram> npcNoToActiveSpeech = new HashMap<>();
     // Special speech bubbles visible to specific players
     private final static List<Player> playersViewingSpecial = new ArrayList<>();
     private final static int DURATION_TICKS = 500;
@@ -79,9 +78,9 @@ public class NPCSpeechManager {
 
     private static void displayRandomSpeech(int npcNo, List<String> dialogues) {
         if (npcNoToActiveSpeech.containsKey(npcNo)) {
-            ArmorStand armorStand = npcNoToActiveSpeech.get(npcNo);
+            FakeHologram armorStand = npcNoToActiveSpeech.get(npcNo);
             if (armorStand != null) {
-                armorStand.remove();
+                armorStand.destroy();
             }
             npcNoToActiveSpeech.remove(npcNo);
         }
@@ -100,7 +99,7 @@ public class NPCSpeechManager {
         }
         Entity entity = npc.getEntity();
 
-        ArmorStand armorStand = SpeechBubble.entityNoFollow(entity, speech, DURATION_TICKS, 0);
+        FakeHologram armorStand = SpeechBubble.entityNoFollow(entity, speech, DURATION_TICKS, 0);
         npcNoToActiveSpeech.put(npcNo, armorStand);
 
         // Remove the armor stand for players viewing the special speech
@@ -141,12 +140,9 @@ public class NPCSpeechManager {
 
     private static void removeDefaultSpeechForPlayer(int npcNo, Player player) {
         if (npcNoToActiveSpeech.containsKey(npcNo)) {
-            ArmorStand armorStand = npcNoToActiveSpeech.get(npcNo);
+            FakeHologram armorStand = npcNoToActiveSpeech.get(npcNo);
 
-            int entityId = armorStand.getEntityId();
-            EntityDestroyPacket entityDestroyPacket = new EntityDestroyPacket(entityId);
-            entityDestroyPacket.load();
-            entityDestroyPacket.send(player);
+            armorStand.hide(player);
         }
     }
 

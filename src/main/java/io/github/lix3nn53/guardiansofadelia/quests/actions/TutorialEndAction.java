@@ -15,8 +15,6 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.Set;
-
 public class TutorialEndAction implements Action {
 
     @Override
@@ -36,23 +34,12 @@ public class TutorialEndAction implements Action {
 
                 player.getInventory().clear();
 
-                // InventoryUtils.setMenuItemPlayer(player);
-
-                Set<String> rpgClassStatsKeys = activeCharacter.getRPGClassStatsKeys();
-                for (String rpgClassStr : rpgClassStatsKeys) {
-                    RPGClassStats rpgClassStats = activeCharacter.getRPGClassStats(rpgClassStr);
-
-                    RPGClass rpgClass = RPGClassManager.getClass(rpgClassStr);
-                    SkillTree skillTree = rpgClass.getSkillTree();
-
-                    rpgClassStats.resetAll(rpgCharacterStats, player, skillTree, skillBar, lang);
-                }
-
-                activeCharacter.clearRPGClassStats();
-
-                String rpgClassStr = RPGClassManager.getStartingClass();
-                activeCharacter.changeClass(player, rpgClassStr, lang);
+                String rpgClassStr = activeCharacter.getRpgClassStr();
+                RPGClass rpgClass = RPGClassManager.getClass(rpgClassStr);
+                SkillTree skillTree = rpgClass.getSkillTree();
                 RPGClassStats rpgClassStats = activeCharacter.getRPGClassStats();
+                rpgClassStats.resetAll(rpgCharacterStats, player, skillTree, skillBar, lang);
+
                 activeCharacter.setChatTag(player, ChatTag.NOVICE);
 
                 rpgCharacterStats.setTotalExp(0);

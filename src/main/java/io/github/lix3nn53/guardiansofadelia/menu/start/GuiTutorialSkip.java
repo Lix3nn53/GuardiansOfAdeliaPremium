@@ -18,11 +18,13 @@ import java.util.ArrayList;
 public class GuiTutorialSkip extends GuiGeneric {
 
     private final int charNo;
+    private final String rpgClassStr;
 
-    public GuiTutorialSkip(GuardianData guardianData, int charNo) {
+    public GuiTutorialSkip(GuardianData guardianData, int charNo, String rpgClassStr) {
         super(27, CustomCharacterGui.MENU_27_FLAT.toString() + ChatPalette.BLACK +
                 Translation.t(guardianData, "general.tutorial.question") + " #" + charNo, 0);
         this.charNo = charNo;
+        this.rpgClassStr = rpgClassStr;
 
         ItemStack yes = new ItemStack(Material.LIME_WOOL);
         ItemMeta itemMeta = yes.getItemMeta();
@@ -47,9 +49,9 @@ public class GuiTutorialSkip extends GuiGeneric {
 
         int slot = event.getSlot();
         if (slot == 11) {
-            CharacterSelectionScreenManager.createCharacter(player, charNo);
+            CharacterSelectionScreenManager.createCharacter(player, charNo, rpgClassStr);
         } else if (slot == 15) {
-            CharacterSelectionScreenManager.createCharacterWithoutTutorial(player, charNo);
+            CharacterSelectionScreenManager.createCharacterWithoutTutorial(player, charNo, rpgClassStr);
         }
     }
 }

@@ -36,10 +36,6 @@ public class ClassConfigurations {
     private static void loadClassConfigs() {
         RPGClassManager.clearClasses();
 
-        YamlConfiguration config = ConfigurationUtils.createConfig(filePath, "config.yml");
-        String startingClass = config.getString("startingClass");
-        RPGClassManager.setStartingClass(startingClass.toUpperCase());
-
         List<String> directories = ConfigurationUtils.getAllDirectoriesInFile(filePath);
 
         for (String className : directories) {

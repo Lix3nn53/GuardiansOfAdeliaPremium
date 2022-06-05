@@ -211,6 +211,11 @@ public class Enchant {
 
                 ArmorGearType armorGearType = ArmorGearType.fromMaterial(itemStack.getType());
                 ArmorSlot armorSlot = ArmorSlot.getArmorSlot(itemStack);
+                if (armorSlot == null) { // SHIELD
+                    // Shield defense values are equal to PLATE LEGGINGS
+                    armorGearType = ArmorGearType.PLATE_ARMOR;
+                    armorSlot = ArmorSlot.LEGGINGS;
+                }
                 bonus = EnchantManager.getBonusArmor(armorGearType, armorSlot, gearLevel, enchantLevel);
             }
 

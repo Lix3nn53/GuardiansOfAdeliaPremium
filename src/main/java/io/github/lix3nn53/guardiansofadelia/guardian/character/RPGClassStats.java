@@ -1,16 +1,10 @@
 package io.github.lix3nn53.guardiansofadelia.guardian.character;
 
-import io.github.lix3nn53.guardiansofadelia.guardian.GuardianData;
-import io.github.lix3nn53.guardiansofadelia.guardian.GuardianDataManager;
 import io.github.lix3nn53.guardiansofadelia.guardian.attribute.Attribute;
 import io.github.lix3nn53.guardiansofadelia.guardian.attribute.AttributeType;
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.SkillBar;
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.player.SkillRPGClassData;
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.tree.SkillTree;
-import io.github.lix3nn53.guardiansofadelia.sounds.CustomSound;
-import io.github.lix3nn53.guardiansofadelia.sounds.GoaSound;
-import io.github.lix3nn53.guardiansofadelia.text.ChatPalette;
-import io.github.lix3nn53.guardiansofadelia.utilities.centermessage.MessageUtils;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;
@@ -18,12 +12,10 @@ import java.util.HashMap;
 public class RPGClassStats {
     private final SkillRPGClassData skillRPGClassData;
     private final HashMap<AttributeType, Integer> attributeInvested;
-    private int totalExp;
 
-    public RPGClassStats(SkillRPGClassData skillRPGClassData, HashMap<AttributeType, Integer> attributeInvested, int totalExp) {
+    public RPGClassStats(SkillRPGClassData skillRPGClassData, HashMap<AttributeType, Integer> attributeInvested) {
         this.skillRPGClassData = skillRPGClassData;
         this.attributeInvested = attributeInvested;
-        this.totalExp = totalExp;
     }
 
     public RPGClassStats() {
@@ -32,58 +24,10 @@ public class RPGClassStats {
         for (AttributeType attributeType : AttributeType.values()) {
             attributeInvested.put(attributeType, 0);
         }
-        this.totalExp = 0;
     }
 
     public SkillRPGClassData getSkillRPGClassData() {
         return skillRPGClassData;
-    }
-
-    public void giveExpNoMessage(int expToGive) {
-        int currentLevel = RPGClassExperienceManager.getLevel(this.totalExp);
-
-        if (currentLevel >= 20) { //last level is 20
-            return;
-        }
-
-        this.totalExp += expToGive;
-    }
-
-    public void giveExp(Player player, int expToGive) {
-        int currentLevel = RPGClassExperienceManager.getLevel(this.totalExp);
-
-        if (currentLevel >= 20) { //last level is 20
-            return;
-        }
-
-        this.totalExp += expToGive;
-
-        int newLevel = RPGClassExperienceManager.getLevel(this.totalExp);
-
-        if (currentLevel < newLevel) { //level up
-            if (GuardianDataManager.hasGuardianData(player)) {
-                GuardianData guardianData = GuardianDataManager.getGuardianData(player);
-                if (guardianData.hasActiveCharacter()) {
-                    RPGCharacter activeCharacter = guardianData.getActiveCharacter();
-
-                    String rpgClassStr = activeCharacter.getRpgClassStr();
-
-                    RPGClass aClass = RPGClassManager.getClass(rpgClassStr);
-
-                    String classString = aClass.getClassString();
-
-                    MessageUtils.sendCenteredMessage(player, classString + ChatPalette.GOLD + " Level up!");
-                    MessageUtils.sendCenteredMessage(player, ChatPalette.YELLOW + "Congratulations, your new " + classString +
-                            ChatPalette.YELLOW + " level is " + ChatPalette.GOLD + newLevel);
-                    CustomSound customSound = GoaSound.LEVEL_UP.getCustomSound();
-                    customSound.play(player.getLocation());
-                }
-            }
-        }
-    }
-
-    public int getTotalExperience() {
-        return totalExp;
     }
 
     public int getInvested(AttributeType attributeType) {
@@ -141,7 +85,6 @@ public class RPGClassStats {
     public void resetAll(RPGCharacterStats rpgCharacterStats, Player player, SkillTree skillTree, SkillBar skillBar, String lang) {
         resetAttributes(rpgCharacterStats);
 
-        totalExp = 0;
         skillRPGClassData.resetSkillPoints(player, skillTree, skillBar, lang);
     }
 
@@ -154,8 +97,9 @@ public class RPGClassStats {
         return total;
     }
 
-    public int getAttributePointsLeftToSpend() {
-        int level = RPGCharacterExperienceManager.getLevel(this.totalExp);
+    public int getAttributePointsLeftToSpend(RPGCharacterStats rpgCharacterStats) {
+        int totalExp = rpgCharacterStats.getTotalExp();
+        int level = RPGCharacterExperienceManager.getLevel(totalExp);
 
         int inventedPointsOnAttributes = getInvestedAttributePoints();
 

@@ -45,7 +45,7 @@ public class RPGClass {
         return color;
     }
 
-    public String getClassStringNoColor() {
+    public String getClassEnum() {
         return name;
     }
 

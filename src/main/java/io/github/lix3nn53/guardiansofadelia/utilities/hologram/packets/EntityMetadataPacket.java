@@ -36,13 +36,18 @@ public class EntityMetadataPacket extends AbstractPacket {
             watcher.setObject(visible, (byte) 0x20);
         }
 
-        Optional<?> opt = Optional
-                .of(WrappedChatComponent
-                        .fromChatMessage(text)[0].getHandle());
-        watcher.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(2, WrappedDataWatcher.Registry.getChatComponentSerializer(true)), opt);
+        if (!text.equals("")) {
+            Optional<?> opt = Optional
+                    .of(WrappedChatComponent
+                            .fromChatMessage(text)[0].getHandle());
+            watcher.setObject(new WrappedDataWatcher.WrappedDataWatcherObject(2, WrappedDataWatcher.Registry.getChatComponentSerializer(true)), opt);
 
-        WrappedDataWatcher.WrappedDataWatcherObject nameVisible = new WrappedDataWatcher.WrappedDataWatcherObject(3, WrappedDataWatcher.Registry.get(Boolean.class));
-        watcher.setObject(nameVisible, true);
+            WrappedDataWatcher.WrappedDataWatcherObject nameVisible = new WrappedDataWatcher.WrappedDataWatcherObject(3, WrappedDataWatcher.Registry.get(Boolean.class));
+            watcher.setObject(nameVisible, true);
+        }
+
+        WrappedDataWatcher.WrappedDataWatcherObject visible = new WrappedDataWatcher.WrappedDataWatcherObject(15, WrappedDataWatcher.Registry.get(Byte.class));
+        watcher.setObject(visible, (byte) 0x10); // marker
 
         packetContainer.getWatchableCollectionModifier().write(0, watcher.getWatchableObjects());
         return this;

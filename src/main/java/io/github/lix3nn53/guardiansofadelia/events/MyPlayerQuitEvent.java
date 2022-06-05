@@ -49,7 +49,7 @@ public class MyPlayerQuitEvent implements Listener {
         TriggerListener.onPlayerQuit(player);
         DoNotGetAwayManager.onQuit(player);
         MiniGameManager.onQuit(player);
-        CosmeticRoom.onQuit(player);
+        CosmeticRoom.onPlayerQuit(player);
 
         return true;
     }

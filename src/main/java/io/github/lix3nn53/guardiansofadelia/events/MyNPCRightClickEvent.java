@@ -8,7 +8,7 @@ import io.github.lix3nn53.guardiansofadelia.guardian.GuardianDataManager;
 import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGCharacter;
 import io.github.lix3nn53.guardiansofadelia.menu.quest.GuiQuestList;
 import io.github.lix3nn53.guardiansofadelia.menu.start.GuiCharacterSelect;
-import io.github.lix3nn53.guardiansofadelia.menu.start.GuiTutorialSkip;
+import io.github.lix3nn53.guardiansofadelia.menu.start.GuiClassSelect;
 import io.github.lix3nn53.guardiansofadelia.npc.merchant.MerchantManager;
 import io.github.lix3nn53.guardiansofadelia.npc.merchant.MerchantMenu;
 import io.github.lix3nn53.guardiansofadelia.npc.speech.NPCSpeechManager;
@@ -57,7 +57,7 @@ public class MyNPCRightClickEvent implements Listener {
                     });
                 } else {
                     Bukkit.getScheduler().runTask(GuardiansOfAdelia.getInstance(), () -> {
-                        GuiTutorialSkip gui = new GuiTutorialSkip(guardianData, id);
+                        GuiClassSelect gui = new GuiClassSelect(guardianData, id);
                         gui.openInventory(player);
                     });
                 }

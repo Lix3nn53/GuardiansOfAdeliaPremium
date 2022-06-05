@@ -3,7 +3,8 @@ package io.github.lix3nn53.guardiansofadelia.guardian.skill.player;
 import io.github.lix3nn53.guardiansofadelia.guardian.GuardianData;
 import io.github.lix3nn53.guardiansofadelia.guardian.GuardianDataManager;
 import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGCharacter;
-import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGClassExperienceManager;
+import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGCharacterExperienceManager;
+import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGCharacterStats;
 import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGClassStats;
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.Skill;
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.SkillBar;
@@ -161,11 +162,11 @@ public class SkillRPGClassData {
             GuardianData guardianData = GuardianDataManager.getGuardianData(player);
             if (guardianData.hasActiveCharacter()) {
                 RPGCharacter activeCharacter = guardianData.getActiveCharacter();
-                RPGClassStats currentRPGClassStats = activeCharacter.getRPGClassStats();
+                RPGCharacterStats rpgCharacterStats = activeCharacter.getRpgCharacterStats();
 
-                int totalExperience = currentRPGClassStats.getTotalExperience();
+                int totalExperience = rpgCharacterStats.getTotalExp();
 
-                pointsTotal = RPGClassExperienceManager.getLevel(totalExperience);
+                pointsTotal = RPGCharacterExperienceManager.getLevel(totalExperience);
             }
         }
 

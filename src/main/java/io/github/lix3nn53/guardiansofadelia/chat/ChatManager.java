@@ -1,6 +1,7 @@
 package io.github.lix3nn53.guardiansofadelia.chat;
 
 import io.github.lix3nn53.guardiansofadelia.GuardiansOfAdelia;
+import io.github.lix3nn53.guardiansofadelia.cosmetic.CosmeticRoom;
 import io.github.lix3nn53.guardiansofadelia.guardian.GuardianData;
 import io.github.lix3nn53.guardiansofadelia.guardian.GuardianDataManager;
 import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGCharacter;
@@ -50,7 +51,12 @@ public class ChatManager {
         GuardiansOfAdelia.getInstance().getLogger().info(chatChannel + "-" + player.getName() + ": " + message);
 
         if (chatChannel == null) { //send message to normal chat
-            SpeechBubble.player(player, message);
+            if (!CosmeticRoom.isPlayerInRoom(player)) { // chat bubble
+                final String finalMessage = message;
+                Bukkit.getScheduler().runTask(GuardiansOfAdelia.getInstance(), () -> {
+                    SpeechBubble.player(player, finalMessage);
+                });
+            }
 
             for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
                 onlinePlayer.spigot().sendMessage(displayNameInteract, suffixText);

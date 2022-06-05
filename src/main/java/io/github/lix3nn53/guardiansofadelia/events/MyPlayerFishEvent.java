@@ -15,7 +15,7 @@ import java.util.List;
 
 public class MyPlayerFishEvent implements Listener {
 
-    private static final int range = 16;
+    private static final int range = 24;
 
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onEvent(PlayerFishEvent event) {

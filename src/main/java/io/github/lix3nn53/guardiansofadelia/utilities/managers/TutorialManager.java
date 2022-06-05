@@ -19,19 +19,17 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
-import java.util.Set;
-
 
 public class TutorialManager {
 
-    public static void startTutorial(Player player, int charNo, Location startLocation) {
+    public static void startTutorial(Player player, int charNo, Location startLocation, String rpgClassStr) {
         if (GuardianDataManager.hasGuardianData(player)) {
             GuardianData guardianData = GuardianDataManager.getGuardianData(player);
-            String startingClass = RPGClassManager.getStartingClass();
-            RPGCharacter rpgCharacter = new RPGCharacter(startingClass, player);
+
+            RPGCharacter rpgCharacter = new RPGCharacter(rpgClassStr, player);
             guardianData.setActiveCharacter(rpgCharacter, charNo);
 
-            RPGClass rpgClass = RPGClassManager.getClass(startingClass);
+            RPGClass rpgClass = RPGClassManager.getClass(rpgClassStr);
             SkillTree skillTree = rpgClass.getSkillTree();
             RPGClassStats rpgClassStats = rpgCharacter.getRPGClassStats();
             SkillRPGClassData skillRPGClassData = rpgClassStats.getSkillRPGClassData();
@@ -41,15 +39,6 @@ public class TutorialManager {
             int totalExpForLevel = RPGCharacterExperienceManager.getTotalRequiredExperience(90);
             RPGCharacterStats rpgCharacterStats = rpgCharacter.getRpgCharacterStats();
             rpgCharacterStats.setTotalExp(totalExpForLevel);
-
-            int totalExpClass = RPGClassExperienceManager.getTotalRequiredExperience(RPGClassExperienceManager.MAX_LEVEL);
-            Set<String> classes = RPGClassManager.getClasses();
-            for (String className : classes) {
-                RPGClass rpgClassInner = RPGClassManager.getClass(className);
-                String classStringNoColor = rpgClassInner.getClassStringNoColor();
-                RPGClassStats rpgClassStatsInner = rpgCharacter.getRPGClassStats(classStringNoColor);
-                rpgClassStatsInner.giveExpNoMessage(totalExpClass);
-            }
 
             // InventoryUtils.setMenuItemPlayer(player);
             // giveTutorialItems(player, startingClass);

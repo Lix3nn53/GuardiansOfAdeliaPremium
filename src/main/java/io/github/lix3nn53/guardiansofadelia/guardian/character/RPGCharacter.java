@@ -2,26 +2,24 @@ package io.github.lix3nn53.guardiansofadelia.guardian.character;
 
 import io.github.lix3nn53.guardiansofadelia.chat.ChatManager;
 import io.github.lix3nn53.guardiansofadelia.chat.ChatTag;
-import io.github.lix3nn53.guardiansofadelia.creatures.pets.PetManager;
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.SkillBar;
-import io.github.lix3nn53.guardiansofadelia.guardian.skill.SkillDataManager;
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.player.SkillRPGClassData;
-import io.github.lix3nn53.guardiansofadelia.guardian.skill.tree.SkillTree;
 import io.github.lix3nn53.guardiansofadelia.jobs.RPGCharacterCraftingStats;
 import io.github.lix3nn53.guardiansofadelia.quests.Quest;
 import io.github.lix3nn53.guardiansofadelia.rpginventory.RPGInventory;
-import io.github.lix3nn53.guardiansofadelia.text.ChatPalette;
 import org.bukkit.entity.Player;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 public final class RPGCharacter {
 
     private final RPGInventory rpgInventory;
 
-    private final HashMap<String, RPGClassStats> classToClassStats;
-    private String rpgClassStr;
-    private SkillBar skillBar;
+    private final RPGClassStats rpgClassStats;
+    private final String rpgClassStr;
+    private final SkillBar skillBar;
 
     private final RPGCharacterStats rpgCharacterStats;
 
@@ -32,14 +30,14 @@ public final class RPGCharacter {
 
     private ChatTag chatTag = ChatTag.NOVICE;
 
-    public RPGCharacter(String rpgClassStr, Player player, HashMap<String, RPGClassStats> classToClassStats) {
+    public RPGCharacter(String rpgClassStr, Player player, RPGClassStats rpgClassStats) {
         this.rpgInventory = new RPGInventory(player);
         this.rpgClassStr = rpgClassStr.toUpperCase();
 
-        this.classToClassStats = classToClassStats;
-        RPGClassStats rpgClassStats = new RPGClassStats();
-        if (classToClassStats.containsKey(rpgClassStr)) {
-            rpgClassStats = classToClassStats.get(rpgClassStr);
+        if (rpgClassStats != null) {
+            this.rpgClassStats = rpgClassStats;
+        } else {
+            this.rpgClassStats = new RPGClassStats();
         }
 
         this.rpgCharacterStats = new RPGCharacterStats(player, rpgClassStr, rpgClassStats);
@@ -54,9 +52,7 @@ public final class RPGCharacter {
         this.rpgInventory = new RPGInventory(player);
         this.rpgClassStr = rpgClassStr.toUpperCase();
 
-        this.classToClassStats = new HashMap<>();
-        RPGClassStats rpgClassStats = new RPGClassStats();
-        this.classToClassStats.put(rpgClassStr, rpgClassStats);
+        this.rpgClassStats = new RPGClassStats();
 
         this.rpgCharacterStats = new RPGCharacterStats(player, rpgClassStr, rpgClassStats);
 
@@ -69,38 +65,11 @@ public final class RPGCharacter {
         return rpgClassStr;
     }
 
-    public HashMap<String, RPGClassStats> getClassToClassStats() {
-        return classToClassStats;
-    }
-
     public RPGClassStats getRPGClassStats() {
-        String rpgClassStr = getRpgClassStr();
-        if (classToClassStats.containsKey(rpgClassStr)) {
-            return classToClassStats.get(rpgClassStr);
-        }
-
-        return new RPGClassStats();
-    }
-
-    public RPGClassStats getRPGClassStats(String rpgClassStr) {
-        if (classToClassStats.containsKey(rpgClassStr.toUpperCase())) {
-            return classToClassStats.get(rpgClassStr.toUpperCase());
-        }
-
-        RPGClassStats rpgClassStats = new RPGClassStats();
-        classToClassStats.put(rpgClassStr.toUpperCase(), rpgClassStats);
         return rpgClassStats;
     }
 
-    public void clearRPGClassStats() {
-        classToClassStats.clear();
-    }
-
-    public Set<String> getRPGClassStatsKeys() {
-        return classToClassStats.keySet();
-    }
-
-    public boolean changeClass(Player player, String newClassStr, String lang) {
+    /*public boolean changeClass(Player player, String newClassStr, String lang) {
         String newClassUpper = newClassStr.toUpperCase();
         RPGClass rpgClass = RPGClassManager.getClass(newClassUpper);
 
@@ -124,7 +93,7 @@ public final class RPGCharacter {
         PetManager.respawnPet(player);
 
         return true;
-    }
+    }*/
 
     public boolean acceptQuest(Quest quest, Player player, int npcNo) {
         if (!hasQuest(quest.getQuestID())) {

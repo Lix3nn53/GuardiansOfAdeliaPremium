@@ -2,9 +2,11 @@ package io.github.lix3nn53.guardiansofadelia.events;
 
 import io.github.lix3nn53.guardiansofadelia.commands.admin.CommandAdmin;
 import io.github.lix3nn53.guardiansofadelia.creatures.pets.PetManager;
-import io.github.lix3nn53.guardiansofadelia.utilities.InventoryUtils;
+import io.github.lix3nn53.guardiansofadelia.guardian.GuardianData;
+import io.github.lix3nn53.guardiansofadelia.guardian.GuardianDataManager;
+import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGCharacter;
+import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGCharacterStats;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -28,16 +30,23 @@ public class MyPlayerTeleportEvent implements Listener {
         String fromName = from.getWorld().getName();
         String toName = to.getWorld().getName();
 
-        if (!fromName.equals(toName)) {
-            Player player = event.getPlayer();
+        Player player = event.getPlayer();
 
-            InventoryUtils.removeAllFromInventoryByMaterial(player.getInventory(), Material.COMPASS);
+        if (!fromName.equals(toName)) {
+
             PetManager.respawnPet(player);
 
             if (PetManager.hasCompanion(player)) {
                 if (CommandAdmin.DEBUG_MODE) player.sendMessage("PLAYER TELEPORT COMPANION");
                 PetManager.removeCompanions(player);
             }
+        }
+
+        if (GuardianDataManager.hasGuardianData(player)) {
+            GuardianData guardianData = GuardianDataManager.getGuardianData(player);
+            RPGCharacter activeCharacter = guardianData.getActiveCharacter();
+            RPGCharacterStats rpgCharacterStats = activeCharacter.getRpgCharacterStats();
+            rpgCharacterStats.reattachCosmeticHologram();
         }
     }
 }

@@ -293,14 +293,12 @@ public class DatabaseManager {
             }
 
             // class stats
-            Set<String> rpgClassStatsKeys = activeCharacter.getRPGClassStatsKeys();
-            for (String rpgClassStatsKey : rpgClassStatsKeys) {
-                RPGClassStats rpgClassStats = activeCharacter.getRPGClassStats(rpgClassStatsKey);
-                try {
-                    DatabaseQueries.setCharacterClassStats(player.getUniqueId(), activeCharacterNo, rpgClassStatsKey, rpgClassStats);
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
+            RPGClassStats rpgClassStats = activeCharacter.getRPGClassStats();
+            String rpgClassStr = activeCharacter.getRpgClassStr();
+            try {
+                DatabaseQueries.setCharacterClassStats(player.getUniqueId(), activeCharacterNo, rpgClassStr, rpgClassStats);
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
         }
     }

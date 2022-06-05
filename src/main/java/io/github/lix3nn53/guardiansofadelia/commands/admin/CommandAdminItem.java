@@ -91,8 +91,8 @@ public class CommandAdminItem implements CommandExecutor {
                 }
             } else if (args[0].equals("weapon")) {
                 if (args.length >= 3) {
-                    WeaponGearType weaponGearType = WeaponGearType.valueOf(args[1]);
-                    int no = Integer.parseInt(args[2]);
+                    WeaponGearType weaponGearType = WeaponGearType.valueOf(args[1].toUpperCase());
+                    int no = Integer.parseInt(args[2].toUpperCase());
                     GearLevel gearLevel = GearLevel.values()[no];
                     ItemTier itemTier = ItemTier.LEGENDARY;
                     if (args.length > 3) {
