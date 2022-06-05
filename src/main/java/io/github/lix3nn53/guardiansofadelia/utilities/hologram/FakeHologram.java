@@ -6,15 +6,15 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 public class FakeHologram {
 
     protected static final int RANGE = 24;
 
     protected final int entityID;
-    private final List<Player> viewing = new ArrayList<>();
+    private Set<Player> viewing = new HashSet<>();
     protected String text;
     private final EntityDestroyPacket entityDestroyPacket;
     private Location location;
@@ -29,13 +29,14 @@ public class FakeHologram {
 
     public void hide(@NotNull Player player) {
         entityDestroyPacket.send(player);
+        viewing.remove(player);
     }
 
     public void show(@NotNull Player player) {
         new SpawnEntityLivingPacket(entityID, location)
                 .load()
                 .send(player);
-        new EntityMetadataPacket(entityID, text, true)
+        new EntityMetadataPacket(entityID, text, true, true)
                 .load()
                 .send(player);
         viewing.add(player);
@@ -44,7 +45,7 @@ public class FakeHologram {
     public void showNearby() {
         AbstractPacket spawn = new SpawnEntityLivingPacket(entityID, location)
                 .load();
-        AbstractPacket metadata = new EntityMetadataPacket(entityID, text, true)
+        AbstractPacket metadata = new EntityMetadataPacket(entityID, text, true, true)
                 .load();
 
         location.getWorld().getNearbyEntities(location, RANGE, RANGE, RANGE).forEach(entity -> {
@@ -57,7 +58,7 @@ public class FakeHologram {
     }
 
     public void updateText(String text) {
-        AbstractPacket load = new EntityMetadataPacket(entityID, text, true).load();
+        AbstractPacket load = new EntityMetadataPacket(entityID, text, true, true).load();
 
         for (Player player : viewing) {
             load.send(player);
@@ -118,9 +119,23 @@ public class FakeHologram {
         }
 
         for (Player player : viewing) {
-            hide(player);
+            entityDestroyPacket.send(player);
         }
 
         viewing.clear();
+    }
+
+    public boolean isViewing(Player player) {
+        return viewing.contains(player);
+    }
+
+    public void setViewing(Set<Player> viewing) {
+        this.viewing.removeAll(viewing);
+
+        for (Player player : viewing) {
+            entityDestroyPacket.send(player);
+        }
+
+        this.viewing = viewing;
     }
 }

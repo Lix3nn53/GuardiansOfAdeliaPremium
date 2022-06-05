@@ -7,15 +7,21 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
+import java.util.Set;
+import java.util.stream.Collectors;
+
 public class CosmeticHologram extends FakeHologram {
 
     private BukkitTask rotationTask;
+    private final ItemStack helmet;
 
-    public CosmeticHologram(int entityID, Location location, String text) {
-        super(entityID, location, text);
+    public CosmeticHologram(int entityID, Location location, ItemStack helmet) {
+        super(entityID, location, "");
+
+        this.helmet = helmet;
     }
 
-    public void start(Player source, ItemStack helmet) {
+    public void start(Player source) {
         show(source);
         mount(source, source);
         setHelmet(source, helmet);
@@ -50,12 +56,22 @@ public class CosmeticHologram extends FakeHologram {
                 look(source, location);
                 rotateHead(source, location);
 
-                source.getNearbyEntities(RANGE, RANGE, RANGE).forEach(entity -> {
-                    if (entity instanceof Player player) {
-                        look(player, location);
-                        rotateHead(player, location);
+                Set<Player> nearbyPlayers = source.getNearbyEntities(RANGE, RANGE, RANGE).stream()
+                        .filter(entity -> entity instanceof Player)
+                        .map(entity -> (Player) entity)
+                        .collect(Collectors.toSet());
+
+                for (Player player : nearbyPlayers) {
+                    if (!isViewing(player)) {
+                        show(player);
+                        mount(player, source);
+                        setHelmet(player, helmet);
                     }
-                });
+                    look(player, location);
+                    rotateHead(player, location);
+                }
+
+                setViewing(nearbyPlayers);
             }
         }.runTaskTimer(GuardiansOfAdelia.getInstance(), 2L, 10L);
     }

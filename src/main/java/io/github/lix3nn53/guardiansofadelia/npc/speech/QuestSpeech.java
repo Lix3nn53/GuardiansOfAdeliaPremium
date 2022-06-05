@@ -48,7 +48,7 @@ public class QuestSpeech {
         String message = CustomCharacterMisc.SPEECH_BUBBLE.toString() + ChatPalette.GRAY + messages.get(index);
 
         long duration = getDuration(message);
-        SpeechBubble.entityNoFollow(npc, message, duration, 0, player);
+        SpeechBubble.entityNoFollow(npc, message, duration, player);
         // player.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, (int) (duration + 10), 0));
 
         new BukkitRunnable() {

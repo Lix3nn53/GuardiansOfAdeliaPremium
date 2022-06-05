@@ -1,5 +1,6 @@
 package io.github.lix3nn53.guardiansofadelia.commands.admin;
 
+import io.github.lix3nn53.guardiansofadelia.GuardiansOfAdelia;
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.onground.SkillOnGround;
 import io.github.lix3nn53.guardiansofadelia.sounds.CustomSound;
 import io.github.lix3nn53.guardiansofadelia.sounds.GoaSound;
@@ -7,6 +8,7 @@ import io.github.lix3nn53.guardiansofadelia.text.ChatPalette;
 import io.github.lix3nn53.guardiansofadelia.text.font.CustomCharacter;
 import io.github.lix3nn53.guardiansofadelia.text.font.NegativeSpace;
 import io.github.lix3nn53.guardiansofadelia.utilities.gui.GuiGeneric;
+import io.github.lix3nn53.guardiansofadelia.utilities.hologram.packets.PlayerInfoPacket;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -75,6 +77,15 @@ public class CommandTest implements CommandExecutor {
                         cosmeticStand.setRotation(newLoc.getYaw(), newLoc.getPitch());
                     }
                 }.runTaskTimer(GuardiansOfAdelia.getInstance(), 2L, 2L);*/
+
+                PlayerInfoPacket playerInfoPacket = new PlayerInfoPacket(player);
+
+                player.getNearbyEntities(20, 20, 20).forEach(e -> {
+                    if (e instanceof Player target) {
+                        target.hidePlayer(GuardiansOfAdelia.getInstance(), player);
+                        playerInfoPacket.send(target);
+                    }
+                });
             } else if (args[0].equals("custom")) {
                 CustomCharacter chara = CustomCharacter.valueOf(args[1]);
                 chara.setNegativeSpacesBefore(Integer.parseInt(args[2]));

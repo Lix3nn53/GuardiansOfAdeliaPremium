@@ -2,6 +2,8 @@ package io.github.lix3nn53.guardiansofadelia.npc.speech;
 
 import io.github.lix3nn53.guardiansofadelia.GuardiansOfAdelia;
 import io.github.lix3nn53.guardiansofadelia.chat.SpeechBubble;
+import io.github.lix3nn53.guardiansofadelia.text.ChatPalette;
+import io.github.lix3nn53.guardiansofadelia.text.font.CustomCharacterMisc;
 import io.github.lix3nn53.guardiansofadelia.utilities.hologram.FakeHologram;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
@@ -86,7 +88,7 @@ public class NPCSpeechManager {
         }
 
         int randomIndex = (int) (Math.random() * dialogues.size());
-        String speech = dialogues.get(randomIndex);
+        final String speech = CustomCharacterMisc.SPEECH_BUBBLE.toString() + ChatPalette.GRAY + dialogues.get(randomIndex);
 
         NPCRegistry npcRegistry = CitizensAPI.getNPCRegistry();
         NPC npc = npcRegistry.getById(npcNo);
@@ -99,7 +101,7 @@ public class NPCSpeechManager {
         }
         Entity entity = npc.getEntity();
 
-        FakeHologram armorStand = SpeechBubble.entityNoFollow(entity, speech, DURATION_TICKS, 0);
+        FakeHologram armorStand = SpeechBubble.entityNoFollow(entity, speech, DURATION_TICKS);
         npcNoToActiveSpeech.put(npcNo, armorStand);
 
         // Remove the armor stand for players viewing the special speech

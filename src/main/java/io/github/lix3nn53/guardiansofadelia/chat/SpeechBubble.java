@@ -80,7 +80,7 @@ public class SpeechBubble {
         }.runTaskTimer(GuardiansOfAdelia.getInstance(), 0L, 2L);
     }
 
-    public static FakeHologram entityNoFollow(Entity entity, String message, long durationTicks, float offsetY) {
+    public static FakeHologram entityNoFollow(Entity entity, String message, long durationTicks) {
         float height = (float) entity.getHeight();
         Location location = entity.getLocation().clone().add(0, height + 0.4, 0);
 
@@ -100,7 +100,7 @@ public class SpeechBubble {
         return fakeHologram;
     }
 
-    public static FakeHologram entityNoFollow(Entity entity, String message, long durationTicks, float offsetY, Player player) {
+    public static FakeHologram entityNoFollow(Entity entity, String message, long durationTicks, Player player) {
         float height = (float) entity.getHeight();
         Location location = entity.getLocation().clone().add(0, height + 0.4, 0);
 

@@ -15,7 +15,6 @@ import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.disguisetypes.MobDisguise;
 import me.libraryaddict.disguise.disguisetypes.PlayerDisguise;
-import me.libraryaddict.disguise.disguisetypes.watchers.ArmorStandWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.LivingWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.PlayerWatcher;
 import org.bukkit.Location;
@@ -92,7 +91,6 @@ public class CosmeticRoom {
 
     public static void start(Player player, Location backLocation) {
         CosmeticRoomData cosmeticRoomData = new CosmeticRoomData(backLocation);
-        players.put(player, cosmeticRoomData);
 
         if (armorStand == null || !armorStand.isValid()) {
             armorStand = location.getWorld().spawn(location, ArmorStand.class);
@@ -118,21 +116,18 @@ public class CosmeticRoom {
 
         DisguiseAPI.disguiseToPlayers(armorStand, disguise, player);
 
-        MobDisguise forPlayer = new MobDisguise(DisguiseType.ARMOR_STAND);
-        ArmorStandWatcher watcherForPlayer = (ArmorStandWatcher) forPlayer.getWatcher();
-        watcherForPlayer.setInvisible(false);
-        watcherForPlayer.setMarker(true);
-        watcherForPlayer.setInvisible(true);
-        watcherForPlayer.setArmor(new ItemStack[]{null, null, null, null});
-        watcherForPlayer.setItemInMainHand(null);
-        watcherForPlayer.setItemInOffHand(null);
-        forPlayer.setViewSelfDisguise(false);
-        DisguiseAPI.disguiseToAll(player, forPlayer);
-
         if (PetManager.hasPet(player)) {
             player.removePotionEffect(PotionEffectType.SPEED);
             PetManager.despawnPet(player);
         }
+
+        GuardiansOfAdelia instance = GuardiansOfAdelia.getInstance();
+        for (Player other : players.keySet()) {
+            other.hidePlayer(instance, player);
+            player.hidePlayer(instance, other);
+        }
+
+        players.put(player, cosmeticRoomData);
     }
 
     public static void onPlayerQuit(Player player) {
@@ -159,13 +154,15 @@ public class CosmeticRoom {
             disguise.removeDisguise();
         }
 
-        if (DisguiseAPI.isDisguised(player)) {
-            DisguiseAPI.getDisguise(player).removeDisguise();
-        }
-
         Location backLocation = cosmeticRoomData.getBackLocation();
         if (player.isOnline() && backLocation != null) {
             player.teleport(backLocation);
+
+            GuardiansOfAdelia instance = GuardiansOfAdelia.getInstance();
+            for (Player other : players.keySet()) {
+                other.showPlayer(instance, player);
+                player.showPlayer(instance, other);
+            }
         }
 
         new BukkitRunnable() {

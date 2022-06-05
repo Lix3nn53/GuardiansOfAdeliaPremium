@@ -12,6 +12,7 @@ import io.github.lix3nn53.guardiansofadelia.party.PartyManager;
 import io.github.lix3nn53.guardiansofadelia.text.ChatPalette;
 import io.github.lix3nn53.guardiansofadelia.text.font.CustomCharacter;
 import io.github.lix3nn53.guardiansofadelia.text.font.CustomCharacterGuild;
+import io.github.lix3nn53.guardiansofadelia.text.font.CustomCharacterMisc;
 import io.github.lix3nn53.guardiansofadelia.text.font.NegativeSpace;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
@@ -52,9 +53,9 @@ public class ChatManager {
 
         if (chatChannel == null) { //send message to normal chat
             if (!CosmeticRoom.isPlayerInRoom(player)) { // chat bubble
-                final String finalMessage = message;
+                final String holoMessage = CustomCharacterMisc.SPEECH_BUBBLE.toString() + ChatPalette.GRAY + message;
                 Bukkit.getScheduler().runTask(GuardiansOfAdelia.getInstance(), () -> {
-                    SpeechBubble.player(player, finalMessage);
+                    SpeechBubble.player(player, holoMessage);
                 });
             }
 

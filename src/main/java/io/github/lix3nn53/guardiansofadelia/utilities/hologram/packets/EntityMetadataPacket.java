@@ -10,18 +10,21 @@ import java.util.Optional;
 public class EntityMetadataPacket extends AbstractPacket {
 
     private final boolean setInvisible;
+    private final boolean setMarker;
     private final String text;
 
-    public EntityMetadataPacket(int entityID, @NotNull String text, boolean setInvisible) {
+    public EntityMetadataPacket(int entityID, @NotNull String text, boolean setInvisible, boolean setMarker) {
         super(entityID, PacketType.Play.Server.ENTITY_METADATA);
         this.setInvisible = setInvisible;
         this.text = text;
+        this.setMarker = setMarker;
     }
 
     public EntityMetadataPacket(int entityID) {
         super(entityID, PacketType.Play.Server.ENTITY_METADATA);
         this.setInvisible = true;
         this.text = "";
+        this.setMarker = true;
     }
 
     @Override
@@ -46,8 +49,10 @@ public class EntityMetadataPacket extends AbstractPacket {
             watcher.setObject(nameVisible, true);
         }
 
-        WrappedDataWatcher.WrappedDataWatcherObject visible = new WrappedDataWatcher.WrappedDataWatcherObject(15, WrappedDataWatcher.Registry.get(Byte.class));
-        watcher.setObject(visible, (byte) 0x10); // marker
+        if (setMarker) {
+            WrappedDataWatcher.WrappedDataWatcherObject visible = new WrappedDataWatcher.WrappedDataWatcherObject(15, WrappedDataWatcher.Registry.get(Byte.class));
+            watcher.setObject(visible, (byte) 0x10); // marker
+        }
 
         packetContainer.getWatchableCollectionModifier().write(0, watcher.getWatchableObjects());
         return this;

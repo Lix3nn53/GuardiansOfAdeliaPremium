@@ -1071,10 +1071,10 @@ public class RPGCharacterStats {
         if (cosmeticHologram == null) {
             int entityId = GuardiansOfAdelia.getEntityId();
             Location location = player.getLocation();
-            cosmeticHologram = new CosmeticHologram(entityId, location, "");
+            cosmeticHologram = new CosmeticHologram(entityId, location, cosmetic.getShowcase(color, tint));
         }
 
-        cosmeticHologram.start(player, cosmetic.getShowcase(color, tint));
+        cosmeticHologram.start(player);
     }
 
     public void removeCosmetic(CosmeticSlot cosmeticSlot) {
@@ -1110,13 +1110,13 @@ public class RPGCharacterStats {
                 int entityId = GuardiansOfAdelia.getEntityId();
                 Location location = player.getLocation();
 
-                cosmeticHologram = new CosmeticHologram(entityId, location, "");
-
                 Cosmetic cosmetic = CosmeticManager.get(record.cosmeticId());
                 CosmeticColor color = record.cosmeticColor();
                 int tint = record.cosmeticTint();
 
-                cosmeticHologram.start(player, cosmetic.getShowcase(color, tint));
+                cosmeticHologram = new CosmeticHologram(entityId, location, cosmetic.getShowcase(color, tint));
+
+                cosmeticHologram.start(player);
             }
         }.runTaskLater(GuardiansOfAdelia.getInstance(), 40L);
     }
