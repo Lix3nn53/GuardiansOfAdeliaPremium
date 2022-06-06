@@ -20,6 +20,7 @@ public class DungeonRoom {
     private final List<DungeonRoomDoor> doors;
     private final HashMap<Integer, List<DungeonRoomSpawner>> waveToSpawners;
     private final List<RandomSkillOnGroundWithOffset> skillsOnGround;
+    private final List<DungeonRoomLootChest> lootChests;
 
     /**
      * Rooms to start after this room ends
@@ -27,11 +28,13 @@ public class DungeonRoom {
     private final List<Integer> nextRooms;
 
     public DungeonRoom(List<DungeonRoomDoor> doors, HashMap<Integer, List<DungeonRoomSpawner>> waveToSpawners,
-                       List<RandomSkillOnGroundWithOffset> skillsOnGround, List<Integer> nextRooms) {
+                       List<RandomSkillOnGroundWithOffset> skillsOnGround,
+                       List<DungeonRoomLootChest> lootChests, List<Integer> nextRooms) {
         this.doors = doors;
         this.waveToSpawners = waveToSpawners;
         this.skillsOnGround = skillsOnGround;
         this.nextRooms = nextRooms;
+        this.lootChests = lootChests;
     }
 
     public void onDungeonStart(Location dungeonStart) {
@@ -41,7 +44,7 @@ public class DungeonRoom {
     }
 
     public void onRoomStart(DungeonRoomState roomState, int roomNo, HashMap<Integer, List<DungeonRoomSpawnerState>> wavesToSpawnerStates,
-                            Location dungeonStart, DungeonTheme theme, int darkness) {
+                            Location dungeonStart, DungeonTheme theme, int darkness, int roomCount) {
         for (DungeonRoomDoor door : doors) {
             door.close(dungeonStart);
         }
@@ -75,6 +78,10 @@ public class DungeonRoom {
         for (RandomSkillOnGroundWithOffset skillOnGround : skillsOnGround) {
             ArmorStand activate = skillOnGround.activate(dungeonStart, 40L);
             roomState.addSkillsOnGroundArmorStand(activate);
+        }
+
+        for (DungeonRoomLootChest lootChest : lootChests) {
+            lootChest.spawn(dungeonStart, roomNo, roomCount);
         }
     }
 
@@ -211,5 +218,13 @@ public class DungeonRoom {
 
     public List<RandomSkillOnGroundWithOffset> getSkillsOnGround() {
         return skillsOnGround;
+    }
+
+    public void addLootChest(DungeonRoomLootChest lootChest) {
+        lootChests.add(lootChest);
+    }
+
+    public List<DungeonRoomLootChest> getLootChests() {
+        return lootChests;
     }
 }

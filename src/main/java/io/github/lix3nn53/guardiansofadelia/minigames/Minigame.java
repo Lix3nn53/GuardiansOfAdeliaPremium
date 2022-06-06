@@ -1,6 +1,7 @@
 package io.github.lix3nn53.guardiansofadelia.minigames;
 
 import io.github.lix3nn53.guardiansofadelia.GuardiansOfAdelia;
+import io.github.lix3nn53.guardiansofadelia.cosmetic.CosmeticRoom;
 import io.github.lix3nn53.guardiansofadelia.creatures.pets.PetManager;
 import io.github.lix3nn53.guardiansofadelia.guardian.GuardianData;
 import io.github.lix3nn53.guardiansofadelia.guardian.GuardianDataManager;
@@ -345,13 +346,15 @@ public abstract class Minigame {
                 return false;
             }
             for (Player player : partyMembers) {
-                if (!player.getWorld().getName().equals("world")) {
+                if (!player.getWorld().getName().equals("world") || CosmeticRoom.isPlayerInRoom(player)) {
                     player.sendMessage(ChatPalette.RED + "You must be in open world");
                     return false;
                 }
+
                 if (!MiniGameManager.isInMinigame(player)) {
-                    if (!getPlayersInGame().contains(player) && getPlayersInGame().size() < this.teamAmount * this.teamSize) {
-                        return true;
+                    if (getPlayersInGame().size() >= this.teamAmount * this.teamSize) {
+                        player.sendMessage(ChatPalette.RED + "There is not enough space for your party");
+                        return false;
                     }
                 } else {
                     player.sendMessage(ChatPalette.RED + "You are already in a minigame");
@@ -364,20 +367,23 @@ public abstract class Minigame {
 
     private boolean addPlayerWithChecks(Player player) {
         if (!this.isInGame) {
-            if (!player.getWorld().getName().equals("world")) {
+            if (!player.getWorld().getName().equals("world") || CosmeticRoom.isPlayerInRoom(player)) {
                 player.sendMessage(ChatPalette.RED + "You must be in open world");
                 return false;
             }
             if (!MiniGameManager.isInMinigame(player)) {
-                if (!getPlayersInGame().contains(player) && getPlayersInGame().size() < this.teamAmount * this.teamSize) {
-                    addPlayerNoCheck(player);
-                    for (Player member : getPlayersInGame()) {
-                        MessageUtils.sendCenteredMessage(member, player.getName() + getGameColor() + " joined queue for " + getMinigameName());
-                    }
-                    MiniGameManager.addPlayer(player, this);
-                    onPlayerJoinQueueCountdownCheck(true);
-                    return true;
+                if (getPlayersInGame().size() >= this.teamAmount * this.teamSize) {
+                    player.sendMessage(ChatPalette.RED + "There is not enough space for you");
+                    return false;
                 }
+
+                addPlayerNoCheck(player);
+                for (Player member : getPlayersInGame()) {
+                    MessageUtils.sendCenteredMessage(member, player.getName() + getGameColor() + " joined queue for " + getMinigameName());
+                }
+                MiniGameManager.addPlayer(player, this);
+                onPlayerJoinQueueCountdownCheck(true);
+                return true;
             } else {
                 player.sendMessage(ChatPalette.RED + "You are already in a minigame");
                 return false;

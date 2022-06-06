@@ -44,9 +44,11 @@ public class MyPlayerTeleportEvent implements Listener {
 
         if (GuardianDataManager.hasGuardianData(player)) {
             GuardianData guardianData = GuardianDataManager.getGuardianData(player);
-            RPGCharacter activeCharacter = guardianData.getActiveCharacter();
-            RPGCharacterStats rpgCharacterStats = activeCharacter.getRpgCharacterStats();
-            rpgCharacterStats.reattachCosmeticHologram();
+            if (guardianData.hasActiveCharacter()) {
+                RPGCharacter activeCharacter = guardianData.getActiveCharacter();
+                RPGCharacterStats rpgCharacterStats = activeCharacter.getRpgCharacterStats();
+                rpgCharacterStats.reattachCosmeticHologram();
+            }
         }
     }
 }

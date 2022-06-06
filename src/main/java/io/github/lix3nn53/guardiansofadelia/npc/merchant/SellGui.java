@@ -133,13 +133,13 @@ public class SellGui extends GuiGeneric {
         }
         int[] coins = EconomyUtils.priceToCoins(this.totalValue);
         if (coins[0] > 0) {
-            InventoryUtils.giveItemToPlayer(player, new Coin(CoinType.COPPER, coins[0]).getCoin());
+            InventoryUtils.giveItemToPlayer(player, new Coin(CoinType.COPPER, coins[0]).getItemStack());
         }
         if (coins[1] > 0) {
-            InventoryUtils.giveItemToPlayer(player, new Coin(CoinType.SILVER, coins[1]).getCoin());
+            InventoryUtils.giveItemToPlayer(player, new Coin(CoinType.SILVER, coins[1]).getItemStack());
         }
         if (coins[2] > 0) {
-            InventoryUtils.giveItemToPlayer(player, new Coin(CoinType.GOLD, coins[2]).getCoin());
+            InventoryUtils.giveItemToPlayer(player, new Coin(CoinType.GOLD, coins[2]).getItemStack());
         }
         player.closeInventory();
         player.sendMessage(ChatPalette.GOLD + "Sold items to NPC for: " + EconomyUtils.priceToString(this.totalValue));

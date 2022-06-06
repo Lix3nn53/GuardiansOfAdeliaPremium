@@ -19,7 +19,6 @@ import me.libraryaddict.disguise.disguisetypes.watchers.LivingWatcher;
 import me.libraryaddict.disguise.disguisetypes.watchers.PlayerWatcher;
 import org.bukkit.Location;
 import org.bukkit.entity.ArmorStand;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
@@ -28,7 +27,6 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.HashMap;
-import java.util.List;
 
 public class CosmeticRoom {
 
@@ -130,15 +128,6 @@ public class CosmeticRoom {
         players.put(player, cosmeticRoomData);
     }
 
-    public static void onPlayerQuit(Player player) {
-        leaveRoom(player);
-
-        List<Entity> passengers = player.getPassengers();
-        for (Entity passenger : passengers) {
-            passenger.remove();
-        }
-    }
-
     public static void leaveRoom(Player player) {
         if (!players.containsKey(player)) return;
 
@@ -155,14 +144,14 @@ public class CosmeticRoom {
         }
 
         Location backLocation = cosmeticRoomData.getBackLocation();
-        if (player.isOnline() && backLocation != null) {
+        if (backLocation != null) {
             player.teleport(backLocation);
+        }
 
-            GuardiansOfAdelia instance = GuardiansOfAdelia.getInstance();
-            for (Player other : players.keySet()) {
-                other.showPlayer(instance, player);
-                player.showPlayer(instance, other);
-            }
+        GuardiansOfAdelia instance = GuardiansOfAdelia.getInstance();
+        for (Player other : players.keySet()) {
+            other.showPlayer(instance, player);
+            player.showPlayer(instance, other);
         }
 
         new BukkitRunnable() {

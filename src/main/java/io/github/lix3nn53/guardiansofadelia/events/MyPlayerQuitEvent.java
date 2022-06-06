@@ -1,6 +1,5 @@
 package io.github.lix3nn53.guardiansofadelia.events;
 
-import io.github.lix3nn53.guardiansofadelia.cosmetic.CosmeticRoom;
 import io.github.lix3nn53.guardiansofadelia.creatures.pets.PetManager;
 import io.github.lix3nn53.guardiansofadelia.guardian.GuardianData;
 import io.github.lix3nn53.guardiansofadelia.guardian.GuardianDataManager;
@@ -49,7 +48,6 @@ public class MyPlayerQuitEvent implements Listener {
         TriggerListener.onPlayerQuit(player);
         DoNotGetAwayManager.onQuit(player);
         MiniGameManager.onQuit(player);
-        CosmeticRoom.onPlayerQuit(player);
 
         return true;
     }

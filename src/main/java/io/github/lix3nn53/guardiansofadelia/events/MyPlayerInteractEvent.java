@@ -15,8 +15,6 @@ import io.github.lix3nn53.guardiansofadelia.jobs.crafting.CraftingType;
 import io.github.lix3nn53.guardiansofadelia.menu.crafting.GuiCraftingLevelSelection;
 import io.github.lix3nn53.guardiansofadelia.minigames.MiniGameManager;
 import io.github.lix3nn53.guardiansofadelia.minigames.dungeon.DungeonTheme;
-import io.github.lix3nn53.guardiansofadelia.rewards.chest.LootChest;
-import io.github.lix3nn53.guardiansofadelia.rewards.chest.LootChestManager;
 import io.github.lix3nn53.guardiansofadelia.text.ChatPalette;
 import io.github.lix3nn53.guardiansofadelia.transportation.TeleportScroll;
 import io.github.lix3nn53.guardiansofadelia.transportation.TeleportationUtils;
@@ -196,7 +194,14 @@ public class MyPlayerInteractEvent implements Listener {
                             gui.openInventory(player);
                         }
                     }
-                } else if (clickedBlockType.equals(Material.CHEST)) {
+                } else if (clickedBlockType.equals(Material.BARREL) || clickedBlockType.equals(Material.ENDER_CHEST)
+                        || clickedBlockType.equals(Material.TRAPPED_CHEST) || clickedBlockType.equals(Material.CHEST_MINECART)
+                        || clickedBlockType.equals(Material.CRAFTING_TABLE) || clickedBlockType.equals(Material.RESPAWN_ANCHOR)
+                        || clickedBlockType.equals(Material.LODESTONE) || clickedBlockType.equals(Material.CHEST)) {
+                    event.setCancelled(true);
+                }
+
+                /*else if (clickedBlockType.equals(Material.CHEST)) {
                     //LOOT CHEST
                     event.setCancelled(true);
                     Location location = clickedBlock.getLocation();
@@ -204,12 +209,7 @@ public class MyPlayerInteractEvent implements Listener {
                     if (lootChest != null) {
                         lootChest.openLootInventory(player);
                     }
-                } else if (clickedBlockType.equals(Material.BARREL) || clickedBlockType.equals(Material.ENDER_CHEST)
-                        || clickedBlockType.equals(Material.TRAPPED_CHEST) || clickedBlockType.equals(Material.CHEST_MINECART)
-                        || clickedBlockType.equals(Material.CRAFTING_TABLE) || clickedBlockType.equals(Material.RESPAWN_ANCHOR)
-                        || clickedBlockType.equals(Material.LODESTONE)) {
-                    event.setCancelled(true);
-                }
+                }*/
             }
         }
     }

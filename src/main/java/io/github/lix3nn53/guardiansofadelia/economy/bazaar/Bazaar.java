@@ -102,21 +102,21 @@ public class Bazaar {
                     int[] coins = EconomyUtils.priceToCoins(price);
 
                     if (coins[0] > 0) {
-                        ItemStack coin = new Coin(CoinType.COPPER, coins[0]).getCoin();
+                        ItemStack coin = new Coin(CoinType.COPPER, coins[0]).getItemStack();
                         boolean addedToBazaarStorage = guardianData.addToBazaarStorage(coin);
                         if (!addedToBazaarStorage) {
                             InventoryUtils.giveItemToPlayer(owner, coin);
                         }
                     }
                     if (coins[1] > 0) {
-                        ItemStack coin = new Coin(CoinType.SILVER, coins[1]).getCoin();
+                        ItemStack coin = new Coin(CoinType.SILVER, coins[1]).getItemStack();
                         boolean addedToBazaarStorage = guardianData.addToBazaarStorage(coin);
                         if (!addedToBazaarStorage) {
                             InventoryUtils.giveItemToPlayer(owner, coin);
                         }
                     }
                     if (coins[2] > 0) {
-                        ItemStack coin = new Coin(CoinType.GOLD, coins[2]).getCoin();
+                        ItemStack coin = new Coin(CoinType.GOLD, coins[2]).getItemStack();
                         boolean addedToBazaarStorage = guardianData.addToBazaarStorage(coin);
                         if (!addedToBazaarStorage) {
                             InventoryUtils.giveItemToPlayer(owner, coin);

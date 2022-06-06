@@ -155,13 +155,13 @@ public class CommandAdminItem implements CommandExecutor {
                         int[] coins = EconomyUtils.priceToCoins(price);
 
                         if (coins[0] > 0) {
-                            InventoryUtils.giveItemToPlayer(player, new Coin(CoinType.COPPER, coins[0]).getCoin());
+                            InventoryUtils.giveItemToPlayer(player, new Coin(CoinType.COPPER, coins[0]).getItemStack());
                         }
                         if (coins[1] > 0) {
-                            InventoryUtils.giveItemToPlayer(player, new Coin(CoinType.SILVER, coins[1]).getCoin());
+                            InventoryUtils.giveItemToPlayer(player, new Coin(CoinType.SILVER, coins[1]).getItemStack());
                         }
                         if (coins[2] > 0) {
-                            InventoryUtils.giveItemToPlayer(player, new Coin(CoinType.GOLD, coins[2]).getCoin());
+                            InventoryUtils.giveItemToPlayer(player, new Coin(CoinType.GOLD, coins[2]).getItemStack());
                         }
                     } catch (NumberFormatException e) {
                         player.sendMessage(ChatPalette.GOLD + "(Enter a number)");

@@ -23,7 +23,7 @@ public class MobDropGenerator {
 
     private static final float DROP_RATE = 0.05f;
 
-    public static List<ItemStack> getDrops(int entityLevel, boolean isDungeon) {
+    public static List<ItemStack> getDrops(GearLevel gearLevel, boolean isDungeon, boolean isLootChest) {
         List<ItemStack> drops = new ArrayList<>();
 
         float random = (float) Math.random();
@@ -34,22 +34,40 @@ public class MobDropGenerator {
         }
 
         if (isDungeon) {
-            dropRate *= 1.2f;
+            dropRate += 0.02f;
+        }
+        if (isLootChest) {
+            dropRate += 0.04f;
         }
 
         if (random < dropRate) {
-            GearLevel gearLevel = GearLevel.getGearLevel(entityLevel);
-
             //Tier
-            float mysticTierChange = 0.05f;
-            float rareTierChange = mysticTierChange + 0.4f;
-            float tierRandom = (float) Math.random(); //Common or rare?
+            float legendaryTierChance = 0f;
+            float mysticTierChance = 0.05f;
+            float rareTierChance = 0.4f;
+            if (isDungeon) {
+                legendaryTierChance += 0.01f;
+                mysticTierChance += 0.02f;
+                rareTierChance += 0.2f;
+            }
+            if (isLootChest) {
+                legendaryTierChance += 0.02f;
+                mysticTierChance += 0.04f;
+                rareTierChance += 0.4f;
+            }
+
+            mysticTierChance += legendaryTierChance;
+            rareTierChance += mysticTierChance;
+
+            float tierRandom = (float) Math.random();
 
             ItemTier tier = ItemTier.COMMON;
 
-            if (tierRandom < mysticTierChange) {
+            if (tierRandom < legendaryTierChance) {
+                tier = ItemTier.LEGENDARY;
+            } else if (tierRandom < mysticTierChance) {
                 tier = ItemTier.MYSTIC;
-            } else if (tierRandom < rareTierChange) {
+            } else if (tierRandom < rareTierChance) {
                 tier = ItemTier.RARE;
             }
 

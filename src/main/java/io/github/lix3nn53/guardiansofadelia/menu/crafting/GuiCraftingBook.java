@@ -106,6 +106,9 @@ public class GuiCraftingBook extends GuiBookGeneric {
 
                             if (hasIngredients) {
                                 ItemStack current = event.getCurrentItem();
+                                if (current == null || current.getType().equals(Material.AIR)) {
+                                    return;
+                                }
                                 ItemStack clone = current.clone();
 
                                 jobExpToGive = jobExpToGive * craftingLevel;

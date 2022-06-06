@@ -14,9 +14,10 @@ depend:
   - LuckPerms
   - WorldEdit
   - WorldGuard
-  - MythicMobs
   - NoteBlockAPI
   - CrazyAdvancementsAPI
+  - ModelEngine
+  - MythicMobs
 commands:
   admin:
     description: Admin command

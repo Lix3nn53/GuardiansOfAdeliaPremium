@@ -22,7 +22,7 @@ public class Coin {
         return amount;
     }
 
-    public ItemStack getCoin() {
+    public ItemStack getItemStack() {
         if (amount > 0) {
             ItemStack money = new ItemStack(Material.IRON_INGOT, amount);
             ItemMeta itemMeta = money.getItemMeta();
@@ -43,6 +43,7 @@ public class Coin {
 
             return money;
         }
+
         return new ItemStack(Material.AIR);
     }
 }

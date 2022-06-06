@@ -16,7 +16,9 @@ import io.github.lix3nn53.guardiansofadelia.minigames.dungeon.DungeonInstance;
 import io.github.lix3nn53.guardiansofadelia.minigames.dungeon.DungeonTheme;
 import io.github.lix3nn53.guardiansofadelia.minigames.dungeon.room.DungeonRoom;
 import io.github.lix3nn53.guardiansofadelia.minigames.dungeon.room.DungeonRoomDoor;
+import io.github.lix3nn53.guardiansofadelia.minigames.dungeon.room.DungeonRoomLootChest;
 import io.github.lix3nn53.guardiansofadelia.minigames.dungeon.room.DungeonRoomSpawner;
+import io.github.lix3nn53.guardiansofadelia.rewards.chest.LootChestTier;
 import io.github.lix3nn53.guardiansofadelia.text.ChatPalette;
 import io.github.lix3nn53.guardiansofadelia.utilities.config.DungeonConfiguration;
 import io.github.lix3nn53.guardiansofadelia.utilities.config.SkillOnGroundConfigurations;
@@ -57,6 +59,7 @@ public class CommandAdminDungeon implements CommandExecutor {
                 player.sendMessage(ChatPalette.GOLD + "/admindungeon add skill <roomNo>" + ChatPalette.GOLD + " !!look at location block!!");
                 player.sendMessage(ChatPalette.GOLD + "/admindungeon add skill global" + ChatPalette.GOLD + " !!look at location block!!");
                 player.sendMessage(ChatPalette.GOLD + "/admindungeon add checkpoint" + ChatPalette.GOLD + " !!look at location block!!");
+                player.sendMessage(ChatPalette.GOLD + "/admindungeon add chest <roomNo>" + ChatPalette.GOLD + " !!look at CHEST!!");
                 player.sendMessage(ChatPalette.GOLD + "/admindungeon set bossRoom " + ChatPalette.GOLD + " !!select WorldEdit region first!!");
                 player.sendMessage(ChatPalette.GOLD + "/admindungeon set prizeloc" + ChatPalette.GOLD + " !!look at block!!");
             } else if (args[0].equals("reload")) {
@@ -67,8 +70,10 @@ public class CommandAdminDungeon implements CommandExecutor {
                 SkillOnGroundConfigurations.loadConfigs();
                 DungeonConfiguration.createConfigs();
                 DungeonConfiguration.loadConfigs();
+                player.sendMessage(ChatPalette.GREEN + "Configs reloaded");
             } else if (args[0].equals("save")) {
                 DungeonConfiguration.writeConfigs();
+                player.sendMessage(ChatPalette.GREEN + "Saved");
             } else if (args[0].equals("select")) {
                 String key = args[1].toUpperCase();
 
@@ -143,8 +148,9 @@ public class CommandAdminDungeon implements CommandExecutor {
                         HashMap<Integer, List<DungeonRoomSpawner>> waves = new HashMap<>();
                         List<Integer> nextRooms = new ArrayList<>();
                         List<RandomSkillOnGroundWithOffset> skillsOnGround = new ArrayList<>();
+                        List<DungeonRoomLootChest> lootChests = new ArrayList<>();
 
-                        DungeonRoom dungeonRoom = new DungeonRoom(doors, waves, skillsOnGround, nextRooms);
+                        DungeonRoom dungeonRoom = new DungeonRoom(doors, waves, skillsOnGround, lootChests, nextRooms);
 
                         dungeonTheme.addDungeonRoom(roomNo, dungeonRoom);
                         player.sendMessage(ChatPalette.GREEN_DARK + "Added new room");
@@ -262,6 +268,36 @@ public class CommandAdminDungeon implements CommandExecutor {
                         }
 
                         player.sendMessage(ChatPalette.GREEN_DARK + "Added new checkpoint");
+                        break;
+                    }
+                    case "chest": {
+                        int roomNo = Integer.parseInt(args[2]);
+
+                        HashMap<String, DungeonTheme> dungeonThemes = MiniGameManager.getDungeonThemes();
+                        DungeonTheme dungeonTheme = dungeonThemes.get(key);
+
+                        Block targetBlock = player.getTargetBlock(null, 12);
+                        Material type = targetBlock.getType();
+
+                        if (!type.equals(Material.CHEST)) {
+                            player.sendMessage(ChatPalette.RED + "You must be looking at a chest");
+                            return false;
+                        }
+
+                        Location add = targetBlock.getLocation().add(0.5, 0, 0.5);
+
+                        targetBlock.setType(Material.AIR);
+
+                        Location start = MiniGameManager.getDungeonInstance(key, 1).getStartLocation(1);
+                        Vector offset = start.toVector().subtract(add.toVector()).multiply(-1);
+
+                        LootChestTier lootChestTier = LootChestTier.fromLevel(dungeonTheme.getLevelReq());
+                        DungeonRoomLootChest dungeonRoomLootChest = new DungeonRoomLootChest(lootChestTier, offset, 0, 0);
+
+                        DungeonRoom dungeonRoom = dungeonTheme.getDungeonRoom(roomNo);
+                        dungeonRoom.addLootChest(dungeonRoomLootChest);
+                        player.sendMessage(ChatPalette.GREEN_DARK + "Added new loot chest");
+                        remakeHolograms(key);
                         break;
                     }
                 }

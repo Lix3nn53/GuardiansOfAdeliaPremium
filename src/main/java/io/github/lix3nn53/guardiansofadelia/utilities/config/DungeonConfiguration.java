@@ -9,7 +9,9 @@ import io.github.lix3nn53.guardiansofadelia.minigames.dungeon.DungeonInstance;
 import io.github.lix3nn53.guardiansofadelia.minigames.dungeon.DungeonTheme;
 import io.github.lix3nn53.guardiansofadelia.minigames.dungeon.room.DungeonRoom;
 import io.github.lix3nn53.guardiansofadelia.minigames.dungeon.room.DungeonRoomDoor;
+import io.github.lix3nn53.guardiansofadelia.minigames.dungeon.room.DungeonRoomLootChest;
 import io.github.lix3nn53.guardiansofadelia.minigames.dungeon.room.DungeonRoomSpawner;
+import io.github.lix3nn53.guardiansofadelia.rewards.chest.LootChestTier;
 import io.github.lix3nn53.guardiansofadelia.transportation.portals.PortalColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -144,9 +146,24 @@ public class DungeonConfiguration {
                     skillsOnGround.add(skillOnGroundWithOffset);
                 }
 
+                List<DungeonRoomLootChest> lootChests = new ArrayList<>();
+                for (int groundIndex = 1; groundIndex <= 999; groundIndex++) {
+                    if (!section.contains("room" + roomIndex + ".lootChest" + groundIndex)) break;
+
+                    float x = (float) section.getDouble("room" + roomIndex + ".lootChest" + groundIndex + ".x");
+                    float y = (float) section.getDouble("room" + roomIndex + ".lootChest" + groundIndex + ".y");
+                    float z = (float) section.getDouble("room" + roomIndex + ".lootChest" + groundIndex + ".z");
+                    float yaw = (float) section.getDouble("room" + roomIndex + ".lootChest" + groundIndex + ".yaw");
+                    float pitch = (float) section.getDouble("room" + roomIndex + ".lootChest" + groundIndex + ".pitch");
+
+                    Vector vector = new Vector(x, y, z);
+                    LootChestTier lootChestTier = LootChestTier.fromLevel(levelReq);
+                    lootChests.add(new DungeonRoomLootChest(lootChestTier, vector, yaw, pitch));
+                }
+
                 List<Integer> nextRooms = section.getIntegerList("room" + roomIndex + ".nextRooms");
 
-                DungeonRoom dungeonRoom = new DungeonRoom(dungeonRoomDoors, waveToSpawners, skillsOnGround, nextRooms);
+                DungeonRoom dungeonRoom = new DungeonRoom(dungeonRoomDoors, waveToSpawners, skillsOnGround, lootChests, nextRooms);
                 dungeonRooms.put(roomIndex, dungeonRoom);
             }
 
@@ -283,6 +300,21 @@ public class DungeonConfiguration {
                     currentThemeConfig.set("room" + roomKey + ".skillOnGround" + skillIndex + ".loc" + ".z", offset.getZ());
 
                     skillIndex++;
+                }
+
+                List<DungeonRoomLootChest> lootChests = dungeonRoom.getLootChests();
+                int lootChestIndex = 1;
+                for (DungeonRoomLootChest lootChest : lootChests) {
+
+                    Vector offset = lootChest.getOffset();
+
+                    currentThemeConfig.set("room" + roomKey + ".lootChest" + lootChestIndex + ".x", offset.getX());
+                    currentThemeConfig.set("room" + roomKey + ".lootChest" + lootChestIndex + ".y", offset.getY());
+                    currentThemeConfig.set("room" + roomKey + ".lootChest" + lootChestIndex + ".z", offset.getZ());
+                    currentThemeConfig.set("room" + roomKey + ".lootChest" + lootChestIndex + ".yaw", lootChest.getYaw());
+                    currentThemeConfig.set("room" + roomKey + ".lootChest" + lootChestIndex + ".pitch", lootChest.getPitch());
+
+                    lootChestIndex++;
                 }
 
                 currentThemeConfig.set("room" + roomKey + ".nextRooms", dungeonRoom.getNextRooms());

@@ -1,8 +1,8 @@
 package io.github.lix3nn53.guardiansofadelia.utilities.config;
 
-import io.github.lix3nn53.guardiansofadelia.rewards.chest.LootChest;
 import io.github.lix3nn53.guardiansofadelia.rewards.chest.LootChestManager;
 import io.github.lix3nn53.guardiansofadelia.rewards.chest.LootChestTier;
+import io.github.lix3nn53.guardiansofadelia.rewards.chest.OpenWorldLootChest;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -41,30 +41,34 @@ public class LootChestConfiguration {
             float x = (float) section.getDouble("x");
             float y = (float) section.getDouble("y");
             float z = (float) section.getDouble("z");
-            Location location = new Location(world, x, y, z);
+            float yaw = (float) section.getDouble("yaw");
+            float pitch = (float) section.getDouble("pitch");
+            Location location = new Location(world, x, y, z, yaw, pitch);
             String tierStr = section.getString("tier");
             LootChestTier lootChestTier = LootChestTier.valueOf(tierStr);
-            LootChest lootChest = new LootChest(location, lootChestTier);
+            OpenWorldLootChest lootChest = new OpenWorldLootChest(location, lootChestTier);
 
             LootChestManager.addLootChest(lootChest);
         }
     }
 
     private static void writeLootChests(String fileName) {
-        HashMap<String, List<LootChest>> chunkKeyToLootChests = LootChestManager.getChunkKeyToLootChests();
+        HashMap<String, List<OpenWorldLootChest>> chunkKeyToLootChests = LootChestManager.getChunkKeyToLootChests();
 
         int i = 1;
         for (String chunkKey : chunkKeyToLootChests.keySet()) {
-            List<LootChest> lootChests = chunkKeyToLootChests.get(chunkKey);
+            List<OpenWorldLootChest> lootChests = chunkKeyToLootChests.get(chunkKey);
 
-            for (LootChest lootChest : lootChests) {
+            for (OpenWorldLootChest lootChest : lootChests) {
                 Location location = lootChest.getLocation();
                 LootChestTier lootChestTier = lootChest.getLootChestTier();
 
                 lootChestsConfig.set("chest" + i + ".world", location.getWorld().getName());
-                lootChestsConfig.set("chest" + i + ".x", location.getBlockX());
-                lootChestsConfig.set("chest" + i + ".y", location.getBlockY());
-                lootChestsConfig.set("chest" + i + ".z", location.getBlockZ());
+                lootChestsConfig.set("chest" + i + ".x", location.getX());
+                lootChestsConfig.set("chest" + i + ".y", location.getY());
+                lootChestsConfig.set("chest" + i + ".z", location.getZ());
+                lootChestsConfig.set("chest" + i + ".yaw", location.getYaw());
+                lootChestsConfig.set("chest" + i + ".pitch", location.getPitch());
                 lootChestsConfig.set("chest" + i + ".tier", lootChestTier.name());
 
                 i++;

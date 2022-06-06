@@ -24,7 +24,7 @@ import java.util.HashMap;
 public class DungeonPrizeChestManager {
 
     private static final float RADIUS = 4;
-    private static final float HEIGHT = 1.5f;
+    private static final float HEIGHT = 0.5f;
 
     private static final HashMap<ArmorStand, PrizeChest> entityToPrizeChest = new HashMap<>();
     private static final HashMap<ArmorStand, ArmorStand> entityToIcon = new HashMap<>();

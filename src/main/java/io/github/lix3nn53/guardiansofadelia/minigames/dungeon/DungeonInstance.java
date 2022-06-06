@@ -103,7 +103,8 @@ public class DungeonInstance extends Minigame {
                     DungeonRoomState dungeonRoomState = roomNoToRoomState.get(roomNo);
 
                     HashMap<Integer, List<DungeonRoomSpawnerState>> wavesToSpawnerStates = roomToWavesToSpawnerStates.get(roomNo);
-                    dungeonRoom.onRoomStart(dungeonRoomState, roomNo, wavesToSpawnerStates, getStartLocation(1), theme, darkness);
+                    dungeonRoom.onRoomStart(dungeonRoomState, roomNo, wavesToSpawnerStates,
+                            getStartLocation(1), theme, darkness, roomNoToRoomState.size());
                 }
 
                 startDarknessRunnable();
@@ -240,7 +241,8 @@ public class DungeonInstance extends Minigame {
                             DungeonRoomState nextRoomState = roomNoToRoomState.get(nextRoomNo);
 
                             HashMap<Integer, List<DungeonRoomSpawnerState>> nextRoomWavesToSpawnerStates = roomToWavesToSpawnerStates.get(nextRoomNo);
-                            nextRoom.onRoomStart(nextRoomState, nextRoomNo, nextRoomWavesToSpawnerStates, this.getStartLocation(1), this.theme, this.darkness);
+                            nextRoom.onRoomStart(nextRoomState, nextRoomNo, nextRoomWavesToSpawnerStates,
+                                    this.getStartLocation(1), this.theme, this.darkness, roomNoToRoomState.size());
                         }
 
                         newActiveRooms.remove(Integer.valueOf(roomNo));
@@ -275,7 +277,7 @@ public class DungeonInstance extends Minigame {
         topLines.add(ChatColor.DARK_PURPLE + "Darkness: " + ChatColor.RESET + darkness);
 
         int rooms = 0;
-        if (roomNoToRoomState != null) rooms = roomNoToRoomState.size();
+        if (roomNoToRoomState != null) rooms = roomNoToRoomState.size() - 1;
         topLines.add(ChatColor.GOLD + "Rooms left: " + ChatColor.RESET + rooms);
 
         return topLines;
@@ -310,6 +312,18 @@ public class DungeonInstance extends Minigame {
         Set<Integer> dungeonRoomKeys = theme.getDungeonRoomKeys();
 
         Location startLocation = getStartLocation(1);
+
+        List<RandomSkillOnGroundWithOffset> globalSkillsOnGround = theme.getSkillsOnGround();
+        for (int i = 0; i < globalSkillsOnGround.size(); i++) {
+            RandomSkillOnGroundWithOffset skill = globalSkillsOnGround.get(i);
+            Vector offset = skill.getOffset();
+
+            Location add = startLocation.clone().add(offset);
+
+            Hologram hologram = new Hologram(add, ChatPalette.PURPLE + "GLOBAL Skill-" + i);
+            HologramManager.addHologram(hologram);
+            debugHolograms.add(hologram);
+        }
 
         for (int roomKey : dungeonRoomKeys) {
             DungeonRoom room = theme.getDungeonRoom(roomKey);
@@ -351,6 +365,32 @@ public class DungeonInstance extends Minigame {
                     HologramManager.addHologram(hologram);
                     debugHolograms.add(hologram);
                 }
+            }
+
+            List<DungeonRoomLootChest> lootChests = room.getLootChests();
+            for (int i = 0; i < lootChests.size(); i++) {
+                DungeonRoomLootChest lootChest = lootChests.get(i);
+
+                Vector offset = lootChest.getOffset();
+
+                Location add = startLocation.clone().add(offset);
+
+                Hologram hologram = new Hologram(add, ChatPalette.GOLD + "Room-" + roomKey + " LootChest-" + i);
+                HologramManager.addHologram(hologram);
+                debugHolograms.add(hologram);
+            }
+
+            List<RandomSkillOnGroundWithOffset> skillsOnGround = room.getSkillsOnGround();
+            for (int i = 0; i < skillsOnGround.size(); i++) {
+                RandomSkillOnGroundWithOffset skill = skillsOnGround.get(i);
+
+                Vector offset = skill.getOffset();
+
+                Location add = startLocation.clone().add(offset);
+
+                Hologram hologram = new Hologram(add, ChatPalette.PURPLE_LIGHT + "Room-" + roomKey + " Skill-" + i);
+                HologramManager.addHologram(hologram);
+                debugHolograms.add(hologram);
             }
         }
     }

@@ -65,24 +65,24 @@ public class GuiCoinConverter extends GuiGeneric {
             if (currentType.equals(Material.IRON_INGOT)) {
                 if (InventoryUtils.inventoryContains(playerInventory, Material.GOLD_INGOT, 1)) {
                     InventoryUtils.removeMaterialFromInventory(playerInventory, Material.GOLD_INGOT, 1);
-                    InventoryUtils.giveItemToPlayer(player, new Coin(CoinType.COPPER, 64).getCoin());
+                    InventoryUtils.giveItemToPlayer(player, new Coin(CoinType.COPPER, 64).getItemStack());
                 }
             } else if (currentType.equals(Material.GOLD_INGOT)) {
                 if (current.getAmount() == 1) {
                     if (InventoryUtils.inventoryContains(playerInventory, Material.IRON_INGOT, 64)) {
                         InventoryUtils.removeMaterialFromInventory(playerInventory, Material.IRON_INGOT, 64);
-                        InventoryUtils.giveItemToPlayer(player, new Coin(CoinType.SILVER, 1).getCoin());
+                        InventoryUtils.giveItemToPlayer(player, new Coin(CoinType.SILVER, 1).getItemStack());
                     }
                 } else if (current.getAmount() == 64) {
                     if (InventoryUtils.inventoryContains(playerInventory, Material.DIAMOND, 1)) {
                         InventoryUtils.removeMaterialFromInventory(playerInventory, Material.DIAMOND, 1);
-                        InventoryUtils.giveItemToPlayer(player, new Coin(CoinType.SILVER, 64).getCoin());
+                        InventoryUtils.giveItemToPlayer(player, new Coin(CoinType.SILVER, 64).getItemStack());
                     }
                 }
             } else if (currentType.equals(Material.DIAMOND)) {
                 if (InventoryUtils.inventoryContains(playerInventory, Material.GOLD_INGOT, 64)) {
                     InventoryUtils.removeMaterialFromInventory(playerInventory, Material.GOLD_INGOT, 64);
-                    InventoryUtils.giveItemToPlayer(player, new Coin(CoinType.GOLD, 1).getCoin());
+                    InventoryUtils.giveItemToPlayer(player, new Coin(CoinType.GOLD, 1).getItemStack());
                 }
             }
         }
