@@ -1,8 +1,8 @@
 package io.github.lix3nn53.guardiansofadelia.commands.admin;
 
+import io.github.lix3nn53.guardiansofadelia.creatures.mythicmobs.MMSpawnerManager;
+import io.github.lix3nn53.guardiansofadelia.creatures.mythicmobs.spawner.MMSpawner;
 import io.github.lix3nn53.guardiansofadelia.menu.admin.GuiAdminDailyRewards;
-import io.github.lix3nn53.guardiansofadelia.rewards.chest.ALootChest;
-import io.github.lix3nn53.guardiansofadelia.rewards.chest.LootChestManager;
 import io.github.lix3nn53.guardiansofadelia.rewards.chest.LootChestTier;
 import io.github.lix3nn53.guardiansofadelia.rewards.chest.OpenWorldLootChest;
 import io.github.lix3nn53.guardiansofadelia.text.ChatPalette;
@@ -56,9 +56,9 @@ public class CommandAdminReward implements CommandExecutor {
                 OpenWorldLootChest lootChest = new OpenWorldLootChest(location, value);
                 lootChest.spawn();
 
-                LootChestManager.addLootChest(lootChest);
+                MMSpawnerManager.addGlobalSpawner(lootChest);
 
-                player.sendMessage(ChatPalette.GREEN_DARK + "Added loot chest, tier: " + value.toString());
+                player.sendMessage(ChatPalette.GREEN_DARK + "Added loot chest, tier: " + value);
                 // lootChest.startPlayingParticles();
                 targetBlock.setType(Material.AIR);
                 lootChest.spawn();
@@ -70,7 +70,7 @@ public class CommandAdminReward implements CommandExecutor {
 
                     LivingEntity livingEntity = (LivingEntity) entity;
 
-                    ALootChest lootChest = LootChestManager.getLootChest(livingEntity);
+                    MMSpawner lootChest = MMSpawnerManager.getSpawnerOfEntity(livingEntity);
 
                     if (lootChest == null) continue;
 

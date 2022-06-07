@@ -5,6 +5,8 @@ import io.github.lix3nn53.guardiansofadelia.bungeelistener.products.BoostPremium
 import io.github.lix3nn53.guardiansofadelia.commands.admin.CommandAdmin;
 import io.github.lix3nn53.guardiansofadelia.creatures.drops.DropProtectionManager;
 import io.github.lix3nn53.guardiansofadelia.creatures.drops.MobDropGenerator;
+import io.github.lix3nn53.guardiansofadelia.creatures.mythicmobs.MMSpawnerManager;
+import io.github.lix3nn53.guardiansofadelia.creatures.mythicmobs.spawner.MMSpawner;
 import io.github.lix3nn53.guardiansofadelia.guardian.GuardianData;
 import io.github.lix3nn53.guardiansofadelia.guardian.GuardianDataManager;
 import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGCharacter;
@@ -14,9 +16,8 @@ import io.github.lix3nn53.guardiansofadelia.items.GearLevel;
 import io.github.lix3nn53.guardiansofadelia.jobs.gathering.GatheringManager;
 import io.github.lix3nn53.guardiansofadelia.minigames.MiniGameManager;
 import io.github.lix3nn53.guardiansofadelia.quests.Quest;
-import io.github.lix3nn53.guardiansofadelia.rewards.chest.ALootChest;
-import io.github.lix3nn53.guardiansofadelia.rewards.chest.LootChestManager;
 import io.lumine.mythic.bukkit.events.MythicMobDeathEvent;
+import org.bukkit.World;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -46,6 +47,11 @@ public class KillProtectionManager {
      * @param mythicEvent
      */
     public static void onLivingEntityDeath(LivingEntity livingTarget, MythicMobDeathEvent mythicEvent) {
+        MMSpawner spawnerOfEntity = MMSpawnerManager.getSpawnerOfEntity(livingTarget);
+        if (spawnerOfEntity != null) {
+            spawnerOfEntity.onDeath();
+        }
+
         if (livingEntityToDamages.containsKey(livingTarget)) {
             PlayerDamage playerDamage = livingEntityToDamages.get(livingTarget);
             livingEntityToDamages.remove(livingTarget);
@@ -57,7 +63,7 @@ public class KillProtectionManager {
             boolean isDungeon = once.getWorld().getName().equalsIgnoreCase("Dungeons");
 
             //drops
-            ArrayList<ItemStack> drops = new ArrayList<>();
+            List<ItemStack> drops = new ArrayList<>();
             int mobLevel = 0;
             if (mythicEvent != null) {
                 mobLevel = (int) (mythicEvent.getMobLevel() + 0.5);
@@ -113,23 +119,12 @@ public class KillProtectionManager {
                 }
             }
 
-            // Drops
-            // TODO mythic mobs drops does not work
-            List<ItemStack> mythicDrops = mythicEvent.getDrops();
-            mythicDrops.addAll(drops);
-
-            // Loot Chest
-            ALootChest lootChest = LootChestManager.getLootChest(livingTarget);
-            if (lootChest != null) {
-                mythicDrops = lootChest.onDeath();
-            }
-
-            for (ItemStack itemStack : mythicDrops) {
+            // Drop items
+            World world = livingTarget.getWorld();
+            for (ItemStack itemStack : drops) {
                 DropProtectionManager.setItem(itemStack, bestPlayers);
-                livingTarget.getWorld().dropItemNaturally(livingTarget.getLocation(), itemStack);
+                world.dropItemNaturally(livingTarget.getLocation(), itemStack);
             }
-
-            mythicEvent.setDrops(mythicDrops);
         }
     }
 

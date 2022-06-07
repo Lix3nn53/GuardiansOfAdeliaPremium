@@ -130,7 +130,6 @@ public class SpeechBubble {
 
         new BukkitRunnable() {
 
-            FakeHologram armorStand;
             int ticksPass = 0;
 
             @Override

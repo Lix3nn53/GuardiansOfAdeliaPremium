@@ -1,27 +1,23 @@
-package io.github.lix3nn53.guardiansofadelia.rewards.chest;
+package io.github.lix3nn53.guardiansofadelia.creatures.mythicmobs.spawner;
 
 import io.github.lix3nn53.guardiansofadelia.GuardiansOfAdelia;
-import io.github.lix3nn53.guardiansofadelia.utilities.PersistentDataContainerUtil;
+import io.github.lix3nn53.guardiansofadelia.creatures.mythicmobs.MMSpawnerManager;
 import io.lumine.mythic.api.exceptions.InvalidMobTypeException;
 import io.lumine.mythic.bukkit.BukkitAPIHelper;
 import io.lumine.mythic.bukkit.MythicBukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
-import org.bukkit.inventory.ItemStack;
 
-import java.util.List;
+public abstract class MMSpawner {
 
-public abstract class ALootChest {
-
-    protected final LootChestTier lootChestTier;
+    protected final String mobKey;
     protected Location location;
     protected LivingEntity spawned;
 
-    public ALootChest(Location location, LootChestTier lootChestTier) {
+    public MMSpawner(String mobKey, Location location) {
+        this.mobKey = mobKey;
         this.location = location;
-        this.lootChestTier = lootChestTier;
-        // startPlayingParticles();
     }
 
     public Location getLocation() {
@@ -32,28 +28,20 @@ public abstract class ALootChest {
         this.location = location;
     }
 
-    public LootChestTier getLootChestTier() {
-        return lootChestTier;
-    }
-
     public LivingEntity spawn() {
-        String key = this.lootChestTier.getMobKey();
-
         BukkitAPIHelper apiHelper = MythicBukkit.inst().getAPIHelper();
         Entity entity = null;
         try {
-            entity = apiHelper.spawnMythicMob(key, this.location, 1);
+            entity = apiHelper.spawnMythicMob(mobKey, this.location, 1);
         } catch (InvalidMobTypeException e) {
-            GuardiansOfAdelia.getInstance().getLogger().info("LootChest mythicmob code error: " + key);
+            GuardiansOfAdelia.getInstance().getLogger().info("LootChest mythicmob code error: " + mobKey);
             e.printStackTrace();
         }
         if (entity == null) return null;
         if (!(entity instanceof LivingEntity chest)) {
-            GuardiansOfAdelia.getInstance().getLogger().info("LootChest is not LivingEntity, code: " + key);
+            GuardiansOfAdelia.getInstance().getLogger().info("LootChest is not LivingEntity, code: " + mobKey);
             return null;
         }
-
-        PersistentDataContainerUtil.putString(LootChestManager.LOOT_CHEST_KEY, this.lootChestTier.name(), entity);
 
         if (spawned != null) {
             spawned.remove();
@@ -61,7 +49,7 @@ public abstract class ALootChest {
 
         spawned = chest;
 
-        LootChestManager.onSpawn(this);
+        MMSpawnerManager.onSpawn(this);
 
         return spawned;
     }
@@ -80,14 +68,13 @@ public abstract class ALootChest {
 
     private void onDespawn() {
         if (spawned != null) {
-            LootChestManager.onDespawn(spawned);
+            MMSpawnerManager.onDespawn(spawned);
         }
     }
 
-    public List<ItemStack> onDeath() {
+    public void onDeath() {
         onDespawn();
-
-        return lootChestTier.getLoot();
+        GuardiansOfAdelia.getInstance().getLogger().info("Debug death MMSpawner");
     }
 
     public void rotate() {

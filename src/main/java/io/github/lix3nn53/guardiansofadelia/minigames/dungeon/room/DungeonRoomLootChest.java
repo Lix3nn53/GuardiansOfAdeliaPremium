@@ -1,26 +1,35 @@
 package io.github.lix3nn53.guardiansofadelia.minigames.dungeon.room;
 
 import io.github.lix3nn53.guardiansofadelia.creatures.drops.MobDropGenerator;
+import io.github.lix3nn53.guardiansofadelia.creatures.mythicmobs.spawner.MMSpawner;
 import io.github.lix3nn53.guardiansofadelia.items.GearLevel;
-import io.github.lix3nn53.guardiansofadelia.rewards.chest.ALootChest;
 import io.github.lix3nn53.guardiansofadelia.rewards.chest.LootChestTier;
 import org.bukkit.Location;
+import org.bukkit.World;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
 import java.util.List;
 
-public class DungeonRoomLootChest extends ALootChest {
+public class DungeonRoomLootChest extends MMSpawner {
 
+    private final LootChestTier lootChestTier;
     private final Vector offset;
-    private final float yaw;
+    private float yaw;
     private final float pitch;
 
     public DungeonRoomLootChest(LootChestTier lootChestTier, Vector offset, float yaw, float pitch) {
-        super(null, lootChestTier);
+        super(lootChestTier.getMobKey(), null);
+        this.lootChestTier = lootChestTier;
         this.offset = offset;
         this.yaw = yaw;
         this.pitch = pitch;
+    }
+
+    @Override
+    public LivingEntity spawn() {
+        throw new IllegalArgumentException("This method is not implemented for DungeonRoomLootChest");
     }
 
     public boolean spawn(Location dungeonStart, int roomNo, int roomCount) {
@@ -57,8 +66,17 @@ public class DungeonRoomLootChest extends ALootChest {
     }
 
     @Override
-    public List<ItemStack> onDeath() {
-        List<ItemStack> result = super.onDeath();
+    public void rotate() {
+        super.rotate();
+
+        this.yaw += 90;
+    }
+
+    @Override
+    public void onDeath() {
+        super.onDeath();
+
+        List<ItemStack> result = lootChestTier.getLoot();
 
         GearLevel gearLevel = this.lootChestTier.getRandomGearLevel();
 
@@ -66,6 +84,9 @@ public class DungeonRoomLootChest extends ALootChest {
 
         result.addAll(drops);
 
-        return result;
+        World world = location.getWorld();
+        for (ItemStack itemStack : result) {
+            world.dropItemNaturally(location, itemStack);
+        }
     }
 }

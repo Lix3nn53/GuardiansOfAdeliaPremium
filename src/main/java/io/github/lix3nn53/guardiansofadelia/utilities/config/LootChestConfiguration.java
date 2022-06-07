@@ -1,6 +1,7 @@
 package io.github.lix3nn53.guardiansofadelia.utilities.config;
 
-import io.github.lix3nn53.guardiansofadelia.rewards.chest.LootChestManager;
+import io.github.lix3nn53.guardiansofadelia.creatures.mythicmobs.MMSpawnerManager;
+import io.github.lix3nn53.guardiansofadelia.creatures.mythicmobs.spawner.MMSpawnerOpenWorld;
 import io.github.lix3nn53.guardiansofadelia.rewards.chest.LootChestTier;
 import io.github.lix3nn53.guardiansofadelia.rewards.chest.OpenWorldLootChest;
 import org.bukkit.Bukkit;
@@ -48,30 +49,32 @@ public class LootChestConfiguration {
             LootChestTier lootChestTier = LootChestTier.valueOf(tierStr);
             OpenWorldLootChest lootChest = new OpenWorldLootChest(location, lootChestTier);
 
-            LootChestManager.addLootChest(lootChest);
+            MMSpawnerManager.addGlobalSpawner(lootChest);
         }
     }
 
     private static void writeLootChests(String fileName) {
-        HashMap<String, List<OpenWorldLootChest>> chunkKeyToLootChests = LootChestManager.getChunkKeyToLootChests();
+        HashMap<String, List<MMSpawnerOpenWorld>> chunkKeyToLootChests = MMSpawnerManager.getChunkKeyToSpawners();
 
         int i = 1;
         for (String chunkKey : chunkKeyToLootChests.keySet()) {
-            List<OpenWorldLootChest> lootChests = chunkKeyToLootChests.get(chunkKey);
+            List<MMSpawnerOpenWorld> lootChests = chunkKeyToLootChests.get(chunkKey);
 
-            for (OpenWorldLootChest lootChest : lootChests) {
-                Location location = lootChest.getLocation();
-                LootChestTier lootChestTier = lootChest.getLootChestTier();
+            for (MMSpawnerOpenWorld spawner : lootChests) {
+                if (spawner instanceof OpenWorldLootChest lootChest) {
+                    Location location = lootChest.getLocation();
+                    LootChestTier lootChestTier = lootChest.getLootChestTier();
 
-                lootChestsConfig.set("chest" + i + ".world", location.getWorld().getName());
-                lootChestsConfig.set("chest" + i + ".x", location.getX());
-                lootChestsConfig.set("chest" + i + ".y", location.getY());
-                lootChestsConfig.set("chest" + i + ".z", location.getZ());
-                lootChestsConfig.set("chest" + i + ".yaw", location.getYaw());
-                lootChestsConfig.set("chest" + i + ".pitch", location.getPitch());
-                lootChestsConfig.set("chest" + i + ".tier", lootChestTier.name());
+                    lootChestsConfig.set("chest" + i + ".world", location.getWorld().getName());
+                    lootChestsConfig.set("chest" + i + ".x", location.getX());
+                    lootChestsConfig.set("chest" + i + ".y", location.getY());
+                    lootChestsConfig.set("chest" + i + ".z", location.getZ());
+                    lootChestsConfig.set("chest" + i + ".yaw", location.getYaw());
+                    lootChestsConfig.set("chest" + i + ".pitch", location.getPitch());
+                    lootChestsConfig.set("chest" + i + ".tier", lootChestTier.name());
 
-                i++;
+                    i++;
+                }
             }
         }
 

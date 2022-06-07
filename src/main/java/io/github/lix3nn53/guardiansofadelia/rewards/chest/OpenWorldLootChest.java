@@ -2,51 +2,33 @@ package io.github.lix3nn53.guardiansofadelia.rewards.chest;
 
 import io.github.lix3nn53.guardiansofadelia.GuardiansOfAdelia;
 import io.github.lix3nn53.guardiansofadelia.creatures.drops.MobDropGenerator;
+import io.github.lix3nn53.guardiansofadelia.creatures.mythicmobs.spawner.MMSpawnerOpenWorld;
 import io.github.lix3nn53.guardiansofadelia.items.GearLevel;
 import org.bukkit.Location;
-import org.bukkit.entity.LivingEntity;
+import org.bukkit.World;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.List;
 
-public class OpenWorldLootChest extends ALootChest {
+public class OpenWorldLootChest extends MMSpawnerOpenWorld {
 
-    private static final long COOLDOWN_IN_MINUTES_MIN = 4;
-    private static final long COOLDOWN_IN_MINUTES_MAX = 12;
-
-    private boolean isOnCooldown = false;
+    private final LootChestTier lootChestTier;
 
     public OpenWorldLootChest(Location location, LootChestTier lootChestTier) {
-        super(location, lootChestTier);
-        // startPlayingParticles();
+        super(lootChestTier.getMobKey(), location);
+        this.lootChestTier = lootChestTier;
+    }
+
+    public LootChestTier getLootChestTier() {
+        return lootChestTier;
     }
 
     @Override
-    public LivingEntity spawn() {
-        if (isOnCooldown) return null;
+    public void onDeath() {
+        super.onDeath();
+        GuardiansOfAdelia.getInstance().getLogger().info("Debug death OpenWorldLootChest");
 
-        return super.spawn();
-    }
-
-    @Override
-    public List<ItemStack> onDeath() {
-        isOnCooldown = true;
-
-        long cooldownInMinutes = (long) (COOLDOWN_IN_MINUTES_MIN + (Math.random() * (COOLDOWN_IN_MINUTES_MAX - COOLDOWN_IN_MINUTES_MIN)));
-
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                isOnCooldown = false;
-                if (location.getChunk().isLoaded()) {
-                    // startPlayingParticles();
-                    spawn();
-                }
-            }
-        }.runTaskLater(GuardiansOfAdelia.getInstance(), 20 * 60 * cooldownInMinutes);
-
-        List<ItemStack> result = super.onDeath();
+        List<ItemStack> result = lootChestTier.getLoot();
 
         GearLevel gearLevel = this.lootChestTier.getRandomGearLevel();
 
@@ -54,6 +36,9 @@ public class OpenWorldLootChest extends ALootChest {
 
         result.addAll(drops);
 
-        return result;
+        World world = location.getWorld();
+        for (ItemStack itemStack : result) {
+            world.dropItemNaturally(location, itemStack);
+        }
     }
 }

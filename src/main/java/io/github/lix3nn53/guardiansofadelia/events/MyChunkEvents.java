@@ -1,12 +1,12 @@
 package io.github.lix3nn53.guardiansofadelia.events;
 
+import io.github.lix3nn53.guardiansofadelia.creatures.mythicmobs.MMSpawnerManager;
 import io.github.lix3nn53.guardiansofadelia.economy.bazaar.BazaarManager;
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.onground.SkillOnGroundWithLocationManager;
 import io.github.lix3nn53.guardiansofadelia.jobs.gathering.GatheringManager;
 import io.github.lix3nn53.guardiansofadelia.minigames.checkpoint.CheckpointManager;
 import io.github.lix3nn53.guardiansofadelia.npc.QuestNPCManager;
 import io.github.lix3nn53.guardiansofadelia.revive.TombManager;
-import io.github.lix3nn53.guardiansofadelia.rewards.chest.LootChestManager;
 import io.github.lix3nn53.guardiansofadelia.transportation.portals.PortalManager;
 import io.github.lix3nn53.guardiansofadelia.utilities.LocationUtils;
 import io.github.lix3nn53.guardiansofadelia.utilities.managers.HologramManager;
@@ -97,13 +97,13 @@ public class MyChunkEvents implements Listener {
         PortalManager.onChunkLoad(chunkKey);
         CheckpointManager.onChunkLoad(chunkKey);
         HologramManager.onChunkLoad(chunkKey);
-        LootChestManager.onChunkLoad(chunkKey);
+        MMSpawnerManager.onChunkLoad(chunkKey);
         GatheringManager.onChunkLoad(chunkKey);
         SkillOnGroundWithLocationManager.onChunkLoad(chunkKey);
     }
 
     private void customEventsOnChunkUnload(Chunk chunk) {
         String chunkKey = LocationUtils.getChunkKey(chunk.getBlock(0, 0, 0).getLocation());
-        LootChestManager.onChunkUnload(chunkKey);
+        MMSpawnerManager.onChunkUnload(chunkKey);
     }
 }
