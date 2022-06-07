@@ -6,8 +6,8 @@ import io.github.lix3nn53.guardiansofadelia.guardian.GuardianData;
 import io.github.lix3nn53.guardiansofadelia.guardian.GuardianDataManager;
 import io.github.lix3nn53.guardiansofadelia.guardian.element.ElementType;
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.onground.RandomSkillOnGroundWithOffset;
+import io.github.lix3nn53.guardiansofadelia.items.DungeonPrizeChest;
 import io.github.lix3nn53.guardiansofadelia.items.GearLevel;
-import io.github.lix3nn53.guardiansofadelia.items.PrizeChest;
 import io.github.lix3nn53.guardiansofadelia.items.PrizeChestType;
 import io.github.lix3nn53.guardiansofadelia.items.RpgGears.ItemTier;
 import io.github.lix3nn53.guardiansofadelia.menu.GuiDungeonJoin;
@@ -123,13 +123,13 @@ public class DungeonTheme {
         throw new IllegalArgumentException("DungeonTheme Boss: MythicMob not found: " + bossInternalName);
     }
 
-    public PrizeChest getPrizeChest() {
+    public DungeonPrizeChest getPrizeChest() {
         PrizeChestType[] values = PrizeChestType.values();
         int random = GuardiansOfAdelia.RANDOM.nextInt(values.length);
 
         PrizeChestType chestType = values[random];
 
-        return new PrizeChest(this, chestType);
+        return new DungeonPrizeChest(this, chestType);
     }
 
     /**

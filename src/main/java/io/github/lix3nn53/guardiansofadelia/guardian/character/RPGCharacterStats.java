@@ -1084,6 +1084,10 @@ public class RPGCharacterStats {
 
         this.cosmetics.remove(cosmeticSlot);
 
+        if (this.cosmeticHologram == null) {
+            return;
+        }
+
         if (this.cosmetics.isEmpty()) {
             cosmeticHologram.destroy();
             cosmeticHologram = null;

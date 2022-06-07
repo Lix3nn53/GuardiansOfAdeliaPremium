@@ -685,7 +685,7 @@ public abstract class Minigame {
                 teamToCheckpoint.put(teamOfPlayer, checkpoint);
                 Party party = teams.get(teamOfPlayer);
                 for (Player member : party.getMembers()) {
-                    MessageUtils.sendCenteredMessage(member, ChatPalette.GREEN_DARK + "-- " + ChatPalette.GREEN_DARK + "New Checkpoint Set" + ChatPalette.GREEN_DARK + " --");
+                    MessageUtils.sendCenteredMessage(member, ChatPalette.BLUE + "-- " + ChatPalette.BLUE_LIGHT + "New Checkpoint Set" + ChatPalette.BLUE + " --");
                 }
 
                 return true;

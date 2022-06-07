@@ -1,5 +1,6 @@
 package io.github.lix3nn53.guardiansofadelia.minigames.checkpoint;
 
+import io.github.lix3nn53.guardiansofadelia.text.ChatPalette;
 import io.github.lix3nn53.guardiansofadelia.utilities.hologram.Hologram;
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
@@ -29,14 +30,14 @@ public class Checkpoint {
 
         ItemStack holoItem = new ItemStack(Material.STONE_PICKAXE);
         ItemMeta itemMeta = holoItem.getItemMeta();
-        itemMeta.setCustomModelData(5);
+        itemMeta.setCustomModelData(8);
         itemMeta.setUnbreakable(true);
         holoItem.setItemMeta(itemMeta);
 
         MiscDisguise disguise = new MiscDisguise(DisguiseType.DROPPED_ITEM);
         DroppedItemWatcher watcher = (DroppedItemWatcher) disguise.getWatcher();
         watcher.setItemStack(holoItem);
-        watcher.setCustomName("Checkpoint");
+        watcher.setCustomName(ChatPalette.BLUE_LIGHT + "Checkpoint");
         watcher.setCustomNameVisible(true);
 
         DisguiseAPI.disguiseToAll(hologram.getArmorStand().getPassengers().get(0), disguise);

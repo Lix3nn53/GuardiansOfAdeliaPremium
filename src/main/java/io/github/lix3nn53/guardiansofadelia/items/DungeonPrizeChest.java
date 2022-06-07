@@ -17,7 +17,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PrizeChest {
+public class DungeonPrizeChest {
 
     private final String code;
     private final String name;
@@ -28,7 +28,7 @@ public class PrizeChest {
      * @param dungeonTheme
      * @param type         0 for Weapon, 1 for Jewelry, 2 for Armor
      */
-    public PrizeChest(DungeonTheme dungeonTheme, PrizeChestType type) {
+    public DungeonPrizeChest(DungeonTheme dungeonTheme, PrizeChestType type) {
         this.name = ChatPalette.GOLD + dungeonTheme.getName() + " Prize Chest (" + type.toString() + ")";
         this.code = dungeonTheme.getCode();
         this.type = type;
@@ -78,7 +78,7 @@ public class PrizeChest {
         // model.setCustomName(getName());
         // model.setCustomNameVisible(true);
 
-        ArmorStand icon = (ArmorStand) location.add(0, 1.5, 0).getWorld().spawnEntity(location, EntityType.ARMOR_STAND);
+        ArmorStand icon = (ArmorStand) location.add(0, 0.5, 0).getWorld().spawnEntity(location, EntityType.ARMOR_STAND);
         icon.setVisible(false);
         icon.setInvulnerable(true);
         icon.setSmall(true);

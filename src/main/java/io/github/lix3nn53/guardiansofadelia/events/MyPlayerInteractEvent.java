@@ -7,7 +7,7 @@ import io.github.lix3nn53.guardiansofadelia.guardian.GuardianData;
 import io.github.lix3nn53.guardiansofadelia.guardian.GuardianDataManager;
 import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGCharacter;
 import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGClassStats;
-import io.github.lix3nn53.guardiansofadelia.items.PrizeChest;
+import io.github.lix3nn53.guardiansofadelia.items.DungeonPrizeChest;
 import io.github.lix3nn53.guardiansofadelia.items.PrizeChestType;
 import io.github.lix3nn53.guardiansofadelia.items.list.armors.ArmorSlot;
 import io.github.lix3nn53.guardiansofadelia.items.stats.StatUtils;
@@ -100,7 +100,7 @@ public class MyPlayerInteractEvent implements Listener {
 
                     List<ItemStack> itemStacks = dungeonTheme.generateChestItems(type);
 
-                    PrizeChest prizeChest = new PrizeChest(dungeonTheme, type);
+                    DungeonPrizeChest prizeChest = new DungeonPrizeChest(dungeonTheme, type);
                     prizeChest.play(player, itemStacks);
                     player.getInventory().setItemInMainHand(null);
                 }

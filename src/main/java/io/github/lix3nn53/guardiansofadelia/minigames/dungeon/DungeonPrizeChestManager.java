@@ -1,7 +1,7 @@
 package io.github.lix3nn53.guardiansofadelia.minigames.dungeon;
 
 import io.github.lix3nn53.guardiansofadelia.GuardiansOfAdelia;
-import io.github.lix3nn53.guardiansofadelia.items.PrizeChest;
+import io.github.lix3nn53.guardiansofadelia.items.DungeonPrizeChest;
 import io.github.lix3nn53.guardiansofadelia.items.PrizeChestType;
 import io.github.lix3nn53.guardiansofadelia.minigames.MiniGameManager;
 import io.github.lix3nn53.guardiansofadelia.minigames.Minigame;
@@ -26,10 +26,10 @@ public class DungeonPrizeChestManager {
     private static final float RADIUS = 4;
     private static final float HEIGHT = 0.5f;
 
-    private static final HashMap<ArmorStand, PrizeChest> entityToPrizeChest = new HashMap<>();
+    private static final HashMap<ArmorStand, DungeonPrizeChest> entityToPrizeChest = new HashMap<>();
     private static final HashMap<ArmorStand, ArmorStand> entityToIcon = new HashMap<>();
 
-    public static void onSpawn(ArmorStand armorStand, PrizeChest prizeChest, ArmorStand icon) {
+    public static void onSpawn(ArmorStand armorStand, DungeonPrizeChest prizeChest, ArmorStand icon) {
         entityToPrizeChest.put(armorStand, prizeChest);
         entityToIcon.put(armorStand, icon);
 
@@ -53,7 +53,7 @@ public class DungeonPrizeChestManager {
     public static void loot(ArmorStand armorStand, Player player) {
         if (!entityToPrizeChest.containsKey(armorStand)) return;
 
-        PrizeChest prizeChest = entityToPrizeChest.get(armorStand);
+        DungeonPrizeChest prizeChest = entityToPrizeChest.get(armorStand);
 
         if (!prizeChest.canLoot(player)) {
             player.sendMessage(ChatPalette.RED + "You already got this prize chest");
@@ -101,7 +101,7 @@ public class DungeonPrizeChestManager {
             int chestTypeIndex = GuardiansOfAdelia.RANDOM.nextInt(length);
             PrizeChestType prizeChestType = values[chestTypeIndex];
 
-            PrizeChest prizeChest = new PrizeChest(theme, prizeChestType);
+            DungeonPrizeChest prizeChest = new DungeonPrizeChest(theme, prizeChestType);
 
             Location location = vector.toLocation(center.getWorld());
 
