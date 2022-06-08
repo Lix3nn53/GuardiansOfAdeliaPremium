@@ -2,16 +2,13 @@ package io.github.lix3nn53.guardiansofadelia.utilities.config;
 
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.onground.RandomSkillOnGroundWithOffset;
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.onground.SkillOnGround;
+import io.github.lix3nn53.guardiansofadelia.interactables.chest.LootChestTier;
 import io.github.lix3nn53.guardiansofadelia.items.GearLevel;
 import io.github.lix3nn53.guardiansofadelia.minigames.MiniGameManager;
 import io.github.lix3nn53.guardiansofadelia.minigames.checkpoint.Checkpoint;
 import io.github.lix3nn53.guardiansofadelia.minigames.dungeon.DungeonInstance;
 import io.github.lix3nn53.guardiansofadelia.minigames.dungeon.DungeonTheme;
-import io.github.lix3nn53.guardiansofadelia.minigames.dungeon.room.DungeonRoom;
-import io.github.lix3nn53.guardiansofadelia.minigames.dungeon.room.DungeonRoomDoor;
-import io.github.lix3nn53.guardiansofadelia.minigames.dungeon.room.DungeonRoomLootChest;
-import io.github.lix3nn53.guardiansofadelia.minigames.dungeon.room.DungeonRoomSpawner;
-import io.github.lix3nn53.guardiansofadelia.rewards.chest.LootChestTier;
+import io.github.lix3nn53.guardiansofadelia.minigames.dungeon.room.*;
 import io.github.lix3nn53.guardiansofadelia.transportation.portals.PortalColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -161,9 +158,24 @@ public class DungeonConfiguration {
                     lootChests.add(new DungeonRoomLootChest(lootChestTier, vector, yaw, pitch));
                 }
 
+                List<DungeonRoomExplosiveBarrel> explosiveBarrels = new ArrayList<>();
+                for (int groundIndex = 1; groundIndex <= 999; groundIndex++) {
+                    if (!section.contains("room" + roomIndex + ".explosiveBarrel" + groundIndex)) break;
+
+                    float x = (float) section.getDouble("room" + roomIndex + ".explosiveBarrel" + groundIndex + ".x");
+                    float y = (float) section.getDouble("room" + roomIndex + ".explosiveBarrel" + groundIndex + ".y");
+                    float z = (float) section.getDouble("room" + roomIndex + ".explosiveBarrel" + groundIndex + ".z");
+                    float yaw = (float) section.getDouble("room" + roomIndex + ".explosiveBarrel" + groundIndex + ".yaw");
+                    float pitch = (float) section.getDouble("room" + roomIndex + ".explosiveBarrel" + groundIndex + ".pitch");
+
+                    Vector vector = new Vector(x, y, z);
+                    explosiveBarrels.add(new DungeonRoomExplosiveBarrel(vector, yaw, pitch));
+                }
+
                 List<Integer> nextRooms = section.getIntegerList("room" + roomIndex + ".nextRooms");
 
-                DungeonRoom dungeonRoom = new DungeonRoom(dungeonRoomDoors, waveToSpawners, skillsOnGround, lootChests, nextRooms);
+                DungeonRoom dungeonRoom = new DungeonRoom(nextRooms, dungeonRoomDoors, waveToSpawners, skillsOnGround,
+                        lootChests, explosiveBarrels);
                 dungeonRooms.put(roomIndex, dungeonRoom);
             }
 
@@ -315,6 +327,20 @@ public class DungeonConfiguration {
                     currentThemeConfig.set("room" + roomKey + ".lootChest" + lootChestIndex + ".pitch", lootChest.getPitch());
 
                     lootChestIndex++;
+                }
+
+                List<DungeonRoomExplosiveBarrel> explosiveBarrels = dungeonRoom.getExplosiveBarrels();
+                int explosiveBarrelIndex = 1;
+                for (DungeonRoomExplosiveBarrel explosiveBarrel : explosiveBarrels) {
+                    Vector offset = explosiveBarrel.getOffset();
+
+                    currentThemeConfig.set("room" + roomKey + ".explosiveBarrel" + explosiveBarrelIndex + ".x", offset.getX());
+                    currentThemeConfig.set("room" + roomKey + ".explosiveBarrel" + explosiveBarrelIndex + ".y", offset.getY());
+                    currentThemeConfig.set("room" + roomKey + ".explosiveBarrel" + explosiveBarrelIndex + ".z", offset.getZ());
+                    currentThemeConfig.set("room" + roomKey + ".explosiveBarrel" + explosiveBarrelIndex + ".yaw", explosiveBarrel.getYaw());
+                    currentThemeConfig.set("room" + roomKey + ".explosiveBarrel" + explosiveBarrelIndex + ".pitch", explosiveBarrel.getPitch());
+
+                    explosiveBarrelIndex++;
                 }
 
                 currentThemeConfig.set("room" + roomKey + ".nextRooms", dungeonRoom.getNextRooms());

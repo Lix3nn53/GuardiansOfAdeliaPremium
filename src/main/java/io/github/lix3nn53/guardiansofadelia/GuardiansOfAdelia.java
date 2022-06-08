@@ -216,6 +216,7 @@ public class GuardiansOfAdelia extends JavaPlugin {
         // Admin commands
         this.getCommand("admin").setExecutor(new CommandAdmin());
         this.getCommand("admindungeon").setExecutor(new CommandAdminDungeon());
+        this.getCommand("admininteractable").setExecutor(new CommandAdminInteractable());
         this.getCommand("adminitem").setExecutor(new CommandAdminItem());
         this.getCommand("adminjob").setExecutor(new CommandAdminJob());
         this.getCommand("adminquest").setExecutor(new CommandAdminQuest());

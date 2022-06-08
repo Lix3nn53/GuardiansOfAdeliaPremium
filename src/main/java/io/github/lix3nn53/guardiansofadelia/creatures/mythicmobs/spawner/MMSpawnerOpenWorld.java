@@ -2,27 +2,28 @@ package io.github.lix3nn53.guardiansofadelia.creatures.mythicmobs.spawner;
 
 import io.github.lix3nn53.guardiansofadelia.GuardiansOfAdelia;
 import org.bukkit.Location;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
 public class MMSpawnerOpenWorld extends MMSpawner {
 
-    private static final long COOLDOWN_IN_MINUTES_MIN = 4;
-    private static final long COOLDOWN_IN_MINUTES_MAX = 12;
+    private final long cooldownMin;
+    private final long cooldownMax;
 
     protected boolean isOnCooldown = false;
     private BukkitTask cooldownTask;
 
-    public MMSpawnerOpenWorld(String mobKey, Location location) {
+    public MMSpawnerOpenWorld(String mobKey, Location location, long cooldownMin, long cooldownMax) {
         super(mobKey, location);
+        this.cooldownMin = cooldownMin;
+        this.cooldownMax = cooldownMax;
     }
 
     @Override
-    public LivingEntity spawn() {
-        if (isOnCooldown) return null;
+    public void spawn() {
+        if (isOnCooldown) return;
 
-        return super.spawn();
+        super.spawn();
     }
 
     @Override
@@ -32,7 +33,7 @@ public class MMSpawnerOpenWorld extends MMSpawner {
 
         isOnCooldown = true;
 
-        long cooldownInMinutes = (long) (COOLDOWN_IN_MINUTES_MIN + (Math.random() * (COOLDOWN_IN_MINUTES_MAX - COOLDOWN_IN_MINUTES_MIN)));
+        final long finalCooldown = (long) (cooldownMin + (Math.random() * (cooldownMax - cooldownMin)));
 
         if (cooldownTask != null) {
             cooldownTask.cancel();
@@ -42,11 +43,11 @@ public class MMSpawnerOpenWorld extends MMSpawner {
             @Override
             public void run() {
                 isOnCooldown = false;
-                if (location.getChunk().isLoaded()) {
+                if (getLocation().getChunk().isLoaded()) {
                     // startPlayingParticles();
                     spawn();
                 }
             }
-        }.runTaskLater(GuardiansOfAdelia.getInstance(), 20 * 60 * cooldownInMinutes);
+        }.runTaskLater(GuardiansOfAdelia.getInstance(), 20 * finalCooldown);
     }
 }

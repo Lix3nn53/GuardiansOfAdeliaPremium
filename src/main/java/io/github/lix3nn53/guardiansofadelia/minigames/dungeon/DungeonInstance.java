@@ -371,11 +371,28 @@ public class DungeonInstance extends Minigame {
             for (int i = 0; i < lootChests.size(); i++) {
                 DungeonRoomLootChest lootChest = lootChests.get(i);
 
+                lootChest.spawn(getStartLocation(1));
+
                 Vector offset = lootChest.getOffset();
 
                 Location add = startLocation.clone().add(offset);
 
                 Hologram hologram = new Hologram(add, ChatPalette.GOLD + "Room-" + roomKey + " LootChest-" + i);
+                HologramManager.addHologram(hologram);
+                debugHolograms.add(hologram);
+            }
+
+            List<DungeonRoomExplosiveBarrel> explosiveBarrels = room.getExplosiveBarrels();
+            for (int i = 0; i < explosiveBarrels.size(); i++) {
+                DungeonRoomExplosiveBarrel explosiveBarrel = explosiveBarrels.get(i);
+
+                explosiveBarrel.spawn(getStartLocation(1));
+
+                Vector offset = explosiveBarrel.getOffset();
+
+                Location add = startLocation.clone().add(offset);
+
+                Hologram hologram = new Hologram(add, ChatPalette.RED + "Room-" + roomKey + " ExplosiveBarrel-" + i);
                 HologramManager.addHologram(hologram);
                 debugHolograms.add(hologram);
             }

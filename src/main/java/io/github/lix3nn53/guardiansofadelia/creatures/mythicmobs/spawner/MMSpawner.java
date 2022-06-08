@@ -11,9 +11,9 @@ import org.bukkit.entity.LivingEntity;
 
 public abstract class MMSpawner {
 
-    protected final String mobKey;
-    protected Location location;
-    protected LivingEntity spawned;
+    private final String mobKey;
+    private Location location;
+    private LivingEntity spawned;
 
     public MMSpawner(String mobKey, Location location) {
         this.mobKey = mobKey;
@@ -28,30 +28,30 @@ public abstract class MMSpawner {
         this.location = location;
     }
 
-    public LivingEntity spawn() {
-        BukkitAPIHelper apiHelper = MythicBukkit.inst().getAPIHelper();
-        Entity entity = null;
-        try {
-            entity = apiHelper.spawnMythicMob(mobKey, this.location, 1);
-        } catch (InvalidMobTypeException e) {
-            GuardiansOfAdelia.getInstance().getLogger().info("LootChest mythicmob code error: " + mobKey);
-            e.printStackTrace();
-        }
-        if (entity == null) return null;
-        if (!(entity instanceof LivingEntity chest)) {
-            GuardiansOfAdelia.getInstance().getLogger().info("LootChest is not LivingEntity, code: " + mobKey);
-            return null;
-        }
-
+    public void spawn() {
         if (spawned != null) {
             spawned.remove();
         }
 
+        MMSpawner mmSpawner = this;
+
+        BukkitAPIHelper apiHelper = MythicBukkit.inst().getAPIHelper();
+        Entity entity = null;
+        try {
+            entity = apiHelper.spawnMythicMob(mobKey, location, 1);
+        } catch (InvalidMobTypeException e) {
+            GuardiansOfAdelia.getInstance().getLogger().info("LootChest mythicmob code error: " + mobKey);
+            e.printStackTrace();
+        }
+        if (entity == null) return;
+        if (!(entity instanceof LivingEntity chest)) {
+            GuardiansOfAdelia.getInstance().getLogger().info("LootChest is not LivingEntity, code: " + mobKey);
+            return;
+        }
+
         spawned = chest;
 
-        MMSpawnerManager.onSpawn(this);
-
-        return spawned;
+        MMSpawnerManager.onSpawn(mmSpawner);
     }
 
     public LivingEntity getSpawned() {
@@ -60,6 +60,7 @@ public abstract class MMSpawner {
 
     public void despawn() {
         onDespawn();
+
         if (spawned != null) {
             spawned.remove();
             spawned = null;
@@ -74,16 +75,19 @@ public abstract class MMSpawner {
 
     public void onDeath() {
         onDespawn();
-        GuardiansOfAdelia.getInstance().getLogger().info("Debug death MMSpawner");
     }
 
     public void rotate() {
         float yaw = location.getYaw();
-        yaw += 90;
+        yaw += 45;
         location.setYaw(yaw);
 
         if (spawned != null && spawned.isValid()) {
             spawned.teleport(location);
         }
+    }
+
+    public String getMobKey() {
+        return mobKey;
     }
 }

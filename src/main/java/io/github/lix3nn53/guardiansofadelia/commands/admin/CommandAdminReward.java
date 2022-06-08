@@ -2,9 +2,9 @@ package io.github.lix3nn53.guardiansofadelia.commands.admin;
 
 import io.github.lix3nn53.guardiansofadelia.creatures.mythicmobs.MMSpawnerManager;
 import io.github.lix3nn53.guardiansofadelia.creatures.mythicmobs.spawner.MMSpawner;
+import io.github.lix3nn53.guardiansofadelia.interactables.chest.LootChest;
+import io.github.lix3nn53.guardiansofadelia.interactables.chest.LootChestTier;
 import io.github.lix3nn53.guardiansofadelia.menu.admin.GuiAdminDailyRewards;
-import io.github.lix3nn53.guardiansofadelia.rewards.chest.LootChestTier;
-import io.github.lix3nn53.guardiansofadelia.rewards.chest.OpenWorldLootChest;
 import io.github.lix3nn53.guardiansofadelia.text.ChatPalette;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -53,7 +53,7 @@ public class CommandAdminReward implements CommandExecutor {
 
                 location.add(0.5, 0, 0.5);
 
-                OpenWorldLootChest lootChest = new OpenWorldLootChest(location, value);
+                LootChest lootChest = new LootChest(location, value);
                 lootChest.spawn();
 
                 MMSpawnerManager.addGlobalSpawner(lootChest);

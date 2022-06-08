@@ -10,15 +10,12 @@ import io.github.lix3nn53.guardiansofadelia.guardian.skill.component.target.Self
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.onground.RandomSkillOnGroundWithOffset;
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.onground.SkillListForGround;
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.onground.SkillOnGround;
+import io.github.lix3nn53.guardiansofadelia.interactables.chest.LootChestTier;
 import io.github.lix3nn53.guardiansofadelia.minigames.MiniGameManager;
 import io.github.lix3nn53.guardiansofadelia.minigames.checkpoint.Checkpoint;
 import io.github.lix3nn53.guardiansofadelia.minigames.dungeon.DungeonInstance;
 import io.github.lix3nn53.guardiansofadelia.minigames.dungeon.DungeonTheme;
-import io.github.lix3nn53.guardiansofadelia.minigames.dungeon.room.DungeonRoom;
-import io.github.lix3nn53.guardiansofadelia.minigames.dungeon.room.DungeonRoomDoor;
-import io.github.lix3nn53.guardiansofadelia.minigames.dungeon.room.DungeonRoomLootChest;
-import io.github.lix3nn53.guardiansofadelia.minigames.dungeon.room.DungeonRoomSpawner;
-import io.github.lix3nn53.guardiansofadelia.rewards.chest.LootChestTier;
+import io.github.lix3nn53.guardiansofadelia.minigames.dungeon.room.*;
 import io.github.lix3nn53.guardiansofadelia.text.ChatPalette;
 import io.github.lix3nn53.guardiansofadelia.utilities.config.DungeonConfiguration;
 import io.github.lix3nn53.guardiansofadelia.utilities.config.SkillOnGroundConfigurations;
@@ -60,8 +57,10 @@ public class CommandAdminDungeon implements CommandExecutor {
                 player.sendMessage(ChatPalette.GOLD + "/admindungeon add skill global" + ChatPalette.GOLD + " !!look at location block!!");
                 player.sendMessage(ChatPalette.GOLD + "/admindungeon add checkpoint" + ChatPalette.GOLD + " !!look at location block!!");
                 player.sendMessage(ChatPalette.GOLD + "/admindungeon add chest <roomNo>" + ChatPalette.GOLD + " !!look at CHEST!!");
+                player.sendMessage(ChatPalette.GOLD + "/admindungeon add barrel <roomNo>" + ChatPalette.GOLD + " !!look at TNT!!");
                 player.sendMessage(ChatPalette.GOLD + "/admindungeon set bossRoom " + ChatPalette.GOLD + " !!select WorldEdit region first!!");
                 player.sendMessage(ChatPalette.GOLD + "/admindungeon set prizeloc" + ChatPalette.GOLD + " !!look at block!!");
+                player.sendMessage(ChatPalette.GOLD + "/admindungeon rotate chest <roomNo> <index>" + ChatPalette.GOLD + " rotates chest by 45");
             } else if (args[0].equals("reload")) {
                 SkillListForGround.clear();
                 MiniGameManager.clearDungeonData();
@@ -149,8 +148,10 @@ public class CommandAdminDungeon implements CommandExecutor {
                         List<Integer> nextRooms = new ArrayList<>();
                         List<RandomSkillOnGroundWithOffset> skillsOnGround = new ArrayList<>();
                         List<DungeonRoomLootChest> lootChests = new ArrayList<>();
+                        List<DungeonRoomExplosiveBarrel> explosiveBarrels = new ArrayList<>();
 
-                        DungeonRoom dungeonRoom = new DungeonRoom(doors, waves, skillsOnGround, lootChests, nextRooms);
+                        DungeonRoom dungeonRoom = new DungeonRoom(nextRooms, doors, waves, skillsOnGround,
+                                lootChests, explosiveBarrels);
 
                         dungeonTheme.addDungeonRoom(roomNo, dungeonRoom);
                         player.sendMessage(ChatPalette.GREEN_DARK + "Added new room");
@@ -300,6 +301,35 @@ public class CommandAdminDungeon implements CommandExecutor {
                         remakeHolograms(key);
                         break;
                     }
+                    case "barrel": {
+                        int roomNo = Integer.parseInt(args[2]);
+
+                        HashMap<String, DungeonTheme> dungeonThemes = MiniGameManager.getDungeonThemes();
+                        DungeonTheme dungeonTheme = dungeonThemes.get(key);
+
+                        Block targetBlock = player.getTargetBlock(null, 12);
+                        Material type = targetBlock.getType();
+
+                        if (!type.equals(Material.TNT)) {
+                            player.sendMessage(ChatPalette.RED + "You must be looking at a TNT");
+                            return false;
+                        }
+
+                        Location add = targetBlock.getLocation().add(0.5, 0, 0.5);
+
+                        targetBlock.setType(Material.AIR);
+
+                        Location start = MiniGameManager.getDungeonInstance(key, 1).getStartLocation(1);
+                        Vector offset = start.toVector().subtract(add.toVector()).multiply(-1);
+
+                        DungeonRoomExplosiveBarrel dungeonRoomExplosiveBarrel = new DungeonRoomExplosiveBarrel(offset, 0, 0);
+
+                        DungeonRoom dungeonRoom = dungeonTheme.getDungeonRoom(roomNo);
+                        dungeonRoom.addExplosiveBarrel(dungeonRoomExplosiveBarrel);
+                        player.sendMessage(ChatPalette.GREEN_DARK + "Added new explosive barrel");
+                        remakeHolograms(key);
+                        break;
+                    }
                 }
             } else if (args[0].equals("set")) {
                 if (!selectedDungeon.containsKey(player)) {
@@ -345,6 +375,32 @@ public class CommandAdminDungeon implements CommandExecutor {
                         remakeHolograms(key);
                     } catch (IncompleteRegionException e) {
                         e.printStackTrace();
+                    }
+                }
+            } else if (args[0].equals("rotate")) {
+                if (!selectedDungeon.containsKey(player)) {
+                    player.sendMessage(ChatPalette.RED + "Select dungeon first");
+                }
+                String key = selectedDungeon.get(player);
+
+                switch (args[1]) {
+                    case "chest": {
+                        int roomNo = Integer.parseInt(args[2]);
+
+                        HashMap<String, DungeonTheme> dungeonThemes = MiniGameManager.getDungeonThemes();
+                        DungeonTheme dungeonTheme = dungeonThemes.get(key);
+
+                        DungeonRoom dungeonRoom = dungeonTheme.getDungeonRoom(roomNo);
+                        List<DungeonRoomLootChest> lootChests = dungeonRoom.getLootChests();
+
+                        int index = Integer.parseInt(args[3]);
+                        DungeonRoomLootChest lootChest = lootChests.get(index);
+
+                        lootChest.rotate();
+
+                        player.sendMessage(ChatPalette.GREEN_DARK + "Rotated dungeon loot chest");
+                        remakeHolograms(key);
+                        break;
                     }
                 }
             }

@@ -11,11 +11,11 @@ public class QuestAdvancements {
         return new ToastNotification(advencementMaterial, ChatColor.GREEN + "Quest Complete: " + name, AdvancementDisplay.AdvancementFrame.CHALLENGE);
     }
 
-    public static ToastNotification getOnTurnInAdvancement(int questID, String name, Material advencementMaterial) {
+    /*public static ToastNotification getOnTurnInAdvancement(int questID, String name, Material advencementMaterial) {
         return new ToastNotification(advencementMaterial, ChatColor.GOLD + "Quest Turn In: " + name, AdvancementDisplay.AdvancementFrame.CHALLENGE);
     }
 
     public static ToastNotification getOnAcceptAdvancement(int questID, String name, Material advencementMaterial) {
         return new ToastNotification(advencementMaterial, ChatColor.LIGHT_PURPLE + "Quest Accept: " + name, AdvancementDisplay.AdvancementFrame.CHALLENGE);
-    }
+    }*/
 }

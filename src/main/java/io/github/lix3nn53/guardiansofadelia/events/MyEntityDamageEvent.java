@@ -94,23 +94,23 @@ public class MyEntityDamageEvent implements Listener {
         if (cause.equals(EntityDamageEvent.DamageCause.FALL) && entity instanceof Player) {
             float fallDistance = entity.getFallDistance();
 
-            return (fallDistance - 3) * (maxHealth / 40); // Vanilla fall damage is 1 damage each block after the third
+            return (fallDistance - 3) * (maxHealth / 20); // Vanilla fall damage is 1 damage each block after the third
         } else if (cause.equals(EntityDamageEvent.DamageCause.POISON)) {
-            return maxHealth / 120;
+            return maxHealth / 40;
         } else if (cause.equals(EntityDamageEvent.DamageCause.WITHER)) {
-            return maxHealth / 120;
+            return maxHealth / 40;
         } else if (cause.equals(EntityDamageEvent.DamageCause.FIRE_TICK)) {
-            return maxHealth / 80;
+            return maxHealth / 20;
         } else if (cause.equals(EntityDamageEvent.DamageCause.FIRE)) {
-            return maxHealth / 40;
+            return maxHealth / 20;
         } else if (cause.equals(EntityDamageEvent.DamageCause.DROWNING)) {
-            return maxHealth / 40;
+            return maxHealth / 20;
         } else if (cause.equals(EntityDamageEvent.DamageCause.HOT_FLOOR)) {
-            return maxHealth / 80;
+            return maxHealth / 20;
         } else if (cause.equals(EntityDamageEvent.DamageCause.LAVA)) {
-            return maxHealth / 40;
+            return maxHealth / 20;
         } else if (cause.equals(EntityDamageEvent.DamageCause.CONTACT)) {
-            return maxHealth / 40;
+            return maxHealth / 20;
         }
         return 0;
     }

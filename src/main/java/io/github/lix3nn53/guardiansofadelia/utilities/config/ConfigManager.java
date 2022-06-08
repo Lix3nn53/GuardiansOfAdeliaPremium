@@ -65,6 +65,7 @@ public class ConfigManager {
         GlobalMessageConfigurations.createConfig();
         EmojiConfiguration.createConfigs();
         CosmeticsConfiguration.createConfigs();
+        ExplosiveBarrelConfiguration.createConfigs();
     }
 
     public static void loadConfigALL() {
@@ -79,6 +80,7 @@ public class ConfigManager {
         TeleportGuiConfiguration.loadConfig();
         DatabaseConfiguration.loadConfigs();
         SkillOnGroundConfigurations.loadConfigs();
+        ExplosiveBarrelConfiguration.loadConfigs();
         DungeonConfiguration.loadConfigs();
         ItemArmorSetConfigurations.loadConfigs();
         ItemPassiveSetConfigurations.loadConfigs();
@@ -104,6 +106,7 @@ public class ConfigManager {
         LootChestConfiguration.writeConfigs();
         JobGatheringConfigurations.writeConfigs();
         DungeonConfiguration.writeConfigs();
+        ExplosiveBarrelConfiguration.writeConfigs();
     }
 
     public static void loadResourcePackConfig() {

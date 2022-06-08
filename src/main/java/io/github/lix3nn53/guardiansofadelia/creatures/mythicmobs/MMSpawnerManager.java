@@ -1,5 +1,6 @@
 package io.github.lix3nn53.guardiansofadelia.creatures.mythicmobs;
 
+import io.github.lix3nn53.guardiansofadelia.GuardiansOfAdelia;
 import io.github.lix3nn53.guardiansofadelia.creatures.mythicmobs.spawner.MMSpawner;
 import io.github.lix3nn53.guardiansofadelia.creatures.mythicmobs.spawner.MMSpawnerOpenWorld;
 import io.github.lix3nn53.guardiansofadelia.utilities.LocationUtils;
@@ -20,7 +21,7 @@ public class MMSpawnerManager {
             List<MMSpawnerOpenWorld> lootChests = chunkKeyToSpawners.get(chunkKey);
 
             for (MMSpawnerOpenWorld spawner : lootChests) {
-                LivingEntity spawn = spawner.spawn();
+                spawner.spawn();
             }
         }
     }
@@ -30,6 +31,7 @@ public class MMSpawnerManager {
             List<MMSpawnerOpenWorld> openWorldSpawners = chunkKeyToSpawners.get(chunkKey);
 
             for (MMSpawnerOpenWorld spawner : openWorldSpawners) {
+                GuardiansOfAdelia.getInstance().getLogger().info("Despawning open world spawner");
                 spawner.despawn();
             }
         }

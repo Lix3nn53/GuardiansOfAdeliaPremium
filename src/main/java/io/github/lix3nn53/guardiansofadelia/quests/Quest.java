@@ -404,8 +404,8 @@ public final class Quest {
             NPCSpeechManager.startQuestDialogue(player, npcNo, turnInDialogue);
         }
 
-        ToastNotification toastNotification = QuestAdvancements.getOnTurnInAdvancement(getQuestID(), this.getName(), getAdvancementMaterial());
-        toastNotification.send(player);
+        // ToastNotification toastNotification = QuestAdvancements.getOnTurnInAdvancement(getQuestID(), this.getName(), getAdvancementMaterial());
+        // toastNotification.send(player);
 
         for (Task task : this.tasks) {
             if (task instanceof TaskCollect) {
@@ -522,8 +522,9 @@ public final class Quest {
             NPCSpeechManager.startQuestDialogue(player, npcNo, startDialogue);
         }
 
-        ToastNotification toastNotification = QuestAdvancements.getOnAcceptAdvancement(getQuestID(), this.getName(), getAdvancementMaterial());
-        toastNotification.send(player);
+        // ToastNotification toastNotification = QuestAdvancements.getOnAcceptAdvancement(getQuestID(), this.getName(), getAdvancementMaterial());
+        // toastNotification.send(player);
+
         TablistUtils.updateTablist(player);
 
         int whoCanGiveThisQuest = QuestNPCManager.getWhoCanGiveThisQuest(getQuestID());

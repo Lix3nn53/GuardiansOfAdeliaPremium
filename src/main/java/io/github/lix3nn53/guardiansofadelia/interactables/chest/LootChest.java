@@ -1,6 +1,5 @@
-package io.github.lix3nn53.guardiansofadelia.rewards.chest;
+package io.github.lix3nn53.guardiansofadelia.interactables.chest;
 
-import io.github.lix3nn53.guardiansofadelia.GuardiansOfAdelia;
 import io.github.lix3nn53.guardiansofadelia.creatures.drops.MobDropGenerator;
 import io.github.lix3nn53.guardiansofadelia.creatures.mythicmobs.spawner.MMSpawnerOpenWorld;
 import io.github.lix3nn53.guardiansofadelia.items.GearLevel;
@@ -10,12 +9,12 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
 
-public class OpenWorldLootChest extends MMSpawnerOpenWorld {
+public class LootChest extends MMSpawnerOpenWorld {
 
     private final LootChestTier lootChestTier;
 
-    public OpenWorldLootChest(Location location, LootChestTier lootChestTier) {
-        super(lootChestTier.getMobKey(), location);
+    public LootChest(Location location, LootChestTier lootChestTier) {
+        super(lootChestTier.getMobKey(), location, 20 * 180, 20 * 600);
         this.lootChestTier = lootChestTier;
     }
 
@@ -26,8 +25,6 @@ public class OpenWorldLootChest extends MMSpawnerOpenWorld {
     @Override
     public void onDeath() {
         super.onDeath();
-        GuardiansOfAdelia.getInstance().getLogger().info("Debug death OpenWorldLootChest");
-
         List<ItemStack> result = lootChestTier.getLoot();
 
         GearLevel gearLevel = this.lootChestTier.getRandomGearLevel();
@@ -36,6 +33,7 @@ public class OpenWorldLootChest extends MMSpawnerOpenWorld {
 
         result.addAll(drops);
 
+        Location location = getLocation();
         World world = location.getWorld();
         for (ItemStack itemStack : result) {
             world.dropItemNaturally(location, itemStack);

@@ -2,11 +2,10 @@ package io.github.lix3nn53.guardiansofadelia.minigames.dungeon.room;
 
 import io.github.lix3nn53.guardiansofadelia.creatures.drops.MobDropGenerator;
 import io.github.lix3nn53.guardiansofadelia.creatures.mythicmobs.spawner.MMSpawner;
+import io.github.lix3nn53.guardiansofadelia.interactables.chest.LootChestTier;
 import io.github.lix3nn53.guardiansofadelia.items.GearLevel;
-import io.github.lix3nn53.guardiansofadelia.rewards.chest.LootChestTier;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
@@ -28,11 +27,11 @@ public class DungeonRoomLootChest extends MMSpawner {
     }
 
     @Override
-    public LivingEntity spawn() {
+    public void spawn() {
         throw new IllegalArgumentException("This method is not implemented for DungeonRoomLootChest");
     }
 
-    public boolean spawn(Location dungeonStart, int roomNo, int roomCount) {
+    public boolean spawnWithChance(Location dungeonStart, int roomNo, int roomCount) {
         float random = (float) Math.random();
 
         float chance = ((float) roomNo) / roomCount;
@@ -41,6 +40,12 @@ public class DungeonRoomLootChest extends MMSpawner {
             return false;
         }
 
+        spawn(dungeonStart);
+
+        return true;
+    }
+
+    public void spawn(Location dungeonStart) {
         Location add = dungeonStart.clone().add(offset);
 
         add.setYaw(yaw);
@@ -49,8 +54,6 @@ public class DungeonRoomLootChest extends MMSpawner {
         super.setLocation(add);
 
         super.spawn();
-
-        return true;
     }
 
     public Vector getOffset() {
@@ -69,7 +72,7 @@ public class DungeonRoomLootChest extends MMSpawner {
     public void rotate() {
         super.rotate();
 
-        this.yaw += 90;
+        this.yaw += 45;
     }
 
     @Override
@@ -84,6 +87,7 @@ public class DungeonRoomLootChest extends MMSpawner {
 
         result.addAll(drops);
 
+        Location location = getLocation();
         World world = location.getWorld();
         for (ItemStack itemStack : result) {
             world.dropItemNaturally(location, itemStack);

@@ -120,6 +120,10 @@ commands:
     description: Build command
     permission: guardian.player
     permission-message: You do not have permission!
+  admininteractable:
+    description: AdminInteractable command
+    permission: guardian.admin
+    permission-message: You do not have permission!
 permissions:
   guardian.player:
     description: GuardiansOfAdelia permission for player commands

@@ -1,4 +1,4 @@
-package io.github.lix3nn53.guardiansofadelia.rewards.chest;
+package io.github.lix3nn53.guardiansofadelia.interactables.chest;
 
 import io.github.lix3nn53.guardiansofadelia.text.ChatPalette;
 import io.github.lix3nn53.guardiansofadelia.utilities.InventoryUtils;

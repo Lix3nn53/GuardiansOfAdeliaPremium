@@ -21,20 +21,22 @@ public class DungeonRoom {
     private final HashMap<Integer, List<DungeonRoomSpawner>> waveToSpawners;
     private final List<RandomSkillOnGroundWithOffset> skillsOnGround;
     private final List<DungeonRoomLootChest> lootChests;
+    private final List<DungeonRoomExplosiveBarrel> explosiveBarrels;
 
     /**
      * Rooms to start after this room ends
      */
     private final List<Integer> nextRooms;
 
-    public DungeonRoom(List<DungeonRoomDoor> doors, HashMap<Integer, List<DungeonRoomSpawner>> waveToSpawners,
-                       List<RandomSkillOnGroundWithOffset> skillsOnGround,
-                       List<DungeonRoomLootChest> lootChests, List<Integer> nextRooms) {
+    public DungeonRoom(List<Integer> nextRooms, List<DungeonRoomDoor> doors, HashMap<Integer,
+            List<DungeonRoomSpawner>> waveToSpawners, List<RandomSkillOnGroundWithOffset> skillsOnGround,
+                       List<DungeonRoomLootChest> lootChests, List<DungeonRoomExplosiveBarrel> explosiveBarrels) {
         this.doors = doors;
         this.waveToSpawners = waveToSpawners;
         this.skillsOnGround = skillsOnGround;
         this.nextRooms = nextRooms;
         this.lootChests = lootChests;
+        this.explosiveBarrels = explosiveBarrels;
     }
 
     public void onDungeonStart(Location dungeonStart) {
@@ -81,7 +83,11 @@ public class DungeonRoom {
         }
 
         for (DungeonRoomLootChest lootChest : lootChests) {
-            lootChest.spawn(dungeonStart, roomNo, roomCount);
+            lootChest.spawnWithChance(dungeonStart, roomNo, roomCount);
+        }
+
+        for (DungeonRoomExplosiveBarrel explosiveBarrel : explosiveBarrels) {
+            explosiveBarrel.spawn(dungeonStart);
         }
     }
 
@@ -226,5 +232,13 @@ public class DungeonRoom {
 
     public List<DungeonRoomLootChest> getLootChests() {
         return lootChests;
+    }
+
+    public void addExplosiveBarrel(DungeonRoomExplosiveBarrel lootChest) {
+        explosiveBarrels.add(lootChest);
+    }
+
+    public List<DungeonRoomExplosiveBarrel> getExplosiveBarrels() {
+        return explosiveBarrels;
     }
 }

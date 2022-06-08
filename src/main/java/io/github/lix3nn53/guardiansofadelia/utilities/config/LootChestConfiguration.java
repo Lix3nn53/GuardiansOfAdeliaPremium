@@ -2,8 +2,8 @@ package io.github.lix3nn53.guardiansofadelia.utilities.config;
 
 import io.github.lix3nn53.guardiansofadelia.creatures.mythicmobs.MMSpawnerManager;
 import io.github.lix3nn53.guardiansofadelia.creatures.mythicmobs.spawner.MMSpawnerOpenWorld;
-import io.github.lix3nn53.guardiansofadelia.rewards.chest.LootChestTier;
-import io.github.lix3nn53.guardiansofadelia.rewards.chest.OpenWorldLootChest;
+import io.github.lix3nn53.guardiansofadelia.interactables.chest.LootChest;
+import io.github.lix3nn53.guardiansofadelia.interactables.chest.LootChestTier;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -47,7 +47,7 @@ public class LootChestConfiguration {
             Location location = new Location(world, x, y, z, yaw, pitch);
             String tierStr = section.getString("tier");
             LootChestTier lootChestTier = LootChestTier.valueOf(tierStr);
-            OpenWorldLootChest lootChest = new OpenWorldLootChest(location, lootChestTier);
+            LootChest lootChest = new LootChest(location, lootChestTier);
 
             MMSpawnerManager.addGlobalSpawner(lootChest);
         }
@@ -61,7 +61,7 @@ public class LootChestConfiguration {
             List<MMSpawnerOpenWorld> lootChests = chunkKeyToLootChests.get(chunkKey);
 
             for (MMSpawnerOpenWorld spawner : lootChests) {
-                if (spawner instanceof OpenWorldLootChest lootChest) {
+                if (spawner instanceof LootChest lootChest) {
                     Location location = lootChest.getLocation();
                     LootChestTier lootChestTier = lootChest.getLootChestTier();
 
@@ -79,8 +79,6 @@ public class LootChestConfiguration {
         }
 
         try {
-            String filePath = ConfigManager.DATA_FOLDER + File.separator + "rewards";
-
             lootChestsConfig.save(filePath + File.separator + fileName);
         } catch (IOException e) {
             e.printStackTrace();

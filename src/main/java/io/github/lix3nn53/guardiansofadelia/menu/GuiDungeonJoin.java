@@ -54,6 +54,8 @@ public class GuiDungeonJoin extends GuiGeneric {
         lore.add("");
         lore.add(ChatPalette.GRAY + "You can get maximum 3 keys.");
         lore.add(ChatPalette.GRAY + "Punch to get a prize chest using your key.");
+        itemMeta.setLore(lore);
+        prize.setItemMeta(itemMeta);
         this.setItem(8, prize);
 
         ItemStack darkness = new ItemStack(Material.PURPLE_WOOL);
@@ -70,6 +72,8 @@ public class GuiDungeonJoin extends GuiGeneric {
         lore.add("");
         lore.add(ChatPalette.GRAY + "You will get +1 key for completing the...");
         lore.add(ChatPalette.GRAY + "...dungeon with less than 50 darkness.");
+        itemMeta.setLore(lore);
+        darkness.setItemMeta(itemMeta);
         this.setItem(7, darkness);
     }
 
