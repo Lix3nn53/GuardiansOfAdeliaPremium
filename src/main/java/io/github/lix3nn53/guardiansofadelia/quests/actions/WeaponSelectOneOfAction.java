@@ -3,6 +3,8 @@ package io.github.lix3nn53.guardiansofadelia.quests.actions;
 import io.github.lix3nn53.guardiansofadelia.guardian.GuardianData;
 import io.github.lix3nn53.guardiansofadelia.guardian.GuardianDataManager;
 import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGCharacter;
+import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGClass;
+import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGClassManager;
 import io.github.lix3nn53.guardiansofadelia.items.config.WeaponReferenceData;
 import io.github.lix3nn53.guardiansofadelia.menu.quest.GuiQuestTaskPrizeSelect;
 import io.github.lix3nn53.guardiansofadelia.text.ChatPalette;
@@ -36,7 +38,10 @@ public class WeaponSelectOneOfAction implements Action {
                     guiSize += 9;
                 }*/
 
-                List<ItemStack> items = weaponPrizesSelectOneOf.getItems();
+                String rpgClassStr = rpgCharacter.getRpgClassStr();
+                RPGClass rpgClass = RPGClassManager.getClass(rpgClassStr);
+
+                List<ItemStack> items = weaponPrizesSelectOneOf.getItems(rpgClass);
                 GuiQuestTaskPrizeSelect gui = new GuiQuestTaskPrizeSelect(guardianData, questNo, 0, taskIndex, items);
                 gui.openInventory(player);
             }

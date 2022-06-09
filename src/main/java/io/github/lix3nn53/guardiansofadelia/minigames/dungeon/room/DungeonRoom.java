@@ -21,7 +21,7 @@ public class DungeonRoom {
     private final HashMap<Integer, List<DungeonRoomSpawner>> waveToSpawners;
     private final List<RandomSkillOnGroundWithOffset> skillsOnGround;
     private final List<DungeonRoomLootChest> lootChests;
-    private final List<DungeonRoomExplosiveBarrel> explosiveBarrels;
+    private final List<DungeonRoomInteractable> interactables;
 
     /**
      * Rooms to start after this room ends
@@ -30,13 +30,13 @@ public class DungeonRoom {
 
     public DungeonRoom(List<Integer> nextRooms, List<DungeonRoomDoor> doors, HashMap<Integer,
             List<DungeonRoomSpawner>> waveToSpawners, List<RandomSkillOnGroundWithOffset> skillsOnGround,
-                       List<DungeonRoomLootChest> lootChests, List<DungeonRoomExplosiveBarrel> explosiveBarrels) {
+                       List<DungeonRoomLootChest> lootChests, List<DungeonRoomInteractable> interactables) {
         this.doors = doors;
         this.waveToSpawners = waveToSpawners;
         this.skillsOnGround = skillsOnGround;
         this.nextRooms = nextRooms;
         this.lootChests = lootChests;
-        this.explosiveBarrels = explosiveBarrels;
+        this.interactables = interactables;
     }
 
     public void onDungeonStart(Location dungeonStart) {
@@ -86,8 +86,8 @@ public class DungeonRoom {
             lootChest.spawnWithChance(dungeonStart, roomNo, roomCount);
         }
 
-        for (DungeonRoomExplosiveBarrel explosiveBarrel : explosiveBarrels) {
-            explosiveBarrel.spawn(dungeonStart);
+        for (DungeonRoomInteractable interactable : interactables) {
+            interactable.spawn(dungeonStart);
         }
     }
 
@@ -234,11 +234,11 @@ public class DungeonRoom {
         return lootChests;
     }
 
-    public void addExplosiveBarrel(DungeonRoomExplosiveBarrel lootChest) {
-        explosiveBarrels.add(lootChest);
+    public void addExplosiveBarrel(DungeonRoomInteractable lootChest) {
+        interactables.add(lootChest);
     }
 
-    public List<DungeonRoomExplosiveBarrel> getExplosiveBarrels() {
-        return explosiveBarrels;
+    public List<DungeonRoomInteractable> getInteractables() {
+        return interactables;
     }
 }

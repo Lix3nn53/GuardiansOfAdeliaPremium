@@ -47,7 +47,11 @@ public class LootChestConfiguration {
             Location location = new Location(world, x, y, z, yaw, pitch);
             String tierStr = section.getString("tier");
             LootChestTier lootChestTier = LootChestTier.valueOf(tierStr);
-            LootChest lootChest = new LootChest(location, lootChestTier);
+
+            long cooldownMin = section.contains("cooldownMin") ? section.getLong("cooldownMin") : 20 * 180;
+            long cooldownMax = section.contains("cooldownMax") ? section.getLong("cooldownMax") : 20 * 600;
+
+            LootChest lootChest = new LootChest(location, lootChestTier, cooldownMin, cooldownMax);
 
             MMSpawnerManager.addGlobalSpawner(lootChest);
         }

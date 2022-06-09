@@ -2,11 +2,10 @@ package io.github.lix3nn53.guardiansofadelia.commands.admin;
 
 import io.github.lix3nn53.guardiansofadelia.creatures.mythicmobs.MMSpawnerManager;
 import io.github.lix3nn53.guardiansofadelia.creatures.mythicmobs.spawner.MMSpawner;
-import io.github.lix3nn53.guardiansofadelia.interactables.ExplosiveBarrel;
+import io.github.lix3nn53.guardiansofadelia.interactables.GenericInteractable;
 import io.github.lix3nn53.guardiansofadelia.interactables.chest.LootChest;
 import io.github.lix3nn53.guardiansofadelia.interactables.chest.LootChestTier;
 import io.github.lix3nn53.guardiansofadelia.text.ChatPalette;
-import io.github.lix3nn53.guardiansofadelia.utilities.config.ExplosiveBarrelConfiguration;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -32,7 +31,7 @@ public class CommandAdminInteractable implements CommandExecutor {
             if (args.length < 1) {
                 player.sendMessage(ChatPalette.YELLOW + "/admininteractable rotate - rotate nearby interactables");
                 player.sendMessage(ChatPalette.YELLOW + "/admininteractable add chest [0-3 = tier]");
-                player.sendMessage(ChatPalette.YELLOW + "/admininteractable add explosive");
+                player.sendMessage(ChatPalette.YELLOW + "/admininteractable add generic <mobKey>");
             } else if (args[0].equals("add")) {
                 if (args[1].equals("chest")) {
                     Block targetBlock = player.getTargetBlock(null, 12);
@@ -52,7 +51,7 @@ public class CommandAdminInteractable implements CommandExecutor {
 
                     location.add(0.5, 0, 0.5);
 
-                    LootChest lootChest = new LootChest(location, value);
+                    LootChest lootChest = new LootChest(location, value, 20 * 180, 20 * 600);
                     lootChest.spawn();
 
                     MMSpawnerManager.addGlobalSpawner(lootChest);
@@ -61,7 +60,9 @@ public class CommandAdminInteractable implements CommandExecutor {
                     // lootChest.startPlayingParticles();
                     targetBlock.setType(Material.AIR);
                     lootChest.spawn();
-                } else if (args[1].equals("explosive")) {
+                } else if (args[1].equals("generic")) {
+                    String mobKey = args[2];
+
                     Block targetBlock = player.getTargetBlock(null, 12);
 
                     Material type = targetBlock.getType();
@@ -75,12 +76,12 @@ public class CommandAdminInteractable implements CommandExecutor {
 
                     location.add(0.5, 0, 0.5);
 
-                    ExplosiveBarrel explosiveBarrel = new ExplosiveBarrel(ExplosiveBarrelConfiguration.MOB_KEY, location);
+                    GenericInteractable explosiveBarrel = new GenericInteractable(mobKey, location, 20 * 60, 20 * 300);
                     explosiveBarrel.spawn();
 
                     MMSpawnerManager.addGlobalSpawner(explosiveBarrel);
 
-                    player.sendMessage(ChatPalette.GREEN_DARK + "Added explosive barrel!");
+                    player.sendMessage(ChatPalette.GREEN_DARK + "Added generic interactable! MobKey: " + mobKey);
                     targetBlock.setType(Material.AIR);
                     explosiveBarrel.spawn();
                 }

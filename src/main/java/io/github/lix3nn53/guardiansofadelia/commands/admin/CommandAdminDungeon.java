@@ -57,7 +57,7 @@ public class CommandAdminDungeon implements CommandExecutor {
                 player.sendMessage(ChatPalette.GOLD + "/admindungeon add skill global" + ChatPalette.GOLD + " !!look at location block!!");
                 player.sendMessage(ChatPalette.GOLD + "/admindungeon add checkpoint" + ChatPalette.GOLD + " !!look at location block!!");
                 player.sendMessage(ChatPalette.GOLD + "/admindungeon add chest <roomNo>" + ChatPalette.GOLD + " !!look at CHEST!!");
-                player.sendMessage(ChatPalette.GOLD + "/admindungeon add barrel <roomNo>" + ChatPalette.GOLD + " !!look at TNT!!");
+                player.sendMessage(ChatPalette.GOLD + "/admindungeon add interactable <mobKey> <roomNo>" + ChatPalette.GOLD + " !!look at TNT!!");
                 player.sendMessage(ChatPalette.GOLD + "/admindungeon set bossRoom " + ChatPalette.GOLD + " !!select WorldEdit region first!!");
                 player.sendMessage(ChatPalette.GOLD + "/admindungeon set prizeloc" + ChatPalette.GOLD + " !!look at block!!");
                 player.sendMessage(ChatPalette.GOLD + "/admindungeon rotate chest <roomNo> <index>" + ChatPalette.GOLD + " rotates chest by 45");
@@ -148,7 +148,7 @@ public class CommandAdminDungeon implements CommandExecutor {
                         List<Integer> nextRooms = new ArrayList<>();
                         List<RandomSkillOnGroundWithOffset> skillsOnGround = new ArrayList<>();
                         List<DungeonRoomLootChest> lootChests = new ArrayList<>();
-                        List<DungeonRoomExplosiveBarrel> explosiveBarrels = new ArrayList<>();
+                        List<DungeonRoomInteractable> explosiveBarrels = new ArrayList<>();
 
                         DungeonRoom dungeonRoom = new DungeonRoom(nextRooms, doors, waves, skillsOnGround,
                                 lootChests, explosiveBarrels);
@@ -301,8 +301,9 @@ public class CommandAdminDungeon implements CommandExecutor {
                         remakeHolograms(key);
                         break;
                     }
-                    case "barrel": {
-                        int roomNo = Integer.parseInt(args[2]);
+                    case "interactable": {
+                        String mobKey = args[2];
+                        int roomNo = Integer.parseInt(args[3]);
 
                         HashMap<String, DungeonTheme> dungeonThemes = MiniGameManager.getDungeonThemes();
                         DungeonTheme dungeonTheme = dungeonThemes.get(key);
@@ -322,7 +323,7 @@ public class CommandAdminDungeon implements CommandExecutor {
                         Location start = MiniGameManager.getDungeonInstance(key, 1).getStartLocation(1);
                         Vector offset = start.toVector().subtract(add.toVector()).multiply(-1);
 
-                        DungeonRoomExplosiveBarrel dungeonRoomExplosiveBarrel = new DungeonRoomExplosiveBarrel(offset, 0, 0);
+                        DungeonRoomInteractable dungeonRoomExplosiveBarrel = new DungeonRoomInteractable(mobKey, offset, 0, 0);
 
                         DungeonRoom dungeonRoom = dungeonTheme.getDungeonRoom(roomNo);
                         dungeonRoom.addExplosiveBarrel(dungeonRoomExplosiveBarrel);

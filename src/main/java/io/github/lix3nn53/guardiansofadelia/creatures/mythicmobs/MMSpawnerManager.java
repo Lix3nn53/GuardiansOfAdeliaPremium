@@ -1,6 +1,5 @@
 package io.github.lix3nn53.guardiansofadelia.creatures.mythicmobs;
 
-import io.github.lix3nn53.guardiansofadelia.GuardiansOfAdelia;
 import io.github.lix3nn53.guardiansofadelia.creatures.mythicmobs.spawner.MMSpawner;
 import io.github.lix3nn53.guardiansofadelia.creatures.mythicmobs.spawner.MMSpawnerOpenWorld;
 import io.github.lix3nn53.guardiansofadelia.utilities.LocationUtils;
@@ -13,7 +12,6 @@ import java.util.List;
 public class MMSpawnerManager {
 
     private static final HashMap<String, List<MMSpawnerOpenWorld>> chunkKeyToSpawners = new HashMap<>();
-
     private static final HashMap<LivingEntity, MMSpawner> spawnedToSpawners = new HashMap<>();
 
     public static void onChunkLoad(String chunkKey) {
@@ -31,7 +29,6 @@ public class MMSpawnerManager {
             List<MMSpawnerOpenWorld> openWorldSpawners = chunkKeyToSpawners.get(chunkKey);
 
             for (MMSpawnerOpenWorld spawner : openWorldSpawners) {
-                GuardiansOfAdelia.getInstance().getLogger().info("Despawning open world spawner");
                 spawner.despawn();
             }
         }

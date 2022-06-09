@@ -1,18 +1,17 @@
 package io.github.lix3nn53.guardiansofadelia.minigames.dungeon.room;
 
 import io.github.lix3nn53.guardiansofadelia.creatures.mythicmobs.spawner.MMSpawner;
-import io.github.lix3nn53.guardiansofadelia.utilities.config.ExplosiveBarrelConfiguration;
 import org.bukkit.Location;
 import org.bukkit.util.Vector;
 
-public class DungeonRoomExplosiveBarrel extends MMSpawner {
+public class DungeonRoomInteractable extends MMSpawner {
 
     private final Vector offset;
     private final float pitch;
     private float yaw;
 
-    public DungeonRoomExplosiveBarrel(Vector offset, float yaw, float pitch) {
-        super(ExplosiveBarrelConfiguration.MOB_KEY, null);
+    public DungeonRoomInteractable(String mobKey, Vector offset, float yaw, float pitch) {
+        super(mobKey, null);
         this.offset = offset;
         this.yaw = yaw;
         this.pitch = pitch;

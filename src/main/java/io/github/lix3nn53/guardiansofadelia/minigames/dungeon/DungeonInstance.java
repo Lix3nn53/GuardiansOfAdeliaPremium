@@ -382,9 +382,9 @@ public class DungeonInstance extends Minigame {
                 debugHolograms.add(hologram);
             }
 
-            List<DungeonRoomExplosiveBarrel> explosiveBarrels = room.getExplosiveBarrels();
+            List<DungeonRoomInteractable> explosiveBarrels = room.getInteractables();
             for (int i = 0; i < explosiveBarrels.size(); i++) {
-                DungeonRoomExplosiveBarrel explosiveBarrel = explosiveBarrels.get(i);
+                DungeonRoomInteractable explosiveBarrel = explosiveBarrels.get(i);
 
                 explosiveBarrel.spawn(getStartLocation(1));
 

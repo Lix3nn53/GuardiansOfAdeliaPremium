@@ -158,24 +158,25 @@ public class DungeonConfiguration {
                     lootChests.add(new DungeonRoomLootChest(lootChestTier, vector, yaw, pitch));
                 }
 
-                List<DungeonRoomExplosiveBarrel> explosiveBarrels = new ArrayList<>();
+                List<DungeonRoomInteractable> interactables = new ArrayList<>();
                 for (int groundIndex = 1; groundIndex <= 999; groundIndex++) {
-                    if (!section.contains("room" + roomIndex + ".explosiveBarrel" + groundIndex)) break;
+                    if (!section.contains("room" + roomIndex + ".interactable" + groundIndex)) break;
 
-                    float x = (float) section.getDouble("room" + roomIndex + ".explosiveBarrel" + groundIndex + ".x");
-                    float y = (float) section.getDouble("room" + roomIndex + ".explosiveBarrel" + groundIndex + ".y");
-                    float z = (float) section.getDouble("room" + roomIndex + ".explosiveBarrel" + groundIndex + ".z");
-                    float yaw = (float) section.getDouble("room" + roomIndex + ".explosiveBarrel" + groundIndex + ".yaw");
-                    float pitch = (float) section.getDouble("room" + roomIndex + ".explosiveBarrel" + groundIndex + ".pitch");
+                    String mobKey = section.getString("room" + roomIndex + ".interactable" + groundIndex + ".mobKey");
+                    float x = (float) section.getDouble("room" + roomIndex + ".interactable" + groundIndex + ".x");
+                    float y = (float) section.getDouble("room" + roomIndex + ".interactable" + groundIndex + ".y");
+                    float z = (float) section.getDouble("room" + roomIndex + ".interactable" + groundIndex + ".z");
+                    float yaw = (float) section.getDouble("room" + roomIndex + ".interactable" + groundIndex + ".yaw");
+                    float pitch = (float) section.getDouble("room" + roomIndex + ".interactable" + groundIndex + ".pitch");
 
                     Vector vector = new Vector(x, y, z);
-                    explosiveBarrels.add(new DungeonRoomExplosiveBarrel(vector, yaw, pitch));
+                    interactables.add(new DungeonRoomInteractable(mobKey, vector, yaw, pitch));
                 }
 
                 List<Integer> nextRooms = section.getIntegerList("room" + roomIndex + ".nextRooms");
 
                 DungeonRoom dungeonRoom = new DungeonRoom(nextRooms, dungeonRoomDoors, waveToSpawners, skillsOnGround,
-                        lootChests, explosiveBarrels);
+                        lootChests, interactables);
                 dungeonRooms.put(roomIndex, dungeonRoom);
             }
 
@@ -329,18 +330,19 @@ public class DungeonConfiguration {
                     lootChestIndex++;
                 }
 
-                List<DungeonRoomExplosiveBarrel> explosiveBarrels = dungeonRoom.getExplosiveBarrels();
-                int explosiveBarrelIndex = 1;
-                for (DungeonRoomExplosiveBarrel explosiveBarrel : explosiveBarrels) {
-                    Vector offset = explosiveBarrel.getOffset();
+                List<DungeonRoomInteractable> interactables = dungeonRoom.getInteractables();
+                int interactableIndex = 1;
+                for (DungeonRoomInteractable interactable : interactables) {
+                    Vector offset = interactable.getOffset();
 
-                    currentThemeConfig.set("room" + roomKey + ".explosiveBarrel" + explosiveBarrelIndex + ".x", offset.getX());
-                    currentThemeConfig.set("room" + roomKey + ".explosiveBarrel" + explosiveBarrelIndex + ".y", offset.getY());
-                    currentThemeConfig.set("room" + roomKey + ".explosiveBarrel" + explosiveBarrelIndex + ".z", offset.getZ());
-                    currentThemeConfig.set("room" + roomKey + ".explosiveBarrel" + explosiveBarrelIndex + ".yaw", explosiveBarrel.getYaw());
-                    currentThemeConfig.set("room" + roomKey + ".explosiveBarrel" + explosiveBarrelIndex + ".pitch", explosiveBarrel.getPitch());
+                    currentThemeConfig.set("room" + roomKey + ".interactable" + interactableIndex + ".mobKey", interactable.getMobKey());
+                    currentThemeConfig.set("room" + roomKey + ".interactable" + interactableIndex + ".x", offset.getX());
+                    currentThemeConfig.set("room" + roomKey + ".interactable" + interactableIndex + ".y", offset.getY());
+                    currentThemeConfig.set("room" + roomKey + ".interactable" + interactableIndex + ".z", offset.getZ());
+                    currentThemeConfig.set("room" + roomKey + ".interactable" + interactableIndex + ".yaw", interactable.getYaw());
+                    currentThemeConfig.set("room" + roomKey + ".interactable" + interactableIndex + ".pitch", interactable.getPitch());
 
-                    explosiveBarrelIndex++;
+                    interactableIndex++;
                 }
 
                 currentThemeConfig.set("room" + roomKey + ".nextRooms", dungeonRoom.getNextRooms());

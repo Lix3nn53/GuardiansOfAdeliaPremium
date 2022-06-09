@@ -3,6 +3,8 @@ package io.github.lix3nn53.guardiansofadelia.menu.quest;
 import io.github.lix3nn53.guardiansofadelia.guardian.GuardianData;
 import io.github.lix3nn53.guardiansofadelia.guardian.GuardianDataManager;
 import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGCharacter;
+import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGClass;
+import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGClassManager;
 import io.github.lix3nn53.guardiansofadelia.items.GearLevel;
 import io.github.lix3nn53.guardiansofadelia.items.RpgGears.ItemTier;
 import io.github.lix3nn53.guardiansofadelia.items.RpgGears.gearset.GearSetManager;
@@ -73,8 +75,10 @@ public class GuiQuestPrizeSelect extends GuiGeneric {
             index++;
         }
 
+        String rpgClassStr = rpgCharacter.getRpgClassStr();
+        RPGClass rpgClass = RPGClassManager.getClass(rpgClassStr);
         if (weaponPrizesSelectOneOf != null) {
-            List<ItemStack> items = weaponPrizesSelectOneOf.getItems();
+            List<ItemStack> items = weaponPrizesSelectOneOf.getItems(rpgClass);
             for (ItemStack itemStack : items) {
                 Integer slotNo = slotsToUse.get(index);
                 this.setItem(slotNo, itemStack);
@@ -83,7 +87,7 @@ public class GuiQuestPrizeSelect extends GuiGeneric {
         }
 
         if (armorPrizesSelectOneOf != null) {
-            List<ItemStack> items = armorPrizesSelectOneOf.getItems();
+            List<ItemStack> items = armorPrizesSelectOneOf.getItems(rpgClass);
             for (ItemStack itemStack : items) {
                 Integer slotNo = slotsToUse.get(index);
                 this.setItem(slotNo, itemStack);

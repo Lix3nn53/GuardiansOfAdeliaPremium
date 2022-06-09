@@ -10,7 +10,6 @@ public class MMSpawnerOpenWorld extends MMSpawner {
     private final long cooldownMin;
     private final long cooldownMax;
 
-    protected boolean isOnCooldown = false;
     private BukkitTask cooldownTask;
 
     public MMSpawnerOpenWorld(String mobKey, Location location, long cooldownMin, long cooldownMax) {
@@ -21,7 +20,14 @@ public class MMSpawnerOpenWorld extends MMSpawner {
 
     @Override
     public void spawn() {
-        if (isOnCooldown) return;
+        GuardiansOfAdelia.getInstance().getLogger().info("Debug spawn MMSpawnerOpenWorld: " + this.getClass().getSimpleName());
+        if (cooldownTask != null) {
+            GuardiansOfAdelia.getInstance().getLogger().info("Cooldown isCancelled: " + cooldownTask.isCancelled());
+        } else {
+            GuardiansOfAdelia.getInstance().getLogger().info("Cooldown is null");
+        }
+        if (cooldownTask != null && !cooldownTask.isCancelled()) return;
+        GuardiansOfAdelia.getInstance().getLogger().info("Debug spawn MMSpawnerOpenWorld pass cooldown check");
 
         super.spawn();
     }
@@ -29,11 +35,9 @@ public class MMSpawnerOpenWorld extends MMSpawner {
     @Override
     public void onDeath() {
         super.onDeath();
-        GuardiansOfAdelia.getInstance().getLogger().info("Debug death MMSpawnerOpenWorld");
-
-        isOnCooldown = true;
 
         final long finalCooldown = (long) (cooldownMin + (Math.random() * (cooldownMax - cooldownMin)));
+        GuardiansOfAdelia.getInstance().getLogger().info("Debug death MMSpawnerOpenWorld cooldown: " + finalCooldown);
 
         if (cooldownTask != null) {
             cooldownTask.cancel();
@@ -42,12 +46,12 @@ public class MMSpawnerOpenWorld extends MMSpawner {
         cooldownTask = new BukkitRunnable() {
             @Override
             public void run() {
-                isOnCooldown = false;
                 if (getLocation().getChunk().isLoaded()) {
-                    // startPlayingParticles();
+                    GuardiansOfAdelia.getInstance().getLogger().info("Debug cooldown finished MMSpawnerOpenWorld");
+                    cancel();
                     spawn();
                 }
             }
-        }.runTaskLater(GuardiansOfAdelia.getInstance(), 20 * finalCooldown);
+        }.runTaskLater(GuardiansOfAdelia.getInstance(), finalCooldown);
     }
 }

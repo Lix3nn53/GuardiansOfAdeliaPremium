@@ -13,8 +13,8 @@ public class LootChest extends MMSpawnerOpenWorld {
 
     private final LootChestTier lootChestTier;
 
-    public LootChest(Location location, LootChestTier lootChestTier) {
-        super(lootChestTier.getMobKey(), location, 20 * 180, 20 * 600);
+    public LootChest(Location location, LootChestTier lootChestTier, long cooldownMin, long cooldownMax) {
+        super(lootChestTier.getMobKey(), location, cooldownMin, cooldownMax);
         this.lootChestTier = lootChestTier;
     }
 

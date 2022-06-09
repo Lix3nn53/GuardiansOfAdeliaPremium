@@ -49,6 +49,7 @@ public abstract class MMSpawner {
             return;
         }
 
+        GuardiansOfAdelia.getInstance().getLogger().info("Debug spawn MMSpawner");
         spawned = chest;
 
         MMSpawnerManager.onSpawn(mmSpawner);
