@@ -1,6 +1,5 @@
 package io.github.lix3nn53.guardiansofadelia.commands.admin;
 
-import io.github.lix3nn53.guardiansofadelia.GuardiansOfAdelia;
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.onground.SkillOnGround;
 import io.github.lix3nn53.guardiansofadelia.sounds.CustomSound;
 import io.github.lix3nn53.guardiansofadelia.sounds.GoaSound;
@@ -8,7 +7,7 @@ import io.github.lix3nn53.guardiansofadelia.text.ChatPalette;
 import io.github.lix3nn53.guardiansofadelia.text.font.CustomCharacter;
 import io.github.lix3nn53.guardiansofadelia.text.font.NegativeSpace;
 import io.github.lix3nn53.guardiansofadelia.utilities.gui.GuiGeneric;
-import io.github.lix3nn53.guardiansofadelia.utilities.hologram.packets.PlayerInfoPacket;
+import io.github.lix3nn53.guardiansofadelia.utilities.packets.EntityEquipmentPacket;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -78,14 +77,24 @@ public class CommandTest implements CommandExecutor {
                     }
                 }.runTaskTimer(GuardiansOfAdelia.getInstance(), 2L, 2L);*/
 
-                PlayerInfoPacket playerInfoPacket = new PlayerInfoPacket(player);
+                /*PlayerInfoPacket playerInfoPacket = new PlayerInfoPacket(player);
 
                 player.getNearbyEntities(20, 20, 20).forEach(e -> {
                     if (e instanceof Player target) {
                         target.hidePlayer(GuardiansOfAdelia.getInstance(), player);
                         playerInfoPacket.send(target);
                     }
-                });
+                });*/
+
+                /*PacketContainer packet = new PacketContainer(PacketType.Play.Server.ENTITY_EQUIPMENT);
+                packet.getIntegers().write(0, player.getEntityId());
+                List<Pair<EnumWrappers.ItemSlot, ItemStack>> pairs = new ArrayList<>();
+                ItemStack helmet = new ItemStack(Material.DIAMOND_HELMET, 1);
+                pairs.add(new Pair<>(EnumWrappers.ItemSlot.HEAD, helmet));
+                packet.getSlotStackPairLists().writeSafely(0, pairs);
+                ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);*/
+                EntityEquipmentPacket entityEquipmentPacket = new EntityEquipmentPacket(player.getEntityId(), new ItemStack(Material.CARVED_PUMPKIN));
+                entityEquipmentPacket.load().send(player);
             } else if (args[0].equals("custom")) {
                 CustomCharacter chara = CustomCharacter.valueOf(args[1]);
                 chara.setNegativeSpacesBefore(Integer.parseInt(args[2]));

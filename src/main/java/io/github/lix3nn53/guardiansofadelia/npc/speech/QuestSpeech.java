@@ -7,12 +7,15 @@ import io.github.lix3nn53.guardiansofadelia.guardian.GuardianDataManager;
 import io.github.lix3nn53.guardiansofadelia.menu.quest.GuiQuestList;
 import io.github.lix3nn53.guardiansofadelia.text.ChatPalette;
 import io.github.lix3nn53.guardiansofadelia.text.font.CustomCharacterMisc;
+import io.github.lix3nn53.guardiansofadelia.utilities.packets.EntityEquipmentPacket;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
 import net.citizensnpcs.api.npc.NPCRegistry;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
@@ -42,8 +45,15 @@ public class QuestSpeech {
                 questGui.openInventory(player);
             }
 
+            ItemStack helmet = player.getEquipment().getHelmet();
+            EntityEquipmentPacket entityEquipmentPacket = new EntityEquipmentPacket(player.getEntityId(), helmet);
+            entityEquipmentPacket.load().send(player);
+
             return;
         }
+
+        EntityEquipmentPacket entityEquipmentPacket = new EntityEquipmentPacket(player.getEntityId(), new ItemStack(Material.CARVED_PUMPKIN));
+        entityEquipmentPacket.load().send(player);
 
         String message = CustomCharacterMisc.SPEECH_BUBBLE.toString() + ChatPalette.GRAY + messages.get(index);
 

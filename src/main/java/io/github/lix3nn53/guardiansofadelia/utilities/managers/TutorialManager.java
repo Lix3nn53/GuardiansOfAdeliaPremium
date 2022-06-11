@@ -1,5 +1,6 @@
 package io.github.lix3nn53.guardiansofadelia.utilities.managers;
 
+import io.github.lix3nn53.guardiansofadelia.GuardiansOfAdelia;
 import io.github.lix3nn53.guardiansofadelia.guardian.GuardianData;
 import io.github.lix3nn53.guardiansofadelia.guardian.GuardianDataManager;
 import io.github.lix3nn53.guardiansofadelia.guardian.character.*;
@@ -14,6 +15,7 @@ import io.github.lix3nn53.guardiansofadelia.npc.QuestNPCManager;
 import io.github.lix3nn53.guardiansofadelia.quests.Quest;
 import io.github.lix3nn53.guardiansofadelia.text.ChatPalette;
 import io.github.lix3nn53.guardiansofadelia.utilities.centermessage.MessageUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -57,6 +59,8 @@ public class TutorialManager {
 
             rpgCharacterStats.setCurrentHealth(rpgCharacterStats.getTotalMaxHealth(rpgClassStats));
             rpgCharacterStats.setCurrentMana(rpgCharacterStats.getTotalMaxMana(rpgClassStats), rpgClassStats);
+
+            Bukkit.getScheduler().runTaskLater(GuardiansOfAdelia.getInstance(), () -> CharacterSelectionScreenManager.onLoadingDone(player), 200L);
         }
     }
 

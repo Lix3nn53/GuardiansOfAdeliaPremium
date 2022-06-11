@@ -1,6 +1,6 @@
 package io.github.lix3nn53.guardiansofadelia.utilities.hologram;
 
-import io.github.lix3nn53.guardiansofadelia.utilities.hologram.packets.*;
+import io.github.lix3nn53.guardiansofadelia.utilities.packets.*;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;

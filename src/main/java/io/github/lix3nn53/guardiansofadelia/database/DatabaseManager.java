@@ -92,6 +92,8 @@ public class DatabaseManager {
             } catch (SQLException e) {
                 e.printStackTrace();
             }
+
+            Bukkit.getScheduler().runTaskLater(GuardiansOfAdelia.getInstance(), () -> CharacterSelectionScreenManager.onLoadingDone(player), 200L);
         });
     }
 
@@ -155,7 +157,7 @@ public class DatabaseManager {
                 try {
                     Location lastLocationOfCharacter = DatabaseQueries.getLastLocationOfCharacter(uuid, charNo);
                     if (lastLocationOfCharacter != null) {
-                        CharacterSelectionScreenManager.setCharLocation(uuid, charNo, lastLocationOfCharacter);
+                        CharacterSelectionScreenManager.setCharLocation(player, charNo, lastLocationOfCharacter);
                     }
                 } catch (SQLException e) {
                     e.printStackTrace();
@@ -191,7 +193,7 @@ public class DatabaseManager {
 
                     int totalExp = DatabaseQueries.getTotalExp(uuid, charNo);
                     int level = RPGCharacterExperienceManager.getLevel(totalExp);
-                    CharacterSelectionScreenManager.setCharLevel(uuid, charNo, level);
+                    CharacterSelectionScreenManager.setCharLevel(player, charNo, level);
 
                     Bukkit.getScheduler().runTask(GuardiansOfAdelia.getInstance(), () -> {
                         livingWatcher1.setCustomName(ChatColor.GOLD + Translation.t(guardianData, "general.level") + ": " + ChatColor.WHITE + level);

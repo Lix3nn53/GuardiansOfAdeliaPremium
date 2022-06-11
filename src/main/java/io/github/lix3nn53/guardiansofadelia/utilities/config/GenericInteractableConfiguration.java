@@ -7,7 +7,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
 import java.io.IOException;
@@ -17,47 +17,51 @@ import java.util.List;
 public class GenericInteractableConfiguration {
 
     private static final String filePath = ConfigManager.DATA_FOLDER + File.separator + "world" + File.separator + "interactables";
-    private static FileConfiguration configFile;
+    private static HashMap<String, YamlConfiguration> allConfigsInFile;
 
-    static void createConfigs() {
-        configFile = ConfigurationUtils.createConfig(filePath, "normal.yml");
+    public static void createConfigs() {
+        GenericInteractableConfiguration.allConfigsInFile = ConfigurationUtils.getAllConfigsInFile(filePath);
     }
 
-    static void loadConfigs() {
+    public static void loadConfigs() {
         load();
     }
 
-    static void writeConfigs() {
-        write("normal.yml");
+    public static void writeConfigs() {
+        write();
     }
 
     private static void load() {
 
-        int themeCount = ConfigurationUtils.getChildComponentCount(configFile, "interactable");
+        for (String fileName : allConfigsInFile.keySet()) {
+            YamlConfiguration configFile = allConfigsInFile.get(fileName);
 
-        for (int i = 1; i <= themeCount; i++) {
-            ConfigurationSection section = configFile.getConfigurationSection("interactable" + i);
-            String mobKey = section.getString("mobKey");
-            String worldString = section.getString("world");
-            World world = Bukkit.getWorld(worldString);
-            float x = (float) section.getDouble("x");
-            float y = (float) section.getDouble("y");
-            float z = (float) section.getDouble("z");
-            float yaw = (float) section.getDouble("yaw");
-            float pitch = (float) section.getDouble("pitch");
+            int themeCount = ConfigurationUtils.getChildComponentCount(configFile, "interactable");
 
-            long cooldownMin = section.contains("cooldownMin") ? section.getLong("cooldownMin") : 20 * 60;
-            long cooldownMax = section.contains("cooldownMax") ? section.getLong("cooldownMax") : 20 * 120;
+            for (int i = 1; i <= themeCount; i++) {
+                ConfigurationSection section = configFile.getConfigurationSection("interactable" + i);
+                String mobKey = section.getString("mobKey");
+                String worldString = section.getString("world");
+                World world = Bukkit.getWorld(worldString);
+                float x = (float) section.getDouble("x");
+                float y = (float) section.getDouble("y");
+                float z = (float) section.getDouble("z");
+                float yaw = (float) section.getDouble("yaw");
+                float pitch = (float) section.getDouble("pitch");
 
-            Location location = new Location(world, x, y, z, yaw, pitch);
+                long cooldownMin = section.contains("cooldownMin") ? section.getLong("cooldownMin") : 20 * 60;
+                long cooldownMax = section.contains("cooldownMax") ? section.getLong("cooldownMax") : 20 * 120;
 
-            GenericInteractable genericInteractable = new GenericInteractable(mobKey, location, cooldownMin, cooldownMax);
+                Location location = new Location(world, x, y, z, yaw, pitch);
 
-            MMSpawnerManager.addGlobalSpawner(genericInteractable);
+                GenericInteractable genericInteractable = new GenericInteractable(fileName, mobKey, location, cooldownMin, cooldownMax);
+
+                MMSpawnerManager.addGlobalSpawner(genericInteractable);
+            }
         }
     }
 
-    private static void write(String fileName) {
+    private static void write() {
         HashMap<String, List<MMSpawnerOpenWorld>> chunkKeyToLootChests = MMSpawnerManager.getChunkKeyToSpawners();
 
         int i = 1;
@@ -66,7 +70,10 @@ public class GenericInteractableConfiguration {
 
             for (MMSpawnerOpenWorld spawner : openWorldSpawners) {
                 if (spawner instanceof GenericInteractable genericInteractable) {
+                    String fileName = genericInteractable.getFileName();
                     Location location = genericInteractable.getLocation();
+
+                    YamlConfiguration configFile = allConfigsInFile.get(fileName);
 
                     configFile.set("interactable" + i + ".mobKey", spawner.getMobKey());
                     configFile.set("interactable" + i + ".world", location.getWorld().getName());
@@ -81,10 +88,14 @@ public class GenericInteractableConfiguration {
             }
         }
 
-        try {
-            configFile.save(filePath + File.separator + fileName);
-        } catch (IOException e) {
-            e.printStackTrace();
+        for (String fileName : allConfigsInFile.keySet()) {
+            YamlConfiguration configFile = allConfigsInFile.get(fileName);
+
+            try {
+                configFile.save(new File(filePath + File.separator + fileName));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 }

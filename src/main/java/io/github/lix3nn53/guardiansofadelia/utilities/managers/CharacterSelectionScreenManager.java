@@ -19,15 +19,19 @@ import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.BoundingBox;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
 import java.util.function.Predicate;
 
 public class CharacterSelectionScreenManager {
 
-    private static final HashMap<UUID, HashMap<Integer, Location>> charLocationsForSelection = new HashMap<>();
-    private static final HashMap<UUID, HashMap<Integer, Integer>> charLevelsForSelection = new HashMap<>();
+    private static final HashMap<Player, HashMap<Integer, Location>> charLocationsForSelection = new HashMap<>();
+    private static final HashMap<Player, HashMap<Integer, Integer>> charLevelsForSelection = new HashMap<>();
     private static final List<Player> players = new ArrayList<>();
     private static List<Location> armorStandLocationBases;
     private static Location tutorialStart;
@@ -35,6 +39,8 @@ public class CharacterSelectionScreenManager {
     private static final HashMap<Integer, List<ArmorStand>> characterNoToArmorStands = new HashMap<>();
 
     private static final List<Player> playersInLoading = new ArrayList<>(); // Player clicked something and waiting for result
+
+    private static final HashMap<Player, Integer> playerToRemoveConfirmation = new HashMap<>();
 
     public static void setArmorStandLocationBases(List<Location> armorStandLocationBases) {
         CharacterSelectionScreenManager.armorStandLocationBases = armorStandLocationBases;
@@ -108,7 +114,6 @@ public class CharacterSelectionScreenManager {
     public static void selectCharacter(Player player, int charNo, Location location) {
         if (playersInLoading.contains(player)) return;
         playersInLoading.add(player);
-        Bukkit.getScheduler().runTaskLater(GuardiansOfAdelia.getInstance(), () -> playersInLoading.remove(player), 200L);
 
         player.sendMessage(ChatPalette.YELLOW + "Loading character-" + charNo);
         DatabaseManager.loadCharacter(player, charNo, location);
@@ -118,8 +123,9 @@ public class CharacterSelectionScreenManager {
     public static void clear(Player player) {
         removeDisguisesFromPlayer(player);
         players.remove(player);
-        charLocationsForSelection.remove(player.getUniqueId());
-        charLevelsForSelection.remove(player.getUniqueId());
+        charLocationsForSelection.remove(player);
+        charLevelsForSelection.remove(player);
+        playerToRemoveConfirmation.remove(player);
         if (players.isEmpty()) {
             removeHolograms();
         }
@@ -144,7 +150,6 @@ public class CharacterSelectionScreenManager {
     public static void createCharacter(Player player, int charNo, String rpgClassStr) {
         if (playersInLoading.contains(player)) return;
         playersInLoading.add(player);
-        Bukkit.getScheduler().runTaskLater(GuardiansOfAdelia.getInstance(), () -> playersInLoading.remove(player), 200L);
 
         player.sendMessage(ChatPalette.YELLOW + "Creating character-" + charNo);
         clear(player);
@@ -155,7 +160,6 @@ public class CharacterSelectionScreenManager {
     public static void createCharacterWithoutTutorial(Player player, int charNo, String rpgClassStr) {
         if (playersInLoading.contains(player)) return;
         playersInLoading.add(player);
-        Bukkit.getScheduler().runTaskLater(GuardiansOfAdelia.getInstance(), () -> playersInLoading.remove(player), 200L);
 
         player.sendMessage(ChatPalette.YELLOW + "Creating character-" + charNo);
         clear(player);
@@ -178,34 +182,35 @@ public class CharacterSelectionScreenManager {
         RPGCharacterStats rpgCharacterStats = rpgCharacter.getRpgCharacterStats();
         rpgCharacterStats.setCurrentHealth(rpgCharacterStats.getTotalMaxHealth(rpgClassStats));
         rpgCharacterStats.setCurrentMana(rpgCharacterStats.getTotalMaxMana(rpgClassStats), rpgClassStats);
+
+        Bukkit.getScheduler().runTaskLater(GuardiansOfAdelia.getInstance(), () -> CharacterSelectionScreenManager.onLoadingDone(player), 200L);
     }
 
 
-    public static void setCharLocation(UUID uuid, int charNo, Location location) {
+    public static void setCharLocation(Player player, int charNo, Location location) {
         HashMap<Integer, Location> integerLocationHashMap = new HashMap<>();
-        if (charLocationsForSelection.containsKey(uuid)) {
-            integerLocationHashMap = charLocationsForSelection.get(uuid);
+        if (charLocationsForSelection.containsKey(player)) {
+            integerLocationHashMap = charLocationsForSelection.get(player);
         }
         integerLocationHashMap.put(charNo, location);
-        charLocationsForSelection.put(uuid, integerLocationHashMap);
+        charLocationsForSelection.put(player, integerLocationHashMap);
     }
 
-    public static void setCharLevel(UUID uuid, int charNo, int level) {
+    public static void setCharLevel(Player player, int charNo, int level) {
         HashMap<Integer, Integer> integerLevelHashMap = new HashMap<>();
-        if (charLevelsForSelection.containsKey(uuid)) {
-            integerLevelHashMap = charLevelsForSelection.get(uuid);
+        if (charLevelsForSelection.containsKey(player)) {
+            integerLevelHashMap = charLevelsForSelection.get(player);
         }
         integerLevelHashMap.put(charNo, level);
-        charLevelsForSelection.put(uuid, integerLevelHashMap);
+        charLevelsForSelection.put(player, integerLevelHashMap);
     }
 
     /**
      * @return last leave location if valid else null
      */
     public static Location getCharLocation(Player player, int charNo) {
-        UUID uuid = player.getUniqueId();
-        if (charLocationsForSelection.containsKey(uuid)) {
-            HashMap<Integer, Location> integerLocationHashMap = charLocationsForSelection.get(uuid);
+        if (charLocationsForSelection.containsKey(player)) {
+            HashMap<Integer, Location> integerLocationHashMap = charLocationsForSelection.get(player);
             if (integerLocationHashMap.containsKey(charNo)) {
                 Location location = integerLocationHashMap.get(charNo);
                 if (location.getWorld().getName().equals("world")) {
@@ -217,9 +222,8 @@ public class CharacterSelectionScreenManager {
     }
 
     public static int getCharLevel(Player player, int charNo) {
-        UUID uuid = player.getUniqueId();
-        if (charLevelsForSelection.containsKey(uuid)) {
-            HashMap<Integer, Integer> integerLevelHashMap = charLevelsForSelection.get(uuid);
+        if (charLevelsForSelection.containsKey(player)) {
+            HashMap<Integer, Integer> integerLevelHashMap = charLevelsForSelection.get(player);
             if (integerLevelHashMap.containsKey(charNo)) {
                 return integerLevelHashMap.get(charNo);
             }
@@ -229,5 +233,56 @@ public class CharacterSelectionScreenManager {
 
     public static boolean isPlayerInCharSelection(Player player) {
         return players.contains(player);
+    }
+
+    public static void onLoadingDone(Player player) {
+        playersInLoading.remove(player);
+    }
+
+    public static void setToBeRemoved(Player player, int charNo) {
+        playerToRemoveConfirmation.put(player, charNo);
+        player.sendMessage(ChatPalette.RED + "Are you sure you want to delete character-" + charNo + "?");
+        player.sendMessage(ChatPalette.RED + "Type '/character remove " + charNo + "' to confirm.");
+        player.sendMessage(ChatPalette.RED_DARK + "WARNING: This action cannot be undone.");
+    }
+
+    public static void confirmRemove(Player player, int charNo) {
+        if (!players.contains(player)) {
+            player.sendMessage(ChatPalette.RED + "You must be in the character selection.");
+            return;
+        }
+
+        if (playerToRemoveConfirmation.containsKey(player)) {
+            int charNoSaved = playerToRemoveConfirmation.get(player);
+            if (charNo != charNoSaved) {
+                player.sendMessage(ChatPalette.RED + "Character number mismatch.");
+                return;
+            }
+            playersInLoading.add(player);
+            playerToRemoveConfirmation.remove(player);
+
+            new BukkitRunnable() {
+
+                @Override
+                public void run() {
+                    DatabaseManager.clearCharacter(player, charNo);
+                    charLocationsForSelection.get(player).remove(charNo);
+                    charLevelsForSelection.get(player).remove(charNo);
+                    playersInLoading.remove(player);
+                }
+            }.runTaskAsynchronously(GuardiansOfAdelia.getInstance());
+
+            if (characterNoToArmorStands.containsKey(charNo)) {
+                List<ArmorStand> armorStands = characterNoToArmorStands.get(charNo);
+                for (ArmorStand armorStand : armorStands) {
+                    Disguise disguise = DisguiseAPI.getDisguise(player, armorStand);
+                    if (disguise != null) {
+                        disguise.removeDisguise();
+                    }
+                }
+            }
+
+            player.sendMessage(ChatPalette.RED + "Character-" + charNo + " deleted.");
+        }
     }
 }

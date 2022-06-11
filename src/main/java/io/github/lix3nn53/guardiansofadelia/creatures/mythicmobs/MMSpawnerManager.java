@@ -51,6 +51,11 @@ public class MMSpawnerManager {
         }
     }
 
+    public static void clear() {
+        chunkKeyToSpawners.clear();
+        spawnedToSpawners.clear();
+    }
+
     public static HashMap<String, List<MMSpawnerOpenWorld>> getChunkKeyToSpawners() {
         return chunkKeyToSpawners;
     }

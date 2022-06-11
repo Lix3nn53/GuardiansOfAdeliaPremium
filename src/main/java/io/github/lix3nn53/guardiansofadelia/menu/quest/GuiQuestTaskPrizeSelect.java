@@ -67,6 +67,12 @@ public class GuiQuestTaskPrizeSelect extends GuiGeneric {
 
     @Override
     public void onClick(InventoryClickEvent event) {
+        ItemStack current = this.getItem(event.getSlot());
+
+        if (current == null) {
+            return;
+        }
+
         Player player = (Player) event.getWhoClicked();
         GuardianData guardianData;
         RPGCharacter rpgCharacter;
@@ -81,8 +87,6 @@ public class GuiQuestTaskPrizeSelect extends GuiGeneric {
         } else {
             return;
         }
-
-        ItemStack current = this.getItem(event.getSlot());
 
         //give item
         GearStatType gearStatType = StatUtils.getStatType(current);

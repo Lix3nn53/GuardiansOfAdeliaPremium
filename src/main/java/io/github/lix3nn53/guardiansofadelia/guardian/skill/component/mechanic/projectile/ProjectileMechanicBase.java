@@ -26,7 +26,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -372,13 +371,9 @@ public class ProjectileMechanicBase {
             if (isProjectileInvisible) {
                 PacketContainer destroyPacket = DisguiseUtilities.getDestroyPacket(p.getEntityId());
 
-                try {
-                    List<Player> players = p.getWorld().getPlayers();
-                    for (Player player : players) {
-                        ProtocolLibrary.getProtocolManager().sendServerPacket(player, destroyPacket, false);
-                    }
-                } catch (InvocationTargetException e) {
-                    e.printStackTrace();
+                List<Player> players = p.getWorld().getPlayers();
+                for (Player player : players) {
+                    ProtocolLibrary.getProtocolManager().sendServerPacket(player, destroyPacket, false);
                 }
             }
 

@@ -30,7 +30,7 @@ public class MyBlockEvents implements Listener {
         }
     }
 
-    public static boolean canBuild(Player player) {
+    public static boolean canStaffRankAllowBuild(Player player) {
         if (GuardianDataManager.hasGuardianData(player)) {
             GuardianData guardianData = GuardianDataManager.getGuardianData(player);
 
@@ -41,6 +41,10 @@ public class MyBlockEvents implements Listener {
         }
 
         return false;
+    }
+
+    public static boolean canBuild(Player player) {
+        return allowBuild.contains(player);
     }
 
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)

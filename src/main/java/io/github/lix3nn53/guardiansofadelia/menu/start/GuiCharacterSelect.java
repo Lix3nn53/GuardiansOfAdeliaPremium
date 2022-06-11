@@ -19,6 +19,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class GuiCharacterSelect extends GuiGeneric {
 
@@ -60,6 +61,21 @@ public class GuiCharacterSelect extends GuiGeneric {
 
             slotNoToTownNo.put(index, key);
         }
+
+        ItemStack remove = new ItemStack(Material.RED_WOOL);
+        itemMeta = remove.getItemMeta();
+        List<String> lore = new ArrayList<>();
+        lore.add("");
+        lore.add(ChatPalette.GRAY + "Remove character at slot " + charNo);
+        lore.add("");
+        lore.add(ChatPalette.RED + "WARNING: This action cannot be undone!");
+        lore.add("");
+        lore.add(ChatPalette.GRAY + "If you don't want to lose your items...");
+        lore.add(ChatPalette.GRAY + "...you can put them in storage.");
+        itemMeta.setLore(lore);
+        itemMeta.setDisplayName(ChatPalette.RED + "Remove character");
+        remove.setItemMeta(itemMeta);
+        this.setItem(26, remove);
     }
 
     @Override
@@ -81,6 +97,9 @@ public class GuiCharacterSelect extends GuiGeneric {
             } else {
                 player.sendMessage(ChatPalette.RED + Translation.t(guardianData, "character.selection.error"));
             }
+        } else if (slot == 26) {
+            CharacterSelectionScreenManager.setToBeRemoved(player, charNo);
+            player.closeInventory();
         } else {
             if (!slotNoToTownNo.containsKey(slot)) return;
             int townNo = slotNoToTownNo.get(slot);

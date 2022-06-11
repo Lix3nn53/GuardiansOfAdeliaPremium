@@ -10,6 +10,7 @@ public enum StaffRank {
     ADMIN,
     DEVELOPER,
     BUILDER,
+    ARTIST,
     SUPPORT,
     YOUTUBER,
     TRAINEE;
@@ -19,10 +20,12 @@ public enum StaffRank {
             case OWNER:
                 return ChatPalette.RED_DARK;
             case ADMIN:
-                return ChatPalette.PURPLE_LIGHT;
+                return ChatPalette.RED;
             case DEVELOPER:
-                return ChatPalette.GOLD;
+                return ChatPalette.PURPLE_LIGHT;
             case BUILDER:
+                return ChatPalette.BLUE;
+            case ARTIST:
                 return ChatPalette.BLUE;
             case SUPPORT:
                 return ChatPalette.BLUE_LIGHT;

@@ -4,6 +4,9 @@ import io.github.lix3nn53.guardiansofadelia.GuardiansOfAdelia;
 import io.github.lix3nn53.guardiansofadelia.creatures.pets.PetManager;
 import io.github.lix3nn53.guardiansofadelia.party.Party;
 import io.github.lix3nn53.guardiansofadelia.party.PartyManager;
+import io.lumine.mythic.bukkit.BukkitAPIHelper;
+import io.lumine.mythic.bukkit.MythicBukkit;
+import io.lumine.mythic.core.mobs.ActiveMob;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -12,6 +15,8 @@ import org.bukkit.scheduler.BukkitRunnable;
 import java.util.List;
 
 public class EntityUtils {
+
+    public static final String MM_ALLY_FACTION = "ally";
 
     /*
     public static LivingEntity create(Location loc, String name, float hp, EntityType type) {
@@ -91,7 +96,19 @@ public class EntityUtils {
                 return false; //pvp is off
             }
 
-            return true; //player attack monster
+            // player attack monster
+
+            BukkitAPIHelper apiHelper = MythicBukkit.inst().getAPIHelper();
+            ActiveMob mythicTarget = apiHelper.getMythicMobInstance(target);
+
+            if (mythicTarget != null) {
+                String faction = mythicTarget.getFaction();
+                GuardiansOfAdelia.getInstance().getLogger().info("player attack ally monster faction: " + faction);
+                // player attack ally monster
+                return faction == null || !faction.equals(MM_ALLY_FACTION);
+            }
+
+            return true;
         } else if (PetManager.isCompanion(attacker)) {  //attacker is a pet
             Player attackerOwner = PetManager.getOwner(attacker);
             if (PetManager.isCompanion(target)) { //target is also a pet
@@ -101,10 +118,34 @@ public class EntityUtils {
                 return canAttack(attackerOwner, target);
             }
 
-            return true; // pet attack monster
+            // pet attack monster
+
+            BukkitAPIHelper apiHelper = MythicBukkit.inst().getAPIHelper();
+            ActiveMob mythicTarget = apiHelper.getMythicMobInstance(target);
+
+            if (mythicTarget != null) {
+                String faction = mythicTarget.getFaction();
+                GuardiansOfAdelia.getInstance().getLogger().info("pet attack ally monster faction: " + faction);
+                // pet attack ally monster
+                return faction == null || !faction.equals(MM_ALLY_FACTION);
+            }
+
+            return true;
         }
 
         //attacker is monster
-        return target instanceof Player || PetManager.isCompanion(target); //monster can only attack players or pets
+
+        BukkitAPIHelper apiHelper = MythicBukkit.inst().getAPIHelper();
+        ActiveMob mythicTarget = apiHelper.getMythicMobInstance(target);
+
+        if (mythicTarget != null) {
+            String faction = mythicTarget.getFaction();
+            GuardiansOfAdelia.getInstance().getLogger().info("enemy attack ally monster faction: " + faction);
+            if (faction != null && faction.equals(MM_ALLY_FACTION)) { // enemy attack ally monster
+                return true;
+            }
+        }
+
+        return target instanceof Player || PetManager.isCompanion(target); // monster attack player or pet
     }
 }

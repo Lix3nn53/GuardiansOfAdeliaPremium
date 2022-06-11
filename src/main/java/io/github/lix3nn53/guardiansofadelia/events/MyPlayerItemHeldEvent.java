@@ -10,6 +10,7 @@ import io.github.lix3nn53.guardiansofadelia.guardian.skill.player.SkillRPGClassD
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.tree.SkillTree;
 import io.github.lix3nn53.guardiansofadelia.items.list.OtherItems;
 import io.github.lix3nn53.guardiansofadelia.items.stats.StatUtils;
+import io.github.lix3nn53.guardiansofadelia.text.ChatPalette;
 import io.github.lix3nn53.guardiansofadelia.utilities.InventoryUtils;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -42,8 +43,8 @@ public class MyPlayerItemHeldEvent implements Listener {
 
                 String rpgClassStr = activeCharacter.getRpgClassStr();
                 if (newSlot >= 0 && newSlot <= 3) { //skill bar
-                    if (previousSlot >= 0 && previousSlot <= 3) { //old slot is also skill bar
-                        player.getInventory().setHeldItemSlot(4);
+                    if (previousSlot != 4) { //old slot must be weapon slot
+                        player.sendMessage(ChatPalette.RED + "You can only cast skills with weapon slot(5)");
                         return;
                     }
 

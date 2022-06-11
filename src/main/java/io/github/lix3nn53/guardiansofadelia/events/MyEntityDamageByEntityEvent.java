@@ -5,6 +5,8 @@ import io.github.lix3nn53.guardiansofadelia.bossbar.HealthBarManager;
 import io.github.lix3nn53.guardiansofadelia.commands.admin.CommandAdmin;
 import io.github.lix3nn53.guardiansofadelia.creatures.killProtection.KillProtectionManager;
 import io.github.lix3nn53.guardiansofadelia.creatures.mythicmobs.MMManager;
+import io.github.lix3nn53.guardiansofadelia.creatures.mythicmobs.MMSpawnerManager;
+import io.github.lix3nn53.guardiansofadelia.creatures.mythicmobs.spawner.MMSpawner;
 import io.github.lix3nn53.guardiansofadelia.creatures.pets.PetManager;
 import io.github.lix3nn53.guardiansofadelia.guardian.GuardianData;
 import io.github.lix3nn53.guardiansofadelia.guardian.GuardianDataManager;
@@ -30,6 +32,7 @@ import io.github.lix3nn53.guardiansofadelia.utilities.PersistentDataContainerUti
 import io.github.lix3nn53.guardiansofadelia.utilities.hologram.DamageIndicator;
 import io.github.lix3nn53.guardiansofadelia.utilities.particle.ParticleShapes;
 import io.lumine.mythic.api.mobs.MythicMob;
+import io.lumine.mythic.bukkit.BukkitAPIHelper;
 import io.lumine.mythic.bukkit.MythicBukkit;
 import io.lumine.mythic.core.mobs.ActiveMob;
 import org.bukkit.Location;
@@ -236,6 +239,17 @@ public class MyEntityDamageByEntityEvent implements Listener {
      * @return isEventCanceled
      */
     private boolean onPlayerAttackEntity(EntityDamageByEntityEvent event, Player player, LivingEntity livingTarget, LivingEntity pet, ElementType damageType, boolean isSkill, boolean isProjectile) {
+        BukkitAPIHelper apiHelper = MythicBukkit.inst().getAPIHelper();
+        ActiveMob mythicTarget = apiHelper.getMythicMobInstance(livingTarget);
+
+        if (mythicTarget != null) {
+            String faction = mythicTarget.getFaction();
+            if (faction != null && faction.equals(EntityUtils.MM_ALLY_FACTION)) {
+                event.setCancelled(true);
+                return false;
+            }
+        }
+
         if (GuardianDataManager.hasGuardianData(player)) {
             GuardianData guardianData = GuardianDataManager.getGuardianData(player);
             if (guardianData.hasActiveCharacter()) {
@@ -331,10 +345,10 @@ public class MyEntityDamageByEntityEvent implements Listener {
                         player.playSound(player.getLocation(), Sound.ENTITY_ZOMBIE_VILLAGER_CURE, 0.6F, 2.0F);
                     }
                 } else {
-                    ActiveMob activeMob = MythicBukkit.inst().getMobManager().getMythicMobInstance(pet);
+                    ActiveMob mythicPet = MythicBukkit.inst().getMobManager().getMythicMobInstance(pet);
 
-                    if (activeMob != null) {
-                        String internalName = activeMob.getType().getInternalName();
+                    if (mythicPet != null) {
+                        String internalName = mythicPet.getType().getInternalName();
 
                         if (MMManager.hasElementType(internalName)) {
                             damageType = MMManager.getElementType(internalName);
@@ -385,10 +399,8 @@ public class MyEntityDamageByEntityEvent implements Listener {
                         }
                     }
                 } else { // mob element resistance
-                    ActiveMob mythicMobInstance = MythicBukkit.inst().getMobManager().getMythicMobInstance(livingTarget);
-
-                    if (mythicMobInstance != null) {
-                        String internalName = mythicMobInstance.getType().getInternalName();
+                    if (mythicTarget != null) {
+                        String internalName = mythicTarget.getType().getInternalName();
                         if (MMManager.hasElementResistance(internalName, damageType)) {
                             float elementResistance = MMManager.getElementResistance(internalName, damageType);
 
@@ -406,6 +418,11 @@ public class MyEntityDamageByEntityEvent implements Listener {
                             }
                         }
                     }
+                }
+
+                MMSpawner spawnerOfEntity = MMSpawnerManager.getSpawnerOfEntity(livingTarget);
+                if (spawnerOfEntity != null) {
+                    damage = 10f;
                 }
 
                 event.setDamage(damage);

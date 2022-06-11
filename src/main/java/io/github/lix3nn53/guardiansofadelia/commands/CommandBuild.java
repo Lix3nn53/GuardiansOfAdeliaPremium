@@ -15,7 +15,7 @@ public class CommandBuild implements CommandExecutor {
             return false;
         }
         if (sender instanceof Player player) {
-            if (!MyBlockEvents.canBuild(player)) {
+            if (!MyBlockEvents.canStaffRankAllowBuild(player)) {
                 player.sendMessage(ChatPalette.RED + "You don't have permission to use this command.");
                 return true;
             }

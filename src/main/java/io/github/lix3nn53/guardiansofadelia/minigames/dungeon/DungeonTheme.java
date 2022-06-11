@@ -137,31 +137,40 @@ public class DungeonTheme {
      */
     public List<ItemStack> generateChestItems(PrizeChestType type) {
         ArrayList<ItemStack> chestItems = new ArrayList<>();
+
+        List<ItemStack> lowTierItems = new ArrayList<>();
+        List<ItemStack> highTierItems = new ArrayList<>();
+
         switch (type) {
-            case WEAPON_MELEE:
-                chestItems.addAll(ItemPoolGenerator.generateWeapons(ItemTier.MYSTIC, gearLevel, true, false, true));
-                chestItems.addAll(ItemPoolGenerator.generateWeapons(ItemTier.LEGENDARY, gearLevel, true, false, true));
-                break;
-            case WEAPON_RANGED:
-                chestItems.addAll(ItemPoolGenerator.generateWeapons(ItemTier.MYSTIC, gearLevel, false, false, true));
-                chestItems.addAll(ItemPoolGenerator.generateWeapons(ItemTier.LEGENDARY, gearLevel, false, false, true));
-                break;
-            case ARMOR_HEAVY:
-                chestItems.addAll(ItemPoolGenerator.generateArmors(ItemTier.MYSTIC, gearLevel, true, false, true));
-                chestItems.addAll(ItemPoolGenerator.generateArmors(ItemTier.LEGENDARY, gearLevel, true, false, true));
-                break;
-            case ARMOR_LIGHT:
-                chestItems.addAll(ItemPoolGenerator.generateArmors(ItemTier.MYSTIC, gearLevel, false, false, true));
-                chestItems.addAll(ItemPoolGenerator.generateArmors(ItemTier.LEGENDARY, gearLevel, false, false, true));
-                break;
-            case JEWELRY:
-                chestItems.addAll(ItemPoolGenerator.generatePassives(ItemTier.MYSTIC, gearLevel, false));
-                chestItems.addAll(ItemPoolGenerator.generatePassives(ItemTier.LEGENDARY, gearLevel, false));
-                break;
-            case PET:
-                chestItems.addAll(ItemPoolGenerator.generateEggs(gearLevel, 1));
-                break;
+            case WEAPON_MELEE -> {
+                lowTierItems = ItemPoolGenerator.generateWeapons(ItemTier.MYSTIC, gearLevel, true, false, true);
+                highTierItems = ItemPoolGenerator.generateWeapons(ItemTier.LEGENDARY, gearLevel, true, false, true);
+            }
+            case WEAPON_RANGED -> {
+                lowTierItems = ItemPoolGenerator.generateWeapons(ItemTier.MYSTIC, gearLevel, false, false, true);
+                highTierItems = ItemPoolGenerator.generateWeapons(ItemTier.LEGENDARY, gearLevel, false, false, true);
+            }
+            case ARMOR_HEAVY -> {
+                lowTierItems = ItemPoolGenerator.generateArmors(ItemTier.MYSTIC, gearLevel, true, false, true);
+                highTierItems = ItemPoolGenerator.generateArmors(ItemTier.LEGENDARY, gearLevel, true, false, true);
+            }
+            case ARMOR_LIGHT -> {
+                lowTierItems = ItemPoolGenerator.generateArmors(ItemTier.MYSTIC, gearLevel, false, false, true);
+                highTierItems = ItemPoolGenerator.generateArmors(ItemTier.LEGENDARY, gearLevel, false, false, true);
+            }
+            case JEWELRY -> {
+                lowTierItems = ItemPoolGenerator.generatePassives(ItemTier.MYSTIC, gearLevel, false);
+                highTierItems = ItemPoolGenerator.generatePassives(ItemTier.LEGENDARY, gearLevel, false);
+            }
+            case PET -> {
+                lowTierItems = ItemPoolGenerator.generateEggs(gearLevel, 1);
+                highTierItems = ItemPoolGenerator.generateEggs(gearLevel, 1);
+            }
         }
+
+        chestItems.addAll(lowTierItems);
+        chestItems.addAll(lowTierItems);
+        chestItems.addAll(highTierItems);
 
         return chestItems;
     }

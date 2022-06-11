@@ -38,7 +38,7 @@ public class HealthCondition extends ConditionComponent {
             float maxHealth = (float) target.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
             float value = currentHealth / maxHealth;
 
-            if (value > minPercent && value <= maxPercent) {
+            if (value >= minPercent && value <= maxPercent) {
                 success = executeChildren(caster, skillLevel, Collections.singletonList(target), castCounter, skillIndex) || success;
             }
         }

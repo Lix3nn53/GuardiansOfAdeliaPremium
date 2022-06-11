@@ -1,6 +1,7 @@
 package io.github.lix3nn53.guardiansofadelia.commands.admin;
 
 import io.github.lix3nn53.guardiansofadelia.chat.StaffRank;
+import io.github.lix3nn53.guardiansofadelia.creatures.mythicmobs.MMSpawnerManager;
 import io.github.lix3nn53.guardiansofadelia.creatures.pets.PetExperienceManager;
 import io.github.lix3nn53.guardiansofadelia.guardian.GuardianData;
 import io.github.lix3nn53.guardiansofadelia.guardian.GuardianDataManager;
@@ -14,6 +15,7 @@ import io.github.lix3nn53.guardiansofadelia.text.ChatPalette;
 import io.github.lix3nn53.guardiansofadelia.towns.Town;
 import io.github.lix3nn53.guardiansofadelia.towns.TownManager;
 import io.github.lix3nn53.guardiansofadelia.utilities.config.ClassConfigurations;
+import io.github.lix3nn53.guardiansofadelia.utilities.config.GenericInteractableConfiguration;
 import io.github.lix3nn53.guardiansofadelia.utilities.config.ItemSkillConfigurations;
 import io.github.lix3nn53.guardiansofadelia.utilities.config.PetConfigurations;
 import org.bukkit.Bukkit;
@@ -38,7 +40,7 @@ public class CommandAdmin implements CommandExecutor {
             if (args.length < 1) {
                 player.sendMessage(ChatPalette.PURPLE + "---- ADMIN ----");
                 player.sendMessage(ChatPalette.PURPLE + "/admin debug");
-                player.sendMessage(ChatPalette.PURPLE + "/admin reload <skills|pets>");
+                player.sendMessage(ChatPalette.PURPLE + "/admin reload <skills|pets|interact>");
                 player.sendMessage(ChatPalette.PURPLE + "/admin setstaff <player> [NONE|OWNER|ADMIN|DEVELOPER|BUILDER|SUPPORT|YOUTUBER|TRAINEE]");
                 player.sendMessage(ChatPalette.PURPLE + "/admin build");
                 player.sendMessage(ChatPalette.PURPLE_LIGHT + "---- UTILS ----");
@@ -142,6 +144,10 @@ public class CommandAdmin implements CommandExecutor {
                     PetConfigurations.loadConfigs();
 
                     player.sendMessage(ChatPalette.GREEN_DARK + "Reloaded pets!");
+                } else if (args[1].equals("interact")) {
+                    MMSpawnerManager.clear();
+                    GenericInteractableConfiguration.createConfigs();
+                    GenericInteractableConfiguration.loadConfigs();
                 }
             }
 
