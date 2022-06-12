@@ -157,6 +157,7 @@ public class DungeonRoom {
                                     roomState.getDungeonInstance().startKeepBossSafeRunnable(boss, boss.getLocation());
                                 }
                             }*/
+                            cancel();
                         }
                     }
                 }.runTaskLater(GuardiansOfAdelia.getInstance(), 20 * 4L);

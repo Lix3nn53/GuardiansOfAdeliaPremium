@@ -1,7 +1,6 @@
 package io.github.lix3nn53.guardiansofadelia.minigames.dungeon.room;
 
 import io.github.lix3nn53.guardiansofadelia.GuardiansOfAdelia;
-import io.github.lix3nn53.guardiansofadelia.events.MyChunkEvents;
 import io.github.lix3nn53.guardiansofadelia.utilities.PersistentDataContainerUtil;
 import io.lumine.mythic.api.exceptions.InvalidMobTypeException;
 import io.lumine.mythic.bukkit.BukkitAPIHelper;
@@ -25,7 +24,8 @@ public class DungeonRoomSpawner {
         this.isBoss = isBoss;
     }
 
-    public List<Entity> firstSpawn(String mobCode, int mobLevel, Location dungeonStart, int roomNo, int spawnerIndex, DungeonRoomSpawnerState spawnerState) {
+    public List<Entity> firstSpawn(String mobCode, int mobLevel, Location dungeonStart, int roomNo, int spawnerIndex,
+                                   DungeonRoomSpawnerState spawnerState) {
         String spawnerKey = roomNo + "-" + spawnerIndex;
 
         Location add = dungeonStart.clone().add(offset);
@@ -42,8 +42,6 @@ public class DungeonRoomSpawner {
             GuardiansOfAdelia.getInstance().getLogger().info("DungeonRoomSpawner mythicmob code error: " + mobCode);
             e.printStackTrace();
         }
-
-        MyChunkEvents.DO_NOT_DELETE.addAll(spawned);
 
         // Start secure spawner runner
         spawnerState.startSecureSpawnerRunner(mobCode, mobLevel, dungeonStart, this, roomNo, spawnerIndex);

@@ -79,9 +79,16 @@ public class SkillRPGClassData {
             }
             int newInvested = invested + reqSkillPoints;
             skillTreeData.setInvestedSkillPoint(skillId, newInvested);
+
             int slotIndex = skillBarData.skillToSlot(skillId);
             if (slotIndex != -1) {
                 skillBar.remakeSkillBarIcon(slotIndex, skillTree, this, lang);
+            } else { // skill not in skill bar so add it if there is an available slot
+                int firstEmptySlot = skillBarData.getFirstEmptySlot();
+                if (firstEmptySlot != -1) {
+                    skillBarData.set(player, skillTree, firstEmptySlot, skillId);
+                    skillBar.remakeSkillBarIcon(firstEmptySlot, skillTree, this, lang);
+                }
             }
 
             return true;

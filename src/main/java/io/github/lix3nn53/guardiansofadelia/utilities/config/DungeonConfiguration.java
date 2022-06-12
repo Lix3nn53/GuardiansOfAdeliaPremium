@@ -204,7 +204,7 @@ public class DungeonConfiguration {
                 prizeChestCenterOffset = new Vector(x, y, z);
             }
 
-            List<RandomSkillOnGroundWithOffset> skillsOnGround = new ArrayList<>();
+            /*List<RandomSkillOnGroundWithOffset> skillsOnGround = new ArrayList<>();
             for (int groundIndex = 1; groundIndex <= 999; groundIndex++) {
                 if (!section.contains("skillOnGround" + groundIndex)) break;
 
@@ -225,7 +225,7 @@ public class DungeonConfiguration {
                 RandomSkillOnGroundWithOffset skillOnGroundWithOffset = new RandomSkillOnGroundWithOffset(skillList, vector);
 
                 skillsOnGround.add(skillOnGroundWithOffset);
-            }
+            }*/
 
             float x1 = (float) section.getDouble("bossRoom" + ".x1");
             float y1 = (float) section.getDouble("bossRoom" + ".y1");
@@ -237,7 +237,7 @@ public class DungeonConfiguration {
             BoundingBox bossRoomBox = new BoundingBox(x1, y1, z1, x2, y2, z2);
 
             DungeonTheme dungeonTheme = new DungeonTheme(code, name, gearLevel, portalColor, levelReq, timeLimitInMinutes,
-                    monsterPool, bossInternalName, dungeonRooms, startingRooms, checkpoints, prizeChestCenterOffset, skillsOnGround, bossRoomBox);
+                    monsterPool, bossInternalName, dungeonRooms, startingRooms, checkpoints, prizeChestCenterOffset, bossRoomBox);
 
             MiniGameManager.addDungeonTheme(code, dungeonTheme);
         }
@@ -367,7 +367,7 @@ public class DungeonConfiguration {
             currentThemeConfig.set("prizeChestCenter.y", prizeChestCenterOffset.getY());
             currentThemeConfig.set("prizeChestCenter.z", prizeChestCenterOffset.getZ());
 
-            List<RandomSkillOnGroundWithOffset> skillsOnGround = theme.getSkillsOnGround();
+            /*List<RandomSkillOnGroundWithOffset> skillsOnGround = theme.getSkillsOnGround();
             int skillIndex = 1;
             for (RandomSkillOnGroundWithOffset skillOnGround : skillsOnGround) {
 
@@ -378,7 +378,7 @@ public class DungeonConfiguration {
                 currentThemeConfig.set("skillOnGround" + skillIndex + ".loc" + ".z", offset.getZ());
 
                 skillIndex++;
-            }
+            }*/
 
             BoundingBox bossRoomBox = theme.getBossRoomBox();
             currentThemeConfig.set("bossRoom" + ".x1", bossRoomBox.getMinX());

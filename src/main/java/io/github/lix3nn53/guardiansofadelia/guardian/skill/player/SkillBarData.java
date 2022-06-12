@@ -76,4 +76,14 @@ public class SkillBarData {
 
         return -1;
     }
+
+    public int getFirstEmptySlot() {
+        for (int i = 0; i < 4; i++) {
+            if (skillBar[i] == -1) {
+                return i;
+            }
+        }
+
+        return -1;
+    }
 }

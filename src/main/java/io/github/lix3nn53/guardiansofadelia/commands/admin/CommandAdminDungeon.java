@@ -229,9 +229,10 @@ public class CommandAdminDungeon implements CommandExecutor {
                         RandomSkillOnGroundWithOffset skillOnGroundWithOffset = new RandomSkillOnGroundWithOffset(skillList, offset);
 
                         if (args[3].equals("global")) {
-                            dungeonTheme.addSkillOnGround(skillOnGroundWithOffset);
+                            /*dungeonTheme.addSkillOnGround(skillOnGroundWithOffset);
 
-                            player.sendMessage(ChatPalette.GREEN_DARK + "Added new skillOnGround to GLOBAL");
+                            player.sendMessage(ChatPalette.GREEN_DARK + "Added new skillOnGround to GLOBAL");*/
+                            player.sendMessage(ChatPalette.RED + "Not implemented, use room number instead");
                         } else {
                             int roomNo = Integer.parseInt(args[2]);
 

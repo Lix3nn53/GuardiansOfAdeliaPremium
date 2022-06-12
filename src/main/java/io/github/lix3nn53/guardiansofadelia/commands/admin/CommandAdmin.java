@@ -90,10 +90,10 @@ public class CommandAdmin implements CommandExecutor {
                 if (args.length == 3) {
                     try {
                         StaffRank staffRank = StaffRank.valueOf(args[2]);
-                        Player player2 = Bukkit.getPlayer(args[1]);
-                        if (player2 != null) {
-                            if (GuardianDataManager.hasGuardianData(player)) {
-                                GuardianData guardianData = GuardianDataManager.getGuardianData(player);
+                        Player target = Bukkit.getPlayer(args[1]);
+                        if (target != null) {
+                            if (GuardianDataManager.hasGuardianData(target)) {
+                                GuardianData guardianData = GuardianDataManager.getGuardianData(target);
                                 guardianData.setStaffRank(staffRank);
                             }
                         }

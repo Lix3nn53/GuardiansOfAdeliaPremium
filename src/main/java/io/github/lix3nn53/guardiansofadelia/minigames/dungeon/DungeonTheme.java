@@ -5,7 +5,6 @@ import io.github.lix3nn53.guardiansofadelia.creatures.mythicmobs.MMManager;
 import io.github.lix3nn53.guardiansofadelia.guardian.GuardianData;
 import io.github.lix3nn53.guardiansofadelia.guardian.GuardianDataManager;
 import io.github.lix3nn53.guardiansofadelia.guardian.element.ElementType;
-import io.github.lix3nn53.guardiansofadelia.guardian.skill.onground.RandomSkillOnGroundWithOffset;
 import io.github.lix3nn53.guardiansofadelia.items.DungeonPrizeChest;
 import io.github.lix3nn53.guardiansofadelia.items.GearLevel;
 import io.github.lix3nn53.guardiansofadelia.items.PrizeChestType;
@@ -43,9 +42,6 @@ public class DungeonTheme {
     private final List<String> monsterPool;
     private final String bossInternalName;
 
-    // Global skillOnGrounds
-    private final List<RandomSkillOnGroundWithOffset> skillsOnGround;
-
     // Rooms
     private final HashMap<Integer, DungeonRoom> dungeonRooms;
     private final List<Integer> startingRooms;
@@ -58,8 +54,7 @@ public class DungeonTheme {
 
     public DungeonTheme(String code, String name, GearLevel gearLevel, PortalColor portalColor, int levelReq,
                         int timeLimitInMinutes, List<String> monsterPool, String bossInternalName, HashMap<Integer, DungeonRoom> dungeonRooms,
-                        List<Integer> startingRooms, List<Vector> checkpoints, Vector prizeChestCenterOffset,
-                        List<RandomSkillOnGroundWithOffset> skillsOnGround, BoundingBox bossRoomBox) {
+                        List<Integer> startingRooms, List<Vector> checkpoints, Vector prizeChestCenterOffset, BoundingBox bossRoomBox) {
         this.code = code;
         this.name = ChatColor.translateAlternateColorCodes('&', name);
         this.gearLevel = gearLevel;
@@ -72,7 +67,6 @@ public class DungeonTheme {
         this.startingRooms = Collections.unmodifiableList(startingRooms);
         this.checkpointOffsets = checkpoints;
         this.prizeChestCenterOffset = prizeChestCenterOffset;
-        this.skillsOnGround = skillsOnGround;
         this.bossRoomBox = bossRoomBox;
     }
 
@@ -270,14 +264,6 @@ public class DungeonTheme {
 
     public void setPrizeChestCenterOffset(Vector prizeChestCenterOffset) {
         this.prizeChestCenterOffset = prizeChestCenterOffset;
-    }
-
-    public List<RandomSkillOnGroundWithOffset> getSkillsOnGround() {
-        return skillsOnGround;
-    }
-
-    public void addSkillOnGround(RandomSkillOnGroundWithOffset skill) {
-        skillsOnGround.add(skill);
     }
 
     public String getRandomMonsterToSpawn(int darkness) {

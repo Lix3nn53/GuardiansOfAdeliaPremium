@@ -171,18 +171,22 @@ public class GatheringManager {
             player.sendMessage(ChatPalette.RED + "Resource is on cooldown");
             return false;
         }
+        int id = gatheringModelState.getId();
+        GatheringModelData gatheringModelData = modelIdToModelData.get(id);
+        GatheringToolType modelToolType = gatheringModelData.getGatheringToolType();
+
+        if (!modelToolType.equals(GatheringToolType.FISHING_ROD)) {
+            return false;
+        }
 
         GatheringToolType gatheringToolType = null;
         if (!InventoryUtils.isAirOrNull(itemInHand)) {
             gatheringToolType = GatheringToolType.materialToGatheringTool(itemInHand.getType());
         }
 
-        int id = gatheringModelState.getId();
-        GatheringModelData gatheringModelData = modelIdToModelData.get(id);
         GatheringToolTier modelToolTier = gatheringModelData.getMinGatheringToolTier();
-        GatheringToolType modelToolType = gatheringModelData.getGatheringToolType();
 
-        final String wrongToolError = ChatPalette.RED + "Required gathering tool: " + modelToolTier.toString() + " " + modelToolType.toString();
+        final String wrongToolError = ChatPalette.RED + "Required gathering tool: " + modelToolTier.toString() + " " + modelToolType;
         if (gatheringToolType == null) {
             player.sendMessage(wrongToolError);
             return false;

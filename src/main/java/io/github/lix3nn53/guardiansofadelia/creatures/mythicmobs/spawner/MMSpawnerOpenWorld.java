@@ -20,14 +20,7 @@ public class MMSpawnerOpenWorld extends MMSpawner {
 
     @Override
     public void spawn() {
-        GuardiansOfAdelia.getInstance().getLogger().info("Debug spawn MMSpawnerOpenWorld: " + this.getClass().getSimpleName());
-        if (cooldownTask != null) {
-            GuardiansOfAdelia.getInstance().getLogger().info("Cooldown isCancelled: " + cooldownTask.isCancelled());
-        } else {
-            GuardiansOfAdelia.getInstance().getLogger().info("Cooldown is null");
-        }
         if (cooldownTask != null && !cooldownTask.isCancelled()) return;
-        GuardiansOfAdelia.getInstance().getLogger().info("Debug spawn MMSpawnerOpenWorld pass cooldown check");
 
         super.spawn();
     }
@@ -37,7 +30,6 @@ public class MMSpawnerOpenWorld extends MMSpawner {
         super.onDeath();
 
         final long finalCooldown = (long) (cooldownMin + (Math.random() * (cooldownMax - cooldownMin)));
-        GuardiansOfAdelia.getInstance().getLogger().info("Debug death MMSpawnerOpenWorld cooldown: " + finalCooldown);
 
         if (cooldownTask != null) {
             cooldownTask.cancel();
@@ -47,7 +39,6 @@ public class MMSpawnerOpenWorld extends MMSpawner {
             @Override
             public void run() {
                 if (getLocation().getChunk().isLoaded()) {
-                    GuardiansOfAdelia.getInstance().getLogger().info("Debug cooldown finished MMSpawnerOpenWorld");
                     cancel();
                     spawn();
                 }

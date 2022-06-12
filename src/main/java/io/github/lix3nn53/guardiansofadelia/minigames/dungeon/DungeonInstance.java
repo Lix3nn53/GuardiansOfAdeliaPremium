@@ -2,7 +2,6 @@ package io.github.lix3nn53.guardiansofadelia.minigames.dungeon;
 
 import io.github.lix3nn53.guardiansofadelia.GuardiansOfAdelia;
 import io.github.lix3nn53.guardiansofadelia.commands.admin.CommandAdmin;
-import io.github.lix3nn53.guardiansofadelia.events.MyChunkEvents;
 import io.github.lix3nn53.guardiansofadelia.guardian.GuardianData;
 import io.github.lix3nn53.guardiansofadelia.guardian.GuardianDataManager;
 import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGCharacter;
@@ -83,14 +82,6 @@ public class DungeonInstance extends Minigame {
             DungeonRoom dungeonRoom = this.theme.getDungeonRoom(roomNo);
 
             dungeonRoom.onDungeonStart(startLocation);
-        }
-
-        // Start dungeon skillsOnGround that does not belong to rooms
-        List<RandomSkillOnGroundWithOffset> skillsOnGround = this.theme.getSkillsOnGround();
-        for (RandomSkillOnGroundWithOffset skillOnGround : skillsOnGround) {
-            ArmorStand activate = skillOnGround.activate(startLocation, 40L);
-            skillsOnGroundArmorStands.add(activate);
-            MyChunkEvents.DO_NOT_DELETE.add(activate);
         }
 
         final List<Integer> startingRooms = this.theme.getStartingRooms();
@@ -202,7 +193,6 @@ public class DungeonInstance extends Minigame {
 
         // Clear global skillsOnGround
         for (ArmorStand armorStand : skillsOnGroundArmorStands) {
-            MyChunkEvents.DO_NOT_DELETE.remove(armorStand);
             armorStand.remove();
         }
         skillsOnGroundArmorStands.clear();
@@ -312,18 +302,6 @@ public class DungeonInstance extends Minigame {
         Set<Integer> dungeonRoomKeys = theme.getDungeonRoomKeys();
 
         Location startLocation = getStartLocation(1);
-
-        List<RandomSkillOnGroundWithOffset> globalSkillsOnGround = theme.getSkillsOnGround();
-        for (int i = 0; i < globalSkillsOnGround.size(); i++) {
-            RandomSkillOnGroundWithOffset skill = globalSkillsOnGround.get(i);
-            Vector offset = skill.getOffset();
-
-            Location add = startLocation.clone().add(offset);
-
-            Hologram hologram = new Hologram(add, ChatPalette.PURPLE + "GLOBAL Skill-" + i);
-            HologramManager.addHologram(hologram);
-            debugHolograms.add(hologram);
-        }
 
         for (int roomKey : dungeonRoomKeys) {
             DungeonRoom room = theme.getDungeonRoom(roomKey);
@@ -604,7 +582,6 @@ public class DungeonInstance extends Minigame {
 
         // Clear global skillsOnGround
         for (ArmorStand armorStand : skillsOnGroundArmorStands) {
-            MyChunkEvents.DO_NOT_DELETE.remove(armorStand);
             armorStand.remove();
         }
         skillsOnGroundArmorStands.clear();

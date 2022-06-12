@@ -52,10 +52,6 @@ public class DungeonRoomState {
     }
 
     public void clearSkillsOnGroundArmorStands() {
-        for (ArmorStand armorStand : skillsOnGroundArmorStands) {
-            armorStand.remove();
-        }
-
         skillsOnGroundArmorStands.clear();
     }
 }

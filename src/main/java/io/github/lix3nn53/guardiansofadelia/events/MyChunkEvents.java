@@ -25,12 +25,9 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.world.ChunkUnloadEvent;
 import org.bukkit.event.world.EntitiesLoadEvent;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class MyChunkEvents implements Listener {
-
-    public static final List<Entity> DO_NOT_DELETE = new ArrayList<>();
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onEntitiesLoadEvent(EntitiesLoadEvent event) {
@@ -71,8 +68,6 @@ public class MyChunkEvents implements Listener {
     }
 
     private boolean shouldChunkEventRemove(Entity chunkEntity) {
-        if (DO_NOT_DELETE.contains(chunkEntity)) return false;
-
         NPCRegistry npcRegistry = CitizensAPI.getNPCRegistry();
         if (npcRegistry.isNPC(chunkEntity)) {
             return false;
@@ -105,5 +100,6 @@ public class MyChunkEvents implements Listener {
     private void customEventsOnChunkUnload(Chunk chunk) {
         String chunkKey = LocationUtils.getChunkKey(chunk.getBlock(0, 0, 0).getLocation());
         MMSpawnerManager.onChunkUnload(chunkKey);
+        SkillOnGroundWithLocationManager.onChunkUnload(chunkKey);
     }
 }

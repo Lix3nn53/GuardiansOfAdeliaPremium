@@ -1,7 +1,6 @@
 package io.github.lix3nn53.guardiansofadelia.guardian.skill.onground;
 
 import io.github.lix3nn53.guardiansofadelia.GuardiansOfAdelia;
-import io.github.lix3nn53.guardiansofadelia.events.MyChunkEvents;
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.Skill;
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.SkillType;
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.component.SkillComponent;
@@ -84,7 +83,9 @@ public class SkillOnGround {
                 }
 
                 boolean cast = skill.cast(armorStand, skillLevel, targets, castCounter, 999);
-                castCounter++;
+                if (cast) {
+                    castCounter++;
+                }
             }
         }.runTaskTimer(GuardiansOfAdelia.getInstance(), delay, period);
 
@@ -92,8 +93,7 @@ public class SkillOnGround {
     }
 
     public void deactivate() {
-        MyChunkEvents.DO_NOT_DELETE.remove(armorStand);
-        armorStand.remove();
         this.bukkitTask.cancel();
+        armorStand.remove();
     }
 }

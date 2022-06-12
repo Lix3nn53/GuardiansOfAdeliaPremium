@@ -19,6 +19,15 @@ public class SkillOnGroundWithLocationManager {
         }
     }
 
+    public static void onChunkUnload(String chunkKey) {
+        if (chunkKeyToHologram.containsKey(chunkKey)) {
+            List<SkillOnGroundWithLocation> holograms = chunkKeyToHologram.get(chunkKey);
+            for (SkillOnGroundWithLocation hologram : holograms) {
+                hologram.deactivate();
+            }
+        }
+    }
+
     public static void remove(SkillOnGroundWithLocation hologram) {
         String chunkKey = LocationUtils.getChunkKey(hologram.getLocation());
         if (chunkKeyToHologram.containsKey(chunkKey)) {

@@ -154,6 +154,7 @@ public abstract class Minigame {
 
                                     activeCharacter.getRpgCharacterStats().recalculateEquipment(rpgClassStr, rpgClassStats);
                                 }
+                                cancel();
                             }
                         }.runTaskLater(GuardiansOfAdelia.getInstance(), 40);
                     }
@@ -169,6 +170,7 @@ public abstract class Minigame {
                     if (secondsPass == timeLimitInMinutes * 60) {
                         //end minigame
                         endGame();
+                        cancel();
                     } else {
                         updateTimeOnScoreBoards(timeLimitInMinutes * 60 - secondsPass);
                         onGameTick();
@@ -762,6 +764,7 @@ public abstract class Minigame {
                 @Override
                 public void run() {
                     player.teleport(startWatchLocation);
+                    cancel();
                 }
             }.runTaskLater(GuardiansOfAdelia.getInstance(), 5L);
         }

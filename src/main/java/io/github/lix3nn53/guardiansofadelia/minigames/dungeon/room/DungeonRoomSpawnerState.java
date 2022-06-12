@@ -58,7 +58,9 @@ public class DungeonRoomSpawnerState {
     }
 
     public void stopSecureSpawnerRunner() {
-        if (secureSpawnRunner != null) secureSpawnRunner.cancel();
+        if (secureSpawnRunner != null) {
+            secureSpawnRunner.cancel();
+        }
     }
 
     public void clearSpawned() {
