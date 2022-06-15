@@ -1107,8 +1107,8 @@ public class RPGCharacterStats {
             public void run() {
                 player.sendMessage("debug: reattachCosmeticHologram run");
                 if (cosmeticHologram != null) {
-                    cosmeticHologram.destroy();
                     player.sendMessage("debug: reattachCosmeticHologram run cosmeticHologram != null");
+                    cosmeticHologram.destroy();
                 }
 
                 int entityId = GuardiansOfAdelia.getEntityId();
@@ -1122,6 +1122,6 @@ public class RPGCharacterStats {
 
                 cosmeticHologram.start(player);
             }
-        }.runTaskLater(GuardiansOfAdelia.getInstance(), 40L);
+        }.runTaskLater(GuardiansOfAdelia.getInstance(), 20L);
     }
 }

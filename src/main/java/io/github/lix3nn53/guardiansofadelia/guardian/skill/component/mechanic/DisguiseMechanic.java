@@ -5,6 +5,7 @@ import io.github.lix3nn53.guardiansofadelia.guardian.skill.SkillDataManager;
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.component.MechanicComponent;
 import io.github.lix3nn53.guardiansofadelia.text.ChatPalette;
 import me.libraryaddict.disguise.DisguiseAPI;
+import me.libraryaddict.disguise.disguisetypes.Disguise;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.disguisetypes.MobDisguise;
 import org.bukkit.configuration.ConfigurationSection;
@@ -46,8 +47,12 @@ public class DisguiseMechanic extends MechanicComponent {
     public boolean execute(LivingEntity caster, int skillLevel, List<LivingEntity> targets, int castCounter, int skillIndex) {
         if (targets.isEmpty()) return false;
 
+
         int ticks = tickList.get(skillLevel - 1);
         for (LivingEntity target : targets) {
+
+            Disguise oldDisguise = DisguiseAPI.getDisguise(target);
+
             MobDisguise disguise = new MobDisguise(disguiseType, isAdult);
             disguise = disguise.setReplaceSounds(true);
             DisguiseAPI.disguiseToAll(target, disguise);
@@ -65,7 +70,13 @@ public class DisguiseMechanic extends MechanicComponent {
 
                 @Override
                 public void run() {
-                    DisguiseAPI.undisguiseToAll(target);
+                    if (target.isValid()) {
+                        if (oldDisguise == null) {
+                            DisguiseAPI.undisguiseToAll(target);
+                        } else {
+                            DisguiseAPI.disguiseToAll(target, oldDisguise);
+                        }
+                    }
                 }
             }.runTaskLater(GuardiansOfAdelia.getInstance(), ticksCurrent);
         }

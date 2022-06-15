@@ -8,6 +8,7 @@ import io.github.lix3nn53.guardiansofadelia.text.ChatPalette;
 import io.github.lix3nn53.guardiansofadelia.text.font.CustomCharacter;
 import io.github.lix3nn53.guardiansofadelia.utilities.managers.CompassManager;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
@@ -53,34 +54,34 @@ public class HeaderBar {
         float buffElementDamage = stats.getBuffValue(BuffType.ELEMENT_DAMAGE);
         if (buffElementDamage != 1) {
             if (buffElementDamage > 1) {
-                buffs.add(ChatPalette.RED + "Dmg +" + (int) ((buffElementDamage - 1) * 100 + 0.5) + "%");
+                buffs.add(ChatColor.RESET.toString() + ChatPalette.RED + "Dmg +" + (int) ((buffElementDamage - 1) * 100 + 0.5) + "%");
             } else {
-                buffs.add(ChatPalette.RED + "Dmg -" + (int) ((1 - buffElementDamage) * 100 + 0.5) + "%");
+                buffs.add(ChatColor.RESET.toString() + ChatPalette.RED + "Dmg -" + (int) ((1 - buffElementDamage) * 100 + 0.5) + "%");
             }
         }
         float buffElementDefense = stats.getBuffValue(BuffType.ELEMENT_DEFENSE);
         if (buffElementDefense != 1) {
             if (buffElementDefense > 1) {
-                buffs.add(ChatPalette.BLUE_LIGHT + "Def +" + (int) ((buffElementDefense - 1) * 100 + 0.5) + "%");
+                buffs.add(ChatColor.RESET.toString() + ChatPalette.BLUE_LIGHT + "Def +" + (int) ((buffElementDefense - 1) * 100 + 0.5) + "%");
             } else {
-                buffs.add(ChatPalette.BLUE_LIGHT + "Def -" + (int) ((1 - buffElementDefense) * 100 + 0.5) + "%");
+                buffs.add(ChatColor.RESET.toString() + ChatPalette.BLUE_LIGHT + "Def -" + (int) ((1 - buffElementDefense) * 100 + 0.5) + "%");
             }
         }
         float buffCriticalChance = stats.getBuffValue(BuffType.CRIT_CHANCE);
         if (buffCriticalChance != 0) {
-            buffs.add(ChatPalette.GOLD + "Crit +" + (int) ((buffCriticalChance * 100) + 0.5) + "%");
+            buffs.add(ChatColor.RESET.toString() + ChatPalette.GOLD + "Crit +" + (int) ((buffCriticalChance * 100) + 0.5) + "%");
         }
         float buffCriticalDamage = stats.getBuffValue(BuffType.CRIT_DAMAGE);
         if (buffCriticalDamage != 0) {
-            buffs.add(ChatPalette.ORANGE + "CritDmg +" + (int) ((buffCriticalDamage * 100) + 0.5) + "%");
+            buffs.add(ChatColor.RESET.toString() + ChatPalette.ORANGE + "CritDmg +" + (int) ((buffCriticalDamage * 100) + 0.5) + "%");
         }
         float buffLifeSteal = stats.getBuffValue(BuffType.LIFE_STEAL);
         if (buffLifeSteal != 0) {
-            buffs.add(ChatPalette.RED + "LifeSteal +" + (int) ((buffLifeSteal * 100) + 0.5) + "%");
+            buffs.add(ChatColor.RESET.toString() + ChatPalette.RED + "LifeSteal +" + (int) ((buffLifeSteal * 100) + 0.5) + "%");
         }
         float buffAbilityHaste = stats.getBuffValue(BuffType.ABILITY_HASTE);
         if (buffAbilityHaste != 0) {
-            buffs.add(ChatPalette.BLUE + "Haste +" + buffAbilityHaste + "");
+            buffs.add(ChatColor.RESET.toString() + ChatPalette.BLUE + "Haste +" + buffAbilityHaste + "");
         }
 
         for (int i = 0; i < buffs.size(); i++) {
@@ -98,7 +99,7 @@ public class HeaderBar {
         String[] parts = {message.substring(0, mid), message.substring(mid)};
 
         CustomCharacter compassDirection = CompassManager.getCompassDirection(player);
-        String middle = compassDirection.toString();
+        String middle = ChatColor.RESET + compassDirection.toString();
 
         return parts[0] + middle + parts[1];
     }

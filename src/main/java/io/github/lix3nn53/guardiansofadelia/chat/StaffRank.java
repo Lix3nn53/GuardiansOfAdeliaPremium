@@ -11,51 +11,34 @@ public enum StaffRank {
     DEVELOPER,
     BUILDER,
     ARTIST,
-    SUPPORT,
-    YOUTUBER,
-    TRAINEE;
+    CONTENT,
+    COMMUNITY,
+    YOUTUBER;
 
     public ChatPalette getChatPalette() {
-        switch (this) {
-            case OWNER:
-                return ChatPalette.RED_DARK;
-            case ADMIN:
-                return ChatPalette.RED;
-            case DEVELOPER:
-                return ChatPalette.PURPLE_LIGHT;
-            case BUILDER:
-                return ChatPalette.BLUE;
-            case ARTIST:
-                return ChatPalette.BLUE;
-            case SUPPORT:
-                return ChatPalette.BLUE_LIGHT;
-            case YOUTUBER:
-                return ChatPalette.RED;
-            case TRAINEE:
-                return ChatPalette.GREEN_DARK;
-        }
-        return ChatPalette.GRAY;
+        return switch (this) {
+            case OWNER -> ChatPalette.RED_DARK;
+            case CONTENT -> ChatPalette.BLUE_LIGHT;
+            case COMMUNITY -> ChatPalette.BLUE_DARK;
+            case ADMIN, YOUTUBER -> ChatPalette.RED;
+            case DEVELOPER -> ChatPalette.PURPLE;
+            case BUILDER -> ChatPalette.BLUE;
+            case ARTIST -> ChatPalette.PURPLE_LIGHT;
+        };
     }
 
     public CustomCharacter getCustomCharacter() {
-        switch (this) {
-            case OWNER:
-                return CustomCharacterChatTag.ADMIN;
-            case ADMIN:
-                return CustomCharacterChatTag.ADMIN;
-            case DEVELOPER:
-                return CustomCharacterChatTag.ADMIN;
-            case BUILDER:
-                return CustomCharacterChatTag.ADMIN;
-            case SUPPORT:
-                return CustomCharacterChatTag.ADMIN;
-            case YOUTUBER:
-                return CustomCharacterChatTag.ADMIN;
-            case TRAINEE:
-                return CustomCharacterChatTag.ADMIN;
-        }
+        return switch (this) {
+            case OWNER -> CustomCharacterChatTag.OWNER;
+            case ADMIN -> CustomCharacterChatTag.ADMIN;
+            case DEVELOPER -> CustomCharacterChatTag.DEVELOPER;
+            case BUILDER -> CustomCharacterChatTag.BUILDER;
+            case ARTIST -> CustomCharacterChatTag.ARTIST;
+            case CONTENT -> CustomCharacterChatTag.CONTENT;
+            case COMMUNITY -> CustomCharacterChatTag.COMMUNITY;
+            case YOUTUBER -> CustomCharacterChatTag.YOUTUBER;
+        };
 
-        return null;
     }
 
     public boolean canBuild() {

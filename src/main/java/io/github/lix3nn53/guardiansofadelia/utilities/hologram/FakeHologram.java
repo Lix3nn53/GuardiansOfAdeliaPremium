@@ -17,6 +17,8 @@ public class FakeHologram {
     private Set<Player> viewing = new HashSet<>();
     protected String text;
     private final EntityDestroyPacket entityDestroyPacket;
+    private final SpawnEntityLivingPacket spawnEntityLivingPacket;
+    private final EntityMetadataPacket entityMetadataPacket;
     private Location location;
 
     public FakeHologram(int entityID, Location location, String text) {
@@ -25,6 +27,10 @@ public class FakeHologram {
         this.text = text;
         entityDestroyPacket = new EntityDestroyPacket(entityID);
         entityDestroyPacket.load();
+        spawnEntityLivingPacket = new SpawnEntityLivingPacket(entityID, location);
+        spawnEntityLivingPacket.load();
+        entityMetadataPacket = new EntityMetadataPacket(entityID, text, true, true);
+        entityMetadataPacket.load();
     }
 
     public void hide(@NotNull Player player) {
@@ -33,25 +39,16 @@ public class FakeHologram {
     }
 
     public void show(@NotNull Player player) {
-        new SpawnEntityLivingPacket(entityID, location)
-                .load()
-                .send(player);
-        new EntityMetadataPacket(entityID, text, true, true)
-                .load()
-                .send(player);
+        spawnEntityLivingPacket.send(player);
+        entityMetadataPacket.send(player);
         viewing.add(player);
     }
 
     public void showNearby() {
-        AbstractPacket spawn = new SpawnEntityLivingPacket(entityID, location)
-                .load();
-        AbstractPacket metadata = new EntityMetadataPacket(entityID, text, true, true)
-                .load();
-
         location.getWorld().getNearbyEntities(location, RANGE, RANGE, RANGE).forEach(entity -> {
             if (entity instanceof Player player) {
-                spawn.send(player);
-                metadata.send(player);
+                spawnEntityLivingPacket.send(player);
+                entityMetadataPacket.send(player);
                 viewing.add(player);
             }
         });
@@ -130,10 +127,19 @@ public class FakeHologram {
     }
 
     public void setViewing(Set<Player> viewing) {
-        this.viewing.removeAll(viewing);
+        // Send destroy packet to players that are in the old set but not in the new set
+        for (Player player : this.viewing) {
+            if (!viewing.contains(player)) {
+                entityDestroyPacket.send(player);
+            }
+        }
 
+        // Send spawn packet to players that are in the new set but not in the old set
         for (Player player : viewing) {
-            entityDestroyPacket.send(player);
+            if (!this.viewing.contains(player)) {
+                spawnEntityLivingPacket.send(player);
+                entityMetadataPacket.send(player);
+            }
         }
 
         this.viewing = viewing;

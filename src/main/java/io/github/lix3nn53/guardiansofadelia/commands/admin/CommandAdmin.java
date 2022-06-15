@@ -1,5 +1,6 @@
 package io.github.lix3nn53.guardiansofadelia.commands.admin;
 
+import io.github.lix3nn53.guardiansofadelia.chat.ChatManager;
 import io.github.lix3nn53.guardiansofadelia.chat.StaffRank;
 import io.github.lix3nn53.guardiansofadelia.creatures.mythicmobs.MMSpawnerManager;
 import io.github.lix3nn53.guardiansofadelia.creatures.pets.PetExperienceManager;
@@ -41,7 +42,7 @@ public class CommandAdmin implements CommandExecutor {
                 player.sendMessage(ChatPalette.PURPLE + "---- ADMIN ----");
                 player.sendMessage(ChatPalette.PURPLE + "/admin debug");
                 player.sendMessage(ChatPalette.PURPLE + "/admin reload <skills|pets|interact>");
-                player.sendMessage(ChatPalette.PURPLE + "/admin setstaff <player> [NONE|OWNER|ADMIN|DEVELOPER|BUILDER|SUPPORT|YOUTUBER|TRAINEE]");
+                player.sendMessage(ChatPalette.PURPLE + "/admin setstaff <player> <tag>");
                 player.sendMessage(ChatPalette.PURPLE + "/admin build");
                 player.sendMessage(ChatPalette.PURPLE_LIGHT + "---- UTILS ----");
                 player.sendMessage(ChatPalette.PURPLE_LIGHT + "/admin fly");
@@ -89,12 +90,15 @@ public class CommandAdmin implements CommandExecutor {
             } else if (args[0].equals("setstaff")) {
                 if (args.length == 3) {
                     try {
-                        StaffRank staffRank = StaffRank.valueOf(args[2]);
+                        StaffRank staffRank = StaffRank.valueOf(args[2].toUpperCase());
                         Player target = Bukkit.getPlayer(args[1]);
                         if (target != null) {
                             if (GuardianDataManager.hasGuardianData(target)) {
                                 GuardianData guardianData = GuardianDataManager.getGuardianData(target);
                                 guardianData.setStaffRank(staffRank);
+                                player.sendMessage(ChatPalette.GREEN + "Set staff rank of " + target.getName() + " to " + staffRank);
+                                target.sendMessage(ChatPalette.GREEN + "Your staff rank has been set to " + staffRank);
+                                ChatManager.updatePlayerName(target);
                             }
                         }
                     } catch (IllegalArgumentException illegalArgumentException) {

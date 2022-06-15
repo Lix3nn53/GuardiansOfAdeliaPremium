@@ -71,8 +71,8 @@ public class EntityUtils {
             BukkitAPIHelper apiHelper = MythicBukkit.inst().getAPIHelper();
             mythicTarget = apiHelper.getMythicMobInstance(target);
         } catch (Exception e) {
-            /*GuardiansOfAdelia.getInstance().getLogger().warning("canAttack Could not get mythic mob instance for target " + target.getName());
-            e.printStackTrace();*/
+            GuardiansOfAdelia.getInstance().getLogger().warning("canAttack Could not get mythic mob instance for target " + target.getName());
+            // e.printStackTrace();
             return true;
         }
 

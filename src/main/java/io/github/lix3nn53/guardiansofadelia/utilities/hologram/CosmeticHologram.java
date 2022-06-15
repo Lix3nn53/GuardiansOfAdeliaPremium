@@ -71,6 +71,8 @@ public class CosmeticHologram extends FakeHologram {
                     rotateHead(player, location);
                 }
 
+                nearbyPlayers.add(source);
+
                 setViewing(nearbyPlayers);
             }
         }.runTaskTimer(GuardiansOfAdelia.getInstance(), 2L, 10L);
