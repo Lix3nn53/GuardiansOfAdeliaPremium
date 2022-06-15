@@ -43,6 +43,8 @@ public class MyPlayerItemHeldEvent implements Listener {
 
                 String rpgClassStr = activeCharacter.getRpgClassStr();
                 if (newSlot >= 0 && newSlot <= 3) { //skill bar
+                    event.setCancelled(true);
+
                     if (previousSlot != 4) { //old slot must be weapon slot
                         player.sendMessage(ChatPalette.RED + "You can only cast skills with weapon slot(5)");
                         return;
@@ -57,7 +59,6 @@ public class MyPlayerItemHeldEvent implements Listener {
                         //play sound special to player on cast fail
                         player.playSound(player.getLocation(), Sound.BLOCK_ANVIL_LAND, 0.1f, 0.1f);
                     }
-                    event.setCancelled(true);
                     return;
                 }
 

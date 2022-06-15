@@ -1068,12 +1068,13 @@ public class RPGCharacterStats {
         CosmeticColor color = record.cosmeticColor();
         int tint = record.cosmeticTint();
 
-        if (cosmeticHologram == null) {
-            int entityId = GuardiansOfAdelia.getEntityId();
-            Location location = player.getLocation();
-            cosmeticHologram = new CosmeticHologram(entityId, location, cosmetic.getShowcase(color, tint));
+        if (cosmeticHologram != null) {
+            cosmeticHologram.destroy();
         }
 
+        int entityId = GuardiansOfAdelia.getEntityId();
+        Location location = player.getLocation();
+        cosmeticHologram = new CosmeticHologram(entityId, location, cosmetic.getShowcase(color, tint));
         cosmeticHologram.start(player);
     }
 
@@ -1101,13 +1102,10 @@ public class RPGCharacterStats {
 
         if (record == null) return;
 
-        player.sendMessage("debug: reattachCosmeticHologram");
         new BukkitRunnable() {
             @Override
             public void run() {
-                player.sendMessage("debug: reattachCosmeticHologram run");
                 if (cosmeticHologram != null) {
-                    player.sendMessage("debug: reattachCosmeticHologram run cosmeticHologram != null");
                     cosmeticHologram.destroy();
                 }
 
