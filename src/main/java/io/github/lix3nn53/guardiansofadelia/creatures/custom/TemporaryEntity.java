@@ -12,6 +12,7 @@ import org.bukkit.entity.memory.MemoryKey;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.EntityEquipment;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionAttachment;
@@ -337,6 +338,53 @@ public class TemporaryEntity implements LivingEntity {
     @Override
     public <T> void setMemory(MemoryKey<T> memoryKey, T t) {
 
+    }
+
+    @Nullable
+    @Override
+    public Sound getHurtSound() {
+        return null;
+    }
+
+    @Nullable
+    @Override
+    public Sound getDeathSound() {
+        return null;
+    }
+
+    @NotNull
+    @Override
+    public Sound getFallDamageSound(int i) {
+        return null;
+    }
+
+    @NotNull
+    @Override
+    public Sound getFallDamageSoundSmall() {
+        return null;
+    }
+
+    @NotNull
+    @Override
+    public Sound getFallDamageSoundBig() {
+        return null;
+    }
+
+    @NotNull
+    @Override
+    public Sound getDrinkingSound(@NotNull ItemStack itemStack) {
+        return null;
+    }
+
+    @NotNull
+    @Override
+    public Sound getEatingSound(@NotNull ItemStack itemStack) {
+        return null;
+    }
+
+    @Override
+    public boolean canBreatheUnderwater() {
+        return true;
     }
 
     @NotNull
@@ -672,6 +720,24 @@ public class TemporaryEntity implements LivingEntity {
     @Override
     public EntityType getType() {
         return EntityType.CHICKEN;
+    }
+
+    @NotNull
+    @Override
+    public Sound getSwimSound() {
+        return null;
+    }
+
+    @NotNull
+    @Override
+    public Sound getSwimSplashSound() {
+        return null;
+    }
+
+    @NotNull
+    @Override
+    public Sound getSwimHighSpeedSplashSound() {
+        return null;
     }
 
     @Override

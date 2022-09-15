@@ -1,5 +1,9 @@
 package io.github.lix3nn53.guardiansofadelia.commands.admin;
 
+import com.comphenix.protocol.PacketType;
+import com.comphenix.protocol.ProtocolLibrary;
+import com.comphenix.protocol.events.PacketContainer;
+import io.github.lix3nn53.guardiansofadelia.chat.SpeechBubble;
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.onground.SkillOnGround;
 import io.github.lix3nn53.guardiansofadelia.sounds.CustomSound;
 import io.github.lix3nn53.guardiansofadelia.sounds.GoaSound;
@@ -7,7 +11,6 @@ import io.github.lix3nn53.guardiansofadelia.text.ChatPalette;
 import io.github.lix3nn53.guardiansofadelia.text.font.CustomCharacter;
 import io.github.lix3nn53.guardiansofadelia.text.font.NegativeSpace;
 import io.github.lix3nn53.guardiansofadelia.utilities.gui.GuiGeneric;
-import io.github.lix3nn53.guardiansofadelia.utilities.packets.EntityEquipmentPacket;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -20,6 +23,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+
+import java.util.Random;
+import java.util.UUID;
 
 public class CommandTest implements CommandExecutor {
 
@@ -93,8 +99,30 @@ public class CommandTest implements CommandExecutor {
                 pairs.add(new Pair<>(EnumWrappers.ItemSlot.HEAD, helmet));
                 packet.getSlotStackPairLists().writeSafely(0, pairs);
                 ProtocolLibrary.getProtocolManager().sendServerPacket(player, packet);*/
-                EntityEquipmentPacket entityEquipmentPacket = new EntityEquipmentPacket(player.getEntityId(), new ItemStack(Material.CARVED_PUMPKIN));
-                entityEquipmentPacket.load().send(player);
+//                EntityEquipmentPacket entityEquipmentPacket = new EntityEquipmentPacket(player.getEntityId(), new ItemStack(Material.CARVED_PUMPKIN));
+//                entityEquipmentPacket.load().send(player);
+
+                SpeechBubble.player(player, "holoMessage");
+
+                int entityID = new Random().nextInt();
+                final PacketContainer packetContainer = new PacketContainer(PacketType.Play.Server.SPAWN_ENTITY);
+
+                final int entityType = Integer.parseInt(args[1]);
+                final int extraData = 1;
+                packetContainer.getIntegers().write(0, entityID);
+                packetContainer.getIntegers().write(1, entityType);
+                packetContainer.getIntegers().write(2, extraData);
+
+                packetContainer.getEntityTypeModifier().write(0, EntityType.ARMOR_STAND);
+
+                packetContainer.getUUIDs().write(0, UUID.randomUUID());
+
+                Location location = player.getLocation();
+                packetContainer.getDoubles().write(0, location.getX());
+                packetContainer.getDoubles().write(1, location.getY());
+                packetContainer.getDoubles().write(2, location.getZ());
+
+                ProtocolLibrary.getProtocolManager().sendServerPacket(player, packetContainer);
             } else if (args[0].equals("custom")) {
                 CustomCharacter chara = CustomCharacter.valueOf(args[1]);
                 chara.setNegativeSpacesBefore(Integer.parseInt(args[2]));

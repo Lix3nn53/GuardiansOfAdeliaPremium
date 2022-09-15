@@ -260,6 +260,7 @@ public class GuardiansOfAdelia extends JavaPlugin {
             w.setGameRule(GameRule.MAX_ENTITY_CRAMMING, 8); //DEFAULT
             w.setGameRule(GameRule.MAX_COMMAND_CHAIN_LENGTH, 0); //DISABLED
             w.setGameRule(GameRule.FREEZE_DAMAGE, false); //DISABLED
+            w.setGameRule(GameRule.DO_WARDEN_SPAWNING, false); //DISABLED
             w.setTime(3000);
 
             if (w.getName().equals("arena")) {

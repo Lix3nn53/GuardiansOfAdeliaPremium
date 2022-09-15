@@ -96,7 +96,7 @@
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot</artifactId>
-            <version>1.18.2-R0.1-SNAPSHOT</version>
+            <version>1.19.2-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -111,7 +111,7 @@
             <version>2.0.28-SNAPSHOT</version>
             <type>jar</type>
             <scope>system</scope>
-            <systemPath>${project.basedir}/src/main/resources/modules/Citizens-2.0.29-b2548.jar</systemPath>
+            <systemPath>${project.basedir}/src/main/resources/modules/Citizens-2.0.30-b2700.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>LibsDisguises</groupId>
@@ -156,9 +156,9 @@
         <dependency>
             <groupId>io.lumine.mythic</groupId>
             <artifactId>MythicMobs</artifactId>
-            <version>5.0.1-SNAPSHOT</version>
+            <version>5.1.4-3aa1b5d2</version>
             <scope>system</scope>
-            <systemPath>${project.basedir}/src/main/resources/modules/MythicMobs-5.1.0-SNAPSHOT.jar</systemPath>
+            <systemPath>${project.basedir}/src/main/resources/modules/MythicMobs-5.1.4.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>com.xxmicloxx</groupId>
