@@ -93,6 +93,8 @@ public class TaskLoader {
             int damageNeeded = configurationSection.getInt("damageNeeded");
 
             task = new TaskDealDamage(internalName, damageNeeded, customCompassTarget);
+        } else if (componentType.equals(TaskTriggerDeath.class.getSimpleName())) {
+            task = new TaskTriggerDeath(customCompassTarget);
         } else if (componentType.equals(TaskGathering.class.getSimpleName())) {
             int ingredientIndex = configurationSection.getInt("ingredientIndex");
             Ingredient ingredient = GatheringManager.getIngredient(ingredientIndex);

@@ -599,6 +599,29 @@ public final class Quest {
         return false;
     }
 
+    public boolean triggerDeathTasks(Player questOwner) {
+        int taskIndex = 0;
+        for (Task task : this.tasks) {
+            if (task.isCompleted()) {
+                taskIndex++;
+                continue;
+            }
+            if (task instanceof TaskTriggerDeath taskDealDamage) {
+                boolean didProgress = taskDealDamage.progress(questOwner, questID, taskIndex, false);
+
+                if (didProgress) {
+                    TablistUtils.updateTablist(questOwner);
+                    if (this.isCompleted()) {
+                        this.onComplete(questOwner);
+                    }
+                    return true;
+                }
+            }
+            taskIndex++;
+        }
+        return false;
+    }
+
     public boolean progressCollectTasks(Player questOwner, String itemName, int amount) {
         for (Task task : this.tasks) {
             if (task.isCompleted()) continue;

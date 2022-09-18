@@ -2,7 +2,11 @@ package io.github.lix3nn53.guardiansofadelia.events;
 
 import io.github.lix3nn53.guardiansofadelia.GuardiansOfAdelia;
 import io.github.lix3nn53.guardiansofadelia.creatures.pets.PetManager;
+import io.github.lix3nn53.guardiansofadelia.guardian.GuardianData;
+import io.github.lix3nn53.guardiansofadelia.guardian.GuardianDataManager;
+import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGCharacter;
 import io.github.lix3nn53.guardiansofadelia.minigames.MiniGameManager;
+import io.github.lix3nn53.guardiansofadelia.quests.Quest;
 import io.github.lix3nn53.guardiansofadelia.revive.TombManager;
 import io.github.lix3nn53.guardiansofadelia.towns.Town;
 import io.github.lix3nn53.guardiansofadelia.towns.TownManager;
@@ -14,6 +18,8 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.scheduler.BukkitRunnable;
+
+import java.util.List;
 
 public class MyPlayerDeathEvent implements Listener {
 
@@ -49,6 +55,16 @@ public class MyPlayerDeathEvent implements Listener {
                     Town town = TownManager.getTown(1);
                     player.teleport(town.getLocation());
                     PetManager.respawnPet(player);
+                }
+
+                // trigger death tasks for quests
+                GuardianData guardianData = GuardianDataManager.getGuardianData(player);
+                if (guardianData.hasActiveCharacter()) {
+                    RPGCharacter activeCharacter = guardianData.getActiveCharacter();
+                    List<Quest> questList = activeCharacter.getQuestList();
+                    for (Quest quest : questList) {
+                        quest.triggerDeathTasks(player);
+                    }
                 }
             }
         }.runTaskLater(GuardiansOfAdelia.getInstance(), 5L);

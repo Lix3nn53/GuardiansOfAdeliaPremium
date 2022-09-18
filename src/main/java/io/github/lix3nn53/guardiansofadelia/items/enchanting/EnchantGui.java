@@ -227,6 +227,11 @@ public class EnchantGui extends GuiGeneric {
     public void onClick(InventoryClickEvent event) {
         Inventory clickedInventory = event.getClickedInventory();
         ItemStack current = event.getCurrentItem();
+
+        if (current == null) {
+            return;
+        }
+
         Material currentType = current.getType();
 
         if (clickedInventory.getType().equals(InventoryType.CHEST)) {
