@@ -15,10 +15,7 @@ import io.github.lix3nn53.guardiansofadelia.guardian.skill.player.SkillRPGClassD
 import io.github.lix3nn53.guardiansofadelia.text.ChatPalette;
 import io.github.lix3nn53.guardiansofadelia.towns.Town;
 import io.github.lix3nn53.guardiansofadelia.towns.TownManager;
-import io.github.lix3nn53.guardiansofadelia.utilities.config.ClassConfigurations;
-import io.github.lix3nn53.guardiansofadelia.utilities.config.GenericInteractableConfiguration;
-import io.github.lix3nn53.guardiansofadelia.utilities.config.ItemSkillConfigurations;
-import io.github.lix3nn53.guardiansofadelia.utilities.config.PetConfigurations;
+import io.github.lix3nn53.guardiansofadelia.utilities.config.*;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -41,7 +38,7 @@ public class CommandAdmin implements CommandExecutor {
             if (args.length < 1) {
                 player.sendMessage(ChatPalette.PURPLE + "---- ADMIN ----");
                 player.sendMessage(ChatPalette.PURPLE + "/admin debug");
-                player.sendMessage(ChatPalette.PURPLE + "/admin reload <skills|pets|interact>");
+                player.sendMessage(ChatPalette.PURPLE + "/admin reload <skills|pets|interact|rp>");
                 player.sendMessage(ChatPalette.PURPLE + "/admin setstaff <player> <tag>");
                 player.sendMessage(ChatPalette.PURPLE + "/admin build");
                 player.sendMessage(ChatPalette.PURPLE_LIGHT + "---- UTILS ----");
@@ -121,6 +118,9 @@ public class CommandAdmin implements CommandExecutor {
             } else if (args[0].equals("reload")) {
                 if (args.length == 1) {
                     player.sendMessage("/admin reload skills");
+                    player.sendMessage("/admin reload pets");
+                    player.sendMessage("/admin reload interact");
+                    player.sendMessage("/admin reload rp");
                 } else if (args[1].equals("skills")) {
                     ClassConfigurations.loadConfigs();
                     player.sendMessage(ChatPalette.GREEN_DARK + "Reloaded class configs!");
@@ -152,6 +152,13 @@ public class CommandAdmin implements CommandExecutor {
                     MMSpawnerManager.clear();
                     GenericInteractableConfiguration.createConfigs();
                     GenericInteractableConfiguration.loadConfigs();
+                } else if (args[1].equals("rp")) {
+                    ConfigManager.loadResourcePackConfig();
+                } else {
+                    player.sendMessage("/admin reload skills");
+                    player.sendMessage("/admin reload pets");
+                    player.sendMessage("/admin reload interact");
+                    player.sendMessage("/admin reload rp");
                 }
             }
 

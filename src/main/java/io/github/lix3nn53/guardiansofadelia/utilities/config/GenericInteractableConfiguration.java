@@ -54,7 +54,7 @@ public class GenericInteractableConfiguration {
 
                 Location location = new Location(world, x, y, z, yaw, pitch);
 
-                GenericInteractable genericInteractable = new GenericInteractable(fileName, mobKey, location, cooldownMin, cooldownMax);
+                GenericInteractable genericInteractable = new GenericInteractable(Bukkit.getWorld(fileName), mobKey, location, cooldownMin, cooldownMax);
 
                 MMSpawnerManager.addGlobalSpawner(genericInteractable);
             }
@@ -70,7 +70,7 @@ public class GenericInteractableConfiguration {
 
             for (MMSpawnerOpenWorld spawner : openWorldSpawners) {
                 if (spawner instanceof GenericInteractable genericInteractable) {
-                    String fileName = genericInteractable.getFileName();
+                    String fileName = genericInteractable.getWorld().getName();
                     Location location = genericInteractable.getLocation();
 
                     YamlConfiguration configFile = allConfigsInFile.get(fileName);
@@ -92,7 +92,7 @@ public class GenericInteractableConfiguration {
             YamlConfiguration configFile = allConfigsInFile.get(fileName);
 
             try {
-                configFile.save(new File(filePath + File.separator + fileName));
+                configFile.save(new File(filePath + File.separator + fileName + ".yml"));
             } catch (IOException e) {
                 e.printStackTrace();
             }

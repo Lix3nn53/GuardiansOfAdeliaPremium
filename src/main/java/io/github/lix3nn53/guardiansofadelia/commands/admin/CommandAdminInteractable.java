@@ -76,7 +76,7 @@ public class CommandAdminInteractable implements CommandExecutor {
 
                     location.add(0.5, 0, 0.5);
 
-                    GenericInteractable explosiveBarrel = new GenericInteractable(location.getWorld().getName(), mobKey, location, 20 * 60, 20 * 300);
+                    GenericInteractable explosiveBarrel = new GenericInteractable(location.getWorld(), mobKey, location, 20 * 60, 20 * 300);
                     explosiveBarrel.spawn();
 
                     MMSpawnerManager.addGlobalSpawner(explosiveBarrel);

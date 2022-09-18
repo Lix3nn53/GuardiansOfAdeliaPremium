@@ -25,7 +25,6 @@ public class ConfigManager {
     static File DATA_FOLDER;
     private static FileConfiguration characterSelectionConfig;
     private static FileConfiguration townsConfig;
-    private static FileConfiguration resourcePackConfig;
     private static FileConfiguration hologramsConfig;
 
     public static void init() {
@@ -37,7 +36,6 @@ public class ConfigManager {
 
     public static void createConfigALL() {
         characterSelectionConfig = ConfigurationUtils.createConfig(DATA_FOLDER.toString(), "characterSelection.yml");
-        resourcePackConfig = ConfigurationUtils.createConfig(DATA_FOLDER.toString(), "resourcepack.yml");
         townsConfig = ConfigurationUtils.createConfig(DATA_FOLDER + File.separator + "world", "towns.yml");
         hologramsConfig = ConfigurationUtils.createConfig(DATA_FOLDER + File.separator + "world", "holograms.yml");
 
@@ -110,7 +108,15 @@ public class ConfigManager {
     }
 
     public static void loadResourcePackConfig() {
-        GuardiansOfAdelia.ResourcePackURL = resourcePackConfig.getString("url");
+        String resourcePack = Bukkit.getResourcePack();
+        String resourcePackHash = Bukkit.getResourcePackHash();
+        String resourcePackPrompt = Bukkit.getResourcePackPrompt();
+
+        GuardiansOfAdelia.getInstance().getLogger().info("RESOURCE_PACK: " + resourcePack);
+        GuardiansOfAdelia.getInstance().getLogger().info("RESOURCE_PACK HASH: " + resourcePackHash);
+        GuardiansOfAdelia.getInstance().getLogger().info("RESOURCE_PACK PROMPT: " + resourcePackPrompt);
+
+        GuardiansOfAdelia.ResourcePackURL = resourcePack;
     }
 
     public static void loadHologramsConfig() {

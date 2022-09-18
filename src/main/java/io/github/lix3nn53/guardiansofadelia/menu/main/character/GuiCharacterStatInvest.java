@@ -42,8 +42,8 @@ public class GuiCharacterStatInvest extends GuiGeneric {
         lore.add("");
         lore.add(ChatPalette.GRAY + Translation.t(guardianData, "general.click.left") + ": +1");
         lore.add(ChatPalette.GRAY + Translation.t(guardianData, "general.click.right") + ": -1");
-        lore.add(ChatPalette.GRAY + "Shift + " + Translation.t(guardianData, "general.click.right") + ": +5");
-        lore.add(ChatPalette.GRAY + "Shift + " + Translation.t(guardianData, "general.click.left") + ": -5");
+        lore.add(ChatPalette.GRAY + "Shift + " + Translation.t(guardianData, "general.click.left") + ": +5");
+        lore.add(ChatPalette.GRAY + "Shift + " + Translation.t(guardianData, "general.click.right") + ": -5");
         itemMeta.setLore(lore);
         itemStack.setItemMeta(itemMeta);
         this.setItem(10, itemStack);

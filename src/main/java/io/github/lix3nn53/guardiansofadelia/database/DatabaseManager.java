@@ -67,20 +67,29 @@ public class DatabaseManager {
                 if (rpgCharacter != null) {
                     GuardianData guardianData = GuardianDataManager.getGuardianData(player);
                     guardianData.setActiveCharacter(rpgCharacter, charNo);
+
+                    RPGClassStats rpgClassStats = rpgCharacter.getRPGClassStats();
+                    RPGCharacterStats rpgCharacterStats = rpgCharacter.getRpgCharacterStats();
+
+                    Bukkit.getScheduler().runTask(GuardiansOfAdelia.getInstance(), () -> {
+                        rpgCharacterStats.recalculateEquipment(rpgCharacter.getRpgClassStr(), rpgClassStats);
+                    });
+
+                    rpgCharacterStats.recalculateRPGInventory(rpgCharacter.getRpgInventory(), rpgClassStats);
+
                     Bukkit.getScheduler().runTask(GuardiansOfAdelia.getInstance(), () -> player.teleport(location));
                     TablistUtils.updateTablist(player);
                     // InventoryUtils.setMenuItemPlayer(player);
                     String rpgClassStr = rpgCharacter.getRpgClassStr();
                     SkillTree skillTree = RPGClassManager.getClass(rpgClassStr).getSkillTree();
-                    RPGClassStats rpgClassStats = rpgCharacter.getRPGClassStats();
                     SkillRPGClassData skillRPGClassData = rpgClassStats.getSkillRPGClassData();
 
                     rpgCharacter.getSkillBar().remakeSkillBar(skillTree, skillRPGClassData, guardianData.getLanguage());
 
                     player.setHealth(player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
 
-                    int totalMaxMana = rpgCharacter.getRpgCharacterStats().getTotalMaxMana(rpgClassStats);
-                    rpgCharacter.getRpgCharacterStats().setCurrentMana(totalMaxMana, rpgClassStats);
+                    int totalMaxMana = rpgCharacterStats.getTotalMaxMana(rpgClassStats);
+                    rpgCharacterStats.setCurrentMana(totalMaxMana, rpgClassStats);
                     ChatManager.updatePlayerName(player);
 
                     List<Quest> questList = rpgCharacter.getQuestList();

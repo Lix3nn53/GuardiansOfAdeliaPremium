@@ -629,7 +629,7 @@ public class TemporaryEntity implements LivingEntity {
 
     @Override
     public String getName() {
-        return "TemporaryLocation";
+        return "TemporaryEntity";
     }
 
     @Override

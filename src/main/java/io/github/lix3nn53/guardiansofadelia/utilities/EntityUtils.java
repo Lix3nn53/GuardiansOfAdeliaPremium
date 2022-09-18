@@ -1,6 +1,7 @@
 package io.github.lix3nn53.guardiansofadelia.utilities;
 
 import io.github.lix3nn53.guardiansofadelia.GuardiansOfAdelia;
+import io.github.lix3nn53.guardiansofadelia.creatures.custom.TemporaryEntity;
 import io.github.lix3nn53.guardiansofadelia.creatures.pets.PetManager;
 import io.github.lix3nn53.guardiansofadelia.party.Party;
 import io.github.lix3nn53.guardiansofadelia.party.PartyManager;
@@ -66,7 +67,12 @@ public class EntityUtils {
      */
 
     public static boolean canAttack(LivingEntity attacker, LivingEntity target) {
+        if (target instanceof TemporaryEntity) {
+            return false;
+        }
+
         ActiveMob mythicTarget = null;
+
         try {
             BukkitAPIHelper apiHelper = MythicBukkit.inst().getAPIHelper();
             mythicTarget = apiHelper.getMythicMobInstance(target);

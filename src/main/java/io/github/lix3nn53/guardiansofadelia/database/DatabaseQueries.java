@@ -521,15 +521,6 @@ public class DatabaseQueries {
                     ItemStack[] itemStacks = ItemSerializer.itemStackArrayFromBase64(armorContentString);
                     player.getInventory().setArmorContents(itemStacks);
                 }
-
-                RPGClassStats rpgClassStats = rpgClassStatsMap.get(rpgClassStr);
-
-                // Escape IllegalStateException: Asynchronous effect add!
-                Bukkit.getScheduler().runTask(GuardiansOfAdelia.getInstance(), () -> {
-                    rpgCharacterStats.recalculateEquipment(rpgClassStr, rpgClassStats);
-                });
-
-                rpgCharacterStats.recalculateRPGInventory(rpgCharacter.getRpgInventory(), rpgClassStats);
             }
             resultSet.close();
             pst.close();

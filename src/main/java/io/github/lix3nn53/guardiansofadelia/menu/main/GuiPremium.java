@@ -118,6 +118,11 @@ public class GuiPremium extends GuiGeneric {
             gui.openInventory(player);
         } else if (GuiHelper.get54BigButtonIndexes(3).contains(slot)) {
             if (guardianData.isFreeToAct()) {
+                if (!player.getWorld().getName().equals("world")) {
+                    player.sendMessage(ChatPalette.RED + "You can't use teleport gui from this location.");
+                    return;
+                }
+
                 player.closeInventory();
 
                 String destination = "Cosmetic Room";
