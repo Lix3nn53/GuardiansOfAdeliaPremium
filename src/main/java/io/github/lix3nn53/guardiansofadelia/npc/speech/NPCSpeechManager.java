@@ -27,6 +27,8 @@ public class NPCSpeechManager {
     // Special speech bubbles visible to specific players
     private final static List<Player> playersViewingSpecial = new ArrayList<>();
     private final static int DURATION_TICKS = 500;
+    // QuestSpeech for skip
+    private final static HashMap<Player, QuestSpeech> questSpeechHashMap = new HashMap<>();
     // RUNNER
     private static BukkitTask TASK;
     private static int ORDER_INDEX = 0;
@@ -130,7 +132,10 @@ public class NPCSpeechManager {
         }
         Entity entity = npc.getEntity();
 
-        QuestSpeech.startDialogue(player, entity, messages, 0);
+        QuestSpeech questSpeech = new QuestSpeech(player, entity, messages);
+        questSpeechHashMap.put(player, questSpeech);
+        questSpeech.startNextDialogue();
+
         playersViewingSpecial.add(player);
 
         removeDefaultSpeechForPlayer(npcNo, player);
@@ -138,6 +143,7 @@ public class NPCSpeechManager {
 
     public static void onQuestDialogueEnd(Player player) {
         playersViewingSpecial.remove(player);
+        questSpeechHashMap.remove(player);
     }
 
     private static void removeDefaultSpeechForPlayer(int npcNo, Player player) {
@@ -150,5 +156,9 @@ public class NPCSpeechManager {
 
     public static boolean isPlayerViewingSpecial(Player player) {
         return playersViewingSpecial.contains(player);
+    }
+
+    public static QuestSpeech getQuestSpeech(Player player) {
+        return questSpeechHashMap.get(player);
     }
 }

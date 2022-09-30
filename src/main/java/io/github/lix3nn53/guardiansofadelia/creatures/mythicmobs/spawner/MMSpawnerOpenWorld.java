@@ -45,4 +45,12 @@ public class MMSpawnerOpenWorld extends MMSpawner {
             }
         }.runTaskLater(GuardiansOfAdelia.getInstance(), finalCooldown);
     }
+
+    public long getCooldownMin() {
+        return cooldownMin;
+    }
+
+    public long getCooldownMax() {
+        return cooldownMax;
+    }
 }

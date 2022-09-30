@@ -13,7 +13,6 @@ import io.github.lix3nn53.guardiansofadelia.jobs.crafting.CraftingType;
 import io.github.lix3nn53.guardiansofadelia.quests.Quest;
 import io.github.lix3nn53.guardiansofadelia.sounds.CustomSound;
 import io.github.lix3nn53.guardiansofadelia.sounds.GoaSound;
-import io.github.lix3nn53.guardiansofadelia.text.ChatPalette;
 import io.github.lix3nn53.guardiansofadelia.utilities.InventoryUtils;
 import io.github.lix3nn53.guardiansofadelia.utilities.gui.GuiBookGeneric;
 import io.github.lix3nn53.guardiansofadelia.utilities.gui.GuiPage;
@@ -23,7 +22,6 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -73,72 +71,73 @@ public class GuiCraftingBook extends GuiBookGeneric {
 
         if (clickedInventory.getType().equals(InventoryType.CHEST)) {
             RPGCharacter rpgCharacter = guardianData.getActiveCharacter();
-            if (rpgCharacter != null) {
-                ItemStack item = clickedInventory.getItem(7);
-                ItemMeta craftingGuideGlass = item.getItemMeta();
-                if (craftingGuideGlass.hasDisplayName()) {
-                    String displayName = craftingGuideGlass.getDisplayName();
-                    if (displayName.equals(ChatPalette.GOLD + "Crafting Guide")) {
-                        int slot = event.getSlot();
+            if (rpgCharacter == null) {
+                return;
+            }
 
-                        if (slot == 8 || slot == 17 || slot == 26 || slot == 35 || slot == 44) {
-                            List<ItemStack> ingredients = new ArrayList<>();
+            int slot = event.getSlot();
 
-                            for (int i = slot - 8; i < slot - 1; i++) {
-                                ItemStack ingredient = clickedInventory.getItem(i);
-                                if (ingredient != null) {
-                                    if (!ingredient.getType().equals(Material.AIR)) {
-                                        ingredients.add(ingredient);
-                                    }
-                                }
-                            }
+            ItemStack itemStack = clickedInventory.getItem(slot);
 
-                            boolean hasIngredients = true;
-                            int jobExpToGive = 0;
-                            for (ItemStack ingredient : ingredients) {
-                                jobExpToGive += ingredient.getAmount();
-                                boolean inventoryContains = InventoryUtils.inventoryContains(player.getInventory(), ingredient.getType(), ingredient.getAmount());
-                                if (!inventoryContains) {
-                                    hasIngredients = false;
-                                    break;
-                                }
-                            }
+            if (itemStack == null) {
+                return;
+            }
 
-                            if (hasIngredients) {
-                                ItemStack current = event.getCurrentItem();
-                                if (current == null || current.getType().equals(Material.AIR)) {
-                                    return;
-                                }
-                                ItemStack clone = current.clone();
+            if (slot == 8 || slot == 17 || slot == 26 || slot == 35 || slot == 44) {
+                List<ItemStack> ingredients = new ArrayList<>();
 
-                                jobExpToGive = jobExpToGive * craftingLevel;
-                                GearLevel gearLevel = GearLevel.values()[craftingLevel];
-
-                                if (craftingType.equals(CraftingType.ARMOR_HEAVY) || craftingType.equals(CraftingType.ARMOR_LIGHT)
-                                        || craftingType.equals(CraftingType.WEAPON_MELEE) || craftingType.equals(CraftingType.WEAPON_RANGED)) {
-                                    StatUtils.addRandomPassiveStats(clone, gearLevel, ItemTier.MYSTIC);
-                                    GearSetManager.addRandomGearEffect(current);
-                                } else if (craftingType.equals(CraftingType.JEWEL)) {
-                                    StatUtils.addRandomPassiveStats(clone, gearLevel, ItemTier.MYSTIC);
-                                }
-
-                                for (ItemStack ingredient : ingredients) {
-                                    InventoryUtils.removeItemFromInventory(player.getInventory(), ingredient, ingredient.getAmount());
-                                }
-                                InventoryUtils.giveItemToPlayer(player, clone);
-
-                                rpgCharacter.getCraftingStats().addExperience(player, craftingType, jobExpToGive);
-
-                                CustomSound customSound = GoaSound.ANVIL.getCustomSound();
-                                customSound.play(player.getLocation());
-
-                                // Quest TaskCrafting
-                                List<Quest> questList = rpgCharacter.getQuestList();
-                                for (Quest quest : questList) {
-                                    quest.progressCraftingTasks(player, craftingType, clone);
-                                }
-                            }
+                for (int i = slot - 8; i < slot - 1; i++) {
+                    ItemStack ingredient = clickedInventory.getItem(i);
+                    if (ingredient != null) {
+                        if (!ingredient.getType().equals(Material.AIR)) {
+                            ingredients.add(ingredient);
                         }
+                    }
+                }
+
+                boolean hasIngredients = true;
+                int jobExpToGive = 0;
+                for (ItemStack ingredient : ingredients) {
+                    jobExpToGive += ingredient.getAmount();
+                    boolean inventoryContains = InventoryUtils.inventoryContains(player.getInventory(), ingredient.getType(), ingredient.getAmount());
+                    if (!inventoryContains) {
+                        hasIngredients = false;
+                        break;
+                    }
+                }
+
+                if (hasIngredients) {
+                    ItemStack current = event.getCurrentItem();
+                    if (current == null || current.getType().equals(Material.AIR)) {
+                        return;
+                    }
+                    ItemStack clone = current.clone();
+
+                    jobExpToGive = jobExpToGive * craftingLevel;
+                    GearLevel gearLevel = GearLevel.values()[craftingLevel];
+
+                    if (craftingType.equals(CraftingType.ARMOR_HEAVY) || craftingType.equals(CraftingType.ARMOR_LIGHT)
+                            || craftingType.equals(CraftingType.WEAPON_MELEE) || craftingType.equals(CraftingType.WEAPON_RANGED)) {
+                        StatUtils.addRandomPassiveStats(clone, gearLevel, ItemTier.MYSTIC);
+                        GearSetManager.addRandomGearEffect(current);
+                    } else if (craftingType.equals(CraftingType.JEWEL)) {
+                        StatUtils.addRandomPassiveStats(clone, gearLevel, ItemTier.MYSTIC);
+                    }
+
+                    for (ItemStack ingredient : ingredients) {
+                        InventoryUtils.removeItemFromInventory(player.getInventory(), ingredient, ingredient.getAmount());
+                    }
+                    InventoryUtils.giveItemToPlayer(player, clone);
+
+                    rpgCharacter.getCraftingStats().addExperience(player, craftingType, jobExpToGive);
+
+                    CustomSound customSound = GoaSound.ANVIL.getCustomSound();
+                    customSound.play(player.getLocation());
+
+                    // Quest TaskCrafting
+                    List<Quest> questList = rpgCharacter.getQuestList();
+                    for (Quest quest : questList) {
+                        quest.progressCraftingTasks(player, craftingType, clone);
                     }
                 }
             }

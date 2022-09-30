@@ -5,6 +5,7 @@ import io.github.lix3nn53.guardiansofadelia.guardian.GuardianData;
 import io.github.lix3nn53.guardiansofadelia.guardian.GuardianDataManager;
 import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGCharacter;
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.SkillDataManager;
+import io.github.lix3nn53.guardiansofadelia.guardian.skill.managers.ActionBarInfoManager;
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.managers.TriggerListener;
 import io.github.lix3nn53.guardiansofadelia.guild.GuildManager;
 import io.github.lix3nn53.guardiansofadelia.minigames.MiniGameManager;
@@ -36,7 +37,6 @@ public class MyPlayerQuitEvent implements Listener {
         if (guardianData != null) {
             RPGCharacter activeCharacter = guardianData.getActiveCharacter();
             if (activeCharacter != null) {
-                activeCharacter.getRpgCharacterStats().onQuit();
                 activeCharacter.getSkillBar().onQuit();
             }
         }
@@ -48,6 +48,7 @@ public class MyPlayerQuitEvent implements Listener {
         TriggerListener.onPlayerQuit(player);
         DoNotGetAwayManager.onQuit(player);
         MiniGameManager.onQuit(player);
+        ActionBarInfoManager.onQuit(player);
 
         return true;
     }

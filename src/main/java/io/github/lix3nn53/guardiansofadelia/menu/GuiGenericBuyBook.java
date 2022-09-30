@@ -18,7 +18,7 @@ public class GuiGenericBuyBook extends GuiBookGeneric {
     @Override
     public void onClick(InventoryClickEvent event) {
         ItemStack current = event.getCurrentItem();
-        if (PersistentDataContainerUtil.hasInteger(current, "shopPrice")) {
+        if (current != null && PersistentDataContainerUtil.hasInteger(current, "shopPrice")) {
             Player player = (Player) event.getWhoClicked();
             int slot = event.getSlot();
 

@@ -147,7 +147,6 @@ public class GatheringManager {
         }
 
         if (!PersistentDataContainerUtil.hasString(itemToUse, "toolTier")) {
-            player.sendMessage(ChatPalette.RED + "toolTier error report to admin");
             return null;
         }
 

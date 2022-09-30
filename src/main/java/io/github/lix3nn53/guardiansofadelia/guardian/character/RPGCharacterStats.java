@@ -37,8 +37,6 @@ import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.disguisetypes.DisguiseType;
 import me.libraryaddict.disguise.disguisetypes.MiscDisguise;
 import me.libraryaddict.disguise.disguisetypes.watchers.DroppedItemWatcher;
-import net.md_5.bungee.api.ChatMessageType;
-import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -50,7 +48,6 @@ import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scheduler.BukkitTask;
 
 import java.util.*;
 
@@ -90,8 +87,6 @@ public class RPGCharacterStats {
     private ArmorGearType sameTypeArmorSet = null;
     private List<GearSet> gearSets = new ArrayList<>();
 
-    private final BukkitTask actionBarTask;
-
     private final HashMap<CosmeticSlot, CosmeticRecord> cosmetics = new HashMap<>();
     private CosmeticHologram cosmeticHologram = null;
 
@@ -126,42 +121,7 @@ public class RPGCharacterStats {
         onMaxHealthChange(rpgClassStats);
 
         //start action bar scheduler
-        actionBarTask = new BukkitRunnable() {
-            @Override
-            public void run() {
-                /*
-                #onQuit replaces this code
-                if (!player.isOnline()) {
-                    cancel();
-                    return;
-                }*/
-
-                String between = "                    ";
-
-                List<ActionBarInfo> actionBarInfos = ActionBarInfoManager.getActionBarInfo(player);
-                if (actionBarInfos != null) {
-                    StringBuilder actionBar = new StringBuilder();
-
-                    int i = 1;
-                    for (ActionBarInfo actionBarInfo : actionBarInfos) {
-                        String actionBarBetween = actionBarInfo.getActionBarBetween(player);
-                        actionBar.append(actionBarBetween);
-                        if (i < actionBarInfos.size()) {
-                            actionBar.append("    ");
-                        }
-                        i++;
-                    }
-
-                    between = "        " + actionBar + "        ";
-                }
-
-                String message = ChatPalette.RED + "❤" + ((int) (player.getHealth() + 0.5)) + "/" +
-                        getTotalMaxHealth(rpgClassStats) + between +
-                        ChatPalette.BLUE_LIGHT + "✦" + currentMana + "/" + getTotalMaxMana(rpgClassStats);
-
-                player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(message));
-            }
-        }.runTaskTimerAsynchronously(GuardiansOfAdelia.getInstance(), 5L, 5L);
+        ActionBarInfoManager.startRunner(player);
     }
 
     public void setRpgClassStr(String rpgClassStr) {
@@ -1050,10 +1010,6 @@ public class RPGCharacterStats {
 
         // Apply changes to data
         this.gearSets = currentGearSets;
-    }
-
-    public void onQuit() {
-        actionBarTask.cancel();
     }
 
     public void setCosmetic(CosmeticSlot cosmeticSlot, CosmeticRecord record) {

@@ -48,8 +48,12 @@ public class TutorialManager {
 
             player.sendTitle(ChatPalette.PURPLE + "Aleesia's Castle", ChatPalette.GRAY + "Fall of the Adelia", 25, 35, 25);
 
-            MessageUtils.sendCenteredMessage(player, ChatPalette.GRAY + "-- " + ChatPalette.PURPLE + "Aleesia's Castle" + ChatPalette.GRAY + " --");
+            player.sendMessage("");
+            player.sendMessage("");
+            MessageUtils.sendCenteredMessage(player, ChatPalette.GRAY + "-- " + ChatPalette.PURPLE + "Aleesia's Tower" + ChatPalette.GRAY + " --");
             MessageUtils.sendCenteredMessage(player, ChatPalette.PURPLE + "---- " + ChatPalette.GRAY + "Fall of the Adelia" + ChatPalette.PURPLE + " ----");
+            player.sendMessage("");
+            player.sendMessage("");
 
             Quest tutorialStartQuest = QuestNPCManager.getQuestCopyById(1);
             rpgCharacter.acceptQuest(tutorialStartQuest, player, -1);

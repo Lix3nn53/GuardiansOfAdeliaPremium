@@ -39,6 +39,10 @@ public class DungeonPrizeChest {
     }
 
     public void play(Player player, List<ItemStack> prizePool) {
+        if (prizePool.isEmpty()) {
+            return;
+        }
+
         InventoryUtils.play(player, prizePool, getName());
     }
 

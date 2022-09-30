@@ -3,14 +3,12 @@ package io.github.lix3nn53.guardiansofadelia.events;
 import io.github.lix3nn53.guardiansofadelia.guardian.GuardianData;
 import io.github.lix3nn53.guardiansofadelia.guardian.GuardianDataManager;
 import io.github.lix3nn53.guardiansofadelia.guardian.character.RPGCharacter;
-import io.github.lix3nn53.guardiansofadelia.guardian.skill.component.mechanic.statuseffect.StatusEffectManager;
 import io.github.lix3nn53.guardiansofadelia.items.stats.StatUtils;
 import io.github.lix3nn53.guardiansofadelia.text.ChatPalette;
 import io.github.lix3nn53.guardiansofadelia.utilities.PersistentDataContainerUtil;
 import io.github.lix3nn53.guardiansofadelia.utilities.managers.PlayerTridentThrowManager;
 import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
@@ -27,12 +25,12 @@ public class MyProjectileLaunchEvent implements Listener {
         Projectile projectile = event.getEntity();
         ProjectileSource shooter = projectile.getShooter();
 
-        if (shooter instanceof LivingEntity) {
+        /*if (shooter instanceof LivingEntity) {
             if (StatusEffectManager.isDisarmed((LivingEntity) shooter)) {
                 event.setCancelled(true);
                 return;
             }
-        }
+        }*/
 
         if (shooter instanceof Player) {
             Player player = (Player) shooter;

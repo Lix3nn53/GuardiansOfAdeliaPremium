@@ -4,9 +4,11 @@ import io.github.lix3nn53.guardiansofadelia.GuardiansOfAdelia;
 import io.github.lix3nn53.guardiansofadelia.chat.SpeechBubble;
 import io.github.lix3nn53.guardiansofadelia.guardian.GuardianData;
 import io.github.lix3nn53.guardiansofadelia.guardian.GuardianDataManager;
+import io.github.lix3nn53.guardiansofadelia.guardian.skill.managers.ActionBarInfoManager;
 import io.github.lix3nn53.guardiansofadelia.menu.quest.GuiQuestList;
 import io.github.lix3nn53.guardiansofadelia.text.ChatPalette;
 import io.github.lix3nn53.guardiansofadelia.text.font.CustomCharacterMisc;
+import io.github.lix3nn53.guardiansofadelia.utilities.hologram.FakeHologram;
 import io.github.lix3nn53.guardiansofadelia.utilities.packets.EntityEquipmentPacket;
 import net.citizensnpcs.api.CitizensAPI;
 import net.citizensnpcs.api.npc.NPC;
@@ -17,22 +19,30 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
 
 import java.util.List;
 
 public class QuestSpeech {
 
-    private static void lookAtNPC(Player player, Entity npc) {
-        Location start = player.getLocation();
-        float height = (float) (npc.getHeight()) / 2f;
-        Location targetLocation = npc.getLocation().add(0, height, 0);
-        Vector vectorBetweenPoints = targetLocation.toVector().subtract(start.toVector());
-        start.setDirection(vectorBetweenPoints);
-        player.teleport(start);
+    private final Player player;
+    private final Entity npc;
+    private final List<String> messages;
+
+    // State
+    private int index = -1;
+    private FakeHologram hologram;
+    private BukkitTask toNext;
+
+    public QuestSpeech(Player player, Entity npc, List<String> messages) {
+        this.player = player;
+        this.npc = npc;
+        this.messages = messages;
     }
 
-    public static void startDialogue(Player player, Entity npc, List<String> messages, int index) {
+    public void startNextDialogue() {
+        index++;
         if (index >= messages.size()) {
             NPCSpeechManager.onQuestDialogueEnd(player);
 
@@ -58,15 +68,32 @@ public class QuestSpeech {
         String message = CustomCharacterMisc.SPEECH_BUBBLE.toString() + ChatPalette.GRAY + messages.get(index);
 
         long duration = getDuration(message);
-        SpeechBubble.entityNoFollow(npc, message, duration, player);
+        hologram = SpeechBubble.entityNoFollow(npc, message, duration, player);
         // player.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, (int) (duration + 10), 0));
+        ActionBarInfoManager.customMessage(player, ChatPalette.YELLOW + "Sneak[shift] to skip dialogue", duration);
 
-        new BukkitRunnable() {
+        toNext = new BukkitRunnable() {
             @Override
             public void run() {
-                startDialogue(player, npc, messages, index + 1);
+                startNextDialogue();
             }
         }.runTaskLater(GuardiansOfAdelia.getInstance(), duration);
+    }
+
+    public void skip() {
+        player.sendMessage("debug: skip quest dialogue");
+        toNext.cancel();
+        hologram.destroy();
+        startNextDialogue();
+    }
+
+    private void lookAtNPC() {
+        Location start = player.getLocation();
+        float height = (float) (npc.getHeight()) / 2f;
+        Location targetLocation = npc.getLocation().add(0, height, 0);
+        Vector vectorBetweenPoints = targetLocation.toVector().subtract(start.toVector());
+        start.setDirection(vectorBetweenPoints);
+        player.teleport(start);
     }
 
     private static long getDuration(String message) {

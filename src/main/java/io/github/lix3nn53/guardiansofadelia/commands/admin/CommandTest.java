@@ -44,7 +44,7 @@ public class CommandTest implements CommandExecutor {
                 player.sendMessage(ChatPalette.BLUE + "/test color <code>");
                 player.sendMessage(ChatPalette.BLUE + "/test hex <code>");
                 player.sendMessage(ChatPalette.BLUE + "/test palette");
-                player.sendMessage(ChatPalette.BLUE + "/test model portal<1-5>");
+                player.sendMessage(ChatPalette.BLUE + "/test model <item> <model>");
                 player.sendMessage(ChatPalette.BLUE + "/test sound <code> - play custom sounds");
                 player.sendMessage(ChatPalette.BLUE + "/test damage <amount> - damage self");
                 player.sendMessage(ChatPalette.BLUE + "/test custom <custom> [sBefore] [sAfter] <negative> <positive> - test custom char");
@@ -175,22 +175,12 @@ public class CommandTest implements CommandExecutor {
                     customSound.play(player);
                 }
             } else if (args[0].equals("model")) {
-                if (args.length == 2) {
+                if (args.length == 3) {
                     Location location = player.getLocation();
                     ArmorStand armorStand = (ArmorStand) location.getWorld().spawnEntity(location, EntityType.ARMOR_STAND);
-                    ItemStack itemStack = new ItemStack(Material.IRON_PICKAXE);
+                    ItemStack itemStack = new ItemStack(Material.valueOf(args[1].toUpperCase()));
                     ItemMeta itemMeta = itemStack.getItemMeta();
-                    if (args[1].equals("portal1")) {
-                        itemMeta.setCustomModelData(6);
-                    } else if (args[1].equals("portal2")) {
-                        itemMeta.setCustomModelData(7);
-                    } else if (args[1].equals("portal3")) {
-                        itemMeta.setCustomModelData(8);
-                    } else if (args[1].equals("portal4")) {
-                        itemMeta.setCustomModelData(9);
-                    } else if (args[1].equals("portal5")) {
-                        itemMeta.setCustomModelData(10);
-                    }
+                    itemMeta.setCustomModelData(Integer.valueOf(args[2]));
                     itemMeta.setUnbreakable(true);
                     itemStack.setItemMeta(itemMeta);
                     EntityEquipment equipment = armorStand.getEquipment();

@@ -62,9 +62,11 @@ public class GenericInteractableConfiguration {
     }
 
     private static void write() {
+        allConfigsInFile.clear();
+
         HashMap<String, List<MMSpawnerOpenWorld>> chunkKeyToLootChests = MMSpawnerManager.getChunkKeyToSpawners();
 
-        int i = 1;
+        HashMap<String, Integer> fileNameToCount = new HashMap<>();
         for (String chunkKey : chunkKeyToLootChests.keySet()) {
             List<MMSpawnerOpenWorld> openWorldSpawners = chunkKeyToLootChests.get(chunkKey);
 
@@ -73,7 +75,8 @@ public class GenericInteractableConfiguration {
                     String fileName = genericInteractable.getWorld().getName();
                     Location location = genericInteractable.getLocation();
 
-                    YamlConfiguration configFile = allConfigsInFile.get(fileName);
+                    int i = fileNameToCount.getOrDefault(fileName, 1);
+                    YamlConfiguration configFile = allConfigsInFile.getOrDefault(fileName, new YamlConfiguration());
 
                     configFile.set("interactable" + i + ".mobKey", spawner.getMobKey());
                     configFile.set("interactable" + i + ".world", location.getWorld().getName());
@@ -83,7 +86,11 @@ public class GenericInteractableConfiguration {
                     configFile.set("interactable" + i + ".yaw", location.getYaw());
                     configFile.set("interactable" + i + ".pitch", location.getPitch());
 
-                    i++;
+                    configFile.set("interactable" + i + ".cooldownMin", spawner.getCooldownMin());
+                    configFile.set("interactable" + i + ".cooldownMax", spawner.getCooldownMax());
+
+                    allConfigsInFile.put(fileName, configFile);
+                    fileNameToCount.put(fileName, i + 1);
                 }
             }
         }

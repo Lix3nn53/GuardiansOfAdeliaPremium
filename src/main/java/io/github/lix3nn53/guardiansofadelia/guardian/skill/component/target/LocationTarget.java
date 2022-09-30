@@ -1,5 +1,6 @@
 package io.github.lix3nn53.guardiansofadelia.guardian.skill.component.target;
 
+import io.github.lix3nn53.guardiansofadelia.GuardiansOfAdelia;
 import io.github.lix3nn53.guardiansofadelia.creatures.custom.TemporaryEntity;
 import io.github.lix3nn53.guardiansofadelia.guardian.skill.component.TargetComponent;
 import io.github.lix3nn53.guardiansofadelia.text.ChatPalette;
@@ -68,11 +69,14 @@ public class LocationTarget extends TargetComponent {
             ParticleShapes.drawLineBetween(eyeLocation.getWorld(), eyeLocation.toVector(), arrangementSingle, targetLocation.toVector(), gap);
         }
 
-        if (temporaryEntities.isEmpty()) return false;
+        // if (temporaryEntities.isEmpty()) return false;
 
         temporaryEntities = determineTargets(caster, temporaryEntities);
 
-        if (temporaryEntities.isEmpty()) return false;
+        if (temporaryEntities.isEmpty()) {
+            GuardiansOfAdelia.getInstance().getLogger().info("LocationTarget: temporaryEntities.isEmpty()");
+            return false;
+        }
 
         List<LivingEntity> targetsNew = new ArrayList<>();
         if (super.isKeepCurrent()) {

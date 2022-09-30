@@ -1,5 +1,6 @@
 package io.github.lix3nn53.guardiansofadelia.guardian.skill.component;
 
+import io.github.lix3nn53.guardiansofadelia.creatures.custom.TemporaryEntity;
 import io.github.lix3nn53.guardiansofadelia.utilities.EntityUtils;
 import net.citizensnpcs.api.CitizensAPI;
 import org.bukkit.configuration.ConfigurationSection;
@@ -123,6 +124,9 @@ public abstract class TargetComponent extends SkillComponent {
      * @return
      */
     private boolean isValidTarget(final LivingEntity caster, final LivingEntity target) {
+        if (target instanceof TemporaryEntity) {
+            return true;
+        }
         if (target == null) return false;
         if (CitizensAPI.getNPCRegistry().isNPC(target)) return false;
         EntityType type = target.getType();

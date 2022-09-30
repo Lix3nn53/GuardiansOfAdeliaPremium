@@ -83,7 +83,7 @@ public class GuiDungeonJoin extends GuiGeneric {
 
         Inventory clickedInventory = event.getClickedInventory();
 
-        if (clickedInventory.getType().equals(InventoryType.CHEST)) {
+        if (clickedInventory != null && clickedInventory.getType().equals(InventoryType.CHEST)) {
             ItemStack current = event.getCurrentItem();
             Material currentType = current.getType();
 
