@@ -81,7 +81,6 @@ public class QuestSpeech {
     }
 
     public void skip() {
-        player.sendMessage("debug: skip quest dialogue");
         toNext.cancel();
         hologram.destroy();
         startNextDialogue();
